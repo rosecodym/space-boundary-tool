@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Recompiled Source">
+      <UniqueIdentifier>{b42e0c6f-c4d5-46d8-8cc1-2aebfb7c5714}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\tests_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\equality_context.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\multiview_solid.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\one_dimensional_equality_context.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\orientation.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\area.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\simple_face.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\wrapped_nef_polygon.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\oriented_area.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\cgal-util.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\polygon_with_holes_2.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\printing-util.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\CreateGuid_64.c">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\build_blocks_.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\complicated_extruded_element.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\multiview_solid_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oriented_area_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\solid_conversion_operations.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solid_conversion_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\precompiled.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\blocking_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\area_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\surface_pair_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\surface_pair.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrapped_nef_polygon_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\library_assumptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\geometry_2d_common.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polygon_cleanup_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

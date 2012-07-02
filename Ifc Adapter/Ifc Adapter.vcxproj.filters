@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="main">
+      <UniqueIdentifier>{67a2ab3c-949d-401f-a5c1-c27c6f076116}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="edm">
+      <UniqueIdentifier>{a42d1206-db16-4182-9a2e-55a26eaeb65e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations">
+      <UniqueIdentifier>{7962b378-5af0-40f6-a94d-740041f31a7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry">
+      <UniqueIdentifier>{72be82c7-dd25-41d8-9b21-a5daa06c6ca8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{77f6a870-5000-4e6b-872a-facdc95511df}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\precompiled.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cgal-typedefs.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sbt-ifcadapter.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\edm_wrapper.h">
+      <Filter>edm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\add_element.h">
+      <Filter>operations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model_operations.h">
+      <Filter>operations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CreateGuid_64.h">
+      <Filter>operations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\reassign_bounded_spaces.h">
+      <Filter>operations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ifc-to-face.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ifc-to-cgal.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\number_collection.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_common.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ifc-to-solid.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrapped_nef_operations.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exact_surrogates.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\unit_scaler.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\one_dimensional_equality_context.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\precompiled.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c-test.c">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="sbt-ifcadapter.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\edm_wrapper.cpp">
+      <Filter>edm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\extract_from_model.cpp">
+      <Filter>operations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\add_element.cpp">
+      <Filter>operations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\add_to_model.cpp">
+      <Filter>operations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CreateGuid_64.c">
+      <Filter>operations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\reassign_bounded_spaces.cpp">
+      <Filter>operations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ifc-to-cgal.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ifc-to-face.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_common.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ifc-to-solid.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrapped_nef_operations.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\exact_surrogates.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unit_scaler.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\number_collection.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\one_dimensional_equality_context.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="schema.rc">
+      <Filter>resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\LBNL\IFC2X3_final.exp" />
+  </ItemGroup>
+</Project>
