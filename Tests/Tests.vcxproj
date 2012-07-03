@@ -107,6 +107,7 @@
     <ClCompile Include="..\Core\src\wrapped_nef_polygon.cpp" />
     <ClCompile Include="src\area_tests.cpp" />
     <ClCompile Include="src\blocking_tests.cpp" />
+    <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\polygon_cleanup_tests.cpp" />
     <ClCompile Include="src\library_assumptions.cpp" />
     <ClCompile Include="src\complicated_extruded_element.cpp" />
@@ -125,6 +126,9 @@
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{68821491-76e6-4090-b7a8-fa8c329fa2db}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\common.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
