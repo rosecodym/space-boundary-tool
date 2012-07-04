@@ -254,7 +254,7 @@ TEST(Blocking, ThreeStairsHalfblocks) {
 TEST(Blocking, ThreeStairsElement) { 
 	equality_context c(g_opts.equality_tolerance);
 
-	element_info * e_info = create_element_as_ext("element", UNKNOWN, 1, 0, 0, 1, 300, 8,
+	element_info * e_info = create_element("element", UNKNOWN, 1, create_ext(0, 0, 1, 300, create_face(8,
 		simple_point(0, 0, 0),
 		simple_point(0, 8250, 0),
 		simple_point(2105, 8250, 0),
@@ -262,7 +262,7 @@ TEST(Blocking, ThreeStairsElement) {
 		simple_point(4050, 12120.109, 0),
 		simple_point(4050, 18195.109, 0),
 		simple_point(8200, 18195.109, 0),
-		simple_point(8200, 0, 0));
+		simple_point(8200, 0, 0))));
 
 	element e(e_info, &c);
 	auto blocks = build_blocks_for(e, &c);
@@ -342,12 +342,12 @@ TEST(Blocking, HalfblocksWithNonParallelOthers) {
 TEST(Blocking, Boot) {
 	equality_context c(g_opts.equality_tolerance);
 
-	element_info * e_info = create_element_as_ext("boot element", UNKNOWN, 1, 0, 0, 1, 300, 5,
+	element_info * e_info = create_element("boot element", UNKNOWN, 1, create_ext(0, 0, 1, 300, create_face(5,
 		simple_point(4050, 12120.109, 0),
 		simple_point(4050, 18195.109, 0),
 		simple_point(8200, 18195.109, 0),
 		simple_point(8200, 17181.249, 0),
-		simple_point(29200, 11991.013, 0));
+		simple_point(29200, 11991.013, 0))));
 	
 	element e(e_info, &c);
 
@@ -380,11 +380,11 @@ TEST(Blocking, SinglePairLink) {
 	surfaces.push_back(a);
 	surfaces.push_back(b);
 
-	element_info * dummy_element = create_element_as_ext("dummy element", UNKNOWN, 1, 0, 0, 1, 100, 4,
+	element_info * dummy_element = create_element("dummy element", UNKNOWN, 1, create_ext(0, 0, 1, 100, create_face(4,
 		simple_point(0, 0, 0),
 		simple_point(1, 0, 0),
 		simple_point(1, 1, 0),
-		simple_point(0, 1, 0));
+		simple_point(0, 1, 0))));
 	element dummy(dummy_element, &c);
 
 	std::vector<block> blocks;

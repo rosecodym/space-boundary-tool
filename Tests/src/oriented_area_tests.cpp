@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include "common.h"
 #include "equality_context.h"
 #include "oriented_area.h"
 #include "sbt-core.h"
@@ -14,16 +15,11 @@ namespace {
 
 TEST(OrientedArea, SimpleFaceConstruction) {
 	equality_context c(g_opts.equality_tolerance);
-	face f;
-	f.void_count = 0;
-	f.voids = nullptr;
-	polyloop * loop = get_outer_boundary_handle(&f);
-	loop->vertex_count = 4;
-	loop->vertices = (point *)malloc(sizeof(point) * loop->vertex_count);
-	set_vertex(loop, 0, 0, 0, 0);
-	set_vertex(loop, 1, 10, 0, 0);
-	set_vertex(loop, 2, 10, 15, 0);
-	set_vertex(loop, 3, 0, 15, 0);
+	face f = create_face(4,
+		simple_point(0, 0, 0),
+		simple_point(10, 0, 0),
+		simple_point(10, 15, 0),
+		simple_point(0, 15, 0));
 	simple_face(f, &c);
 }
 

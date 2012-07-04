@@ -29,32 +29,26 @@ face create_face(size_t vertex_count, ...) {
 		v = va_arg(ap, simple_point);
 		set_vertex(&f.outer_boundary, i, v.x, v.y, v.z);
 	}
+	va_end(ap);
 	return f;
 }
 
-element_info * create_element_as_ext(
-	const char * name, 
-	element_type type, 
-	material_id_t mat, 
-	double dx,
-	double dy,
-	double dz,
-	double depth,
-	size_t v_count, 
-	...)
-{
-	va_list ap;
-	va_start(ap, v_count);
+solid create_ext(double dx, double dy, double dz, double depth, face geometry) {
+	solid res;
+	res.rep_type = REP_EXT;
+	res.rep.as_ext.extrusion_depth = depth;
+	res.rep.as_ext.ext_dx = dx;
+	res.rep.as_ext.ext_dy = dy;
+	res.rep.as_ext.ext_dz = dz;
+	res.rep.as_ext.area = geometry;
+	return res;
+}
 
+element_info * create_element(const char * name, element_type type, material_id_t mat, solid geometry) {
 	element_info * res = (element_info *)malloc(sizeof(element_info));
 	strcpy(res->id, name);
 	res->material = mat;
 	res->type = type;
-	res->geometry.rep_type = REP_EXT;
-	res->geometry.rep.as_ext.extrusion_depth = depth;
-	res->geometry.rep.as_ext.ext_dx = dx;
-	res->geometry.rep.as_ext.ext_dy = dy;
-	res->geometry.rep.as_ext.ext_dz = dz;
-	res->geometry.rep.as_ext.area = create_face(v_count, ap);
+	res->geometry = geometry;
 	return res;
 }
