@@ -392,6 +392,73 @@ TEST(Blocking, SinglePairLink) {
 	EXPECT_EQ(1, blocks.size());
 }
 
+TEST(Blocking, ColumnToLegacySurfaces) {
+	equality_context c(g_opts.equality_tolerance);
+
+	element_info * e = create_element("column", COLUMN, 1, create_ext(0, 0, 1, 4000, create_face(4,
+		simple_point(0, 0, 0),
+		simple_point(0, 255, 0),
+		simple_point(255, 255, 0),
+		simple_point(255, 0, 0))));
+
+	element col(e, &c);
+	std::vector<element> elements(1, col);
+
+	std::vector<std::shared_ptr<surface>> surfaces;
+	auto blocks = blocking::build_blocks(elements, &c);
+	boost::for_each(blocks, [&surfaces](const block & b) { b.as_surfaces(std::back_inserter(surfaces)); });
+
+	auto surface_string = [](std::shared_ptr<surface> & s) -> std::string { 
+		std::stringstream ss;
+		ss << "<" <<
+			CGAL::to_double(s->geometry().orientation().dx()) << ", " <<
+			CGAL::to_double(s->geometry().orientation().dy()) << ", " <<
+			CGAL::to_double(s->geometry().orientation().dz()) << "> @ " <<
+			CGAL::to_double(s->geometry().height()) <<
+			(s->geometry().sense() ? " (not reversed)" : " (reversed)");
+		return ss.str();
+	};
+
+	auto all_surfaces = [&surfaces, &surface_string]() -> std::string {
+		std::stringstream ss;
+		for (auto s = surfaces.begin(); s != surfaces.end(); ++s) {
+			ss << surface_string(*s) << std::endl;
+		}
+		return ss.str();
+	};
+
+	auto all_surfaces_ok = [&surfaces](equality_context * c) -> bool {
+		auto top = boost::find_if(surfaces, [c](std::shared_ptr<surface> & s) { 
+			return s->geometry().orientation().direction() == direction_3(0, 0, 1) && s->geometry().height() == c->request_height(4000);
+		});
+		auto bottom = boost::find_if(surfaces, [c](std::shared_ptr<surface> & s) { 
+			return s->geometry().orientation().direction() == direction_3(0, 0, 1) && s->geometry().height() == c->request_height(0);
+		});
+		auto left = boost::find_if(surfaces, [c](std::shared_ptr<surface> & s) { 
+			return s->geometry().orientation().direction() == direction_3(1, 0, 0) && s->geometry().height() == c->request_height(0);
+		});
+		auto right = boost::find_if(surfaces, [c](std::shared_ptr<surface> & s) { 
+			return s->geometry().orientation().direction() == direction_3(1, 0, 0) && s->geometry().height() == c->request_height(225);
+		});
+		auto front = boost::find_if(surfaces, [c](std::shared_ptr<surface> & s) { 
+			return s->geometry().orientation().direction() == direction_3(0, 1, 0) && s->geometry().height() == c->request_height(0);
+		});
+		auto back = boost::find_if(surfaces, [c](std::shared_ptr<surface> & s) { 
+			return s->geometry().orientation().direction() == direction_3(0, 1, 0) && s->geometry().height() == c->request_height(225);
+		});
+		return
+			surfaces.size() == 6 &&
+			top != surfaces.end() && (*top)->geometry().sense() &&
+			bottom != surfaces.end() && !(*bottom)->geometry().sense() && 
+			left != surfaces.end() && !(*left)->geometry().sense() &&
+			right != surfaces.end() && (*right)->geometry().sense() &&
+			front != surfaces.end() && !(*front)->geometry().sense() &&
+			back != surfaces.end() && (*back)->geometry().sense();
+	};
+	
+	EXPECT_TRUE(all_surfaces_ok(&c)) << all_surfaces();
+}
+
 } // namespace
 
 } // namespace impl

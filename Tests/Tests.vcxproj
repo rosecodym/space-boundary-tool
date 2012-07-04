@@ -103,6 +103,7 @@
     <ClCompile Include="..\Core\src\printing-util.cpp" />
     <ClCompile Include="..\Core\src\simple_face.cpp" />
     <ClCompile Include="..\Core\src\solid_conversion_operations.cpp" />
+    <ClCompile Include="..\Core\src\surface.cpp" />
     <ClCompile Include="..\Core\src\surface_pair.cpp" />
     <ClCompile Include="..\Core\src\wrapped_nef_polygon.cpp" />
     <ClCompile Include="src\area_tests.cpp" />
