@@ -120,7 +120,6 @@ struct stack {
 		while (*b_area.vertices_begin() != *p) {
 			++p;
 			++rot;
-			assert(p != b->geometry().area().vertices_end());
 		}
 
 		std::vector<r_point_3> a_points(a->geometry().to_3d().front().outer());
