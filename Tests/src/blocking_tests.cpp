@@ -392,6 +392,23 @@ TEST(Blocking, SinglePairLink) {
 	EXPECT_EQ(1, blocks.size());
 }
 
+TEST(Blocking, RightCuboid) {
+	equality_context c(g_opts.equality_tolerance);
+
+	element_info * e = create_element("column", COLUMN, 1, create_ext(0, 0, 1, 4000, create_face(4,
+		simple_point(0, 0, 0),
+		simple_point(0, 255, 0),
+		simple_point(255, 255, 0),
+		simple_point(255, 0, 0))));
+
+	element col(e, &c);
+	std::vector<element> elements(1, col);
+
+	std::vector<std::shared_ptr<surface>> surfaces;
+	auto blocks = blocking::build_blocks(elements, &c);
+	EXPECT_EQ(3, blocks.size());
+}
+
 TEST(Blocking, ColumnToLegacySurfaces) {
 	equality_context c(g_opts.equality_tolerance);
 
