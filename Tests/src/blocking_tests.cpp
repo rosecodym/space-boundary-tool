@@ -347,7 +347,7 @@ TEST(Blocking, Boot) {
 		simple_point(4050, 18195.109, 0),
 		simple_point(8200, 18195.109, 0),
 		simple_point(8200, 17181.249, 0),
-		simple_point(29200, 11991.013, 0))));
+		simple_point(29200, 5000, 0))));
 	
 	element e(e_info, &c);
 
