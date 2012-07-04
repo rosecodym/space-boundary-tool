@@ -49,7 +49,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\Cody\Documents\Visual Studio 2010\Projects\Space Boundary Tool\Core\src;C:\Users\Cody\Documents\Visual Studio 2010\Projects\gtest-1.6.0\include;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Core\src;C:\Users\Cody\Documents\Visual Studio 2010\Projects\gtest-1.6.0\include;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996; 4503; 4800</DisableSpecificWarnings>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>-Zm152 %(AdditionalOptions)</AdditionalOptions>
@@ -70,7 +70,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\Cody\Documents\Visual Studio 2010\Projects\Space Boundary Tool\Core\src;C:\Users\Cody\Documents\Visual Studio 2010\Projects\gtest-1.6.0\include;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Core\src;C:\Users\Cody\Documents\Visual Studio 2010\Projects\gtest-1.6.0\include;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996; 4503; 4800</DisableSpecificWarnings>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalOptions>-Zm152 %(AdditionalOptions)</AdditionalOptions>
