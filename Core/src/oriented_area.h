@@ -88,8 +88,8 @@ public:
 	oriented_area(const orientation_t * o, const NT & p, const polygon_2 & geometry, bool sense, std::shared_ptr<equality_context>) {
 		*this = oriented_area(o, area(geometry), p, sense); 
 	}
-	oriented_area(const orientation_t * o, const NT & p, const area & geometry, bool sense) {
-		*this = oriented_area(o, geometry, p, sense); 
+	oriented_area(const orientation_t * o, const NT & height, const area & geometry, bool sense) {
+		*this = oriented_area(o, geometry, -height, sense); 
 	}
 };
 

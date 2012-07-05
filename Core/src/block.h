@@ -52,9 +52,9 @@ public:
 	// DEPRECATED
 	template <typename OutputIterator>
 	void as_surfaces(OutputIterator oi) const {
-		std::shared_ptr<surface> surface_a(new surface(oriented_area(o, layer.p_a(), a, !base_sense), layer.layer_element()));
+		std::shared_ptr<surface> surface_a(new surface(oriented_area(o, layer.height_a(), a, !base_sense), layer.layer_element()));
 		if (layer.has_both_sides()) {
-			std::shared_ptr<surface> surface_b(new surface(oriented_area(o, layer.p_b(), a, base_sense), layer.layer_element()));
+			std::shared_ptr<surface> surface_b(new surface(oriented_area(o, layer.height_b(), a, base_sense), layer.layer_element()));
 			surface::set_other_sides(surface_a, surface_b);
 			*oi++ = surface_b;
 		}
