@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "geometry_common.h"
 #include "printing-macros.h"
 
 #include "area.h"

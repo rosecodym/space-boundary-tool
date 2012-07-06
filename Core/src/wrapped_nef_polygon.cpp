@@ -346,23 +346,6 @@ void snap_nef_polygon_to(nef_polygon_2 * from, const nef_polygon_2 & to) {
 
 } // namespace
 
-polygon_with_holes_2 wrapped_nef_polygon::as_pwh() const {
-	nef_polygon_2::Explorer e = wrapped->explorer();
-	auto the_face = e.faces_begin(); // i'm only initializing it so i can use auto because i don't want to look up how to spell the type
-	bool found = false;
-	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
-		if (f->mark()) {
-			if (found) {
-				ERROR_MSG("[Aborting - tried to convert a wrapped nef polygon with multiple marked faces to a pwh.]\n");
-				throw core_exception(SBT_ASSERTION_FAILED);
-			}
-			the_face = f;
-			found = true;
-		}
-	}
-	return found ? create_pwh_2(e, the_face) : polygon_with_holes_2();
-}
-
 void wrapped_nef_polygon::snap_to(const wrapped_nef_polygon & other) {
 	snap_nef_polygon_to(wrapped.get(), *other.wrapped);
 	SBT_EXPENSIVE_ASSERT(is_valid(), "[Aborting - a nef polygon snap made it invalid.]\n");
@@ -473,7 +456,10 @@ std::vector<polygon_with_holes_2> wrapped_nef_polygon::to_pwhs() const {
 	nef_polygon_2::Explorer e = wrapped->explorer();
 	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
 		if (f->mark()) {
-			res.push_back(create_pwh_2(e, f));
+			auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
+			if (pwh_maybe) {
+				res.push_back(*pwh_maybe);
+			}
 		}
 	}
 	return res;
@@ -501,7 +487,7 @@ polygon_2 wrapped_nef_polygon::outer() const {
 	return outer;
 }
 
-polygon_with_holes_2 wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f) {
+boost::optional<polygon_with_holes_2> wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f) {
 	polygon_2 outer;
 	std::vector<polygon_2> holes;
 	auto p = e.face_cycle(f);
@@ -513,9 +499,8 @@ polygon_with_holes_2 wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Expl
 	}
 	while (p != e.face_cycle(f));
 
-	if (outer.is_empty()) {
-		ERROR_MSG("[Aborting - a wrapped_nef_polygon face had no standard points on its outer boundary.]\n");
-		throw core_exception(SBT_ASSERTION_FAILED);
+	if (!geometry_common::cleanup_loop(&outer, g_opts.equality_tolerance)) {
+		return boost::optional<polygon_with_holes_2>();
 	}
 
 	for (auto h = e.holes_begin(f); h != e.holes_end(f); ++h) {
@@ -528,7 +513,7 @@ polygon_with_holes_2 wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Expl
 			}
 			++p;
 		}
-		if (holes.back().is_empty()) {
+		if (!geometry_common::cleanup_loop(&holes.back(), g_opts.equality_tolerance)) {
 			holes.pop_back();
 		}
 	}

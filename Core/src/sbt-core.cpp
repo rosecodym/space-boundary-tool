@@ -111,8 +111,6 @@ sbt_return_t convert_to_space_boundaries(
 		NOTIFY_MSG(".");
 	}
 
-	printf("\n<built all>\n");
-
 	for (size_t i = 0; i < surfaces.size(); ++i) {
 		if (!surfaces[i]->opposite().expired() && (*sbs)[i]->opposite == nullptr) {
 			for (size_t j = i + 1; j < surfaces.size(); ++j) {

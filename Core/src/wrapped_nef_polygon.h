@@ -22,9 +22,7 @@ private:
 
 	void snap_to(const wrapped_nef_polygon & other);
 
-	polygon_with_holes_2 as_pwh() const;
-
-	static polygon_with_holes_2 create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f); // TEMPORARY
+	static boost::optional<polygon_with_holes_2> create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f);
 
 public:
 	wrapped_nef_polygon() : wrapped(new nef_polygon_2(nef_polygon_2::EMPTY)), m_is_axis_aligned(true) { }
@@ -71,16 +69,6 @@ public:
 	
 	void print_with(void (*msg_func)(char *)) const;
 
-	template <class OutputIterator>
-	void to_simple_polygons(OutputIterator oi) const {
-		nef_polygon_2::Explorer e = wrapped->explorer();
-		for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
-			if (f->mark()) {
-				boost::copy(create_pwh_2(e, f).to_simple_polygons(), oi);
-			}
-		}
-	}
-
 	std::vector<polygon_with_holes_2> to_pwhs() const;
 
 	polygon_2 outer() const;
@@ -99,10 +87,24 @@ public:
 	friend wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 
-	// DEPRECATED
+	// deprecated
 	explicit wrapped_nef_polygon(const wrapped_nef_polygon & src, std::shared_ptr<equality_context> c) 
 		: wrapped(new nef_polygon_2(*src.wrapped)), m_is_axis_aligned(src.m_is_axis_aligned)
 	{ }
+
+	// deprecated
+	template <class OutputIterator>
+	void to_simple_polygons(OutputIterator oi) const {
+		nef_polygon_2::Explorer e = wrapped->explorer();
+		for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
+			if (f->mark()) {
+				auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
+				if (pwh_maybe) {
+					boost::copy(pwh_maybe->to_simple_polygons(), oi);
+				}
+			}
+		}
+	}
 };
 
 inline bool operator == (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
