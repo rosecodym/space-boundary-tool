@@ -3,7 +3,7 @@
 #include "precompiled.h"
 
 #include "cgal-util.h"
-#include "geometry_2d_common.h"
+#include "geometry_common.h"
 #include "printing-macros.h"
 #include "surface_pair.h"
 
@@ -45,7 +45,7 @@ void halfblocks_for_base(const relations_grid & surface_relationships, size_t ba
 				this_poly.push_back(flattening_context->snap(ccb->target()->point()));
 			}
 			// for some reason the envelope calculation creates degenerate faces sometimes
-			if (!geometry_2d::cleanup_polygon(&this_poly, g_opts.equality_tolerance)) {
+			if (!geometry_common::cleanup_loop(&this_poly, g_opts.equality_tolerance)) {
 				continue;
 			}
 			area this_area(this_poly);

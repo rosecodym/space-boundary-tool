@@ -96,17 +96,14 @@
     <ClCompile Include="src\library_assumptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\src\geometry_2d_common.cpp">
-      <Filter>Recompiled Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\polygon_cleanup_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\surface.cpp">
       <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\loop_cleanup_tests.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

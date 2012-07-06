@@ -3,7 +3,7 @@
 #include "area.h"
 #include "cgal-util.h"
 #include "element.h"
-#include "geometry_2d_common.h"
+#include "geometry_common.h"
 #include "printing-util.h"
 #include "oriented_area.h"
 #include "surface.h"
@@ -739,7 +739,7 @@ void get_halfblocks_for_this_base(const std::vector<oriented_area> & faces, int 
 				SBT_ASSERT(false, "[Aborting - an envelope face had adjacent duplicate points.]\n");
 			}
 			// i don't know why these degenerate faces are showing up, but they are
-			if (!geometry_2d::cleanup_polygon(&this_poly, g_opts.equality_tolerance)) {
+			if (!geometry_common::cleanup_loop(&this_poly, g_opts.equality_tolerance)) {
 				PRINT_BLOCKS("[dropping]\n");
 				continue;
 			}

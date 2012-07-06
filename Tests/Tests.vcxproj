@@ -94,7 +94,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Core\src\equality_context.cpp" />
-    <ClCompile Include="..\Core\src\geometry_2d_common.cpp" />
     <ClCompile Include="..\Core\src\multiview_solid.cpp" />
     <ClCompile Include="..\Core\src\one_dimensional_equality_context.cpp" />
     <ClCompile Include="..\Core\src\orientation.cpp" />
@@ -109,7 +108,7 @@
     <ClCompile Include="src\area_tests.cpp" />
     <ClCompile Include="src\blocking_tests.cpp" />
     <ClCompile Include="src\common.cpp" />
-    <ClCompile Include="src\polygon_cleanup_tests.cpp" />
+    <ClCompile Include="src\loop_cleanup_tests.cpp" />
     <ClCompile Include="src\library_assumptions.cpp" />
     <ClCompile Include="src\complicated_extruded_element.cpp" />
     <ClCompile Include="src\multiview_solid_tests.cpp" />

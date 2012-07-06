@@ -102,7 +102,7 @@
     <ClInclude Include="src\cgal-approx.h" />
     <ClInclude Include="src\cgal-util.h" />
     <ClInclude Include="src\core_exception.h" />
-    <ClInclude Include="src\geometry_2d_common.h" />
+    <ClInclude Include="src\geometry_common.h" />
     <ClInclude Include="src\guid_filter.h" />
     <ClInclude Include="src\element.h" />
     <ClInclude Include="src\halfblocks_for_base.h" />
@@ -150,7 +150,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\geometry_2d_common.cpp" />
     <ClCompile Include="src\guid_filter.cpp" />
     <ClCompile Include="src\extract_spaces.cpp" />
     <ClCompile Include="src\cgal-util.cpp" />

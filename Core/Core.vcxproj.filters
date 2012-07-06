@@ -135,9 +135,6 @@
     <ClInclude Include="src\solid_geometry_common.h">
       <Filter>geometry\solid_geometry</Filter>
     </ClInclude>
-    <ClInclude Include="src\geometry_2d_common.h">
-      <Filter>geometry\geometry_2d</Filter>
-    </ClInclude>
     <ClInclude Include="src\link_halfblocks.h">
       <Filter>operations\blocking</Filter>
     </ClInclude>
@@ -158,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="src\printing-macros.h">
       <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_common.h">
+      <Filter>geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -223,9 +223,6 @@
     </ClCompile>
     <ClCompile Include="src\surface_pair.cpp">
       <Filter>operations\blocking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry_2d_common.cpp">
-      <Filter>geometry\geometry_2d</Filter>
     </ClCompile>
     <ClCompile Include="src\build_blocks.cpp">
       <Filter>deprecated operations</Filter>

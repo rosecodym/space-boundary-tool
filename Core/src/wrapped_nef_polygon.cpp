@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 #include "equality_context.h"
-#include "geometry_2d_common.h"
+#include "geometry_common.h"
 #include "misc-util.h"
 #include "operations.h"
 #include "polygon_with_holes_2.h"
@@ -51,7 +51,7 @@ nef_polygon_2 create_nef_polygon(polygon_2 poly) {
 		NOTIFY_MSG( "[creating nef polygon from poly]\n[uncleaned poly follows]\n");
 		util::printing::print_polygon(g_opts.notify_func, poly);
 	}
-	if (!geometry_2d::cleanup_polygon(&poly, g_opts.equality_tolerance)) {
+	if (!geometry_common::cleanup_loop(&poly, g_opts.equality_tolerance)) {
 		ERROR_MSG("[Aborting - couldn't clean up a polygon in order to construct a nef polygon.]\n");
 		util::printing::print_polygon(g_opts.error_func, poly);
 		throw core_exception(SBT_ASSERTION_FAILED);
