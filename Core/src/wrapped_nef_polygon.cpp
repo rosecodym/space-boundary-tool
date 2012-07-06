@@ -5,6 +5,7 @@
 #include "misc-util.h"
 #include "operations.h"
 #include "polygon_with_holes_2.h"
+#include "printing-macros.h"
 #include "printing-util.h"
 #include "sbt-core.h"
 
@@ -320,24 +321,19 @@ void snap_nef_polygon_to(nef_polygon_2 * from, const nef_polygon_2 & to) {
 
 	if (changed) {
 		PRINT_GEOM("[polygon changed - modifying (%u loops)]\n", loops.size());
+		nef_polygon_2 orig = *from;
 		from->clear();
-		std::for_each(loops.begin(), loops.end(), [from](const std::deque<espoint_2> & loop) { 
+		std::for_each(loops.begin(), loops.end(), [from, &to, &orig](const std::deque<espoint_2> & loop) { 
 			IF_FLAGGED(SBT_VERBOSE_GEOMETRY) {
 				NOTIFY_MSG( "[loop:]\n");
 				std::for_each(loop.begin(), loop.end(), [](const espoint_2 & p) { NOTIFY_MSG( "%f\t%f\n", CGAL::to_double(p.x()), CGAL::to_double(p.y())); });
 			}
-			IF_FLAGGED(SBT_EXPENSIVE_CHECKS) {
-				std::vector<point_2> polypoints;
-				std::transform(loop.begin(), loop.end(), std::back_inserter(polypoints), [](const espoint_2 & p) { return point_2(p.x(), p.y()); });
-				if (!polygon_2(polypoints.begin(), polypoints.end()).is_simple()) {
-					ERROR_MSG("[Aborting - tried to symdiff a loop in a nef snap that wasn't simple.\n");
-					throw core_exception(SBT_ASSERTION_FAILED);
-				}
+			std::vector<point_2> polypoints;
+			boost::transform(loop, std::back_inserter(polypoints), [](const espoint_2 & p) { return point_2(p.x(), p.y()); });
+			if (polygon_2(polypoints.begin(), polypoints.end()).is_simple()) {
+				nef_polygon_2 nef(loop.begin(), loop.end(), nef_polygon_2::EXCLUDED); 
+				*from ^= nef;
 			}
-			nef_polygon_2 nef(loop.begin(), loop.end(), nef_polygon_2::EXCLUDED); 
-			PRINT_GEOM("[created temp nef]\n");
-			*from ^= nef;
-			PRINT_GEOM("[symdiffed temp nef]\n");
 		});
 	}
 
