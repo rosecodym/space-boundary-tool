@@ -2,8 +2,12 @@
 
 #include "precompiled.h"
 
+#include "geometry_common.h"
 #include "polygon_with_holes_2.h"
 #include "printing-macros.h"
+#include "sbt-core.h"
+
+extern sb_calculation_options g_opts;
 
 class polygon_with_holes_3 {
 private:
@@ -19,10 +23,20 @@ private:
 public:
 	template <typename PointRange, typename HoleRange>
 	polygon_with_holes_3(const PointRange & outer, const HoleRange & holes) : m_outer(outer.begin(), outer.end()), m_holes(holes.begin(), holes.end()) { 
-		if (m_outer.size() < 3) {
-			NOTIFY_MSG("Polygon with holes is bad!\n");
+		bool cleanup_ok = geometry_common::cleanup_loop(&m_outer, g_opts.equality_tolerance);
+		if (!cleanup_ok && FLAGGED(SBT_EXPENSIVE_CHECKS)) {
+			ERROR_MSG("Couldn't clean up a pwh_3's outer boundary:\n");
 			PRINT_LOOP_3(m_outer);
+			abort();
 		}
+		boost::for_each(m_holes, [](std::vector<point_3> & hole) {
+			bool cleanup_ok = geometry_common::cleanup_loop(&hole, g_opts.equality_tolerance);
+			if (!cleanup_ok && FLAGGED(SBT_EXPENSIVE_CHECKS)) {
+				ERROR_MSG("Couldn't clean up a pwh_3 hole:\n");
+				PRINT_LOOP_3(hole);
+				abort();
+			}
+		});
 	}
 
 	const std::vector<point_3> & outer() const { return m_outer; }
