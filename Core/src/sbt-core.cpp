@@ -2,6 +2,7 @@
 
 #include "core_exception.h"
 #include "equality_context.h"
+#include "geometry_common.h"
 #include "guid_filter.h"
 #include "load_elements.h"
 #include "operations.h"
@@ -27,51 +28,13 @@ sbt_return_t calculate_space_boundaries_(
 
 namespace {
 
-std::deque<point_3> cleaned_loop(const std::vector<point_3> & loop) {
-	printf("<cleaning loop");
-	double eps = g_opts.equality_tolerance;
-	std::deque<point_3> res;
-	boost::for_each(loop, [&res, eps](const point_3 & p) {
-		if (res.empty()) {
-			res.push_back(p);
-		}
-		else if (!equality_context::are_effectively_same(p, res.back(), g_opts.equality_tolerance)) {
-			if (res.size() == 1 || !equality_context::are_effectively_collinear(p, res.back(), res[res.size() - 2], eps)) {
-				res.push_back(p);
-			}
-			else {
-				res.back() = p;
-			}
-		}
-	});
-	while (true) {
-		if (equality_context::are_effectively_same(res.front(), res.back(), eps)) {
-			res.pop_back();
-			continue;
-		}
-		if (equality_context::are_effectively_collinear(res[res.size() - 2], res.back(), res.front(), eps)) {
-			res.pop_back();
-			continue;
-		}
-		if (equality_context::are_effectively_collinear(res.back(), res[0], res[1], eps)) {
-			res.pop_front();
-			continue;
-		}
-		break;
-	}
-	printf(">");
-	return res;
-}
-
 template <typename PointRange>
 void set_geometry(space_boundary * sb, const PointRange & geometry) {
-	printf("<set_geometry");
 	set_vertex_count(&sb->geometry, geometry.size());
 	size_t i = 0;
 	boost::for_each(geometry, [sb, &i](const point_3 & p) {
 		set_vertex(&sb->geometry, i++, CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z()));
 	});
-	printf(">");
 }
 	
 sbt_return_t convert_to_space_boundaries(
@@ -101,15 +64,20 @@ sbt_return_t convert_to_space_boundaries(
 		strncpy(newsb->global_id, surf->guid().c_str(), SB_ID_MAX_LEN);
 		strncpy(newsb->element_id, surf->is_virtual() ? "" : surf->element_id().c_str(), ELEMENT_ID_MAX_LEN);
 
-		printf("<setting geometry");
+		auto cleaned_geometry = surf->geometry().to_3d().front().outer();
+		bool could_clean = geometry_common::cleanup_loop(&cleaned_geometry, g_opts.equality_tolerance);
+		if (FLAGGED(SBT_EXPENSIVE_CHECKS) && !could_clean) {
+			ERROR_MSG("Couldn't clean up a space boundary loop:\n");
+			PRINT_LOOP_3(cleaned_geometry);
+			abort();
+		}
+
 		if (surf->geometry().sense()) {
-			PRINT_LOOP_3(surf->geometry().to_3d().front().outer());
-			set_geometry(newsb, cleaned_loop(surf->geometry().to_3d().front().outer()));
+			set_geometry(newsb, cleaned_geometry);
 		}
 		else {
-			set_geometry(newsb, cleaned_loop(surf->geometry().to_3d().front().outer()) | boost::adaptors::reversed);
+			set_geometry(newsb, cleaned_geometry | boost::adaptors::reversed);
 		}
-		printf(">");
 	
 		direction_3 norm = surf->geometry().sense() ? surf->geometry().orientation().direction() : -surf->geometry().orientation().direction();
 		newsb->normal_x = CGAL::to_double(norm.dx());
