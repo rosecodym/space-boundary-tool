@@ -44,11 +44,14 @@ transformation_3 build_flatten(const direction_3 & d) {
 orientation::orientation(const direction_3 & d)
 	: m_direction(d),
 	m_flatten(build_flatten(d)),
-	m_unflatten(m_flatten.inverse()),
-	debug_dx(CGAL::to_double(d.dx())),
-	debug_dy(CGAL::to_double(d.dy())),
-	debug_dz(CGAL::to_double(d.dz()))
-{ }
+	m_unflatten(m_flatten.inverse())
+{ 
+#ifndef NDEBUG
+	debug_dx = CGAL::to_double(m_direction.dx());
+	debug_dx = CGAL::to_double(m_direction.dy());
+	debug_dx = CGAL::to_double(m_direction.dz());
+#endif
+}
 
 std::string orientation::to_string() const {
 	char buf[128];
