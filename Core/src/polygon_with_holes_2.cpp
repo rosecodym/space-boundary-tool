@@ -1,8 +1,13 @@
 #include "precompiled.h"
 
 #include "cgal-util.h"
+#include "geometry_common.h"
+#include "printing-macros.h"
+#include "sbt-core.h"
 
 #include "polygon_with_holes_2.h"
+
+extern sb_calculation_options g_opts;
 
 namespace {
 
@@ -170,6 +175,23 @@ polygon_2 extract_section(polygon_with_holes_2 * pwh) {
 }
 
 } // namespace
+
+void polygon_with_holes_2::cleanup() {
+	bool cleanup_ok = geometry_common::cleanup_loop(&m_outer, g_opts.equality_tolerance);
+	if (!cleanup_ok && FLAGGED(SBT_EXPENSIVE_CHECKS)) {
+		ERROR_MSG("Couldn't clean up a pwh_2's outer boundary:\n");
+		PRINT_POLYGON(m_outer);
+		abort();
+	}
+	boost::for_each(m_holes, [](polygon_2 & hole) {
+		bool cleanup_ok = geometry_common::cleanup_loop(&hole, g_opts.equality_tolerance);
+		if (!cleanup_ok && FLAGGED(SBT_EXPENSIVE_CHECKS)) {
+			ERROR_MSG("Couldn't clean up a pwh_2 hole:\n");
+			PRINT_POLYGON(hole);
+			abort();
+		}
+	});
+}
 
 void polygon_with_holes_2::reverse() {
 	m_outer.reverse_orientation();
