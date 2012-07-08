@@ -227,9 +227,6 @@
     <ClCompile Include="src\geometry_2d_common.cpp">
       <Filter>geometry\geometry_2d</Filter>
     </ClCompile>
-    <ClCompile Include="src\build_blocks.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
     <ClCompile Include="src\build_stacks.cpp">
       <Filter>deprecated operations</Filter>
     </ClCompile>

@@ -141,10 +141,7 @@
   <ItemGroup>
     <ClCompile Include="src\area.cpp" />
     <ClCompile Include="src\assign_openings.cpp" />
-    <ClCompile Include="src\build_blocks.cpp" />
-    <ClCompile Include="src\build_blocks_.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="src\build_blocks_.cpp" />
     <ClCompile Include="src\build_stacks.cpp" />
     <ClCompile Include="src\c-test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
