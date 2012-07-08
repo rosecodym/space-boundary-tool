@@ -48,8 +48,8 @@ orientation::orientation(const direction_3 & d)
 { 
 #ifndef NDEBUG
 	debug_dx = CGAL::to_double(m_direction.dx());
-	debug_dx = CGAL::to_double(m_direction.dy());
-	debug_dx = CGAL::to_double(m_direction.dz());
+	debug_dy = CGAL::to_double(m_direction.dy());
+	debug_dz = CGAL::to_double(m_direction.dz());
 #endif
 }
 
