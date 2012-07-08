@@ -87,7 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\src\area.cpp" />
-    <ClCompile Include="..\Core\src\build_blocks_.cpp" />
+    <ClCompile Include="..\Core\src\build_blocks.cpp" />
     <ClCompile Include="..\Core\src\cgal-util.cpp" />
     <ClCompile Include="..\Core\src\CreateGuid_64.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
