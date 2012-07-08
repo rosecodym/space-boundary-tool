@@ -460,7 +460,7 @@ TEST(Blocking, ColumnToLegacySurfaces) {
 	});
 	bool bottom_found = bottom != surfaces.end();
 	bool bottom_sense = bottom_found && !(*bottom)->geometry().sense();
-	EXPECT_PRED2(found_and_sense, bottom_found, bottom_found);
+	EXPECT_PRED2(found_and_sense, bottom_found, bottom_sense);
 
 	auto left = boost::find_if(surfaces, [&c](std::shared_ptr<surface> & s) { 
 		return s->geometry().orientation().direction() == direction_3(1, 0, 0) && s->geometry().height() == c.request_height(0);
@@ -470,7 +470,7 @@ TEST(Blocking, ColumnToLegacySurfaces) {
 	EXPECT_PRED2(found_and_sense, left_found, left_sense);
 
 	auto right = boost::find_if(surfaces, [&c](std::shared_ptr<surface> & s) { 
-		return s->geometry().orientation().direction() == direction_3(1, 0, 0) && s->geometry().height() == c.request_height(225);
+		return s->geometry().orientation().direction() == direction_3(1, 0, 0) && s->geometry().height() == c.request_height(255);
 	});
 	bool right_found = right != surfaces.end();
 	bool right_sense = right_found && (*right)->geometry().sense();
@@ -484,7 +484,7 @@ TEST(Blocking, ColumnToLegacySurfaces) {
 	EXPECT_PRED2(found_and_sense, front_found, front_sense);
 
 	auto back = boost::find_if(surfaces, [&c](std::shared_ptr<surface> & s) { 
-		return s->geometry().orientation().direction() == direction_3(0, 1, 0) && s->geometry().height() == c.request_height(225);
+		return s->geometry().orientation().direction() == direction_3(0, 1, 0) && s->geometry().height() == c.request_height(255);
 	});
 	bool back_found = back != surfaces.end();
 	bool back_sense = back_found && (*back)->geometry().sense();
