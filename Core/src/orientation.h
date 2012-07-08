@@ -8,6 +8,12 @@ private:
 	transformation_3 m_flatten;
 	transformation_3 m_unflatten;
 
+#ifndef NDEBUG
+	double debug_dx;
+	double debug_dy;
+	double debug_dz;
+#endif
+
 	orientation(const orientation & disabled);
 	orientation(orientation && disabled);
 	orientation & operator = (const orientation & disabled);

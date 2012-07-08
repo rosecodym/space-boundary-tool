@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "build_blocks.h"
 #include "core_exception.h"
 #include "equality_context.h"
 #include "geometry_common.h"
@@ -194,9 +195,11 @@ sbt_return_t calculate_space_boundaries(
 
 		std::vector<std::shared_ptr<space>> spaces = operations::extract_spaces(space_infos, space_count, whole_building_context, corrector, space_filter);
 
-		NOTIFY_MSG("Beginning block construction for %u elements.\n", elements.size());
-		surfaces = operations::build_blocks(elements, whole_building_context);
-		NOTIFY_MSG("Block construction complete. %u surface(s) generated from blocking.\n", surfaces.size());
+		std::vector<element> elements_derefed;
+		boost::copy(elements | boost::adaptors::indirected, std::back_inserter(elements_derefed));
+
+		auto blocks = blocking::build_blocks(elements_derefed, whole_building_context.get());
+		boost::for_each(blocks, [&surfaces](const block & b) { b.as_surfaces(std::back_inserter(surfaces)); });
 
 		NOTIFY_MSG("Beginning stack construction for %u surfaces.\n", surfaces.size());
 		surfaces = operations::build_stacks(surfaces, spaces, whole_building_context);
