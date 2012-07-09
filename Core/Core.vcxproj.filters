@@ -168,6 +168,9 @@
     <ClInclude Include="src\space_face.h">
       <Filter>operations\stacking</Filter>
     </ClInclude>
+    <ClInclude Include="src\stacking_graph.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
