@@ -21,6 +21,8 @@ public:
 	explicit stackable(const block * b) : m_data(b) { }
 	area stackable_area() const;
 	double thickness() const;
+	boost::optional<space_face *> as_space_face() const;
+	const block * as_block() const;
 	const data_t & data() const { return m_data; }
 };
 

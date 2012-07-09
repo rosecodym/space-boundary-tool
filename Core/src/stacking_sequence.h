@@ -26,6 +26,7 @@ public:
 	}
 
 	stacking_vertex last() const { return layers.back(); }
+	size_t layer_count() const { return layers.size(); }
 
 	stacking_sequence split_off(stackable s) {
 		stacking_sequence other(*this);
@@ -34,7 +35,7 @@ public:
 		return other;
 	}
 
-	blockstack finish() const;
+	blockstack finish();
 };
 
 } // namespace impl

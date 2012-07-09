@@ -54,6 +54,7 @@ public:
 	}
 	bool sense() const { return base_sense; }
 	const area & base_area() const { return a; }
+	const layer_information & material_layer() const { return layer; }
 
 	// DEPRECATED
 	template <typename OutputIterator>

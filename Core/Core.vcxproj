@@ -183,6 +183,7 @@
     </ClCompile>
     <ClCompile Include="src\solid_conversion_operations.cpp" />
     <ClCompile Include="src\stackable.cpp" />
+    <ClCompile Include="src\stacking_sequence.cpp" />
     <ClCompile Include="src\surface.cpp" />
     <ClCompile Include="src\surface_pair.cpp" />
     <ClCompile Include="src\traverse.cpp" />
