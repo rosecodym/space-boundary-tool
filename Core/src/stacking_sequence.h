@@ -3,6 +3,7 @@
 #include "precompiled.h"
 
 #include "blockstack.h"
+#include "orientation.h"
 #include "stacking_graph.h"
 #include "stackable.h"
 
@@ -15,8 +16,12 @@ private:
 	const stacking_graph & g;
 	std::vector<stacking_vertex> layers;
 	area a;
+	NT starting_height;
+	const orientation * o;
 public:
-	stacking_sequence(const stacking_graph & g, stacking_vertex initial) : g(g), layers(1, initial), a(boost::get<space_face *>(g[initial].data())->face_area()) { }
+	stacking_sequence(const stacking_graph & g, stacking_vertex initial, const orientation * o) 
+		: g(g), layers(1, initial), a(boost::get<space_face *>(g[initial].data())->face_area()), starting_height(boost::get<space_face *>(g[initial].data())->height()), o(o)
+	{ }
 	
 	const area & sequence_area() const { return a; }
 	double total_thickness() const { 
