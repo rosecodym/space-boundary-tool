@@ -49,6 +49,10 @@ public:
 		return *this;
 	}
 
+	std::pair<NT, boost::optional<NT>> heights() const;
+	bool sense() const { return base_sense; }
+	const area & base_area() const;
+
 	// DEPRECATED
 	template <typename OutputIterator>
 	void as_surfaces(OutputIterator oi) const {

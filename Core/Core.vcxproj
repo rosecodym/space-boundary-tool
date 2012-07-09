@@ -133,6 +133,8 @@
     <ClInclude Include="src\solid_conversion_operations.h" />
     <ClInclude Include="src\solid_geometry_common.h" />
     <ClInclude Include="src\space.h" />
+    <ClInclude Include="src\space_face.h" />
+    <ClInclude Include="src\stackable.h" />
     <ClInclude Include="src\surface.h" />
     <ClInclude Include="src\misc-util.h" />
     <ClInclude Include="src\surface_pair.h" />
@@ -176,6 +178,7 @@
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
     </ClCompile>
     <ClCompile Include="src\solid_conversion_operations.cpp" />
+    <ClCompile Include="src\stackable.cpp" />
     <ClCompile Include="src\surface.cpp" />
     <ClCompile Include="src\surface_pair.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />

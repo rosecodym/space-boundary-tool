@@ -34,6 +34,9 @@
     <Filter Include="operations\space loading">
       <UniqueIdentifier>{fada8317-382e-4dbc-86e8-a85662ea0bee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="operations\stacking">
+      <UniqueIdentifier>{01642fd4-70ca-4ed0-b867-6aeea62788b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -159,6 +162,12 @@
     <ClInclude Include="src\geometry_common.h">
       <Filter>geometry</Filter>
     </ClInclude>
+    <ClInclude Include="src\stackable.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\space_face.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -238,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="src\build_blocks.cpp">
       <Filter>operations\blocking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stackable.cpp">
+      <Filter>operations\stacking</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
