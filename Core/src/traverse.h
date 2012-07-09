@@ -22,7 +22,7 @@ struct traversal_visitor : public boost::static_visitor<void> {
 	void operator () (const block * b) const;
 };
 
-void traverse(const stacking_graph & graph, stacking_sequence * curr_sequence, double curr_height, double thickness_cutoff, std::vector<blockstack> * results);
+void traverse(const stacking_graph & graph, stacking_sequence * curr_sequence, double curr_height, double thickness_cutoff, double height_eps, std::vector<blockstack> * results);
 
 template <typename OutputIterator>
 void begin_traversal(const stacking_graph & graph, stacking_graph::vertex_descriptor starting_face, double thickness_cutoff, double height_eps, OutputIterator oi) {

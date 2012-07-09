@@ -24,10 +24,10 @@ void traversal_visitor::operator () (const block * b) const {
 	}
 	else {
 		if (equality_context::are_equal(from_height, b->heights().first, height_eps)) {
-			traverse(graph, &other, CGAL::to_double(*b->heights().second), thickness_cutoff, results);
+			traverse(graph, &other, CGAL::to_double(*b->heights().second), thickness_cutoff, height_eps, results);
 		}
 		else {
-			traverse(graph, &other, CGAL::to_double(b->heights().first), thickness_cutoff, results);
+			traverse(graph, &other, CGAL::to_double(b->heights().first), thickness_cutoff, height_eps, results);
 		}
 	}
 }
