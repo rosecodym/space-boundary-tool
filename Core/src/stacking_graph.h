@@ -19,12 +19,12 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 	boost::optional<stackable_connection> connection;
 	size_t i = 0;
 	for (auto p = as_stackables.begin(); p != as_stackables.end(); ++i, ++p) {
+		res[i] = *p;
 		size_t j = i;
 		for (auto q = p; q != as_stackables.end(); ++j, ++q) {
 			if (connection = stackable_connection::do_connect(*p, *q, connection_height_eps)) {
 				auto res = boost::add_edge(i, j, res);
-				res[edge.first].connection_height = connection->connection_height;
-				res[edge.first].connection_area = connection->connection_area;
+				res[edge.first] = *connection;
 			}
 		}
 	}
