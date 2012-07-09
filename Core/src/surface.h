@@ -23,7 +23,7 @@ private:
 
 	const element * e;
 	std::weak_ptr<surface> other_side;
-	std::weak_ptr<space> bounded_space;
+	const space * bounded_space;
 	std::weak_ptr<surface> parent;
 
 	surface(const surface & src);
@@ -33,7 +33,7 @@ public:
 	surface(const oriented_area & geometry, const element & e);
 	surface(oriented_area && geometry, const element & e);
 	surface(std::shared_ptr<surface> s, std::shared_ptr<equality_context> new_c);
-	surface(const oriented_area & geometry, std::weak_ptr<space> bounded_space); // for virtuals
+	surface(const oriented_area & geometry, const space * bounded_space); // for virtuals
 
 	template <class LayerIterator>
 	surface(std::shared_ptr<surface> src, const polygon_2 & new_area, std::weak_ptr<space> bounded_space, LayerIterator layers_begin, LayerIterator layers_end)
@@ -54,14 +54,14 @@ public:
 	std::weak_ptr<surface>								opposite() const { return other_side; }
 	std::weak_ptr<surface>								containing_boundary() const { return parent; }
 	const std::vector<std::pair<material_id_t, NT>> &	materials() const { return material_layers; }
-	std::weak_ptr<space>								get_space() const { return bounded_space; }
-	bool												lies_on_outside() const { return bounded_space.expired() || get_space().lock()->is_outside_space(); }
+	const space *										get_space() const { return bounded_space; }
+	bool												lies_on_outside() const { return bounded_space == nullptr || get_space()->is_outside_space(); }
 	int													get_level() const { return lvl; }
 	bool												is_virtual() const { return e == nullptr; }
 	bool												is_fenestration() const { return !is_virtual() && e->is_fenestration(); }
 
 	void												set_level(int l) { lvl = l; }
-	void												set_space(std::weak_ptr<space> s) { bounded_space = std::weak_ptr<space>(s); }
+	void												set_space(const space * s) { bounded_space = s; }
 
 	static void set_contains(std::shared_ptr<surface> parent, std::shared_ptr<surface> child) {
 		child->parent = std::weak_ptr<surface>(parent);
@@ -69,7 +69,7 @@ public:
 	}
 
 	static bool share_space(std::weak_ptr<surface> a, std::weak_ptr<surface> b) {
-		return a.lock()->bounded_space.lock().get() == b.lock()->bounded_space.lock().get();
+		return a.lock()->bounded_space == b.lock()->bounded_space;
 	}
 
 	static bool are_parallel(std::weak_ptr<surface> a, std::weak_ptr<surface> b) {

@@ -10,10 +10,17 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, stac
 typedef stacking_graph::vertex_descriptor stacking_vertex;
 
 template <typename SpaceFaceRange, typename BlockRange>
-stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRange & blocks, double connection_height_eps, double stack_height_cutoff) {
+stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRange & blocks, double connection_height_eps) {
+	static_assert(std::is_same<BlockRange::value_type, const block *>::value, "Creating a stacking graph requires a BlockRange value type of const block *.");
+
 	std::vector<stackable> as_stackables;
-	boost::transform(*space_faces, std::back_inserter(as_stackables), [](space_face & f) { return stackable(&f); });
-	boost::transform(blocks, std::back_inserter(as_stackables), [](const block & b) { return stackable(&b); });
+
+	// we can't use boost::transform because it requires that its arguments be const
+	// we don't want to modify them now, but we're trying to get non-const pointers
+	for (auto face = space_faces->begin(); face != space_faces->end(); ++face) {
+		as_stackables.push_back(stackable(&*face));
+	}
+	boost::transform(blocks, std::back_inserter(as_stackables), [](const block * b) { return stackable(b); });
 
 	stacking_graph res(space_faces->size() + blocks.size());
 
@@ -24,8 +31,8 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 		size_t j = i;
 		for (auto q = p; q != as_stackables.end(); ++j, ++q) {
 			if (connection = stackable_connection::do_connect(*p, *q, connection_height_eps)) {
-				auto res = boost::add_edge(i, j, res);
-				res[edge.first] = *connection;
+				auto new_edge = boost::add_edge(i, j, res);
+				res[new_edge.first] = *connection;
 			}
 		}
 	}

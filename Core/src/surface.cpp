@@ -11,11 +11,11 @@ extern sb_calculation_options g_opts;
 class equality_context;
 
 surface::surface(const oriented_area & g, const element & e)
-	: global_id(util::misc::new_guid_as_string()), m_geometry(g), lvl(0), e(&e) 
+	: global_id(util::misc::new_guid_as_string()), m_geometry(g), lvl(0), e(&e), bounded_space(nullptr) 
 { }
 
 surface::surface(oriented_area && g, const element & e)
-	: global_id(util::misc::new_guid_as_string()), m_geometry(std::move(g)), lvl(0), e(&e) 
+	: global_id(util::misc::new_guid_as_string()), m_geometry(std::move(g)), lvl(0), e(&e), bounded_space(nullptr) 
 { }
 
 surface::surface(std::shared_ptr<surface> s, std::shared_ptr<equality_context> new_c)
@@ -30,7 +30,7 @@ surface::surface(std::shared_ptr<surface> s, std::shared_ptr<equality_context> n
 { }
 
 // for virtuals
-surface::surface(const oriented_area & g, std::weak_ptr<space> bounded_space)
+surface::surface(const oriented_area & g, const space * bounded_space)
 	: global_id(util::misc::new_guid_as_string()),
 	m_geometry(g),
 	lvl(2),

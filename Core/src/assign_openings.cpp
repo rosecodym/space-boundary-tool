@@ -56,7 +56,7 @@ std::vector<std::shared_ptr<surface>> assign_openings(const std::vector<std::sha
 				ERROR_MSG("Fenestration surface %s/%s/%s (%s%c @ %s) has no opposite.\n",
 					(*p)->guid().c_str(),
 					(*p)->element_id().c_str(),
-					(*p)->get_space().expired() ? "[no space]" : (*p)->get_space().lock()->global_id().c_str(),
+					(*p)->get_space() == nullptr ? "[no space]" : (*p)->get_space()->global_id().c_str(),
 					(*p)->geometry().orientation().to_string().c_str(),
 					(*p)->geometry().sense() ? '+' : '-',
 					CGAL::to_double((*p)->geometry().height()));
@@ -96,7 +96,7 @@ std::vector<std::shared_ptr<surface>> assign_openings(const std::vector<std::sha
 				ERROR_MSG("Fenestration surface %s/%s/%s (%s%c @ %f) could not be assigned a containing surface.\n",
 					(*p)->guid().c_str(),
 					(*p)->element_id().c_str(),
-					(*p)->get_space().expired() ? "[no space]" : (*p)->get_space().lock()->global_id().c_str(),
+					(*p)->get_space() == nullptr ? "[no space]" : (*p)->get_space()->global_id().c_str(),
 					(*p)->geometry().orientation().to_string().c_str(),
 					(*p)->geometry().sense() ? '+' : '-',
 					CGAL::to_double((*p)->geometry().height()));
@@ -110,7 +110,7 @@ std::vector<std::shared_ptr<surface>> assign_openings(const std::vector<std::sha
 					ERROR_MSG("Opposite is %s/%s/%s (%s%c @ %f).\n",
 						opp.guid().c_str(),
 						opp.element_id().c_str(),
-						opp.get_space().expired() ? "[no space]" : opp.get_space().lock()->global_id().c_str(),
+						opp.get_space() == nullptr ? "[no space]" : opp.get_space()->global_id().c_str(),
 						opp.geometry().orientation().to_string().c_str(),
 						opp.geometry().sense() ? '+' : '-',
 						CGAL::to_double(opp.geometry().height()));

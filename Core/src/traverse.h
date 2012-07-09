@@ -25,11 +25,11 @@ struct traversal_visitor : public boost::static_visitor<void> {
 void traverse(const stacking_graph & graph, stacking_sequence * curr_sequence, double curr_height, double thickness_cutoff, double height_eps, std::vector<blockstack> * results);
 
 template <typename OutputIterator>
-void begin_traversal(const stacking_graph & graph, stacking_graph::vertex_descriptor starting_face, double thickness_cutoff, double height_eps, OutputIterator oi) {
+void begin_traversal(const stacking_graph & graph, stacking_graph::vertex_descriptor starting_face, const orientation * o, double thickness_cutoff, double height_eps, OutputIterator oi) {
 	space_face * as_face = boost::get<space_face *>(graph[starting_face].data());
 
-	stacking_sequence initial_sequence(as_face);
-	as_face->clear_area();
+	stacking_sequence initial_sequence(graph, starting_face, o);
+	as_face->remove_area(as_face->face_area());
 	double initial_height = CGAL::to_double(as_face->height());
 
 	std::vector<blockstack> blocks_from_this_face;

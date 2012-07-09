@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "build_blocks.h"
+#include "build_stacks.h"
 #include "core_exception.h"
 #include "equality_context.h"
 #include "geometry_common.h"
@@ -49,7 +50,7 @@ sbt_return_t convert_to_space_boundaries(
 			if (s->get_level() != 5 && s->opposite().expired()) {
 				ERROR_MSG("Space boundary %s/%s is level %i but has no opposite space boundary.\n",
 					s->guid().c_str(),
-					s->get_space().lock()->global_id().c_str(),
+					s->get_space()->global_id().c_str(),
 					s->get_level());
 				abort();
 			}
@@ -104,7 +105,7 @@ sbt_return_t convert_to_space_boundaries(
 			newsb->thicknesses = nullptr;
 		}
 
-		newsb->bounded_space = surf->get_space().lock()->original_info();
+		newsb->bounded_space = surf->get_space()->original_info();
 		newsb->lies_on_outside = surf->lies_on_outside();
 		newsb->level = surf->get_level();
 		newsb->is_virtual = surf->is_virtual();
@@ -199,11 +200,12 @@ sbt_return_t calculate_space_boundaries(
 		boost::copy(elements | boost::adaptors::indirected, std::back_inserter(elements_derefed));
 
 		auto blocks = blocking::build_blocks(elements_derefed, whole_building_context.get());
-		boost::for_each(blocks, [&surfaces](const block & b) { b.as_surfaces(std::back_inserter(surfaces)); });
 
-		NOTIFY_MSG("Beginning stack construction for %u surfaces.\n", surfaces.size());
-		surfaces = operations::build_stacks(surfaces, spaces, whole_building_context);
-		NOTIFY_MSG("Stack construction complete. %u surface(s) generating from stacking.\n", surfaces.size());
+		std::vector<space> spaces_derefed;
+		boost::copy(spaces | boost::adaptors::indirected, std::back_inserter(spaces_derefed));
+
+		auto stacks = stacking::build_stacks(blocks, spaces_derefed, g_opts.equality_tolerance, whole_building_context.get());
+		boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
 
 		if (std::find_if(surfaces.begin(), surfaces.end(), [](std::shared_ptr<surface> s) { return s->is_fenestration(); }) != surfaces.end()) {
 			NOTIFY_MSG("Assigning openings");

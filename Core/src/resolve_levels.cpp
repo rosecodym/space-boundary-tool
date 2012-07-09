@@ -97,9 +97,9 @@ struct stack {
 		if (FLAGGED(SBT_EXPENSIVE_CHECKS) && !surface::oppose(a, b)) {
 			ERROR_MSG("Space boundaries %s/%s and %s/%s form a stack but do not oppose.\n",
 				a->guid().c_str(),
-				a->get_space().lock()->global_id().c_str(),
+				a->get_space()->global_id().c_str(),
 				b->guid().c_str(),
-				b->get_space().lock()->global_id().c_str());
+				b->get_space()->global_id().c_str());
 			abort();
 		}
 
