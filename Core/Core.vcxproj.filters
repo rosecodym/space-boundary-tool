@@ -180,6 +180,9 @@
     <ClInclude Include="src\blockstack.h">
       <Filter>types</Filter>
     </ClInclude>
+    <ClInclude Include="src\build_stacks.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">

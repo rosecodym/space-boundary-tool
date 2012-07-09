@@ -54,7 +54,9 @@ public:
 	}
 	bool sense() const { return base_sense; }
 	const area & base_area() const { return a; }
+	const orientation * block_orientation() const { return o; }
 	const layer_information & material_layer() const { return layer; }
+	bool is_fenestration() const;
 
 	// DEPRECATED
 	template <typename OutputIterator>

@@ -100,6 +100,7 @@
     <ClInclude Include="src\block.h" />
     <ClInclude Include="src\blockstack.h" />
     <ClInclude Include="src\build_blocks.h" />
+    <ClInclude Include="src\build_stacks.h" />
     <ClInclude Include="src\cgal-approx.h" />
     <ClInclude Include="src\cgal-util.h" />
     <ClInclude Include="src\core_exception.h" />

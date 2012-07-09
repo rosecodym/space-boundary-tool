@@ -11,10 +11,10 @@ class blockstack {
 private:
 	area a;
 	std::vector<layer_information> layers;
-	std::pair<space *, boost::optional<space *>> spaces;
+	std::pair<const space *, boost::optional<const space *>> spaces;
 public:
 	template <typename LayerRange>
-	blockstack(area && a, const LayerRange & layers, space * sp_a, space * sp_b = nullptr)
-		: a(a), layers(layers.begin(), layers.end()), spaces(sp_a, sp_b == nullptr ? boost::optional<space *>() : sp_b)
+	blockstack(area && a, const LayerRange & layers, const space * sp_a, const space * sp_b = nullptr)
+		: a(a), layers(layers.begin(), layers.end()), spaces(sp_a, sp_b == nullptr ? boost::optional<const space *>() : sp_b)
 	{ }
 };

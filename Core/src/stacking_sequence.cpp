@@ -9,7 +9,7 @@ namespace stacking {
 namespace impl {
 
 blockstack stacking_sequence::finish() {
-	space * initial_space = (*g[layers.front()].as_space_face())->bounded_space();
+	const space * initial_space = (*g[layers.front()].as_space_face())->bounded_space();
 	if (g[layers.back()].as_space_face()) {
 		return blockstack(
 			std::move(a), 
