@@ -27,6 +27,14 @@ double stackable::thickness() const {
 	return boost::apply_visitor(v(), m_data);
 }
 
+boost::optional<space_face *> stackable::as_space_face() const {
+	struct v : public boost::static_visitor<boost::optional<space_face *>> {
+		boost::optional<space_face *> operator () (space_face * f) const { return f; }
+		boost::optional<space_face *> operator () (const block *) const { return boost::optional<space_face *>(); }
+	};
+	return boost::apply_visitor(v(), m_data);
+}
+
 boost::optional<stackable_connection> stackable_connection::do_connect(stackable a, stackable b, double height_eps) {
 	struct v : public boost::static_visitor<boost::optional<stackable_connection>> {
 		double eps;

@@ -269,5 +269,8 @@
     <ClCompile Include="src\stacking_sequence.cpp">
       <Filter>operations\stacking</Filter>
     </ClCompile>
+    <ClCompile Include="src\stacking_graph.cpp">
+      <Filter>operations\stacking</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
