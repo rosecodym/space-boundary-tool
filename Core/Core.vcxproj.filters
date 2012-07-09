@@ -171,6 +171,15 @@
     <ClInclude Include="src\stacking_graph.h">
       <Filter>operations\stacking</Filter>
     </ClInclude>
+    <ClInclude Include="src\traverse.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stacking_sequence.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\blockstack.h">
+      <Filter>types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -252,6 +261,9 @@
       <Filter>operations\blocking</Filter>
     </ClCompile>
     <ClCompile Include="src\stackable.cpp">
+      <Filter>operations\stacking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\traverse.cpp">
       <Filter>operations\stacking</Filter>
     </ClCompile>
   </ItemGroup>

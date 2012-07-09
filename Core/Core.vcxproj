@@ -98,6 +98,7 @@
   <ItemGroup>
     <ClInclude Include="src\area.h" />
     <ClInclude Include="src\block.h" />
+    <ClInclude Include="src\blockstack.h" />
     <ClInclude Include="src\build_blocks.h" />
     <ClInclude Include="src\cgal-approx.h" />
     <ClInclude Include="src\cgal-util.h" />
@@ -136,9 +137,11 @@
     <ClInclude Include="src\space_face.h" />
     <ClInclude Include="src\stackable.h" />
     <ClInclude Include="src\stacking_graph.h" />
+    <ClInclude Include="src\stacking_sequence.h" />
     <ClInclude Include="src\surface.h" />
     <ClInclude Include="src\misc-util.h" />
     <ClInclude Include="src\surface_pair.h" />
+    <ClInclude Include="src\traverse.h" />
     <ClInclude Include="src\wrapped_nef_polygon.h" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +185,7 @@
     <ClCompile Include="src\stackable.cpp" />
     <ClCompile Include="src\surface.cpp" />
     <ClCompile Include="src\surface_pair.cpp" />
+    <ClCompile Include="src\traverse.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

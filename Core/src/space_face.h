@@ -11,6 +11,8 @@ public:
 	bool sense() const;
 	NT height() const;
 	const area & face_area() const;
+
+	void remove_area(const area & other);
 };
 
 } // namespace impl

@@ -10,7 +10,18 @@ namespace stacking {
 
 namespace impl {
 
-typedef boost::variant<space_face *, const block *> stackable;
+struct stackable {
+public:
+	typedef boost::variant<space_face *, const block *> data_t;
+private:
+	data_t m_data;
+public:
+	explicit stackable(space_face * f) : m_data(f) { }
+	explicit stackable(const block * b) : m_data(b) { }
+	const area & stackable_area() const;
+	double thickness() const;
+	const data_t & data() const;
+};
 
 struct stackable_connection {
 	double connection_height;

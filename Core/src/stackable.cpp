@@ -75,7 +75,7 @@ boost::optional<stackable_connection> stackable_connection::do_connect(stackable
 			return boost::optional<stackable_connection>();
 		}
 	};
-	return boost::apply_visitor(v(height_eps), a, b);
+	return boost::apply_visitor(v(height_eps), a.data(), b.data());
 }
 
 } // namespace impl
