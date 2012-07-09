@@ -37,7 +37,7 @@ void traverse(const stacking_graph & graph, stacking_sequence * curr_sequence, d
 		results->push_back(curr_sequence->finish()); // terminated because of too thick
 		return;
 	}
-	auto connecting = find_connecting_at_height(graph, curr_height);
+	auto connecting = find_connecting_at_height(curr_sequence->last(), graph, curr_height, height_eps);
 	boost::for_each(connecting, [&graph, curr_sequence, curr_height, thickness_cutoff, height_eps, results](stackable connected) {
 		boost::apply_visitor(traversal_visitor(graph, curr_sequence, curr_height, thickness_cutoff, height_eps, results), connected.data());
 	});

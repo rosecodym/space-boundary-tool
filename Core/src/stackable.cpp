@@ -9,6 +9,24 @@ namespace stacking {
 
 namespace impl {
 
+area stackable::stackable_area() const {
+	struct v : public boost::static_visitor<area> {
+		area operator () (space_face * f) const { return f->face_area(); }
+		area operator () (const block * b) const { return b->base_area(); }
+	};
+	return boost::apply_visitor(v(), m_data);
+}
+
+double stackable::thickness() const {
+	struct v : public boost::static_visitor<double> { 
+		double operator () (space_face *) const { return 0; }
+		double operator () (const block * b) const { 
+			return b->heights().second ? abs(CGAL::to_double(b->heights().first) - CGAL::to_double(*b->heights().second)) : 0;
+		}
+	};
+	return boost::apply_visitor(v(), m_data);
+}
+
 boost::optional<stackable_connection> stackable_connection::do_connect(stackable a, stackable b, double height_eps) {
 	struct v : public boost::static_visitor<boost::optional<stackable_connection>> {
 		double eps;

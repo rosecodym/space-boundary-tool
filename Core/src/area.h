@@ -41,6 +41,7 @@ public:
 	bool								any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
 	const area &						print() const { if (use_nef) { nef_rep.print_with(g_opts.notify_func); } else { PRINT_POLYGON(simple_rep); } return *this; }
 
+	area & operator *= (const area & other);
 	area & operator -= (const area & other);
 	area & operator ^= (const area & other);
 

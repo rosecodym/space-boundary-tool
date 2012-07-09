@@ -49,9 +49,11 @@ public:
 		return *this;
 	}
 
-	std::pair<NT, boost::optional<NT>> heights() const;
+	std::pair<NT, boost::optional<NT>> heights() const { 
+		return layer.has_both_sides() ? std::make_pair(layer.height_a(), boost::optional<NT>(layer.height_b())) : std::make_pair(layer.height_a(), boost::optional<NT>());
+	}
 	bool sense() const { return base_sense; }
-	const area & base_area() const;
+	const area & base_area() const { return a; }
 
 	// DEPRECATED
 	template <typename OutputIterator>

@@ -92,6 +92,11 @@ bool area::any_points_satisfy_predicate(const std::function<bool(point_2)> & pre
 	}
 }
 
+area & area::operator *= (const area & other) {
+	*this = *this * other;
+	return *this;
+}
+
 area & area::operator -= (const area & other) {
 	if (is_empty() || other.is_empty()) { return *this; }
 	if (*this == other) {
