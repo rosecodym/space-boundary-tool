@@ -254,9 +254,6 @@
     <ClCompile Include="src\assign_openings.cpp">
       <Filter>deprecated operations</Filter>
     </ClCompile>
-    <ClCompile Include="src\extract_spaces.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
     <ClCompile Include="src\load_elements.cpp">
       <Filter>operations\element loading</Filter>
     </ClCompile>

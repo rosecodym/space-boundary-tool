@@ -14,7 +14,6 @@ class equality_context;
 
 namespace operations {
 
-std::vector<std::shared_ptr<space>>		extract_spaces(space_info ** infos, size_t count, std::shared_ptr<equality_context> context, std::function<point_3(point_3)> corrector, const guid_filter & filter);
 std::vector<std::shared_ptr<surface>>	build_blocks(const std::vector<std::shared_ptr<element>> & elements, std::shared_ptr<equality_context> context);
 std::vector<std::shared_ptr<surface>>	build_stacks(const std::vector<std::shared_ptr<surface>> & blocked_surfaces, const std::vector<std::shared_ptr<space>> & spaces, std::shared_ptr<equality_context> & c);
 std::vector<std::shared_ptr<surface>>	assign_openings(const std::vector<std::shared_ptr<surface>> & surfaces);

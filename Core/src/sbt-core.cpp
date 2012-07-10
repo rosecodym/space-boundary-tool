@@ -7,6 +7,7 @@
 #include "geometry_common.h"
 #include "guid_filter.h"
 #include "load_elements.h"
+#include "load_spaces.h"
 #include "operations.h"
 #include "sbt-core-helpers.h"
 #include "space.h"
@@ -39,12 +40,7 @@ void set_geometry(space_boundary * sb, const PointRange & geometry) {
 	});
 }
 	
-sbt_return_t convert_to_space_boundaries(
-	const std::vector<std::shared_ptr<surface>> & surfaces, 
-	const std::vector<std::shared_ptr<space>> & /*spaces*/, 
-	space_boundary *** sbs,
-	space_info ** /*space_infos*/)
-{
+sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surface>> & surfaces, space_boundary *** sbs) {
 	if (FLAGGED(SBT_EXPENSIVE_CHECKS)) {
 		boost::for_each(surfaces, [](const std::shared_ptr<surface> & s) {
 			if (s->get_level() != 5 && s->opposite().expired()) {
@@ -194,17 +190,14 @@ sbt_return_t calculate_space_boundaries(
 
 		std::vector<std::shared_ptr<element>> elements = load_elements(element_count, element_infos, whole_building_context, corrector, element_filter);
 
-		std::vector<std::shared_ptr<space>> spaces = operations::extract_spaces(space_infos, space_count, whole_building_context, corrector, space_filter);
+		std::vector<space> spaces = load_spaces(space_infos, space_count, whole_building_context.get(), space_filter);
 
 		std::vector<element> elements_derefed;
 		boost::copy(elements | boost::adaptors::indirected, std::back_inserter(elements_derefed));
 
 		auto blocks = blocking::build_blocks(elements_derefed, whole_building_context.get());
 
-		std::vector<space> spaces_derefed;
-		boost::copy(spaces | boost::adaptors::indirected, std::back_inserter(spaces_derefed));
-
-		auto stacks = stacking::build_stacks(blocks, spaces_derefed, g_opts.equality_tolerance, whole_building_context.get());
+		auto stacks = stacking::build_stacks(blocks, spaces, g_opts.equality_tolerance, whole_building_context.get());
 		boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
 
 		if (std::find_if(surfaces.begin(), surfaces.end(), [](std::shared_ptr<surface> s) { return s->is_fenestration(); }) != surfaces.end()) {
@@ -221,7 +214,7 @@ sbt_return_t calculate_space_boundaries(
 		NOTIFY_MSG("done.\n");
 
 		NOTIFY_MSG("Converting internal structures to interface structures");
-		retval = convert_to_space_boundaries(surfaces, spaces, space_boundaries, space_infos);
+		retval = convert_to_space_boundaries(surfaces, space_boundaries);
 		*space_boundary_count = surfaces.size();
 		NOTIFY_MSG("done.\n");
 	}
