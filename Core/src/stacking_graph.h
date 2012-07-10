@@ -2,6 +2,8 @@
 
 #include "stackable.h"
 
+#include "printing-macros.h"
+
 namespace stacking {
 
 namespace impl {
@@ -15,12 +17,16 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 
 	std::vector<stackable> as_stackables;
 
+	PRINT_STACKS("Creating stacking graph.\n");
+
 	// we can't use boost::transform because it requires that its arguments be const
-	// we don't want to modify them now, but we're trying to get non-const pointers
+	// we don't want to modify the arguments now, but we're trying to get non-const pointers to them
 	for (auto face = space_faces->begin(); face != space_faces->end(); ++face) {
 		as_stackables.push_back(stackable(&*face));
 	}
 	boost::transform(blocks, std::back_inserter(as_stackables), [](const block * b) { return stackable(b); });
+
+	PRINT_STACKS("Got all stackables.\n");
 
 	stacking_graph res(space_faces->size() + blocks.size());
 
@@ -36,6 +42,8 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 			}
 		}
 	}
+
+	PRINT_STACKS("Got all stackables.\n");
 
 	return res;
 }
