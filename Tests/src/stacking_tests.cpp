@@ -22,7 +22,8 @@ TEST(Stacking, SingleSpaceFaces) {
 		simple_point(0, 0, 0),
 		simple_point(393.70079, 0, 0),
 		simple_point(393.70079, 387.79528, 0),
-		simple_point(0, 387.79528, 0))));
+		simple_point(0, 387.79528, 0),
+		simple_point(0, 0, 0))));
 
 	std::vector<space> spaces(1, space(s_info, &c));
 
