@@ -56,7 +56,7 @@ public:
 	const area & base_area() const { return a; }
 	const orientation * block_orientation() const { return o; }
 	const layer_information & material_layer() const { return layer; }
-	bool is_fenestration() const;
+	bool is_fenestration() const { return layer.layer_element().is_fenestration(); }
 
 	// DEPRECATED
 	template <typename OutputIterator>
