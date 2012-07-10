@@ -112,6 +112,7 @@
     <ClCompile Include="src\library_assumptions.cpp" />
     <ClCompile Include="src\complicated_extruded_element.cpp" />
     <ClCompile Include="src\multiview_solid_tests.cpp" />
+    <ClCompile Include="src\stacking_tests.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon_tests.cpp" />
     <ClCompile Include="src\oriented_area_tests.cpp" />
     <ClCompile Include="src\precompiled.cpp">

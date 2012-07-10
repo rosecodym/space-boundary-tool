@@ -105,6 +105,9 @@
     <ClCompile Include="..\Core\src\build_blocks.cpp">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\stacking_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">
