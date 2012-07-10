@@ -52,3 +52,10 @@ element_info * create_element(const char * name, element_type type, material_id_
 	res->geometry = geometry;
 	return res;
 }
+
+space_info * create_space(const char * name, solid geometry) {
+	space_info * res = (space_info *)malloc(sizeof(space_info));
+	strcpy(res->id, name);
+	res->geometry = geometry;
+	return res;
+}
