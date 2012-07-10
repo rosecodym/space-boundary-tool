@@ -43,7 +43,7 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 		}
 	}
 
-	PRINT_STACKS("Got all stackables.\n");
+	PRINT_STACKS("Processed all stackables.\n");
 
 	return res;
 }
