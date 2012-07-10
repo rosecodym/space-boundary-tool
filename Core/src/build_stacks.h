@@ -20,9 +20,11 @@ template <typename SpaceRange>
 std::map<const orientation *, std::vector<space_face>> get_space_faces_by_orientation(const SpaceRange & spaces, equality_context * c) {
 	std::map<const orientation *, std::vector<space_face>> res;
 	for (auto sp = spaces.begin(); sp != spaces.end(); ++sp) {
+		PRINT_STACKS("Organizing space faces for %s.\n", sp->global_id().c_str());
 		boost::for_each(sp->get_faces(c), [&res, sp](const oriented_area & geom) {
 			res[&geom.orientation()].push_back(space_face(&*sp, geom));
 		});
+		PRINT_STACKS("Organized space faces for %s.\n", sp->global_id().c_str());
 	}
 	return res;
 }
