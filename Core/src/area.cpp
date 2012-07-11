@@ -152,7 +152,12 @@ area operator - (const area & a, const area & b) {
 }
 
 area operator * (const area & a, const area & b) {
-	PRINT_2D_OPERATIONS("Entered area intersection.\n");
+	if (FLAGGED(SBT_VERBOSE_BLOCKS) || FLAGGED(SBT_VERBOSE_STACKS)) {
+		NOTIFY_MSG("Entered area intersection. Intersecting\n");
+		a.print();
+		NOTIFY_MSG("with\n");
+		b.print();
+	}
 	if (a.is_empty() || b.is_empty() || !CGAL::do_overlap(a.bbox(), b.bbox())) { return area(); }
 	if (!a.use_nef && !b.use_nef && a.simple_rep == b.simple_rep) { return a; }
 	area::promote_both(a, b);
