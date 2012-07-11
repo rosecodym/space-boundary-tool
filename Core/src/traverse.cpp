@@ -19,15 +19,17 @@ void traversal_visitor::operator () (space_face * f) const {
 
 void traversal_visitor::operator () (const block * b) const {
 	stacking_sequence other = seq->split_off(next_vertex);
-	if (!b->heights().second) {
-		results->push_back(other.finish()); // terminated because hit a 5th-level block
-	}
-	else {
-		if (equality_context::are_equal(from_height, b->heights().first, height_eps)) {
-			traverse(graph, &other, CGAL::to_double(*b->heights().second), thickness_cutoff, height_eps, results);
+	if (!other.sequence_area().is_empty()) {
+		if (!b->heights().second) {
+			results->push_back(other.finish()); // terminated because hit a 5th-level block
 		}
 		else {
-			traverse(graph, &other, CGAL::to_double(b->heights().first), thickness_cutoff, height_eps, results);
+			if (equality_context::are_equal(from_height, b->heights().first, height_eps)) {
+				traverse(graph, &other, CGAL::to_double(*b->heights().second), thickness_cutoff, height_eps, results);
+			}
+			else {
+				traverse(graph, &other, CGAL::to_double(b->heights().first), thickness_cutoff, height_eps, results);
+			}
 		}
 	}
 }
