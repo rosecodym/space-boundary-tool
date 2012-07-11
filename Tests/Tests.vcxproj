@@ -102,8 +102,12 @@
     <ClCompile Include="..\Core\src\printing-util.cpp" />
     <ClCompile Include="..\Core\src\simple_face.cpp" />
     <ClCompile Include="..\Core\src\solid_conversion_operations.cpp" />
+    <ClCompile Include="..\Core\src\stackable.cpp" />
+    <ClCompile Include="..\Core\src\stacking_graph.cpp" />
+    <ClCompile Include="..\Core\src\stacking_sequence.cpp" />
     <ClCompile Include="..\Core\src\surface.cpp" />
     <ClCompile Include="..\Core\src\surface_pair.cpp" />
+    <ClCompile Include="..\Core\src\traverse.cpp" />
     <ClCompile Include="..\Core\src\wrapped_nef_polygon.cpp" />
     <ClCompile Include="src\area_tests.cpp" />
     <ClCompile Include="src\blocking_tests.cpp" />

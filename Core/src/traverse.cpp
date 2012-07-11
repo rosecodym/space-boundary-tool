@@ -42,7 +42,7 @@ void traverse(const stacking_graph & graph, stacking_sequence * curr_sequence, d
 	boost::for_each(connecting, [&graph, curr_sequence, curr_height, thickness_cutoff, height_eps, results](stackable connected) {
 		boost::apply_visitor(traversal_visitor(graph, curr_sequence, curr_height, thickness_cutoff, height_eps, results), connected.data());
 	});
-	if (!curr_sequence->sequence_area().is_empty()) {
+	if (curr_sequence->layer_count() > 1 && !curr_sequence->sequence_area().is_empty()) { // layer_count can be 1 if the building geometry is incomplete
 		results->push_back(curr_sequence->finish()); // terminated because of external
 	}
 }

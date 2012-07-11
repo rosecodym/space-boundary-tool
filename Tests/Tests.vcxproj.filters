@@ -108,6 +108,18 @@
     <ClCompile Include="src\stacking_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Core\src\stackable.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\traverse.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\stacking_graph.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\stacking_sequence.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">
