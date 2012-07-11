@@ -46,7 +46,7 @@ boost::optional<stackable_connection> stackable_connection::do_connect(stackable
 			{
 				area intr = f1->face_area() * f2->face_area();
 				if (!intr.is_empty()) {
-					return stackable_connection(CGAL::to_double(f1->height()) + CGAL::to_double(f2->height()) / 2, std::move(intr));
+					return stackable_connection((CGAL::to_double(f1->height()) + CGAL::to_double(f2->height())) / 2, std::move(intr));
 				}
 			}
 			return boost::optional<stackable_connection>();
@@ -55,12 +55,12 @@ boost::optional<stackable_connection> stackable_connection::do_connect(stackable
 			boost::optional<double> matching_height;
 			if (f->sense() == b->sense()) {
 				if (b->heights().second && equality_context::are_equal(f->height(), *b->heights().second, eps)) {
-					matching_height = CGAL::to_double(f->height()) + CGAL::to_double(*b->heights().second) / 2;
+					matching_height = (CGAL::to_double(f->height()) + CGAL::to_double(*b->heights().second)) / 2;
 				}
 			}
 			else {
 				if (equality_context::are_equal(f->height(), b->heights().first, eps)) {
-					matching_height = CGAL::to_double(f->height()) + CGAL::to_double(b->heights().first) / 2;
+					matching_height = (CGAL::to_double(f->height()) + CGAL::to_double(b->heights().first)) / 2;
 				}
 			}
 			if (matching_height) {
@@ -78,18 +78,18 @@ boost::optional<stackable_connection> stackable_connection::do_connect(stackable
 			boost::optional<double> matching_height;
 			if (b1->sense() == b2->sense()) {
 				if (b1_heights.second && equality_context::are_equal(*b1_heights.second, b2_heights.first, eps)) {
-					matching_height = CGAL::to_double(*b1_heights.second) + CGAL::to_double(b2_heights.first) / 2;
+					matching_height = (CGAL::to_double(*b1_heights.second) + CGAL::to_double(b2_heights.first)) / 2;
 				}
 				else if (b2_heights.second && equality_context::are_equal(b1_heights.first, *b2_heights.second, eps)) {
-					matching_height = CGAL::to_double(b1_heights.first) + CGAL::to_double(*b2_heights.second) / 2;
+					matching_height = (CGAL::to_double(b1_heights.first) + CGAL::to_double(*b2_heights.second)) / 2;
 				}
 			}
 			else {
 				if (equality_context::are_equal(b1_heights.first, b2_heights.first, eps)) {
-					matching_height = CGAL::to_double(b1_heights.first) + CGAL::to_double(b2_heights.first) / 2;
+					matching_height = (CGAL::to_double(b1_heights.first) + CGAL::to_double(b2_heights.first)) / 2;
 				}
 				else if (b1_heights.second && b2_heights.second && equality_context::are_equal(*b1_heights.second, *b2_heights.second, eps)) {
-					matching_height = CGAL::to_double(*b1_heights.second) + CGAL::to_double(*b2_heights.second) / 2;
+					matching_height = (CGAL::to_double(*b1_heights.second) + CGAL::to_double(*b2_heights.second)) / 2;
 				}
 			}
 			if (matching_height) {
