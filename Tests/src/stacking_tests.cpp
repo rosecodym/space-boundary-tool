@@ -186,6 +186,49 @@ TEST(Stacking, FloorAndRoom) {
 	EXPECT_EQ(1, stacks.size());
 }
 
+TEST(Stacking, SecondLevel) {
+	equality_context c(g_opts.equality_tolerance);
+
+	face f;
+
+	f = create_face(4,
+		simple_point(20, 25, 157),
+		simple_point(20, 125, 157),
+		simple_point(120, 125, 157),
+		simple_point(120, 25, 157));
+	oriented_area ceiling(simple_face(f, &c), &c);
+
+	f = create_face(4,
+		simple_point(20, 25, 164),
+		simple_point(120, 25, 164),
+		simple_point(120, 125, 164),
+		simple_point(20, 125, 164));
+	oriented_area floor(simple_face(f, &c), &c);
+
+	element_info * e_info = create_element("dummy element", SLAB, 1, create_ext(0, 0, 1, 7, f));
+	std::vector<element> elements(1, element(e_info, &c));
+	std::vector<block> blocks(1, block(ceiling, floor, elements.front()));
+	block b(ceiling, floor, elements.front());
+
+	space_info * s_lower = create_space("lower space", create_ext(0, 0, 1, 150, create_face(4,
+		simple_point(30, 35, 7),
+		simple_point(130, 35, 7),
+		simple_point(130, 135, 7),
+		simple_point(30, 135, 7))));
+	space_info * s_upper = create_space("upper space", create_ext(0, 0, 1, 150, create_face(4,
+		simple_point(30, 35, 164),
+		simple_point(130, 35, 164),
+		simple_point(130, 135, 164),
+		simple_point(30, 135, 164))));
+
+	std::vector<space> spaces;
+	spaces.push_back(space(s_lower, &c));
+	spaces.push_back(space(s_upper, &c));
+
+	auto stacks = stacking::build_stacks(blocks, spaces, 3000, &c);
+	EXPECT_EQ(1, stacks.size());
+}
+
 } // namespace
 
 } // namespace impl

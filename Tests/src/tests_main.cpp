@@ -18,6 +18,6 @@ int main(int argc, char **argv) {
 	g_opts.equality_tolerance = 0.01;
 	g_opts.notify_func = g_opts.warn_func = g_opts.error_func = &do_nothing;
 	//g_opts.notify_func = &print;
-	//g_opts.flags |= SBT_VERBOSE_BLOCKS | SBT_VERBOSE_GEOMETRY;
+	//g_opts.flags |= SBT_VERBOSE_STACKS;
 	return RUN_ALL_TESTS();
 }
