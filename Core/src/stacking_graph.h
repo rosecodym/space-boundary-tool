@@ -48,7 +48,7 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 	return res;
 }
 
-std::vector<stackable> find_connecting_at_height(stacking_vertex v, const stacking_graph & g, double at, double eps);
+std::vector<stacking_vertex> find_connecting_at_height(stacking_vertex v, const stacking_graph & g, double at, double eps);
 
 } // namespace impl
 

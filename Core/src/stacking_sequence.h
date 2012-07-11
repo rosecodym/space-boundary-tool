@@ -33,10 +33,11 @@ public:
 	stacking_vertex last() const { return layers.back(); }
 	size_t layer_count() const { return layers.size(); }
 
-	stacking_sequence split_off(stackable s) {
+	stacking_sequence split_off(stacking_vertex v) {
 		stacking_sequence other(*this);
-		other.a *= s.stackable_area();
-		this->a -= s.stackable_area();
+		other.layers.push_back(v);
+		other.a *= g[v].stackable_area();
+		this->a -= g[v].stackable_area();
 		return other;
 	}
 

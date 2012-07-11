@@ -12,13 +12,14 @@ namespace impl {
 
 struct traversal_visitor : public boost::static_visitor<void> {
 	const stacking_graph & graph;
+	stacking_vertex next_vertex;
 	stacking_sequence * seq;
 	double from_height;
 	double thickness_cutoff;
 	double height_eps;
 	std::vector<blockstack> * results;
-	traversal_visitor(const stacking_graph & graph, stacking_sequence * seq, double from_height, double thickness_cutoff, double height_eps, std::vector<blockstack> * results)
-		: graph(graph), seq(seq), from_height(from_height), thickness_cutoff(thickness_cutoff), height_eps(height_eps), results(results) { }
+	traversal_visitor(const stacking_graph & graph, stacking_vertex v, stacking_sequence * seq, double from_height, double thickness_cutoff, double height_eps, std::vector<blockstack> * results)
+		: graph(graph), next_vertex(v), seq(seq), from_height(from_height), thickness_cutoff(thickness_cutoff), height_eps(height_eps), results(results) { }
 	void operator () (space_face * f) const;
 	void operator () (const block * b) const;
 };
