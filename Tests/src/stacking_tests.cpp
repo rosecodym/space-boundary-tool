@@ -69,7 +69,7 @@ TEST(Stacking, FloorAndRoom) {
 	std::vector<space> spaces(1, space(s_info, &c));
 	std::vector<element> elements(1, element(e_info, &c));
 
-	auto stacks = stacking::build_stacks(blocking::build_blocks(elements, &c), spaces, g_opts.equality_tolerance, &c);
+	auto stacks = stacking::build_stacks(blocking::build_blocks(elements, &c), spaces, 3000, &c);
 	EXPECT_EQ(1, stacks.size());
 }
 
