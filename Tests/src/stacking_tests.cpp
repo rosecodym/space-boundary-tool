@@ -212,14 +212,14 @@ TEST(Stacking, SecondLevel) {
 
 	space_info * s_lower = create_space("lower space", create_ext(0, 0, 1, 150, create_face(4,
 		simple_point(30, 35, 7),
-		simple_point(130, 35, 7),
-		simple_point(130, 135, 7),
-		simple_point(30, 135, 7))));
+		simple_point(110, 35, 7),
+		simple_point(110, 115, 7),
+		simple_point(30, 115, 7))));
 	space_info * s_upper = create_space("upper space", create_ext(0, 0, 1, 150, create_face(4,
 		simple_point(30, 35, 164),
-		simple_point(130, 35, 164),
-		simple_point(130, 135, 164),
-		simple_point(30, 135, 164))));
+		simple_point(110, 35, 164),
+		simple_point(110, 115, 164),
+		simple_point(30, 115, 164))));
 
 	std::vector<space> spaces;
 	spaces.push_back(space(s_lower, &c));
