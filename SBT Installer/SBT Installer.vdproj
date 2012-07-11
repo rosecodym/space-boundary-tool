@@ -45,6 +45,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_DE960509175D437988D86A6F5E243CFD"
+        "OwnerKey" = "8:_6E2B99590B3744999B84400A2E44D92A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DE960509175D437988D86A6F5E243CFD"
+        "OwnerKey" = "8:_FCCA612445CB4969BE83D4E79DE33DBD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DE960509175D437988D86A6F5E243CFD"
+        "OwnerKey" = "8:_EC6AF3EE7D2642F28AA710FBFCC8EAE3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_EB321F53218540329CA813A793DFF3DC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -334,15 +352,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
-        "ProductCode" = "8:{3B0357A0-56DA-4B85-8A41-E397465C1AE9}"
-        "PackageCode" = "8:{9DB3B14D-9344-4E9C-B057-C9B0626E97CA}"
+        "ProductCode" = "8:{1623A030-55F1-4C88-B1B2-AD661BB7BC7B}"
+        "PackageCode" = "8:{CD0822A2-03EC-4C83-84E4-9C6EBA4B9E88}"
         "UpgradeCode" = "8:{A21FE33D-4C00-476D-BA7C-48C82A06B410}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.1.0"
+        "ProductVersion" = "8:1.1.1"
         "Manufacturer" = "8:LBNL"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
