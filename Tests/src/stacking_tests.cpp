@@ -49,6 +49,41 @@ TEST(Stacking, IsolatedSpace) {
 	EXPECT_EQ(0, stacking::build_stacks(blocks, spaces, g_opts.equality_tolerance, &c).size());
 }
 
+TEST(Stacking, FloorAndRoomStackingGraph) {
+	equality_context c(g_opts.equality_tolerance);
+
+	space_info * s_info = create_space("space", create_ext(0, 0, 1, 307.08661, create_face(5,
+		simple_point(0, 0, 0),
+		simple_point(393.70079, 0, 0),
+		simple_point(393.70079, 387.79528, 0),
+		simple_point(0, 387.79528, 0),
+		simple_point(0, 0, 0))));
+
+	element_info * e_info = create_element("floor", SLAB, 1, create_ext(0, 0, 1, 7.8740157, create_face(5,
+		simple_point(0, 0, 0),
+		simple_point(0, -409.44882, 0),
+		simple_point(803.14961, -409.44882, 0),
+		simple_point(803.14961, 0, 0),
+		simple_point(0, 0, 0))));
+
+	std::vector<space> spaces(1, space(s_info, &c));
+	std::vector<element> elements(1, element(e_info, &c));
+	std::vector<block> blocks = blocking::build_blocks(elements, &c);
+
+	auto oriented_blocks = get_blocks_by_orientation(blocks);
+
+	auto space_faces = get_space_faces_by_orientation(spaces, &c);
+	for (auto o = space_faces.begin(); o != space_faces.end(); ++o) {
+		if (o->first->direction() == direction_3(0, 0, 1)) {
+			auto g = create_stacking_graph(&o->second, oriented_blocks[o->first], g_opts.equality_tolerance);
+			auto vertices = boost::vertices(g);
+			EXPECT_EQ(3, std::distance(vertices.first, vertices.second));
+			return;
+		}
+	}
+	ADD_FAILURE() << "Couldn't find stacking orientation <0, 0, 1>";
+}
+
 TEST(Stacking, FloorAndRoom) {
 	equality_context c(g_opts.equality_tolerance);
 
