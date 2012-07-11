@@ -38,11 +38,12 @@ void traverse(const stacking_graph & graph, stacking_sequence * curr_sequence, d
 		return;
 	}
 	auto connecting = find_connecting_at_height(curr_sequence->last(), graph, curr_height, height_eps);
+	PRINT_STACKS("Found %u connecting stackables.\n", connecting.size());
 	boost::for_each(connecting, [&graph, curr_sequence, curr_height, thickness_cutoff, height_eps, results](stackable connected) {
 		boost::apply_visitor(traversal_visitor(graph, curr_sequence, curr_height, thickness_cutoff, height_eps, results), connected.data());
 	});
 	if (!curr_sequence->sequence_area().is_empty()) {
-		results->push_back(curr_sequence->finish()); // terminated because of no other terminus (probably an incomplete building definition)
+		results->push_back(curr_sequence->finish()); // terminated because of external
 	}
 }
 
