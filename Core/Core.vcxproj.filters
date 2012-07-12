@@ -245,12 +245,6 @@
     <ClCompile Include="src\surface_pair.cpp">
       <Filter>operations\blocking</Filter>
     </ClCompile>
-    <ClCompile Include="src\build_stacks.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resolve_levels.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
     <ClCompile Include="src\assign_openings.cpp">
       <Filter>deprecated operations</Filter>
     </ClCompile>
