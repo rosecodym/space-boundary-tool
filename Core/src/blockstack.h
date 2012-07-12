@@ -52,8 +52,10 @@ public:
 		else {
 			std::shared_ptr<surface> surf1(new surface(geom_1, layers.front().layer_element()));
 			surf1->set_level(2);
+			surf1->set_space(spaces.first);
 			std::shared_ptr<surface> surf2(new surface(oriented_area(o, *heights.second, a, !base_sense), layers.back().layer_element()));
 			surf2->set_level(2);
+			surf2->set_space(*spaces.second);
 			surface::set_other_sides(surf1, surf2);
 			*oi++ = surf1;
 			*oi++ = surf2;
