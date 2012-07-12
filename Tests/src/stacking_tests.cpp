@@ -229,6 +229,23 @@ TEST(Stacking, SecondLevel) {
 	EXPECT_EQ(1, stacks.size());
 }
 
+//TEST(Stacking, TooThick) {
+//	equality_context c(g_opts.equality_tolerance);
+//
+//	face f;
+//	f = create_face(4,
+//		simple_point(0, 0, 0),
+//		simple_point(0, 0, 307),
+//		simple_point(0, 387, 307),
+//		simple_point(0, 387, 0));
+//
+//	space_info * s_info = create_space("space", create_ext(1, 0, 0, 300, f));
+//	space dummy_space(s_info, &c);
+//
+//	oriented_area block_connection(simple_face(f, &c).reversed(), &c);
+//	f.outer_boundary.vertices[0].x = -
+//}
+
 } // namespace
 
 } // namespace impl

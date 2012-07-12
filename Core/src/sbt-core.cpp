@@ -177,7 +177,7 @@ sbt_return_t calculate_space_boundaries(
 
 		auto blocks = blocking::build_blocks(elements_derefed, whole_building_context.get());
 
-		auto stacks = stacking::build_stacks(blocks, spaces, 3000, whole_building_context.get());
+		auto stacks = stacking::build_stacks(blocks, spaces, 118, whole_building_context.get());
 		boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
 
 		if (std::find_if(surfaces.begin(), surfaces.end(), [](std::shared_ptr<surface> s) { return s->is_fenestration(); }) != surfaces.end()) {
@@ -188,10 +188,6 @@ sbt_return_t calculate_space_boundaries(
 		else {
 			NOTIFY_MSG("No openings to assign.\n");
 		}
-
-		//NOTIFY_MSG("Resolving space boundary levels");
-		//surfaces = operations::resolve_levels(surfaces);
-		//NOTIFY_MSG("done.\n");
 
 		NOTIFY_MSG("Converting internal structures to interface structures");
 		retval = convert_to_space_boundaries(surfaces, space_boundaries);

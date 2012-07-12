@@ -78,14 +78,8 @@ void generate_sb_summary(sb_counts * counts, space_boundary ** sbs, size_t sb_co
 				}
 			}
 			else if (sbs[i]->level == 3) {
-				if (!sbs[i]->opposite) {
-					++counts->level_3_external[0];
-					++counts->level_3_external[sp_ix];
-				}
-				else {
-					++counts->level_3_internal[0];
-					++counts->level_3_internal[sp_ix];
-				}
+				++counts->level_3_internal[0];
+				++counts->level_3_internal[sp_ix];
 			}
 			else if (sbs[i]->level == 4) {
 				++counts->level_4[0];
