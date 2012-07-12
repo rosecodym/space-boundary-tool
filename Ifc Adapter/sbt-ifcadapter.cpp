@@ -68,7 +68,7 @@ void generate_sb_summary(sb_counts * counts, space_boundary ** sbs, size_t sb_co
 				++counts->virt[sp_ix];
 			}
 			else if (sbs[i]->level == 2) {
-				if (sbs[i]->opposite->lies_on_outside) {
+				if (!sbs[i]->opposite) {
 					++counts->level_2_physical_external[0];
 					++counts->level_2_physical_external[sp_ix];
 				}
@@ -78,7 +78,7 @@ void generate_sb_summary(sb_counts * counts, space_boundary ** sbs, size_t sb_co
 				}
 			}
 			else if (sbs[i]->level == 3) {
-				if (sbs[i]->opposite->lies_on_outside) {
+				if (!sbs[i]->opposite) {
 					++counts->level_3_external[0];
 					++counts->level_3_external[sp_ix];
 				}
@@ -199,6 +199,8 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			sbt_return_t generate_res = calculate_space_boundaries(element_count, elements, loaded_space_count, loaded_spaces, &sb_count, &sbs, opts);
 			if (generate_res == SBT_OK) {
 				generate_sb_summary(counts, sbs, sb_count);
+				sprintf(buf, "Generated count summary.\n");
+				options.notify_func(buf);
 				clear_sbs(&model);
 				// add_to_model figures out the right spaces by re-extracting them based on guids
 				if (add_to_model(model, sb_count, sbs, options.notify_func, unit_scaler::identity_scaler) == IFCADAPT_OK) {

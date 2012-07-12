@@ -322,13 +322,6 @@ std::vector<std::shared_ptr<surface>> resolve_levels(const std::vector<std::shar
 	for (auto s = surfaces.begin(); s != surfaces.end(); ++s) {
 
 		if ((*s)->is_fenestration() || (*s)->is_virtual()) {
-			if (FLAGGED(SBT_EXPENSIVE_CHECKS) && (*s)->opposite().expired()) {
-				ERROR_MSG("Space boundary %s/%s is %s but has no opposite.\n",
-					(*s)->guid().c_str(),
-					(*s)->element_id().c_str(),
-					(*s)->is_fenestration() ? "a fenestration" : "virtual");
-				abort();
-			}
 			(*s)->set_level(2);
 			continue;
 		}

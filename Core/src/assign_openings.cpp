@@ -52,16 +52,6 @@ std::vector<std::shared_ptr<surface>> assign_openings(const std::vector<std::sha
 
 	for (auto p = surfaces.begin(); p != surfaces.end(); ++p) {
 		if ((*p)->is_fenestration()) {
-			if (FLAGGED(SBT_EXPENSIVE_CHECKS) && (*p)->opposite().expired()) {
-				ERROR_MSG("Fenestration surface %s/%s/%s (%s%c @ %s) has no opposite.\n",
-					(*p)->guid().c_str(),
-					(*p)->element_id().c_str(),
-					(*p)->get_space() == nullptr ? "[no space]" : (*p)->get_space()->global_id().c_str(),
-					(*p)->geometry().orientation().to_string().c_str(),
-					(*p)->geometry().sense() ? '+' : '-',
-					CGAL::to_double((*p)->geometry().height()));
-				abort();
-			}
 			for (auto q = surfaces.begin(); q != surfaces.end(); ++q) {
 				if (q != p && 
 					!(*q)->is_fenestration() && 

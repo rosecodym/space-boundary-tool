@@ -41,18 +41,6 @@ void set_geometry(space_boundary * sb, const PointRange & geometry) {
 }
 	
 sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surface>> & surfaces, space_boundary *** sbs) {
-	if (FLAGGED(SBT_EXPENSIVE_CHECKS)) {
-		boost::for_each(surfaces, [](const std::shared_ptr<surface> & s) {
-			if (s->get_level() != 5 && s->opposite().expired()) {
-				ERROR_MSG("Space boundary %s/%s is level %i but has no opposite space boundary.\n",
-					s->guid().c_str(),
-					s->get_space()->global_id().c_str(),
-					s->get_level());
-				abort();
-			}
-		});
-	}
-
 	*sbs = (space_boundary **)malloc(sizeof(space_boundary *) * surfaces.size());
 	for (size_t i = 0; i < surfaces.size(); ++i) {
 		std::shared_ptr<surface> surf = surfaces[i];
@@ -130,18 +118,6 @@ sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surfa
 				}
 			}
 		}
-	}
-
-	if (FLAGGED(SBT_EXPENSIVE_CHECKS)) {
-		std::for_each(*sbs, *sbs + surfaces.size(), [](space_boundary * s) {
-			if (s->opposite == nullptr && s->level != 5) {
-				ERROR_MSG("Space boundary %s/%x is level %i but has no opposite space boundary.\n",
-					s->global_id,
-					s->bounded_space,
-					s->level);
-				abort();
-			}
-		});
 	}
 
 	return SBT_OK;
