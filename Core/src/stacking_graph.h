@@ -17,7 +17,7 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 
 	std::vector<stackable> as_stackables;
 
-	PRINT_STACKS("Creating stacking graph.\n");
+	NOTIFY_MSG("Creating stacking graph");
 
 	// we can't use boost::transform because it requires that its arguments be const
 	// we don't want to modify the arguments now, but we're trying to get non-const pointers to them
@@ -26,9 +26,11 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 	}
 	boost::transform(blocks, std::back_inserter(as_stackables), [](const block * b) { return stackable(b); });
 
-	PRINT_STACKS("Got all stackables.\n");
+	stacking_graph g(as_stackables.size());
 
-	stacking_graph g(space_faces->size() + blocks.size());
+	size_t total_ticks = as_stackables.size() * (as_stackables.size() + 1) / 2;
+	size_t ticks_per_dot = total_ticks / 80;
+	size_t curr_ticks = 0;
 
 	boost::optional<stackable_connection> connection;
 	for (size_t i = 0; i < as_stackables.size(); ++i) {
@@ -38,10 +40,14 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 				auto new_edge = boost::add_edge(i, j, g);
 				g[new_edge.first] = *connection;
 			}
+			if (++curr_ticks > ticks_per_dot) {
+				NOTIFY_MSG(".");
+				curr_ticks = 0;
+			}
 		}
 	}
 
-	PRINT_STACKS("Processed all stackables.\n");
+	NOTIFY_MSG("done.\n");
 
 	return g;
 }
