@@ -189,9 +189,9 @@ sbt_return_t calculate_space_boundaries(
 			NOTIFY_MSG("No openings to assign.\n");
 		}
 
-		NOTIFY_MSG("Resolving space boundary levels");
-		surfaces = operations::resolve_levels(surfaces);
-		NOTIFY_MSG("done.\n");
+		//NOTIFY_MSG("Resolving space boundary levels");
+		//surfaces = operations::resolve_levels(surfaces);
+		//NOTIFY_MSG("done.\n");
 
 		NOTIFY_MSG("Converting internal structures to interface structures");
 		retval = convert_to_space_boundaries(surfaces, space_boundaries);

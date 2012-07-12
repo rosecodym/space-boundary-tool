@@ -18,6 +18,7 @@ private:
 	area a;
 	NT starting_height;
 	const orientation * o;
+	bool too_thick;
 public:
 	stacking_sequence(const stacking_graph & g, stacking_vertex initial, const orientation * o) 
 		: g(g), layers(1, initial), a(boost::get<space_face *>(g[initial].data())->face_area()), starting_height(boost::get<space_face *>(g[initial].data())->height()), o(o)
@@ -41,7 +42,7 @@ public:
 		return other;
 	}
 
-	blockstack finish();
+	blockstack finish(bool too_thick);
 };
 
 } // namespace impl
