@@ -39,14 +39,20 @@ std::map<const orientation *, std::vector<const block *>> get_blocks_by_orientat
 template <typename SpaceFaceRange, typename BlockRange, typename OutputIterator>
 void process_group(SpaceFaceRange * space_faces, const BlockRange & blocks, const orientation * o, double height_cutoff, double height_eps, OutputIterator oi) {
 	stacking_graph g = create_stacking_graph(space_faces, blocks, height_eps);
-	PRINT_STACKS("Created stacking graph.\n");
 	auto all_vertices = boost::vertices(g);
+	size_t ticks_per_dot = space_faces->size() / 80;
+	size_t curr_ticks = 0;
+	NOTIFY_MSG("Traversing");
 	boost::for_each(
 		boost::make_iterator_range(all_vertices.first, all_vertices.second) | boost::adaptors::filtered([&g](stacking_vertex v) { return g[v].as_space_face(); }),
-		[&g, o, height_cutoff, height_eps, &oi](stacking_vertex starting_face) { 
-			begin_traversal(g, starting_face, o, height_cutoff, height_eps, oi); 
+		[&g, o, height_cutoff, height_eps, &oi, &curr_ticks, ticks_per_dot](stacking_vertex starting_face) { 
+			begin_traversal(g, starting_face, o, height_cutoff, height_eps, oi);
+			if (++curr_ticks > ticks_per_dot) {
+				NOTIFY_MSG(".");
+				curr_ticks = 0;
+			}
 		});
-	PRINT_STACKS("Completed all traversals.\n");
+	NOTIFY_MSG("done.\n");
 }
 
 } // namespace impl
@@ -68,11 +74,11 @@ std::vector<blockstack> build_stacks(const BlockRange & blocks, const SpaceRange
 		impl::process_group(&o_info.second, fenestration_blocks[o_info.first], o_info.first, height_cutoff, c->height_epsilon(), std::back_inserter(res));
 		NOTIFY_MSG("Built stacks.\n");
 	});
+	NOTIFY_MSG("Resetting space faces");
 	boost::for_each(space_faces, [](std::pair<const orientation * const, std::vector<impl::space_face>> & o_info) {
-		NOTIFY_MSG("Resetting space faces...");
-		boost::for_each(o_info.second, [](impl::space_face & f) { f.reset_area_to_original(); });
-		NOTIFY_MSG("done.\n");
+		boost::for_each(o_info.second, [](impl::space_face & f) { f.reset_area_to_original(); NOTIFY_MSG("."); });
 	});
+	NOTIFY_MSG("done.\n");
 	boost::for_each(space_faces, [&res, &space_faces, &nonfenestration_blocks, height_cutoff, c](std::pair<const orientation * const, std::vector<impl::space_face>> & o_info) {
 		NOTIFY_MSG("Building nonfenestration stacks along %s.\n", o_info.first->to_string().c_str());
 		impl::process_group(&o_info.second, nonfenestration_blocks[o_info.first], o_info.first, height_cutoff, c->height_epsilon(), std::back_inserter(res));
