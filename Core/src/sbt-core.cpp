@@ -101,7 +101,11 @@ sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surfa
 			newsb->thicknesses = nullptr;
 		}
 
-		newsb->bounded_space = surf->get_space()->original_info();
+		if (FLAGGED(SBT_EXPENSIVE_CHECKS) && surf->get_space() == nullptr) {
+			ERROR_MSG("Aborting - a space boundary had no space.\n");
+			abort();
+		}
+		newsb->bounded_space = surf->get_space() != nullptr ? surf->get_space()->original_info() : nullptr;
 		newsb->lies_on_outside = surf->lies_on_outside();
 		newsb->level = surf->get_level();
 		newsb->is_virtual = surf->is_virtual();
