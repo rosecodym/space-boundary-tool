@@ -28,24 +28,22 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 
 	PRINT_STACKS("Got all stackables.\n");
 
-	stacking_graph res(space_faces->size() + blocks.size());
+	stacking_graph g(space_faces->size() + blocks.size());
 
 	boost::optional<stackable_connection> connection;
-	size_t i = 0;
-	for (auto p = as_stackables.begin(); p != as_stackables.end(); ++i, ++p) {
-		res[i] = *p;
-		size_t j = i;
-		for (auto q = p; q != as_stackables.end(); ++j, ++q) {
-			if (connection = stackable_connection::do_connect(*p, *q, connection_height_eps)) {
-				auto new_edge = boost::add_edge(i, j, res);
-				res[new_edge.first] = *connection;
+	for (size_t i = 0; i < as_stackables.size(); ++i) {
+		g[i] = as_stackables[i];
+		for (size_t j = i; j < as_stackables.size(); ++j) {
+			if (i != j && (connection = stackable_connection::do_connect(as_stackables[i], as_stackables[j], connection_height_eps))) {
+				auto new_edge = boost::add_edge(i, j, g);
+				g[new_edge.first] = *connection;
 			}
 		}
 	}
 
 	PRINT_STACKS("Processed all stackables.\n");
 
-	return res;
+	return g;
 }
 
 std::vector<stacking_vertex> find_connecting_at_height(stacking_vertex v, const stacking_graph & g, double at, double eps);
