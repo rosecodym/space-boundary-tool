@@ -4,6 +4,8 @@
 
 #include "printing-macros.h"
 
+class equality_context;
+
 namespace stacking {
 
 namespace impl {
@@ -12,19 +14,25 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, stac
 typedef stacking_graph::vertex_descriptor stacking_vertex;
 
 template <typename SpaceFaceRange, typename BlockRange>
-stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRange & blocks, double connection_height_eps) {
+stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRange & blocks, double connection_height_eps, equality_context * area_c) {
 	static_assert(std::is_same<BlockRange::value_type, const block *>::value, "Creating a stacking graph requires a BlockRange value type of const block *.");
 
 	std::vector<stackable> as_stackables;
 
 	NOTIFY_MSG("Creating stacking graph");
 
-	// we can't use boost::transform because it requires that its arguments be const
-	// we don't want to modify the arguments now, but we're trying to get non-const pointers to them
 	for (auto face = space_faces->begin(); face != space_faces->end(); ++face) {
-		as_stackables.push_back(stackable(&*face));
+		stackable s(&*face, area_c);
+		if (!s.stackable_area().is_empty()) {
+			as_stackables.push_back(s);
+		}
 	}
-	boost::transform(blocks, std::back_inserter(as_stackables), [](const block * b) { return stackable(b); });
+	for (auto b = blocks.begin(); b != blocks.end(); ++b) {
+		stackable s(*b, area_c);
+		if (!s.stackable_area().is_empty()) {
+			as_stackables.push_back(s);
+		}
+	}
 
 	stacking_graph g(as_stackables.size());
 

@@ -32,14 +32,21 @@ public:
 	explicit wrapped_nef_polygon(const polygon_2 & poly);
 	explicit wrapped_nef_polygon(const polygon_with_holes_2 & pwh);
 
-	template <typename LoopRange>
-	explicit wrapped_nef_polygon(const LoopRange & loops) : wrapped(new nef_polygon_2()), m_is_axis_aligned(true) {
-		boost::for_each(loops, [this](const std::vector<point_2> & loop) {
-			polygon_2 poly(loop.begin(), loop.end());
+	template <typename PolyRange>
+	explicit wrapped_nef_polygon(const PolyRange & polys) {
+		boost::for_each(polys, [this](const polygon_2 & poly) {
 			*wrapped ^= *wrapped_nef_polygon(poly).wrapped;
 			m_is_axis_aligned &= util::cgal::is_axis_aligned(poly);
 		});
 	}
+
+	explicit wrapped_nef_polygon(const std::vector<std::vector<point_2>> & loops) {
+		*this = wrapped_nef_polygon(loops | boost::adaptors::transformed([](const std::vector<point_2> & loop) { 
+			return polygon_2(loop.begin(), loop.end()); 
+		}));
+	}
+
+	wrapped_nef_polygon(const wrapped_nef_polygon & src, equality_context * recontextualization_c);
 
 	wrapped_nef_polygon & operator = (const wrapped_nef_polygon & src) { 
 		if (&src != this) {
@@ -86,11 +93,6 @@ public:
 	friend bool operator >= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
-
-	// deprecated
-	explicit wrapped_nef_polygon(const wrapped_nef_polygon & src, std::shared_ptr<equality_context> c) 
-		: wrapped(new nef_polygon_2(*src.wrapped)), m_is_axis_aligned(src.m_is_axis_aligned)
-	{ }
 
 	// deprecated
 	template <class OutputIterator>

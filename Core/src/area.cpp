@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "equality_context.h"
 #include "geometry_common.h"
 #include "printing-macros.h"
 
@@ -20,12 +21,24 @@ area::area(const std::vector<std::vector<point_2>> & loops) : use_nef(loops.size
 
 area::area(const std::vector<polygon_2> & loops) : use_nef(loops.size() > 1) {
 	if (use_nef) {
-		nef_rep = wrapped_nef_polygon(loops | boost::adaptors::transformed([](const polygon_2 & poly) { return std::vector<point_2>(poly.vertices_begin(), poly.vertices_end()); }));
+		nef_rep = wrapped_nef_polygon(loops);
+		if (nef_rep.is_empty()) { // snapping eliminated the area
+			use_nef = false;
+		}
 	}
 	else {
 		simple_rep = loops.front();
 		ensure_counterclockwise();
 		validate();
+	}
+}
+
+area::area(const area & src, equality_context * recontextualization_c) : use_nef(src.use_nef) {
+	if (use_nef) {
+		nef_rep = wrapped_nef_polygon(src.nef_rep, recontextualization_c);
+	}
+	else {
+		simple_rep = recontextualization_c->snap(src.simple_rep);
 	}
 }
 

@@ -382,6 +382,22 @@ wrapped_nef_polygon::wrapped_nef_polygon(const polygon_with_holes_2 & pwh)
 	SBT_EXPENSIVE_ASSERT(wrapped->is_empty() == wrapped->interior().is_empty(), "[Aborting - created a non-regularized nef polygon out of a pwh.]\n");
 }
 
+wrapped_nef_polygon::wrapped_nef_polygon(const wrapped_nef_polygon & src, equality_context * recontextualization_c) : m_is_axis_aligned(true) {
+	nef_polygon_2::Explorer e = src.wrapped->explorer();
+	std::vector<polygon_2> loops;
+	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
+		if (f->mark()) {
+			auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
+			if (pwh_maybe) {
+				boost::transform(pwh_maybe->all_polygons(), std::back_inserter(loops), [recontextualization_c](const polygon_2 & loop) {
+					return recontextualization_c->snap(loop);
+				});
+			}
+		}
+	}
+	*this = wrapped_nef_polygon(loops);
+}
+
 wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygon & other) {
 	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
 		wrapped_nef_polygon other_snapped(other);
