@@ -46,6 +46,8 @@ public:
 		: a(a), o(o), base_sense(base_sense), layers(layers.begin(), layers.end()), spaces(sp_a, sp_b), heights(height_a, height_b), external(is_external)
 	{ }
 
+	const area & stack_area() const { return a; }
+
 	template <typename OutputIterator>
 	void to_surfaces(OutputIterator oi) const {
 		oriented_area geom_1(o, heights.first, a, base_sense); 

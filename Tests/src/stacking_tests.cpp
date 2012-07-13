@@ -229,22 +229,61 @@ TEST(Stacking, SecondLevel) {
 	EXPECT_EQ(1, stacks.size());
 }
 
-//TEST(Stacking, TooThick) {
-//	equality_context c(g_opts.equality_tolerance);
-//
-//	face f;
-//	f = create_face(4,
-//		simple_point(0, 0, 0),
-//		simple_point(0, 0, 307),
-//		simple_point(0, 387, 307),
-//		simple_point(0, 387, 0));
-//
-//	space_info * s_info = create_space("space", create_ext(1, 0, 0, 300, f));
-//	space dummy_space(s_info, &c);
-//
-//	oriented_area block_connection(simple_face(f, &c).reversed(), &c);
-//	f.outer_boundary.vertices[0].x = -
-//}
+TEST(Stacking, EmptyAfterFaceSplit) {
+	equality_context c(g_opts.equality_tolerance);
+
+	face f;
+	space_info * s_info;
+
+	f = create_face(4,
+		simple_point(10, 15, 1),
+		simple_point(20, 15, 1),
+		simple_point(20, 35, 1),
+		simple_point(10, 15, 1));
+	s_info = create_space("lower space", create_ext(0, 0, -1, 100, f));
+	space lower_space(s_info, &c);
+	oriented_area lower_face_geom(simple_face(f, &c), &c);
+
+	f = create_face(4,
+		simple_point(40, 15, 10), 
+		simple_point(40, 35, 10),
+		simple_point(60, 35, 10),
+		simple_point(60, 15, 10));
+	s_info = create_space("upper space", create_ext(0, 0, 1, 100, f));
+	space upper_space(s_info, &c);
+	oriented_area upper_face_geom(simple_face(f, &c), &c);
+
+	std::vector<space_face> faces;
+	faces.push_back(space_face(&lower_space, lower_face_geom));
+	faces.push_back(space_face(&upper_space, upper_face_geom));
+
+	f = create_face(4,
+		simple_point(15, 15, 1),
+		simple_point(15, 35, 1),
+		simple_point(50, 35, 1),
+		simple_point(50, 15, 1));
+	oriented_area lower_block(simple_face(f, &c), &c);
+	f = create_face(4,
+		simple_point(15, 15, 10),
+		simple_point(50, 15, 10),
+		simple_point(50, 35, 10),
+		simple_point(15, 35, 10));
+	oriented_area upper_block(simple_face(f, &c), &c);
+	element_info * e_info = create_element("element", UNKNOWN, 1, create_ext(0, 0, -1, 9, f));
+	element dummy(e_info, &c);
+
+	block b(lower_block, upper_block, dummy);
+
+	std::vector<const block *> blocks(1, &b);
+
+	stacking_graph g = create_stacking_graph(&faces, blocks, g_opts.equality_tolerance);
+
+	std::vector<blockstack> stacks;
+	begin_traversal(g, 0, std::get<0>(c.request_orientation(direction_3(0, 0, 1))), 300, g_opts.equality_tolerance, std::back_inserter(stacks));
+
+	ASSERT_EQ(1, stacks.size());
+	EXPECT_FALSE(stacks.front().stack_area().is_empty());
+}
 
 } // namespace
 
