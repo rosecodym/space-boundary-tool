@@ -64,8 +64,6 @@ sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surfa
 		else {
 			set_geometry(newsb, cleaned_geometry | boost::adaptors::reversed);
 		}
-
-		printf("-");
 	
 		direction_3 norm = surf->geometry().sense() ? surf->geometry().orientation().direction() : -surf->geometry().orientation().direction();
 		newsb->normal_x = CGAL::to_double(norm.dx());
