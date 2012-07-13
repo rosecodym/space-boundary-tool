@@ -40,11 +40,13 @@ void traversal_visitor::operator () (const block * b) const {
 }
 
 void traverse(const stacking_graph & g, stacking_sequence * curr_sequence, double curr_height, double thickness_cutoff, double height_eps, std::vector<blockstack> * results) {
+	PRINT_STACKS("Entering traverse.\n");
 	if (curr_sequence->total_thickness() > thickness_cutoff) {
 		results->push_back(curr_sequence->finish(true));
 		PRINT_STACKS("Terminating stack - too thick.\n");
 		return;
 	}
+	PRINT_STACKS("Finding connecting stackables.\n");
 	auto connecting = find_connecting_at_height(curr_sequence->last(), g, curr_height, height_eps);
 	PRINT_STACKS("Found %u connecting stackables.\n", connecting.size());
 	boost::for_each(connecting, [&g, curr_sequence, curr_height, thickness_cutoff, height_eps, results](stacking_vertex connected) {
