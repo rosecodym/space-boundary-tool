@@ -69,6 +69,16 @@ public:
 
 	oriented_area project_onto_self(const oriented_area & other) const;
 
+	template <typename OutputIterator>
+	void to_pieces(OutputIterator oi) const {
+		auto pwhs = a.to_pwhs();
+		for (auto pwh = pwhs.begin(); pwh != pwhs.end(); ++pwh) {
+			boost::transform(pwh->to_simple_polygons(), oi, [this](const polygon_2 & poly) {
+				return oriented_area(*this, area(poly));
+			});
+		}
+	}
+
 	void print() const;
 
 	friend oriented_area operator - (const oriented_area & lhs, const oriented_area & rhs);

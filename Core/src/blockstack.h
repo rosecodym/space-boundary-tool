@@ -50,32 +50,36 @@ public:
 
 	template <typename OutputIterator>
 	void to_surfaces(OutputIterator oi) const {
-		oriented_area geom_1(o, heights.first, a, base_sense); 
-		if (!spaces.second) {
-			std::shared_ptr<surface> surf(new surface(std::move(geom_1), layers.front().layer_element()));
-			surf->set_space(spaces.first);
-			surf->set_level(calculate_level());
-			*oi++ = surf;
-		}
-		else if (layers.empty()) { // virtual
-			std::shared_ptr<surface> surf1(new surface(geom_1, spaces.first));
-			surf1->set_level(calculate_level());
-			std::shared_ptr<surface> surf2(new surface(geom_1.reverse(), *spaces.second));
-			surf2->set_level(calculate_level());
-			surface::set_other_sides(surf1, surf2);
-			*oi++ = surf1;
-			*oi++ = surf2;
-		}
-		else {
-			std::shared_ptr<surface> surf1(new surface(geom_1, layers.front().layer_element()));
-			surf1->set_space(spaces.first);
-			surf1->set_level(calculate_level());
-			std::shared_ptr<surface> surf2(new surface(oriented_area(o, *heights.second, a, !base_sense), layers.back().layer_element()));
-			surf2->set_level(calculate_level());
-			surf2->set_space(*spaces.second);
-			surface::set_other_sides(surf1, surf2);
-			*oi++ = surf1;
-			*oi++ = surf2;
-		}
+		oriented_area combined_geom(o, heights.first, a, base_sense); 
+		std::vector<oriented_area> pieces;
+		combined_geom.to_pieces(std::back_inserter(pieces));
+		boost::for_each(pieces, [this, &oi](const oriented_area & piece) {
+			if (!spaces.second) {
+				std::shared_ptr<surface> surf(new surface(piece, layers.front().layer_element()));
+				surf->set_space(spaces.first);
+				surf->set_level(calculate_level());
+				*oi++ = surf;
+			}
+			else if (layers.empty()) { // virtual
+				std::shared_ptr<surface> surf1(new surface(piece, spaces.first));
+				surf1->set_level(calculate_level());
+				std::shared_ptr<surface> surf2(new surface(piece.reverse(), *spaces.second));
+				surf2->set_level(calculate_level());
+				surface::set_other_sides(surf1, surf2);
+				*oi++ = surf1;
+				*oi++ = surf2;
+			}
+			else {
+				std::shared_ptr<surface> surf1(new surface(piece, layers.front().layer_element()));
+				surf1->set_space(spaces.first);
+				surf1->set_level(calculate_level());
+				std::shared_ptr<surface> surf2(new surface(oriented_area(o, *heights.second, piece.area_2d(), !base_sense), layers.back().layer_element()));
+				surf2->set_level(calculate_level());
+				surf2->set_space(*spaces.second);
+				surface::set_other_sides(surf1, surf2);
+				*oi++ = surf1;
+				*oi++ = surf2;
+			}
+		});
 	}
 };

@@ -61,13 +61,6 @@ public:
 	void clear();
 	polygon_2 to_single_polygon() const { return to_pwhs().front().outer(); }
 	polygon_2 outer_bound() const { return to_pwhs().front().outer(); }
-	template <typename OI> 
-	void to_simple_polygons(OI oi) const {
-		auto pwhs = to_pwhs();
-		boost::for_each(pwhs, [oi](const polygon_with_holes_2 & pwh) {
-			boost::copy(pwh.to_simple_polygons(), oi);
-		});
-	}
 };
 
 } // namespace geometry_2d

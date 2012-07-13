@@ -13,20 +13,6 @@
 	} \
 	while (false);
 
-#define PRINT_FEN_AREA(p) \
-	do { \
-		if (g_opts.flags & SBT_VERBOSE_FENESTRATIONS) { \
-			std::vector<polygon_2> areas; \
-			(p).to_simple_polygons(std::back_inserter(areas)); \
-			NOTIFY_MSG( "[%u sections]\n", areas.size()); \
-			for (size_t i = 0; i < areas.size(); ++i) { \
-				NOTIFY_MSG( "section area:\n"); \
-				util::printing::print_polygon(g_opts.notify_func, areas[i]); \
-			} \
-		} \
-	} \
-	while (false);
-
 extern sb_calculation_options g_opts;
 
 namespace operations {
@@ -60,9 +46,7 @@ std::vector<std::shared_ptr<surface>> assign_openings(const std::vector<std::sha
 					surface::set_contains(*q, *p);
 					results.push_back(*p);
 					PRINT_FEN("[assigned %s to %s @ %f]\n[%s]\n", (*p)->guid().c_str(), (*q)->guid().c_str(), CGAL::to_double((*p)->geometry().height()), (*p)->guid().c_str());
-					PRINT_FEN_AREA((*p)->geometry().area_2d());
 					PRINT_FEN("[%s]\n", (*q)->guid().c_str());
-					PRINT_FEN_AREA((*q)->geometry().area_2d());
 					break;
 				}
 				else if (g_opts.flags & SBT_VERBOSE_FENESTRATIONS) {
@@ -72,13 +56,9 @@ std::vector<std::shared_ptr<surface>> assign_openings(const std::vector<std::sha
 					else if ((*q)->geometry().orientation() != (*p)->geometry().orientation()) { NOTIFY_MSG( "[assignment failed - nonparallel]\n"); }
 					else if (!((*q)->geometry().area_2d() >= (*p)->geometry().area_2d())) { 
 						NOTIFY_MSG( "[assignment failed - area mismatch follows (>= returned %s)]\n", (*q)->geometry().area_2d() >= (*p)->geometry().area_2d() ? "true" : "false");
-						PRINT_FEN_AREA((*q)->geometry().area_2d());
-						PRINT_FEN_AREA((*p)->geometry().area_2d());
 					}
 					else { 
 						NOTIFY_MSG( "[assignment failed - unknown!]\n"); 
-						PRINT_FEN_AREA((*q)->geometry().area_2d());
-						PRINT_FEN_AREA((*p)->geometry().area_2d());
 					}
 				}
 			}
