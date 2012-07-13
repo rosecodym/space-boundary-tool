@@ -33,7 +33,7 @@ public:
 	explicit wrapped_nef_polygon(const polygon_with_holes_2 & pwh);
 
 	template <typename PolyRange>
-	explicit wrapped_nef_polygon(const PolyRange & polys) {
+	explicit wrapped_nef_polygon(const PolyRange & polys) : wrapped(new nef_polygon_2()), m_is_axis_aligned(true) {
 		boost::for_each(polys, [this](const polygon_2 & poly) {
 			*wrapped ^= *wrapped_nef_polygon(poly).wrapped;
 			m_is_axis_aligned &= util::cgal::is_axis_aligned(poly);
