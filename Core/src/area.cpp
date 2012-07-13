@@ -40,6 +40,9 @@ area::area(const area & src, equality_context * recontextualization_c) : use_nef
 	}
 	else {
 		simple_rep = recontextualization_c->snap(src.simple_rep);
+		if (!geometry_common::cleanup_loop(&simple_rep, recontextualization_c->area_epsilon())) {
+			simple_rep.clear();
+		}
 	}
 }
 

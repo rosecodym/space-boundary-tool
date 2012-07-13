@@ -389,9 +389,13 @@ wrapped_nef_polygon::wrapped_nef_polygon(const wrapped_nef_polygon & src, equali
 		if (f->mark()) {
 			auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
 			if (pwh_maybe) {
-				boost::transform(pwh_maybe->all_polygons(), std::back_inserter(loops), [recontextualization_c](const polygon_2 & loop) {
-					return recontextualization_c->snap(loop);
-				});
+				auto all_polys = pwh_maybe->all_polygons();
+				for (auto p = all_polys.begin(); p != all_polys.end(); ++p) {
+					loops.push_back(recontextualization_c->snap(*p));
+					if (!geometry_common::cleanup_loop(&loops.back(), recontextualization_c->area_epsilon())) {
+						loops.pop_back();
+					}
+				}
 			}
 		}
 	}
