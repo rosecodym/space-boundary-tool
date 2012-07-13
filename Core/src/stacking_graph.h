@@ -14,7 +14,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, stac
 typedef stacking_graph::vertex_descriptor stacking_vertex;
 
 template <typename SpaceFaceRange, typename BlockRange>
-stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRange & blocks, double connection_height_eps, equality_context * area_c) {
+stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRange & blocks, double connection_height_eps) {
 	static_assert(std::is_same<BlockRange::value_type, const block *>::value, "Creating a stacking graph requires a BlockRange value type of const block *.");
 
 	std::vector<stackable> as_stackables;
@@ -22,13 +22,13 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 	NOTIFY_MSG("Creating stacking graph");
 
 	for (auto face = space_faces->begin(); face != space_faces->end(); ++face) {
-		stackable s(&*face, area_c);
+		stackable s(&*face);
 		if (!s.stackable_area().is_empty()) {
 			as_stackables.push_back(s);
 		}
 	}
 	for (auto b = blocks.begin(); b != blocks.end(); ++b) {
-		stackable s(*b, area_c);
+		stackable s(*b);
 		if (!s.stackable_area().is_empty()) {
 			as_stackables.push_back(s);
 		}

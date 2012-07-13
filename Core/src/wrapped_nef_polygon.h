@@ -46,8 +46,6 @@ public:
 		}));
 	}
 
-	wrapped_nef_polygon(const wrapped_nef_polygon & src, equality_context * recontextualization_c);
-
 	wrapped_nef_polygon & operator = (const wrapped_nef_polygon & src) { 
 		if (&src != this) {
 			wrapped = std::unique_ptr<nef_polygon_2>(new nef_polygon_2(*src.wrapped));

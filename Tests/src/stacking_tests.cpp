@@ -50,11 +50,11 @@ TEST(Stacking, DoConnect) {
 	block bottom_block(lower_down, upper_up, dummy_element);
 	block top_block(upper_down, dummy_element);
 
-	stackable bottom_lower_face_s(&bottom_lower_face, &c);
-	stackable bottom_upper_face_s(&bottom_upper_face, &c);
-	stackable top_lower_face_s(&top_lower_face, &c);
-	stackable bottom_block_s(&bottom_block, &c);
-	stackable top_block_s(&top_block, &c);
+	stackable bottom_lower_face_s(&bottom_lower_face);
+	stackable bottom_upper_face_s(&bottom_upper_face);
+	stackable top_lower_face_s(&top_lower_face);
+	stackable bottom_block_s(&bottom_block);
+	stackable top_block_s(&top_block);
 
 	boost::optional<stackable_connection> cnct;
 
@@ -153,7 +153,7 @@ TEST(Stacking, FloorAndRoomStackingGraph) {
 	auto space_faces = get_space_faces_by_orientation(spaces, &c);
 	for (auto o = space_faces.begin(); o != space_faces.end(); ++o) {
 		if (o->first->direction() == direction_3(0, 0, 1)) {
-			auto g = create_stacking_graph(&o->second, oriented_blocks[o->first], g_opts.equality_tolerance, &c);
+			auto g = create_stacking_graph(&o->second, oriented_blocks[o->first], g_opts.equality_tolerance);
 			auto vertices = boost::vertices(g);
 			EXPECT_EQ(3, std::distance(vertices.first, vertices.second));
 			return;

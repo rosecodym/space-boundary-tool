@@ -30,7 +30,6 @@ public:
 	explicit area(const std::vector<std::vector<point_2>> & loops);
 	explicit area(const std::vector<polygon_2> & loops);
 	explicit area(wrapped_nef_polygon && nef) : nef_rep(std::move(nef)), use_nef(true) { }
-	area(const area & orig, equality_context * recontextualization_c);
 	
 	area(const area & src) { *this = src; }
 	area(area && src) { *this = std::move(src); }
