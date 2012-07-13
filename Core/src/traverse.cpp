@@ -14,8 +14,13 @@ namespace impl {
 void traversal_visitor::operator () (space_face * f) const {
 	stacking_sequence other = seq->split_off(next_vertex);
 	f->remove_area(other.sequence_area());
-	results->push_back(other.finish(false));
-	PRINT_STACKS("Terminating stack - found opposite space face.\n");
+	if (!other.sequence_area().is_empty()) {
+		results->push_back(other.finish(false));
+		PRINT_STACKS("Terminating stack - found opposite space face.\n");
+	}
+	else {
+		PRINT_STACKS("Dropping stack - empty area after final space face.\n");
+	}
 }
 
 void traversal_visitor::operator () (const block * b) const {
