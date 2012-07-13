@@ -50,9 +50,7 @@ TEST(Area, IntersectionInvariability) {
 		area::do_intersect(larger, smaller));
 }
 
-TEST(Area, NefRecontextualization) {
-	equality_context c(g_opts.equality_tolerance);
-	
+TEST(Area, TwoFaces) {
 	std::vector<polygon_2> faces;
 	point_2 face_1[] = {
 		point_2(-3.8, -0.2),
@@ -71,7 +69,6 @@ TEST(Area, NefRecontextualization) {
 	faces.push_back(polygon_2(face_2, face_2 + 4));
 
 	area dbl(faces);
-	area dbl_rectxt(dbl, &c);
 
 	SUCCEED();
 }
