@@ -22,7 +22,6 @@ area::area(const std::vector<std::vector<point_2>> & loops) : use_nef(loops.size
 area::area(const std::vector<polygon_2> & loops) : use_nef(loops.size() > 1) {
 	if (use_nef) {
 		nef_rep = wrapped_nef_polygon(loops);
-
 	}
 	else {
 		simple_rep = loops.front();
@@ -33,14 +32,14 @@ area::area(const std::vector<polygon_2> & loops) : use_nef(loops.size() > 1) {
 
 area::area(const area & src, equality_context * recontextualization_c) : use_nef(src.use_nef) {
 	if (use_nef) {
-		nef_rep = wrapped_nef_polygon(src.nef_rep, recontextualization_c);		
+		nef_rep = wrapped_nef_polygon(src.nef_rep, recontextualization_c);	
 		if (nef_rep.is_empty()) { // snapping eliminated the area
 			use_nef = false;
 		}
 	}
 	else {
 		simple_rep = recontextualization_c->snap(src.simple_rep);
-		if (!geometry_common::cleanup_loop(&simple_rep, recontextualization_c->area_epsilon())) {
+		if (!geometry_common::cleanup_loop(&simple_rep, recontextualization_c->area_epsilon())) { // snapping eliminated the area
 			simple_rep.clear();
 		}
 	}

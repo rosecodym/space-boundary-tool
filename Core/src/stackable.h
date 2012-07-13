@@ -19,8 +19,8 @@ private:
 	area local_area;
 public:
 	stackable() { }
-	explicit stackable(space_face * f, equality_context * area_c) : m_data(f), local_area(f->face_area(), area_c) { }
-	explicit stackable(const block * b, equality_context * area_c) : m_data(b), local_area(b->base_area(), area_c) { }
+	explicit stackable(space_face * f, equality_context * /*area_c*/) : m_data(f), local_area(f->face_area()/*, area_c*/) { }
+	explicit stackable(const block * b, equality_context * /*area_c*/) : m_data(b), local_area(b->base_area()/*, area_c*/) { }
 	area stackable_area() const { return local_area; }
 	double thickness() const;
 	boost::optional<space_face *> as_space_face() const;
