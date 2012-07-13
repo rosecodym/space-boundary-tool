@@ -3,6 +3,10 @@
 #include <gtest/gtest.h>
 
 #include "area.h"
+#include "equality_context.h"
+#include "sbt-core.h"
+
+extern sb_calculation_options g_opts;
 
 namespace geometry_2d {
 
@@ -44,6 +48,32 @@ TEST(Area, IntersectionInvariability) {
 	EXPECT_EQ(
 		area::do_intersect(larger, smaller),
 		area::do_intersect(larger, smaller));
+}
+
+TEST(Area, NefRecontextualization) {
+	equality_context c(g_opts.equality_tolerance);
+	
+	std::vector<polygon_2> faces;
+	point_2 face_1[] = {
+		point_2(-3.8, -0.2),
+		point_2(0, -0.2),
+		point_2(0, 0),
+		point_2(-3.8, 0)
+	};
+	faces.push_back(polygon_2(face_1, face_1 + 4));
+
+	point_2 face_2[] = {
+		point_2(-3.8, 10),
+		point_2(0, 10),
+		point_2(0, 10.2),
+		point_2(-3.8, 10.2)
+	};
+	faces.push_back(polygon_2(face_2, face_2 + 4));
+
+	area dbl(faces);
+	area dbl_rectxt(dbl, &c);
+
+	SUCCEED();
 }
 
 } // namespace
