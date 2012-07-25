@@ -92,6 +92,7 @@ sb_calculation_options create_default_options(void) {
 	sb_calculation_options opts;
 	opts.flags = SBT_NONE;
 	opts.equality_tolerance = 0.01;
+	opts.max_pair_distance = 3.0;
 	opts.space_verification_timeout = 0;
 	opts.space_filter = NULL;
 	opts.space_filter_count = 0;

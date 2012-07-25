@@ -75,6 +75,9 @@
     <ClInclude Include="src\one_dimensional_equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>
+    <ClInclude Include="src\get_length_units_per_meter.h">
+      <Filter>operations</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\precompiled.cpp">
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="src\one_dimensional_equality_context.cpp">
       <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_length_units_per_meter.cpp">
+      <Filter>operations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

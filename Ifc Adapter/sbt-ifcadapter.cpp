@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "edm_wrapper.h"
+#include "get_length_units_per_meter.h"
 #include "model_operations.h"
 #include "reassign_bounded_spaces.h"
 #include "unit_scaler.h"
@@ -193,9 +194,11 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count));
+		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
 			opts = options;
+			opts.max_pair_distance = length_units_per_meter * 3.0;
 			sbt_return_t generate_res = calculate_space_boundaries(element_count, elements, loaded_space_count, loaded_spaces, &sb_count, &sbs, opts);
 			if (generate_res == SBT_OK) {
 				generate_sb_summary(counts, sbs, sb_count);
@@ -254,9 +257,11 @@ ifcadapter_return_t load_and_run_from(
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count));
+		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
 			opts = options;
+			opts.max_pair_distance = length_units_per_meter * 3.0;
 			sbt_return_t generate_res = calculate_space_boundaries(*element_count, *elements, *space_count, *spaces, total_sb_count, sbs, opts);
 			if (generate_res == SBT_OK && output_filename != nullptr) {
 				// add_to_model figures out the right spaces by re-extracting them based on guids

@@ -18,6 +18,7 @@
     <ClInclude Include="src\edm_wrapper.h" />
     <ClInclude Include="src\exact_surrogates.h" />
     <ClInclude Include="src\geometry_common.h" />
+    <ClInclude Include="src\get_length_units_per_meter.h" />
     <ClInclude Include="src\ifc-to-solid.h" />
     <ClInclude Include="src\ifc-to-cgal.h" />
     <ClInclude Include="src\ifc-to-face.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="src\exact_surrogates.cpp" />
     <ClCompile Include="src\extract_from_model.cpp" />
     <ClCompile Include="src\geometry_common.cpp" />
+    <ClCompile Include="src\get_length_units_per_meter.cpp" />
     <ClCompile Include="src\ifc-to-solid.cpp" />
     <ClCompile Include="src\ifc-to-cgal.cpp" />
     <ClCompile Include="src\ifc-to-face.cpp" />
