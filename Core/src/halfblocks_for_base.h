@@ -49,6 +49,10 @@ void halfblocks_for_base(const relations_grid & surface_relationships, size_t ba
 			if (!geometry_common::cleanup_loop(&this_poly, g_opts.equality_tolerance)) {
 				continue;
 			}
+			// we have to do two passes because of a bug in geometry_common::cleanup_loop. see issue #4
+			if (!geometry_common::cleanup_loop(&this_poly, g_opts.equality_tolerance)) {
+				continue;
+			}
 			PRINT_BLOCKS("Face cleaned to:\n");
 			PRINT_POLYGON(this_poly);
 			area this_area(this_poly);
