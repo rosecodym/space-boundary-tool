@@ -37,17 +37,20 @@ void halfblocks_for_base(const relations_grid & surface_relationships, size_t ba
 
 	for (auto p = diag.faces_begin(); p != diag.faces_end(); ++p) {
 		if (!p->is_unbounded()) {
-			PRINT_BLOCKS("Processing diagram face.\n");
+			PRINT_BLOCKS("Processing diagram face:\n");
 			polygon_2 this_poly;
 			auto ccb = p->outer_ccb();
 			auto end = ccb;
 			CGAL_For_all(ccb, end) {
 				this_poly.push_back(flattening_context->snap(ccb->target()->point()));
 			}
+			PRINT_POLYGON(this_poly);
 			// for some reason the envelope calculation creates degenerate faces sometimes
 			if (!geometry_common::cleanup_loop(&this_poly, g_opts.equality_tolerance)) {
 				continue;
 			}
+			PRINT_BLOCKS("Face cleaned to:\n");
+			PRINT_POLYGON(this_poly);
 			area this_area(this_poly);
 			if (FLAGGED(SBT_VERBOSE_BLOCKS)) {
 				NOTIFY_MSG("Intersecting base area:\n");
