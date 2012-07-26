@@ -156,6 +156,8 @@ TEST(Stacking, FloorAndRoomStackingGraph) {
 			auto g = create_stacking_graph(&o->second, oriented_blocks[o->first], g_opts.equality_tolerance);
 			auto vertices = boost::vertices(g);
 			EXPECT_EQ(3, std::distance(vertices.first, vertices.second));
+			auto edges = boost::edges(g);
+			EXPECT_EQ(1, std::distance(edges.first, edges.second));
 			return;
 		}
 	}
