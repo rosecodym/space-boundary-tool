@@ -138,11 +138,11 @@ TEST(Stacking, FloorAndRoomStackingGraph) {
 		simple_point(0, 0, 0))));
 
 	element_info * e_info = create_element("floor", SLAB, 1, create_ext(0, 0, 1, 7.8740157, create_face(5,
-		simple_point(0, 0, 0),
-		simple_point(0, -409.44882, 0),
-		simple_point(803.14961, -409.44882, 0),
-		simple_point(803.14961, 0, 0),
-		simple_point(0, 0, 0))));
+		simple_point(0, 0, -7.8740157),
+		simple_point(0, 409.44882, -7.8740157),
+		simple_point(803.14961, 409.44882, -7.8740157),
+		simple_point(803.14961, 0, -7.8740157),
+		simple_point(0, 0, -7.8740157))));
 
 	std::vector<space> spaces(1, space(s_info, &c));
 	std::vector<element> elements(1, element(e_info, &c));
