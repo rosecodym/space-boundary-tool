@@ -73,7 +73,7 @@ public:
 
 	polygon_2 outer() const;
 	polygon_2 to_single_polygon() const;
-	bool is_valid() const;
+	bool is_valid(double eps) const;
 	bool is_axis_aligned() const { return m_is_axis_aligned; }
 	bool any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
 

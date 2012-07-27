@@ -70,7 +70,7 @@ TEST(Area, SubtractionIsValidVertexOnDiagonal) {
 		c.snap(&op2[i]);
 	}
 	area res = area(polygon_2(op1, op1 + 4)) - area(polygon_2(op2, op2 + 4));
-	EXPECT_TRUE(res.is_valid());
+	EXPECT_TRUE(res.is_valid(g_opts.equality_tolerance));
 }
 
 } // namespace

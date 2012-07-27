@@ -29,15 +29,12 @@ struct space_face {
 	bool sense;
 	std::weak_ptr<space> sp;
 
-	space_face(std::shared_ptr<space> s, const oriented_area & rep) : a(rep.area_2d()), z(rep.height()), dir(&rep.orientation()), sense(rep.sense()), sp(s) { 
-		SBT_EXPENSIVE_ASSERT(a.is_valid(), "[Aborting - tried to create a space face with an invalid area.]\n");
-	}
+	space_face(std::shared_ptr<space> s, const oriented_area & rep) : a(rep.area_2d()), z(rep.height()), dir(&rep.orientation()), sense(rep.sense()), sp(s) { }
 
 	space_face(std::shared_ptr<space> s) : sp(s) { }
 
 	bool trim(const area & cut) {
 		a -= cut;
-		SBT_EXPENSIVE_ASSERT(a.is_valid(), "[Aborting - a space face trim resulted in an invalid area.]\n");
 		return !a.is_empty();
 	}
 };
@@ -58,7 +55,6 @@ struct region {
 
 	region(std::shared_ptr<surface> & s) : a(s->geometry().area_2d()), z(s->geometry().height()), backing_surface(s) { 
 		SBT_ASSERT(!a.is_empty(), "[Aborting - created a stacking region with no area.]\n");
-		SBT_EXPENSIVE_ASSERT(a.is_valid(), "[Aborting - created an invalid stacking region.]\n");
 	}
 
 	static void set_overlaps(std::shared_ptr<region> & a, std::shared_ptr<region> & b) {
@@ -379,7 +375,6 @@ void descend(stack * curr_stack, const std::multimap<NT, std::shared_ptr<region>
 		}
 		for (auto p = regions_this_z.first; p != regions_this_z.second; ++p ) {
 			std::shared_ptr<region> r = p->second;
-			SBT_EXPENSIVE_ASSERT(r->a.is_valid(), "[Aborting - tried to intersect with an invalid region.]\n");
 			area intr = curr_stack->a() * r->a;
 			if (FLAGGED(SBT_VERBOSE_STACKS)) {
 				NOTIFY_MSG( "[intersecting current area]\n");

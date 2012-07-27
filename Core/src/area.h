@@ -2,6 +2,7 @@
 
 #include "precompiled.h"
 
+#include "geometry_common.h"
 #include "polygon_with_holes_2.h"
 #include "printing-macros.h"
 #include "wrapped_nef_polygon.h"
@@ -41,6 +42,8 @@ public:
 	bool								any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
 	const area &						print() const { if (use_nef) { nef_rep.print_with(g_opts.notify_func); } else { PRINT_POLYGON(simple_rep); } return *this; }
 
+	bool is_valid(double eps) const { return use_nef ? nef_rep.is_valid(eps) : geometry_common::is_valid(simple_rep, eps); }
+
 	area & operator -= (const area & other);
 	area & operator ^= (const area & other);
 
@@ -54,7 +57,6 @@ public:
 
 	// DEPRECATED
 	template <typename T> void print_with(T) const { print(); }
-	bool is_valid() const { return true; }
 	void clear();
 	polygon_2 to_single_polygon() const { return to_pwhs().front().outer(); }
 	polygon_2 outer_bound() const { return to_pwhs().front().outer(); }
