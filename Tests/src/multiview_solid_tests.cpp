@@ -117,6 +117,20 @@ TEST(MultiviewSolid, SimpleExtrusionBaseReversed) {
 	});
 }
 
+TEST(MultiviewSolid, ExtrusionWithDuplicateBasePoint) {
+	equality_context c(g_opts.equality_tolerance);
+
+	solid s = create_ext(0, 0, 1, 307.08661, create_face(5,
+		simple_point(0, 0, 0),
+		simple_point(393.70079, 0, 0),
+		simple_point(393.70079, 387.79528, 0),
+		simple_point(0, 387.79528, 0),
+		simple_point(0, 0, 0)));
+
+	multiview_solid ms(s, &c);
+	EXPECT_EQ(6, ms.oriented_faces(&c).size());
+}
+
 TEST(MultiviewSolid, ThreeStairs) {
 	equality_context c(g_opts.equality_tolerance);
 
@@ -133,7 +147,5 @@ TEST(MultiviewSolid, ThreeStairs) {
 	multiview_solid ms(s, &c);
 	EXPECT_EQ(10, ms.oriented_faces(&c).size());
 }
-
-
 
 } // namespace

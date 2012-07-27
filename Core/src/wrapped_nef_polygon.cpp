@@ -348,7 +348,6 @@ void snap_nef_polygon_to(nef_polygon_2 * from, const nef_polygon_2 & to) {
 
 void wrapped_nef_polygon::snap_to(const wrapped_nef_polygon & other) {
 	snap_nef_polygon_to(wrapped.get(), *other.wrapped);
-	SBT_EXPENSIVE_ASSERT(is_valid(), "[Aborting - a nef polygon snap made it invalid.]\n");
 }
 
 void wrapped_nef_polygon::print_with(void (*msg_func)(char *)) const {
@@ -395,13 +394,6 @@ wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygo
 		*wrapped -= other.wrapped->interior();
 	}
 	*wrapped = wrapped->interior();
-	IF_FLAGGED(SBT_EXPENSIVE_CHECKS) {
-		if (!is_valid()) {
-			ERROR_MSG("[Aborting - wrapped_nef_polygon::operator -= produced an invalid polygon. Here it is:]\n");
-			print_with(g_opts.error_func);
-			throw core_exception(SBT_ASSERTION_FAILED);
-		}
-	}
 	return *this;
 }
 
@@ -418,7 +410,6 @@ wrapped_nef_polygon & wrapped_nef_polygon::operator ^= (const wrapped_nef_polygo
 		*wrapped -= other.wrapped->interior();
 	}
 	*wrapped = wrapped->interior();
-	SBT_EXPENSIVE_ASSERT(is_valid(), "[Aborting - wrapped_nef_polygon::operator ^= produced an invalid polygon.]\n");
 	return *this;
 }
 
@@ -531,7 +522,7 @@ polygon_2 wrapped_nef_polygon::to_single_polygon() const {
 	return polys.front();
 }
 
-bool wrapped_nef_polygon::is_valid() const {
+bool wrapped_nef_polygon::is_valid(double eps) const {
 	if (wrapped->is_empty()) {
 		return true;
 	}
@@ -543,7 +534,7 @@ bool wrapped_nef_polygon::is_valid() const {
 				all_points.push_back(switch_point_kernel<espoint_2, epoint_2>(v->point()));
 			}
 		}
-		bool res = !equality_context::is_zero_squared(util::cgal::smallest_squared_distance(all_points.begin(), all_points.end()), g_opts.equality_tolerance);
+		bool res = !equality_context::is_zero_squared(util::cgal::smallest_squared_distance(all_points.begin(), all_points.end()), eps);
 		if (!res) {
 			ERROR_MSG("[Invalid polygon - some points were too close.]\n");
 		}
