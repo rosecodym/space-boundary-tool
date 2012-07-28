@@ -25,9 +25,6 @@
     <Filter Include="geometry\solid_geometry">
       <UniqueIdentifier>{d4b9ce15-03dc-4543-ac7f-90bf6051ab49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="deprecated operations">
-      <UniqueIdentifier>{c1ba9a08-1d3e-49ad-b3a2-9d7d8785ba90}</UniqueIdentifier>
-    </Filter>
     <Filter Include="operations\element loading">
       <UniqueIdentifier>{1a26a81e-3dcc-413b-b0d8-0c21c06ec17a}</UniqueIdentifier>
     </Filter>
@@ -141,9 +138,6 @@
     <ClInclude Include="src\link_halfblocks.h">
       <Filter>operations\blocking</Filter>
     </ClInclude>
-    <ClInclude Include="src\operations.h">
-      <Filter>deprecated operations</Filter>
-    </ClInclude>
     <ClInclude Include="src\load_elements.h">
       <Filter>operations\element loading</Filter>
     </ClInclude>
@@ -182,9 +176,6 @@
     </ClInclude>
     <ClInclude Include="src\build_stacks.h">
       <Filter>operations\stacking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\surface_.h">
-      <Filter>types</Filter>
     </ClInclude>
     <ClInclude Include="src\surface.h">
       <Filter>types</Filter>
@@ -251,9 +242,6 @@
     <ClCompile Include="src\surface_pair.cpp">
       <Filter>operations\blocking</Filter>
     </ClCompile>
-    <ClCompile Include="src\assign_openings.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
     <ClCompile Include="src\load_elements.cpp">
       <Filter>operations\element loading</Filter>
     </ClCompile>
@@ -271,9 +259,6 @@
     </ClCompile>
     <ClCompile Include="src\stacking_graph.cpp">
       <Filter>operations\stacking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\surface_.cpp">
-      <Filter>types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

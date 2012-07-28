@@ -127,7 +127,6 @@
     <ClInclude Include="src\scan_for_degenerate_halfblocks.h" />
     <ClInclude Include="src\simple_face.h" />
     <ClInclude Include="src\one_dimensional_equality_context.h" />
-    <ClInclude Include="src\operations.h" />
     <ClInclude Include="src\point_collection.h" />
     <ClInclude Include="src\precompiled.h" />
     <ClInclude Include="src\printing-util.h" />
@@ -141,7 +140,6 @@
     <ClInclude Include="src\stacking_graph.h" />
     <ClInclude Include="src\stacking_sequence.h" />
     <ClInclude Include="src\surface.h" />
-    <ClInclude Include="src\surface_.h" />
     <ClInclude Include="src\misc-util.h" />
     <ClInclude Include="src\surface_pair.h" />
     <ClInclude Include="src\traverse.h" />
@@ -149,10 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\area.cpp" />
-    <ClCompile Include="src\assign_openings.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="src\build_blocks.cpp" />
     <ClCompile Include="src\c-test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -188,10 +182,6 @@
     <ClCompile Include="src\stackable.cpp" />
     <ClCompile Include="src\stacking_graph.cpp" />
     <ClCompile Include="src\stacking_sequence.cpp" />
-    <ClCompile Include="src\surface_.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="src\surface_pair.cpp" />
     <ClCompile Include="src\traverse.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />

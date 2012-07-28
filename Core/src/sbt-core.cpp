@@ -9,7 +9,6 @@
 #include "guid_filter.h"
 #include "load_elements.h"
 #include "load_spaces.h"
-#include "operations.h"
 #include "sbt-core-helpers.h"
 #include "space.h"
 #include "surface.h"

@@ -3,7 +3,6 @@
 #include "equality_context.h"
 #include "geometry_common.h"
 #include "misc-util.h"
-#include "operations.h"
 #include "polygon_with_holes_2.h"
 #include "printing-macros.h"
 #include "printing-util.h"
