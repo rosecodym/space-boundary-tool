@@ -57,16 +57,4 @@ public:
 	const orientation * block_orientation() const { return o; }
 	const layer_information & material_layer() const { return layer; }
 	bool is_fenestration() const { return layer.layer_element().is_fenestration(); }
-
-	// DEPRECATED
-	template <typename OutputIterator>
-	void as_surfaces(OutputIterator oi) const {
-		std::shared_ptr<surface> surface_a(new surface(oriented_area(o, layer.height_a(), a, !base_sense), layer.layer_element()));
-		if (layer.has_both_sides()) {
-			std::shared_ptr<surface> surface_b(new surface(oriented_area(o, layer.height_b(), a, base_sense), layer.layer_element()));
-			surface::set_other_sides(surface_a, surface_b);
-			*oi++ = surface_b;
-		}
-		*oi++ = surface_a;
-	}
 };

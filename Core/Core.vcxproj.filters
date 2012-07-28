@@ -37,6 +37,9 @@
     <Filter Include="operations\stacking">
       <UniqueIdentifier>{01642fd4-70ca-4ed0-b867-6aeea62788b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="operations\opening assignment">
+      <UniqueIdentifier>{70403e83-00e7-4636-8256-97ab8842638a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -185,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="src\surface.h">
       <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\assign_openings.h">
+      <Filter>operations\opening assignment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

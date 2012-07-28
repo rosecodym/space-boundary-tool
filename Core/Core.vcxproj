@@ -97,6 +97,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\area.h" />
+    <ClInclude Include="src\assign_openings.h" />
     <ClInclude Include="src\block.h" />
     <ClInclude Include="src\blockstack.h" />
     <ClInclude Include="src\build_blocks.h" />
@@ -148,7 +149,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\area.cpp" />
-    <ClCompile Include="src\assign_openings.cpp" />
+    <ClCompile Include="src\assign_openings.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\build_blocks.cpp" />
     <ClCompile Include="src\c-test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

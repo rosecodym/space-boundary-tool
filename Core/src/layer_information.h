@@ -30,5 +30,6 @@ public:
 	bool has_both_sides() const { return m_height_b.is_initialized(); }
 	NT height_a() const { return m_height_a; }
 	NT height_b() const { return *m_height_b; }
+	boost::optional<NT> thickness() const { return m_height_b ? CGAL::abs(m_height_a - *m_height_b) : boost::optional<NT>(); }
 	const element & layer_element() const { return *e; }
 };

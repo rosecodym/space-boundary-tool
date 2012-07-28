@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "assign_openings.h"
 #include "build_blocks.h"
 #include "build_stacks.h"
 #include "core_exception.h"
@@ -40,15 +41,15 @@ void set_geometry(space_boundary * sb, const PointRange & geometry) {
 	});
 }
 	
-sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surface>> & surfaces, space_boundary *** sbs) {
+sbt_return_t convert_to_space_boundaries(const std::vector<std::unique_ptr<surface>> & surfaces, space_boundary *** sbs) {
 	*sbs = (space_boundary **)malloc(sizeof(space_boundary *) * surfaces.size());
 	for (size_t i = 0; i < surfaces.size(); ++i) {
-		std::shared_ptr<surface> surf = surfaces[i];
+		const std::unique_ptr<surface> & surf = surfaces[i];
 		space_boundary * newsb = (*sbs)[i] = (space_boundary *)malloc(sizeof(space_boundary));
 		newsb->geometry.vertex_count = 0;
 
 		strncpy(newsb->global_id, surf->guid().c_str(), SB_ID_MAX_LEN);
-		strncpy(newsb->element_id, surf->is_virtual() ? "" : surf->element_id().c_str(), ELEMENT_ID_MAX_LEN);
+		strncpy(newsb->element_id, surf->is_virtual() ? "" : surf->bounded_element()->source_id().c_str(), ELEMENT_ID_MAX_LEN);
 
 		auto cleaned_geometry = surf->geometry().to_3d().front().outer();
 		bool could_clean = geometry_common::cleanup_loop(&cleaned_geometry, g_opts.equality_tolerance);
@@ -75,13 +76,13 @@ sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surfa
 
 		equality_context layers_context(g_opts.equality_tolerance);
 	
-		newsb->material_layer_count = surf->materials().size();
+		newsb->material_layer_count = surf->material_layers().size();
 		if (newsb->material_layer_count > 0) {
 			newsb->layers = (material_id_t *)malloc(sizeof(material_id_t) * newsb->material_layer_count);
 			newsb->thicknesses = (double *)malloc(sizeof(double) * newsb->material_layer_count);
 			for (size_t j = 0; j < newsb->material_layer_count; ++j) {
-				newsb->layers[j] = surf->materials()[j].first;
-				newsb->thicknesses[j] = CGAL::to_double(layers_context.snap_height(surf->materials()[j].second));
+				newsb->layers[j] = surf->material_layers()[j].layer_element().material();
+				newsb->thicknesses[j] = CGAL::to_double(layers_context.snap_height(*surf->material_layers()[j].thickness()));
 			}
 		}
 		else {
@@ -89,31 +90,32 @@ sbt_return_t convert_to_space_boundaries(const std::vector<std::shared_ptr<surfa
 			newsb->thicknesses = nullptr;
 		}
 
-		if (FLAGGED(SBT_EXPENSIVE_CHECKS) && surf->get_space() == nullptr) {
-			ERROR_MSG("Aborting - a space boundary had no space.\n");
-			abort();
-		}
-		newsb->bounded_space = surf->get_space() != nullptr ? surf->get_space()->original_info() : nullptr;
-		newsb->lies_on_outside = surf->lies_on_outside();
-		newsb->level = surf->get_level();
+		newsb->bounded_space = surf->bounded_space().original_info();
+		newsb->lies_on_outside = false;
+		newsb->level =
+			surf->is_virtual() ?					2 :
+			surf->is_fenestration() ?				2 :
+			surf->is_external() ?					2 :
+			surf->shares_space_with_other_side() ?	4 :
+			surf->has_other_side() ?				2 : 5;
 		newsb->is_virtual = surf->is_virtual();
 
 		NOTIFY_MSG(".");
 	}
 
 	for (size_t i = 0; i < surfaces.size(); ++i) {
-		if (!surfaces[i]->opposite().expired() && (*sbs)[i]->opposite == nullptr) {
+		if (surfaces[i]->has_other_side() && (*sbs)[i]->opposite == nullptr) {
 			for (size_t j = i + 1; j < surfaces.size(); ++j) {
-				if (surfaces[j].get() == surfaces[i]->opposite().lock().get()) {
+				if (surfaces[j].get() == surfaces[i]->other_side()) {
 					(*sbs)[i]->opposite = (*sbs)[j];
 					(*sbs)[j]->opposite = (*sbs)[i];
 					break;
 				}
 			}
 		}
-		if (!surfaces[i]->containing_boundary().expired() && (*sbs)[i]->parent == nullptr) {
+		if (surfaces[i]->parent() != nullptr && (*sbs)[i]->parent == nullptr) {
 			for (size_t j = 0; j < surfaces.size(); ++j) {
-				if (surfaces[i]->containing_boundary().lock().get() == surfaces[j].get()) {
+				if (surfaces[i]->parent() == surfaces[j].get()) {
 					(*sbs)[i]->parent = (*sbs)[j];
 				}
 			}
@@ -162,7 +164,6 @@ sbt_return_t calculate_space_boundaries(
 		}
 
 		std::shared_ptr<equality_context> whole_building_context(new equality_context(g_opts.equality_tolerance));
-		std::vector<std::shared_ptr<surface>> surfaces;
 
 		auto corrector = [&whole_building_context](const point_3 & p) -> point_3 { 
 			return whole_building_context->snap(p);
@@ -178,16 +179,11 @@ sbt_return_t calculate_space_boundaries(
 		auto blocks = blocking::build_blocks(elements_derefed, whole_building_context.get());
 
 		auto stacks = stacking::build_stacks(blocks, spaces, g_opts.max_pair_distance, whole_building_context.get());
+
+		std::vector<std::unique_ptr<surface>> surfaces;
 		boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
 
-		if (std::find_if(surfaces.begin(), surfaces.end(), [](std::shared_ptr<surface> s) { return s->is_fenestration(); }) != surfaces.end()) {
-			NOTIFY_MSG("Assigning openings");
-			surfaces = operations::assign_openings(surfaces);
-			NOTIFY_MSG("done.\n");
-		}
-		else {
-			NOTIFY_MSG("No openings to assign.\n");
-		}
+		opening_assignment::assign_openings(&surfaces, g_opts.equality_tolerance);
 
 		NOTIFY_MSG("Converting internal structures to interface structures");
 		retval = convert_to_space_boundaries(surfaces, space_boundaries);
