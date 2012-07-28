@@ -55,4 +55,38 @@ TEST(Blockstack, SimpleSecondLevelSurfaces) {
 	}));
 }
 
+TEST(Blockstack, FifthLevelSurface) {
+		equality_context c(g_opts.equality_tolerance);
+
+	face f = create_face(4,
+		simple_point(10, 0, 0),
+		simple_point(10, 0, 9),
+		simple_point(10, 15, 9),
+		simple_point(10, 15, 0));
+
+	element_info * e = create_element("dummy element", WALL, 1, create_ext(1, 0, 0, 3.5, f)); // ignore the geometry, it's not relevant
+	space_info * s1 = create_space("dummy space", create_ext(-1, 0, 0, 20, f));
+
+	element ele(e, &c);
+	space sp1(s1, &c);
+
+	oriented_area geom(simple_face(f, &c), &c);
+
+	blockstack st(
+		area(geom.area_2d()),
+		std::vector<layer_information>(1, layer_information(10, ele)), // materials 
+		false, // base sense
+		std::get<0>(c.request_orientation(direction_3(-1, 0, 0))), // orientation
+		false, // external
+		&sp1, // near space
+		10); // near height
+
+	std::vector<std::unique_ptr<surface>> surfaces;
+	st.to_surfaces(std::back_inserter(surfaces));
+
+	ASSERT_EQ(1, surfaces.size());
+	EXPECT_FALSE(surfaces.front()->is_virtual());
+	EXPECT_EQ(0, surfaces.front()->material_layers().size());
+}
+
 } // namespace

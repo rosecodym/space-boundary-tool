@@ -49,7 +49,7 @@ public:
 			}
 			else if (layers.empty()) { // virtual
 				std::unique_ptr<surface> surf1(new surface(piece, *spaces.first));
-				std::unique_ptr<surface> surf2(new surface(piece.reverse(), **spaces.second));;
+				std::unique_ptr<surface> surf2(new surface(piece.reverse(), **spaces.second));
 				surface::set_other_sides(surf1, surf2);
 				*oi++ = std::move(surf1);
 				*oi++ = std::move(surf2);
