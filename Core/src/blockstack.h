@@ -44,8 +44,16 @@ public:
 		combined_geom.to_pieces(std::back_inserter(pieces));
 		boost::for_each(pieces, [this, &oi](const oriented_area & piece) {
 			if (!spaces.second) {
-				std::unique_ptr<surface> surf(new surface(piece, layers.front().layer_element(), *spaces.first, layers, external));
-				*oi++ = std::move(surf);
+				if (layers.back().has_both_sides()) {
+					// external
+					std::unique_ptr<surface> surf(new surface(piece, layers.front().layer_element(), *spaces.first, layers, external));
+					*oi++ = std::move(surf);
+				}
+				else {
+					// fifth-level
+					std::unique_ptr<surface> surf(new surface(piece, layers.front().layer_element(), *spaces.first, std::vector<layer_information>(), external));
+					*oi++ = std::move(surf);
+				}
 			}
 			else if (layers.empty()) { // virtual
 				std::unique_ptr<surface> surf1(new surface(piece, *spaces.first));
