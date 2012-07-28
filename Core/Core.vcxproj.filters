@@ -42,9 +42,6 @@
     <ClInclude Include="src\precompiled.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="src\surface.h">
-      <Filter>types</Filter>
-    </ClInclude>
     <ClInclude Include="src\CreateGuid_64.h">
       <Filter>main</Filter>
     </ClInclude>
@@ -183,6 +180,12 @@
     <ClInclude Include="src\build_stacks.h">
       <Filter>operations\stacking</Filter>
     </ClInclude>
+    <ClInclude Include="src\surface_.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\surface.h">
+      <Filter>types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -202,9 +205,6 @@
     </ClCompile>
     <ClCompile Include="src\sbt-core-helpers.cpp">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\surface.cpp">
-      <Filter>types</Filter>
     </ClCompile>
     <ClCompile Include="src\printing-util.cpp">
       <Filter>cgal</Filter>
@@ -265,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="src\stacking_graph.cpp">
       <Filter>operations\stacking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\surface_.cpp">
+      <Filter>types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
