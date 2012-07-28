@@ -28,10 +28,12 @@ private:
 	}
 
 public:
-	surface(const oriented_area & geometry, const element & e, const space & bounded_space, bool external)
-		: m_guid(new_guid_as_string()), m_geometry(geometry), m_element(&e), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(external) { }
-	surface(oriented_area && geometry, const element & e, const space & bounded_space, bool external)
-		: m_guid(new_guid_as_string()), m_geometry(std::move(geometry)), m_element(&e), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(external) { }
+	template <typename LayerRange>
+	surface(const oriented_area & geometry, const element & e, const space & bounded_space, const LayerRange & layers, bool external)
+		: m_guid(new_guid_as_string()), m_geometry(geometry), m_element(&e), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(external), m_layers(layers.begin(), layers.end()) { }
+	template <typename LayerRange>
+	surface(oriented_area && geometry, const element & e, const space & bounded_space, const LayerRange & layers, bool external)
+		: m_guid(new_guid_as_string()), m_geometry(std::move(geometry)), m_element(&e), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(external), m_layers(layers.begin(), layers.end()) { }
 	// for virtuals
 	surface(const oriented_area & geometry, const space & bounded_space)
 		: m_guid(new_guid_as_string()), m_geometry(geometry), m_element(nullptr), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(false) { }

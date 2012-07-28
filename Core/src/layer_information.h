@@ -16,8 +16,17 @@ public:
 	layer_information(const NT & height_a, const NT & height_b, const element & e) 
 		: m_height_a(height_a), m_height_b(height_b), e(&e) { }
 
+	layer_information(const layer_information & src) { *this = src; }
 	layer_information(layer_information && src) { *this = std::move(src); }
 
+	layer_information & operator = (const layer_information & src) {
+		if (&src != this) {
+			m_height_a = src.m_height_a;
+			m_height_b = src.m_height_b;
+			e = src.e;
+		}
+		return *this;
+	}
 	layer_information & operator = (layer_information && src) {
 		if (&src != this) {
 			m_height_a = std::move(src.m_height_a);

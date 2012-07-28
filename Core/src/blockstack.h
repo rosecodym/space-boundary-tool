@@ -44,7 +44,7 @@ public:
 		combined_geom.to_pieces(std::back_inserter(pieces));
 		boost::for_each(pieces, [this, &oi](const oriented_area & piece) {
 			if (!spaces.second) {
-				std::unique_ptr<surface> surf(new surface(piece, layers.front().layer_element(), *spaces.first, external));
+				std::unique_ptr<surface> surf(new surface(piece, layers.front().layer_element(), *spaces.first, layers, external));
 				*oi++ = std::move(surf);
 			}
 			else if (layers.empty()) { // virtual
@@ -55,8 +55,18 @@ public:
 				*oi++ = std::move(surf2);
 			}
 			else {
-				std::unique_ptr<surface> surf1(new surface(piece, layers.front().layer_element(), *spaces.first, false));
-				std::unique_ptr<surface> surf2(new surface(oriented_area(o, *heights.second, piece.area_2d(), !base_sense), layers.back().layer_element(), **spaces.second, false));
+				std::unique_ptr<surface> surf1(new surface(
+					piece, 
+					layers.front().layer_element(), 
+					*spaces.first, 
+					layers, 
+					false));
+				std::unique_ptr<surface> surf2(new surface(
+					oriented_area(o, *heights.second, piece.area_2d(), !base_sense), 
+					layers.back().layer_element(), 
+					**spaces.second, 
+					layers | boost::adaptors::reversed, 
+					false));
 				surface::set_other_sides(surf1, surf2);
 				*oi++ = std::move(surf1);
 				*oi++ = std::move(surf2);
