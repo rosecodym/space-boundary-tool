@@ -48,7 +48,7 @@ public:
 	const surface * other_side() const { return m_other_side; }
 	const surface * parent() const { return m_parent; }
 
-	bool is_virtual() const { return m_element != nullptr; }
+	bool is_virtual() const { return m_element == nullptr; }
 	bool is_fenestration() const { return !is_virtual() && m_element->is_fenestration(); }
 	bool is_external() const { return m_external; }
 	bool has_other_side() const { return m_other_side != nullptr; }
