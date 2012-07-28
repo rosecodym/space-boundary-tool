@@ -120,6 +120,9 @@
     <ClCompile Include="..\Core\src\stacking_sequence.cpp">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\blockstack_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">
