@@ -118,7 +118,7 @@
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files %28x86%29\CGAL\include;.;src\;C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\include;C:\Program Files (x86)\boost\boost_1_47;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;4512</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -140,7 +140,7 @@
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files %28x86%29\CGAL\include;src\;C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\include;C:\Program Files (x86)\boost\boost_1_47;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4503</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4503;4512</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

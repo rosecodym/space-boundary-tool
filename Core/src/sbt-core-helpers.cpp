@@ -124,7 +124,7 @@ element_info ** create_element_list(size_t count) {
 	return list;
 }
 
-void free_space_list(space_info ** list, size_t count) {
+void free_space_list(space_info ** /*list*/, size_t /*count*/) {
 	// can't be assed to fix a double-free right now
 	//for (size_t i = 0; i < count; ++i) {
 	//	cleanup_space_info(list[i]);
@@ -133,7 +133,7 @@ void free_space_list(space_info ** list, size_t count) {
 	//free(list);
 }
 
-void free_element_list(element_info ** list, size_t count) {
+void free_element_list(element_info ** /*list*/, size_t /*count*/) {
 	// can't be assed to fix a double-free right now
 	//for (size_t i = 0; i < count; ++i) {
 	//	cleanup_element_info(list[i]);

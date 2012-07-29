@@ -55,12 +55,17 @@ public:
 	bool shares_space_with_other_side() const { return has_other_side() && &m_space == &m_other_side->m_space; }
 
 	bool set_parent_maybe(surface * parent, double height_eps) {
-		return
-			parent->geometry().sense() == this->geometry().sense() &&
+		if (parent->geometry().sense() == this->geometry().sense() &&
 			&parent->geometry().orientation() == &this->geometry().orientation() &&
 			equality_context::are_equal(parent->geometry().height(), this->geometry().height(), height_eps) &&
-			parent->geometry().area_2d() >= this->geometry().area_2d() &&
-			(m_parent = parent);
+			parent->geometry().area_2d() >= this->geometry().area_2d())
+		{
+			m_parent = parent;
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	static void set_other_sides(std::unique_ptr<surface> & a, std::unique_ptr<surface> & b) {

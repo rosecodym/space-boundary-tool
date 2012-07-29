@@ -37,7 +37,6 @@ int main(int argc, char * argv[]) {
 		("output-file,o", bpo::value<std::string>(&output_file_name))
 		("check-wall-slab-intersections", "check for wall/slab intersections")
 		("space-verify-timeout", bpo::value<int>(&opts.space_verification_timeout)->default_value(15), "spend at most this many seconds correcting space geometry (-1 for infinite)")
-		("validate", "perform data integrity checks")
 		("space-filter,s", bpo::value<std::vector<std::string>>(&space_filter), "filter to space guid")
 		("element-filter,e", bpo::value<std::vector<std::string>>(&element_filter), "filter to element guid")
 		("force-brute-force-element-resolution", "force the use of the brute force element intersection checking algorithm")
@@ -89,8 +88,9 @@ int main(int argc, char * argv[]) {
 	opts.warn_func = &warn_print;
 	opts.error_func = & error_print;
 
+	opts.flags |= SBT_EXPENSIVE_CHECKS;
+
 	if (!vm.count("check-wall-slab-intersections"))	{ opts.flags |= SBT_SKIP_WALL_SLAB_CHECK; }
-	if (true || vm.count("validate"))				{ opts.flags |= SBT_EXPENSIVE_CHECKS; }
 	if (vm.count("verbose-blocking"))				{ opts.flags |= SBT_VERBOSE_BLOCKS; }
 	if (vm.count("verbose-stacking"))				{ opts.flags |= SBT_VERBOSE_STACKS; }
 	if (vm.count("verbose-spaces"))					{ opts.flags |= SBT_VERBOSE_SPACES; }

@@ -53,13 +53,12 @@ nef_polygon_2 create_nef_polygon(polygon_2 poly) {
 	if (!geometry_common::cleanup_loop(&poly, g_opts.equality_tolerance)) {
 		ERROR_MSG("[Aborting - couldn't clean up a polygon in order to construct a nef polygon.]\n");
 		util::printing::print_polygon(g_opts.error_func, poly);
-		throw core_exception(SBT_ASSERTION_FAILED);
+		abort();
 	}
 	if (g_opts.flags & SBT_VERBOSE_GEOMETRY) {
 		NOTIFY_MSG( "[cleaned poly follows]\n");
 		util::printing::print_polygon(g_opts.notify_func, poly);
 	}
-	SBT_ASSERT(poly.is_simple(), "[Aborting - tried to create a nef polygon out of non-simple polygon.]\n");
 	std::vector<espoint_2> extended;
 	std::transform(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(extended), [](const point_2 & p) {
 		return switch_point_kernel<espoint_2, point_2>(p);
@@ -363,7 +362,6 @@ wrapped_nef_polygon::wrapped_nef_polygon(const nef_polygon_2 & nef, bool aligned
 	m_is_axis_aligned(aligned) 
 { 
 	remove_duplicate_points(wrapped.get());
-	SBT_EXPENSIVE_ASSERT(wrapped->is_empty() == wrapped->interior().is_empty(), "[Aborting - created a non-regularized nef polygon (explicit alignment constructor).]\n");
 }
 
 wrapped_nef_polygon::wrapped_nef_polygon(const polygon_2 & poly)
@@ -376,8 +374,6 @@ wrapped_nef_polygon::wrapped_nef_polygon(const polygon_with_holes_2 & pwh)
 	: wrapped(new nef_polygon_2(create_nef_polygon(pwh.outer()))), m_is_axis_aligned(pwh.is_axis_aligned())
 {
 	boost::for_each(pwh.holes(), [this](const polygon_2 & hole) { *this -= wrapped_nef_polygon(hole); });
-
-	SBT_EXPENSIVE_ASSERT(wrapped->is_empty() == wrapped->interior().is_empty(), "[Aborting - created a non-regularized nef polygon out of a pwh.]\n");
 }
 
 wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygon & other) {
@@ -472,8 +468,6 @@ polygon_2 wrapped_nef_polygon::outer() const {
 		}
 	}
 
-	SBT_ASSERT(!outer.is_empty(), "[Aborting - a wrapped_nef_polygon face had no standard points on its outer boundary.]\n");
-
 	return outer;
 }
 
@@ -516,7 +510,7 @@ polygon_2 wrapped_nef_polygon::to_single_polygon() const {
 	to_simple_polygons(std::back_inserter(polys));
 	if (polys.size() != 1) {
 		ERROR_MSG("[Aborting - tried to get a single polygon out of a nef polygon, but it didn't work (%u polys).]\n", polys.size());
-		throw core_exception(SBT_ASSERTION_FAILED);
+		abort();
 	}
 	return polys.front();
 }
