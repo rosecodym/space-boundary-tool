@@ -105,7 +105,7 @@ sb_calculation_options create_default_options(void) {
 }
 
 bool is_external_sb(space_boundary * sb) {
-	return sb->opposite && !sb->opposite->bounded_space;
+	return sb->opposite == nullptr && sb->material_layer_count != 0;
 }
 
 space_info ** create_space_list(size_t count) {
