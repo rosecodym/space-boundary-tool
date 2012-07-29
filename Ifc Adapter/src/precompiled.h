@@ -1,6 +1,7 @@
 #pragma once
 
 #pragma warning (push,1)
+#pragma warning (disable:4701) // potentially uninitialized local
 #pragma warning (disable:4702) // unreachable code
 #pragma warning (disable:4756) // overflow in constant arithmetic
 #pragma warning (disable:4800) // forcing int to bool
