@@ -174,11 +174,9 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 		element_info ** elements;
 		space_boundary ** sbs;
 		space_info ** loaded_spaces;
-		space_info ** calculated_spaces;
 		size_t element_count;
 		size_t sb_count;
 		size_t loaded_space_count;
-		size_t calculated_space_count;
 		ifcadapter_return_t res = extract_from_model(
 			model, 
 			&element_count, 
