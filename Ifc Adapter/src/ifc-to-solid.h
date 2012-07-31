@@ -7,4 +7,4 @@
 
 class unit_scaler;
 
-void ifc_to_solid(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler);
+int ifc_to_solid(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler); // nonzero return indicates failure

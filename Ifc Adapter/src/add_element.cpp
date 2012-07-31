@@ -33,26 +33,29 @@ void add_element(std::vector<element_info *> * infos, element_type type, const c
 	info->type = type;
 	info->material = next_construction_id++;
 
+	exact_solid s;
+	int got_geometry = -1;
+
 	if (type == WINDOW || type == DOOR) {
 		exact_solid s;
 		auto related_opening = get_related_opening(inst);
 		if (related_opening) {
-			ifc_to_solid(&s, *related_opening, scaler);
-			s.populate_inexact_version(&info->geometry);
+			got_geometry = ifc_to_solid(&s, *related_opening, scaler);
 		}
 		else {
-			sprintf(buf, "Warning: door or window element does not have a related opening. It will be skipped.\n");
-			msg_func(buf);
-			return; 
+			msg_func("Warning: door or window element does not have a related opening.\n");
 		}
 	}
 	else {
-		exact_solid s;
-		ifc_to_solid(&s, inst, scaler);
-		s.populate_inexact_version(&info->geometry);
+		got_geometry = ifc_to_solid(&s, inst, scaler);
 	}
 
-	infos->push_back(info);
-
-	msg_func("done\n");
+	if (got_geometry == 0) {
+		s.populate_inexact_version(&info->geometry);
+		infos->push_back(info);
+		msg_func("done\n");
+	}
+	else {
+		msg_func("This element will be skipped.\n");
+	}
 }
