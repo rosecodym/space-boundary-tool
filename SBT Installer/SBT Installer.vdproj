@@ -21,6 +21,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5E1B04C9E6824C6E8381206431AED567"
+        "OwnerKey" = "8:_6E2B99590B3744999B84400A2E44D92A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5E1B04C9E6824C6E8381206431AED567"
+        "OwnerKey" = "8:_FCCA612445CB4969BE83D4E79DE33DBD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5E1B04C9E6824C6E8381206431AED567"
+        "OwnerKey" = "8:_EC6AF3EE7D2642F28AA710FBFCC8EAE3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6DEF7306321041A994A2051D14439DD2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -41,24 +59,6 @@
         {
         "MsmKey" = "8:_B3AC2CDD31D743CD9CEEB356916819B8"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DE960509175D437988D86A6F5E243CFD"
-        "OwnerKey" = "8:_6E2B99590B3744999B84400A2E44D92A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DE960509175D437988D86A6F5E243CFD"
-        "OwnerKey" = "8:_EC6AF3EE7D2642F28AA710FBFCC8EAE3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DE960509175D437988D86A6F5E243CFD"
-        "OwnerKey" = "8:_FCCA612445CB4969BE83D4E79DE33DBD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -155,11 +155,6 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
-                    {
-                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.10.0.x86"
                     {
                     "Name" = "8:Visual C++ 2010 Runtime Libraries (x86)"
@@ -358,7 +353,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
         "ProductCode" = "8:{A681E51E-5A47-4D01-8359-CE8413CC631E}"
-        "PackageCode" = "8:{B9CD9286-B051-4E2B-B8D4-9A012008055A}"
+        "PackageCode" = "8:{3E5C300F-1A11-4AEC-B71E-1F9CE0205329}"
         "UpgradeCode" = "8:{A21FE33D-4C00-476D-BA7C-48C82A06B410}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1144,6 +1139,20 @@
         }
         "MergeModule"
         {
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_5E1B04C9E6824C6E8381206431AED567"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:Microsoft_VC100_CRT_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:0"
+            "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
         }
         "ProjectOutput"
         {
