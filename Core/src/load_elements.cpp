@@ -12,6 +12,10 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 	std::vector<element> complex_elements;
 	for (size_t i = 0; i < count; ++i) {
 		if (filter(infos[i]->id)) {
+			if (infos[i]->geometry.rep_type != REP_BREP && infos[i]->geometry.rep_type != REP_EXT) {
+				WARN_MSG("Warning: element %s has an unknown geometry representation type. It will be skipped.\n", infos[i]->id);
+				continue;
+			}
 			PRINT_ELEMENTS("Creating initial element for %s.\n", infos[i]->id);
 			complex_elements.push_back(element(infos[i], c));
 			PRINT_ELEMENTS("Initial element for %s created.\n", complex_elements.back().source_id().c_str());

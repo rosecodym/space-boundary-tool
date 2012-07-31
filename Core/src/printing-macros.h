@@ -13,6 +13,13 @@
 	} \
 	while (false);
 
+#define WARN_MSG(...) \
+	do { \
+		sprintf(g_msgbuf, __VA_ARGS__); \
+		g_opts.warn_func(g_msgbuf); \
+	} \
+	while (false);
+
 #define ERROR_MSG(...) \
 	do { \
 		sprintf(g_msgbuf, __VA_ARGS__); \

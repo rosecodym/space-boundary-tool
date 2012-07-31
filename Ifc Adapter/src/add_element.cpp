@@ -37,7 +37,6 @@ void add_element(std::vector<element_info *> * infos, element_type type, const c
 	int got_geometry = -1;
 
 	if (type == WINDOW || type == DOOR) {
-		exact_solid s;
 		auto related_opening = get_related_opening(inst);
 		if (related_opening) {
 			got_geometry = ifc_to_solid(&s, *related_opening, scaler);
