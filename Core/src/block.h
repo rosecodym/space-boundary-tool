@@ -49,15 +49,12 @@ public:
 		return *this;
 	}
 
-	// DEPRECATED
-	template <typename OutputIterator>
-	void as_surfaces(OutputIterator oi) const {
-		std::shared_ptr<surface> surface_a(new surface(oriented_area(o, layer.p_a(), a, !base_sense), layer.layer_element()));
-		if (layer.has_both_sides()) {
-			std::shared_ptr<surface> surface_b(new surface(oriented_area(o, layer.p_b(), a, base_sense), layer.layer_element()));
-			surface::set_other_sides(surface_a, surface_b);
-			*oi++ = surface_b;
-		}
-		*oi++ = surface_a;
+	std::pair<NT, boost::optional<NT>> heights() const { 
+		return layer.has_both_sides() ? std::make_pair(layer.height_a(), boost::optional<NT>(layer.height_b())) : std::make_pair(layer.height_a(), boost::optional<NT>());
 	}
+	bool sense() const { return base_sense; }
+	const area & base_area() const { return a; }
+	const orientation * block_orientation() const { return o; }
+	const layer_information & material_layer() const { return layer; }
+	bool is_fenestration() const { return layer.layer_element().is_fenestration(); }
 };

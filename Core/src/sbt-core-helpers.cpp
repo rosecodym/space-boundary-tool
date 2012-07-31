@@ -92,6 +92,7 @@ sb_calculation_options create_default_options(void) {
 	sb_calculation_options opts;
 	opts.flags = SBT_NONE;
 	opts.equality_tolerance = 0.01;
+	opts.max_pair_distance = 3.0;
 	opts.space_verification_timeout = 0;
 	opts.space_filter = NULL;
 	opts.space_filter_count = 0;
@@ -104,7 +105,7 @@ sb_calculation_options create_default_options(void) {
 }
 
 bool is_external_sb(space_boundary * sb) {
-	return sb->opposite && !sb->opposite->bounded_space;
+	return sb->opposite == nullptr && sb->material_layer_count != 0;
 }
 
 space_info ** create_space_list(size_t count) {
@@ -123,7 +124,7 @@ element_info ** create_element_list(size_t count) {
 	return list;
 }
 
-void free_space_list(space_info ** list, size_t count) {
+void free_space_list(space_info ** /*list*/, size_t /*count*/) {
 	// can't be assed to fix a double-free right now
 	//for (size_t i = 0; i < count; ++i) {
 	//	cleanup_space_info(list[i]);
@@ -132,7 +133,7 @@ void free_space_list(space_info ** list, size_t count) {
 	//free(list);
 }
 
-void free_element_list(element_info ** list, size_t count) {
+void free_element_list(element_info ** /*list*/, size_t /*count*/) {
 	// can't be assed to fix a double-free right now
 	//for (size_t i = 0; i < count; ++i) {
 	//	cleanup_element_info(list[i]);

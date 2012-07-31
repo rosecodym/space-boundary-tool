@@ -44,7 +44,7 @@ cppw::Application_instance create_a2p3d(cppw::Open_model & model, const transfor
 
 	transformation_3 flatten = build_flatten(ortho_dir);
 
-	double z;
+	double z = 0.0;
 	bool set_z = false;
 	for (size_t i = 0; i < sb->geometry.vertex_count; ++i) {
 		point_3 p3flat = from_c_point(sb->geometry.vertices[i]).transform(flatten);

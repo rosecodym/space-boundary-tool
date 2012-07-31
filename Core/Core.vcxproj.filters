@@ -25,22 +25,22 @@
     <Filter Include="geometry\solid_geometry">
       <UniqueIdentifier>{d4b9ce15-03dc-4543-ac7f-90bf6051ab49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="deprecated operations">
-      <UniqueIdentifier>{c1ba9a08-1d3e-49ad-b3a2-9d7d8785ba90}</UniqueIdentifier>
-    </Filter>
     <Filter Include="operations\element loading">
       <UniqueIdentifier>{1a26a81e-3dcc-413b-b0d8-0c21c06ec17a}</UniqueIdentifier>
     </Filter>
     <Filter Include="operations\space loading">
       <UniqueIdentifier>{fada8317-382e-4dbc-86e8-a85662ea0bee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="operations\stacking">
+      <UniqueIdentifier>{01642fd4-70ca-4ed0-b867-6aeea62788b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\opening assignment">
+      <UniqueIdentifier>{70403e83-00e7-4636-8256-97ab8842638a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
       <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="src\surface.h">
-      <Filter>types</Filter>
     </ClInclude>
     <ClInclude Include="src\CreateGuid_64.h">
       <Filter>main</Filter>
@@ -135,14 +135,8 @@
     <ClInclude Include="src\solid_geometry_common.h">
       <Filter>geometry\solid_geometry</Filter>
     </ClInclude>
-    <ClInclude Include="src\geometry_2d_common.h">
-      <Filter>geometry\geometry_2d</Filter>
-    </ClInclude>
     <ClInclude Include="src\link_halfblocks.h">
       <Filter>operations\blocking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\operations.h">
-      <Filter>deprecated operations</Filter>
     </ClInclude>
     <ClInclude Include="src\load_elements.h">
       <Filter>operations\element loading</Filter>
@@ -158,6 +152,36 @@
     </ClInclude>
     <ClInclude Include="src\printing-macros.h">
       <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_common.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stackable.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\space_face.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stacking_graph.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\traverse.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stacking_sequence.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\blockstack.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\build_stacks.h">
+      <Filter>operations\stacking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\surface.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\assign_openings.h">
+      <Filter>operations\opening assignment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -179,9 +203,6 @@
     <ClCompile Include="src\sbt-core-helpers.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="src\surface.cpp">
-      <Filter>types</Filter>
-    </ClCompile>
     <ClCompile Include="src\printing-util.cpp">
       <Filter>cgal</Filter>
     </ClCompile>
@@ -199,9 +220,6 @@
     </ClCompile>
     <ClCompile Include="src\guid_filter.cpp">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\build_blocks_.cpp">
-      <Filter>operations\blocking</Filter>
     </ClCompile>
     <ClCompile Include="src\wrapped_nef_polygon.cpp">
       <Filter>geometry\geometry_2d</Filter>
@@ -224,26 +242,23 @@
     <ClCompile Include="src\surface_pair.cpp">
       <Filter>operations\blocking</Filter>
     </ClCompile>
-    <ClCompile Include="src\geometry_2d_common.cpp">
-      <Filter>geometry\geometry_2d</Filter>
-    </ClCompile>
-    <ClCompile Include="src\build_blocks.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
-    <ClCompile Include="src\build_stacks.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resolve_levels.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
-    <ClCompile Include="src\assign_openings.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
-    <ClCompile Include="src\extract_spaces.cpp">
-      <Filter>deprecated operations</Filter>
-    </ClCompile>
     <ClCompile Include="src\load_elements.cpp">
       <Filter>operations\element loading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\build_blocks.cpp">
+      <Filter>operations\blocking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stackable.cpp">
+      <Filter>operations\stacking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\traverse.cpp">
+      <Filter>operations\stacking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stacking_sequence.cpp">
+      <Filter>operations\stacking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stacking_graph.cpp">
+      <Filter>operations\stacking</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 #ignore thumbnails created by windows
 Thumbs.db
 #Ignore files build by Visual Studio
-*sdf
 *.obj
 *.exe
 *.pdb
@@ -20,6 +19,9 @@ Thumbs.db
 *.cache
 *.ilk
 *.log
+*.tlog
+*.ipch
+*sdf
 [Bb]in
 [Dd]ebug*/
 *.lib

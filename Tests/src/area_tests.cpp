@@ -3,6 +3,10 @@
 #include <gtest/gtest.h>
 
 #include "area.h"
+#include "equality_context.h"
+#include "sbt-core.h"
+
+extern sb_calculation_options g_opts;
 
 namespace geometry_2d {
 
@@ -45,6 +49,53 @@ TEST(Area, IntersectionInvariability) {
 		area::do_intersect(larger, smaller),
 		area::do_intersect(larger, smaller));
 }
+
+TEST(Area, TwoFaces) {
+	std::vector<polygon_2> faces;
+	point_2 face_1[] = {
+		point_2(-3.8, -0.2),
+		point_2(0, -0.2),
+		point_2(0, 0),
+		point_2(-3.8, 0)
+	};
+	faces.push_back(polygon_2(face_1, face_1 + 4));
+
+	point_2 face_2[] = {
+		point_2(-3.8, 10),
+		point_2(0, 10),
+		point_2(0, 10.2),
+		point_2(-3.8, 10.2)
+	};
+	faces.push_back(polygon_2(face_2, face_2 + 4));
+
+	area dbl(faces);
+
+	SUCCEED();
+}
+
+TEST(Area, SubtractionIsValidVertexOnDiagonal) {
+	equality_context c(g_opts.equality_tolerance);
+	point_2 op1[] = {
+		point_2(27.443970, 8.339190),
+		point_2(28.769285, 8.339190),
+		point_2(28.769285, 8.844385),
+		point_2(27.443970, 8.844385)
+	};
+	point_2 op2[] = {
+		point_2(28.665582, 8.744685),
+		point_2(28.883634, 8.954685),
+		point_2(28.883634, 11.736685),
+		point_2(28.665582, 11.736685)
+	};
+	for (size_t i = 0; i < 4; ++i) {
+		// this is in the test because the contextualization is relevant
+		c.snap(&op1[i]);
+		c.snap(&op2[i]);
+	}
+	area res = area(polygon_2(op1, op1 + 4)) - area(polygon_2(op2, op2 + 4));
+	EXPECT_TRUE(res.is_valid(g_opts.equality_tolerance));
+}
+
 
 } // namespace
 

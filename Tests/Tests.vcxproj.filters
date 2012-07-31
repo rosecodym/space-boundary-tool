@@ -57,9 +57,6 @@
     <ClCompile Include="..\Core\src\CreateGuid_64.c">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\src\build_blocks_.cpp">
-      <Filter>Recompiled Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\complicated_extruded_element.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,11 +93,40 @@
     <ClCompile Include="src\library_assumptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\src\geometry_2d_common.cpp">
-      <Filter>Recompiled Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\polygon_cleanup_tests.cpp">
+    <ClCompile Include="src\common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\loop_cleanup_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\build_blocks.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry_common_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stacking_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\stackable.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\traverse.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\stacking_graph.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\stacking_sequence.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\blockstack_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

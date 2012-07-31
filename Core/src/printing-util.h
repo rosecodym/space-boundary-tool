@@ -4,27 +4,6 @@
 
 #include "sbt-core.h"
 
-#define NOTIFY_MSG(...) \
-	do { \
-		sprintf(g_msgbuf, __VA_ARGS__); \
-		g_opts.notify_func(g_msgbuf); \
-	} \
-	while (false);
-
-#define WARN_MSG(...) \
-	do { \
-		sprintf(g_msgbuf, __VA_ARGS__); \
-		g_opts.warn_func(g_msgbuf); \
-	} \
-	while (false);
-
-#define ERROR_MSG(...) \
-	do { \
-		sprintf(g_msgbuf, __VA_ARGS__); \
-		g_opts.error_func(g_msgbuf); \
-	} \
-	while (false);
-
 #define ASSERT_FAIL(...) \
 	do { \
 		sprintf(g_msgbuf, __VA_ARGS__); \

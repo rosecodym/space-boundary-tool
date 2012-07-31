@@ -22,9 +22,7 @@ private:
 
 	void snap_to(const wrapped_nef_polygon & other);
 
-	polygon_with_holes_2 as_pwh() const;
-
-	static polygon_with_holes_2 create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f); // TEMPORARY
+	static boost::optional<polygon_with_holes_2> create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f);
 
 public:
 	wrapped_nef_polygon() : wrapped(new nef_polygon_2(nef_polygon_2::EMPTY)), m_is_axis_aligned(true) { }
@@ -34,13 +32,18 @@ public:
 	explicit wrapped_nef_polygon(const polygon_2 & poly);
 	explicit wrapped_nef_polygon(const polygon_with_holes_2 & pwh);
 
-	template <typename LoopRange>
-	explicit wrapped_nef_polygon(const LoopRange & loops) : wrapped(new nef_polygon_2()), m_is_axis_aligned(true) {
-		boost::for_each(loops, [this](const std::vector<point_2> & loop) {
-			polygon_2 poly(loop.begin(), loop.end());
+	template <typename PolyRange>
+	explicit wrapped_nef_polygon(const PolyRange & polys) : wrapped(new nef_polygon_2()), m_is_axis_aligned(true) {
+		boost::for_each(polys, [this](const polygon_2 & poly) {
 			*wrapped ^= *wrapped_nef_polygon(poly).wrapped;
 			m_is_axis_aligned &= util::cgal::is_axis_aligned(poly);
 		});
+	}
+
+	explicit wrapped_nef_polygon(const std::vector<std::vector<point_2>> & loops) {
+		*this = wrapped_nef_polygon(loops | boost::adaptors::transformed([](const std::vector<point_2> & loop) { 
+			return polygon_2(loop.begin(), loop.end()); 
+		}));
 	}
 
 	wrapped_nef_polygon & operator = (const wrapped_nef_polygon & src) { 
@@ -71,21 +74,11 @@ public:
 	
 	void print_with(void (*msg_func)(char *)) const;
 
-	template <class OutputIterator>
-	void to_simple_polygons(OutputIterator oi) const {
-		nef_polygon_2::Explorer e = wrapped->explorer();
-		for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
-			if (f->mark()) {
-				boost::copy(create_pwh_2(e, f).to_simple_polygons(), oi);
-			}
-		}
-	}
-
 	std::vector<polygon_with_holes_2> to_pwhs() const;
 
 	polygon_2 outer() const;
 	polygon_2 to_single_polygon() const;
-	bool is_valid() const;
+	bool is_valid(double eps) const;
 	bool is_axis_aligned() const { return m_is_axis_aligned; }
 	bool any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
 
@@ -99,10 +92,19 @@ public:
 	friend wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 
-	// DEPRECATED
-	explicit wrapped_nef_polygon(const wrapped_nef_polygon & src, std::shared_ptr<equality_context> c) 
-		: wrapped(new nef_polygon_2(*src.wrapped)), m_is_axis_aligned(src.m_is_axis_aligned)
-	{ }
+	// deprecated
+	template <class OutputIterator>
+	void to_simple_polygons(OutputIterator oi) const {
+		nef_polygon_2::Explorer e = wrapped->explorer();
+		for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
+			if (f->mark()) {
+				auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
+				if (pwh_maybe) {
+					boost::copy(pwh_maybe->to_simple_polygons(), oi);
+				}
+			}
+		}
+	}
 };
 
 inline bool operator == (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {

@@ -132,7 +132,6 @@ void edm_wrapper::setup_schema() {
 		sprintf(buf, "\nError while setting up the schema: %s\n", e.message.data());
 		g_opts.error_func(buf);
 	}
-	FILE * dummy;
 	cppw::Compile_results res = cppw::Express_compiler(path).compile();
 	if (res.errors) {
 		clear_db();

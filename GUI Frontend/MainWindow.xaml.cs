@@ -27,7 +27,7 @@ namespace GUI_Frontend
         [UnmanagedFunctionPointer(System.Runtime.InteropServices.CallingConvention.Cdecl)]
         private delegate void MessageDelegate(string msg);
 
-        List<SBSummary> spaceBoundaryCounts;
+        List<SBSummary> spaceBoundaryCounts = new List<SBSummary>();
 
         private BackgroundWorker worker = new BackgroundWorker();
         MessageDelegate messageDelegate;

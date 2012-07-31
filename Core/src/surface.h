@@ -2,94 +2,74 @@
 
 #include "precompiled.h"
 
+#include "CreateGuid_64.h"
 #include "element.h"
-#include "misc-util.h"
+#include "equality_context.h"
+#include "layer_information.h"
 #include "oriented_area.h"
-#include "sbt-core.h"
-#include "space.h"
 
-extern sb_calculation_options g_opts;
+class space;
 
 class surface {
-
 private:
-
-	std::string global_id;
+	std::string m_guid;
 	oriented_area m_geometry;
+	const element * m_element; // virtual space boundaries don't have elements
+	const space & m_space;
+	const surface * m_other_side;
+	const surface * m_parent;
+	bool m_external;
+	std::vector<layer_information> m_layers;
 
-	int lvl;
-
-	std::vector<std::pair<material_id_t, NT>> material_layers;
-
-	const element * e;
-	std::weak_ptr<surface> other_side;
-	std::weak_ptr<space> bounded_space;
-	std::weak_ptr<surface> parent;
-
-	surface(const surface & src);
-	surface & operator = (const surface & src);
+	static std::string new_guid_as_string() {
+		char buf[24] = "ERROR CREATING GUID";
+		CreateCompressedGuidString(buf, 23);
+		return std::string(buf);
+	}
 
 public:
-	surface(const oriented_area & geometry, const element & e);
-	surface(oriented_area && geometry, const element & e);
-	surface(std::shared_ptr<surface> s, std::shared_ptr<equality_context> new_c);
-	surface(const oriented_area & geometry, std::weak_ptr<space> bounded_space); // for virtuals
+	template <typename LayerRange>
+	surface(const oriented_area & geometry, const element & e, const space & bounded_space, const LayerRange & layers, bool external)
+		: m_guid(new_guid_as_string()), m_geometry(geometry), m_element(&e), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(external), m_layers(layers.begin(), layers.end()) { }
+	template <typename LayerRange>
+	surface(oriented_area && geometry, const element & e, const space & bounded_space, const LayerRange & layers, bool external)
+		: m_guid(new_guid_as_string()), m_geometry(std::move(geometry)), m_element(&e), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(external), m_layers(layers.begin(), layers.end()) { }
+	// for virtuals
+	surface(const oriented_area & geometry, const space & bounded_space)
+		: m_guid(new_guid_as_string()), m_geometry(geometry), m_element(nullptr), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(false) { }
+	surface(oriented_area && geometry, const space & bounded_space)
+		: m_guid(new_guid_as_string()), m_geometry(geometry), m_element(nullptr), m_space(bounded_space), m_other_side(nullptr), m_parent(nullptr), m_external(false) { }
 
-	template <class LayerIterator>
-	surface(std::shared_ptr<surface> src, const polygon_2 & new_area, std::weak_ptr<space> bounded_space, LayerIterator layers_begin, LayerIterator layers_end)
-		: global_id(util::misc::new_guid_as_string()),
-		m_geometry(src->geometry().reverse(), area(new_area)),
-		lvl(0),
-		material_layers(layers_begin, layers_end),
-		e(src->e),
-		other_side(src->other_side),
-		bounded_space(bounded_space),
-		parent(src->parent)
-	{ }
+	const std::string & guid() const { return m_guid; }
+	const oriented_area & geometry() const { return m_geometry; }
+	const space & bounded_space() const { return m_space; }
+	const element * bounded_element() const { return m_element; }
+	const std::vector<layer_information> & material_layers() const { return m_layers; }
+	const surface * other_side() const { return m_other_side; }
+	const surface * parent() const { return m_parent; }
 
-	const std::string &									guid() const { return global_id; }
-	const oriented_area &								geometry() const { return m_geometry; }
-	std::string											element_id() const { return is_virtual() ? "" : e->source_id(); }
-	material_id_t										surface_material() const { return e->material(); }
-	std::weak_ptr<surface>								opposite() const { return other_side; }
-	std::weak_ptr<surface>								containing_boundary() const { return parent; }
-	const std::vector<std::pair<material_id_t, NT>> &	materials() const { return material_layers; }
-	std::weak_ptr<space>								get_space() const { return bounded_space; }
-	bool												lies_on_outside() const { return bounded_space.expired() || get_space().lock()->is_outside_space(); }
-	int													get_level() const { return lvl; }
-	bool												is_virtual() const { return e == nullptr; }
-	bool												is_fenestration() const { return !is_virtual() && e->is_fenestration(); }
+	bool is_virtual() const { return m_element == nullptr; }
+	bool is_fenestration() const { return !is_virtual() && m_element->is_fenestration(); }
+	bool is_external() const { return m_external; }
+	bool has_other_side() const { return m_other_side != nullptr; }
+	bool shares_space_with_other_side() const { return has_other_side() && &m_space == &m_other_side->m_space; }
 
-	void												set_level(int l) { lvl = l; }
-	void												set_space(std::weak_ptr<space> s) { bounded_space = std::weak_ptr<space>(s); }
-
-	static void set_contains(std::shared_ptr<surface> parent, std::shared_ptr<surface> child) {
-		child->parent = std::weak_ptr<surface>(parent);
-		child->set_space(parent->get_space());
-	}
-
-	static bool share_space(std::weak_ptr<surface> a, std::weak_ptr<surface> b) {
-		return a.lock()->bounded_space.lock().get() == b.lock()->bounded_space.lock().get();
-	}
-
-	static bool are_parallel(std::weak_ptr<surface> a, std::weak_ptr<surface> b) {
-		return oriented_area::are_parallel(a.lock()->m_geometry, b.lock()->m_geometry);
-	}
-
-	static bool oppose(std::weak_ptr<surface> a, std::weak_ptr<surface> b) {
-		if (a.lock()->other_side.lock().get() == b.lock().get()) {
+	bool set_parent_maybe(surface * parent, double height_eps) {
+		if (parent->geometry().sense() == this->geometry().sense() &&
+			&parent->geometry().orientation() == &this->geometry().orientation() &&
+			equality_context::are_equal(parent->geometry().height(), this->geometry().height(), height_eps) &&
+			parent->geometry().area_2d() >= this->geometry().area_2d())
+		{
+			m_parent = parent;
 			return true;
 		}
-		return false;
+		else {
+			return false;
+		}
 	}
 
-	static void set_other_sides(std::shared_ptr<surface> a, std::shared_ptr<surface> b) {
-		a->other_side = std::weak_ptr<surface>(b);
-		b->other_side = std::weak_ptr<surface>(a);
+	static void set_other_sides(std::unique_ptr<surface> & a, std::unique_ptr<surface> & b) {
+		a->m_other_side = b.get();
+		b->m_other_side = a.get();
 	}
-
-	// DEPRECATED
-	surface(const oriented_area & g, std::shared_ptr<element> & e)
-		: global_id(util::misc::new_guid_as_string()), m_geometry(g), lvl(0), e(e.get()) { }
-
 };

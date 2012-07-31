@@ -1,7 +1,5 @@
 #pragma once
 
-#define _SCL_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
 #define CGAL_NO_AUTOLINK_GMP
 #define CGAL_NO_AUTOLINK_MPFR
 #define BOOST_RESULT_OF_USE_DECLTYPE
@@ -11,6 +9,7 @@
 #pragma warning (disable:4512) // assignment operator could not be generated
 
 #pragma warning (push,1)
+#pragma warning (disable:4701) // potential use of uninitialized variable
 #pragma warning (disable:4702) // unreachable code
 #pragma warning (disable:4756) // overflow in constant arithmetic
 #include <vector>
@@ -49,7 +48,6 @@
 #include <CGAL/Interval_skip_list_interval.h>
 #include <CGAL/Nef_polyhedron_2.h>
 #include <CGAL/Nef_polyhedron_3.h>
-//#include <LEDA/system/msc/autolink_eval.h>
 #pragma warning (pop)
 
 typedef CORE::Expr						NT;

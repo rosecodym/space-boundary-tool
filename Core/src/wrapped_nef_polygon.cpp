@@ -1,10 +1,10 @@
 #include "precompiled.h"
 
 #include "equality_context.h"
-#include "geometry_2d_common.h"
+#include "geometry_common.h"
 #include "misc-util.h"
-#include "operations.h"
 #include "polygon_with_holes_2.h"
+#include "printing-macros.h"
 #include "printing-util.h"
 #include "sbt-core.h"
 
@@ -50,16 +50,15 @@ nef_polygon_2 create_nef_polygon(polygon_2 poly) {
 		NOTIFY_MSG( "[creating nef polygon from poly]\n[uncleaned poly follows]\n");
 		util::printing::print_polygon(g_opts.notify_func, poly);
 	}
-	if (!geometry_2d::cleanup_polygon(&poly, g_opts.equality_tolerance)) {
+	if (!geometry_common::cleanup_loop(&poly, g_opts.equality_tolerance)) {
 		ERROR_MSG("[Aborting - couldn't clean up a polygon in order to construct a nef polygon.]\n");
 		util::printing::print_polygon(g_opts.error_func, poly);
-		throw core_exception(SBT_ASSERTION_FAILED);
+		abort();
 	}
 	if (g_opts.flags & SBT_VERBOSE_GEOMETRY) {
 		NOTIFY_MSG( "[cleaned poly follows]\n");
 		util::printing::print_polygon(g_opts.notify_func, poly);
 	}
-	SBT_ASSERT(poly.is_simple(), "[Aborting - tried to create a nef polygon out of non-simple polygon.]\n");
 	std::vector<espoint_2> extended;
 	std::transform(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(extended), [](const point_2 & p) {
 		return switch_point_kernel<espoint_2, point_2>(p);
@@ -320,24 +319,19 @@ void snap_nef_polygon_to(nef_polygon_2 * from, const nef_polygon_2 & to) {
 
 	if (changed) {
 		PRINT_GEOM("[polygon changed - modifying (%u loops)]\n", loops.size());
+		nef_polygon_2 orig = *from;
 		from->clear();
-		std::for_each(loops.begin(), loops.end(), [from](const std::deque<espoint_2> & loop) { 
+		std::for_each(loops.begin(), loops.end(), [from, &to, &orig](const std::deque<espoint_2> & loop) { 
 			IF_FLAGGED(SBT_VERBOSE_GEOMETRY) {
 				NOTIFY_MSG( "[loop:]\n");
 				std::for_each(loop.begin(), loop.end(), [](const espoint_2 & p) { NOTIFY_MSG( "%f\t%f\n", CGAL::to_double(p.x()), CGAL::to_double(p.y())); });
 			}
-			IF_FLAGGED(SBT_EXPENSIVE_CHECKS) {
-				std::vector<point_2> polypoints;
-				std::transform(loop.begin(), loop.end(), std::back_inserter(polypoints), [](const espoint_2 & p) { return point_2(p.x(), p.y()); });
-				if (!polygon_2(polypoints.begin(), polypoints.end()).is_simple()) {
-					ERROR_MSG("[Aborting - tried to symdiff a loop in a nef snap that wasn't simple.\n");
-					throw core_exception(SBT_ASSERTION_FAILED);
-				}
+			std::vector<point_2> polypoints;
+			boost::transform(loop, std::back_inserter(polypoints), [](const espoint_2 & p) { return point_2(p.x(), p.y()); });
+			if (polygon_2(polypoints.begin(), polypoints.end()).is_simple()) {
+				nef_polygon_2 nef(loop.begin(), loop.end(), nef_polygon_2::EXCLUDED); 
+				*from ^= nef;
 			}
-			nef_polygon_2 nef(loop.begin(), loop.end(), nef_polygon_2::EXCLUDED); 
-			PRINT_GEOM("[created temp nef]\n");
-			*from ^= nef;
-			PRINT_GEOM("[symdiffed temp nef]\n");
 		});
 	}
 
@@ -350,26 +344,8 @@ void snap_nef_polygon_to(nef_polygon_2 * from, const nef_polygon_2 & to) {
 
 } // namespace
 
-polygon_with_holes_2 wrapped_nef_polygon::as_pwh() const {
-	nef_polygon_2::Explorer e = wrapped->explorer();
-	auto the_face = e.faces_begin(); // i'm only initializing it so i can use auto because i don't want to look up how to spell the type
-	bool found = false;
-	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
-		if (f->mark()) {
-			if (found) {
-				ERROR_MSG("[Aborting - tried to convert a wrapped nef polygon with multiple marked faces to a pwh.]\n");
-				throw core_exception(SBT_ASSERTION_FAILED);
-			}
-			the_face = f;
-			found = true;
-		}
-	}
-	return found ? create_pwh_2(e, the_face) : polygon_with_holes_2();
-}
-
 void wrapped_nef_polygon::snap_to(const wrapped_nef_polygon & other) {
 	snap_nef_polygon_to(wrapped.get(), *other.wrapped);
-	SBT_EXPENSIVE_ASSERT(is_valid(), "[Aborting - a nef polygon snap made it invalid.]\n");
 }
 
 void wrapped_nef_polygon::print_with(void (*msg_func)(char *)) const {
@@ -386,7 +362,6 @@ wrapped_nef_polygon::wrapped_nef_polygon(const nef_polygon_2 & nef, bool aligned
 	m_is_axis_aligned(aligned) 
 { 
 	remove_duplicate_points(wrapped.get());
-	SBT_EXPENSIVE_ASSERT(wrapped->is_empty() == wrapped->interior().is_empty(), "[Aborting - created a non-regularized nef polygon (explicit alignment constructor).]\n");
 }
 
 wrapped_nef_polygon::wrapped_nef_polygon(const polygon_2 & poly)
@@ -399,8 +374,6 @@ wrapped_nef_polygon::wrapped_nef_polygon(const polygon_with_holes_2 & pwh)
 	: wrapped(new nef_polygon_2(create_nef_polygon(pwh.outer()))), m_is_axis_aligned(pwh.is_axis_aligned())
 {
 	boost::for_each(pwh.holes(), [this](const polygon_2 & hole) { *this -= wrapped_nef_polygon(hole); });
-
-	SBT_EXPENSIVE_ASSERT(wrapped->is_empty() == wrapped->interior().is_empty(), "[Aborting - created a non-regularized nef polygon out of a pwh.]\n");
 }
 
 wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygon & other) {
@@ -416,13 +389,6 @@ wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygo
 		*wrapped -= other.wrapped->interior();
 	}
 	*wrapped = wrapped->interior();
-	IF_FLAGGED(SBT_EXPENSIVE_CHECKS) {
-		if (!is_valid()) {
-			ERROR_MSG("[Aborting - wrapped_nef_polygon::operator -= produced an invalid polygon. Here it is:]\n");
-			print_with(g_opts.error_func);
-			throw core_exception(SBT_ASSERTION_FAILED);
-		}
-	}
 	return *this;
 }
 
@@ -439,7 +405,6 @@ wrapped_nef_polygon & wrapped_nef_polygon::operator ^= (const wrapped_nef_polygo
 		*wrapped -= other.wrapped->interior();
 	}
 	*wrapped = wrapped->interior();
-	SBT_EXPENSIVE_ASSERT(is_valid(), "[Aborting - wrapped_nef_polygon::operator ^= produced an invalid polygon.]\n");
 	return *this;
 }
 
@@ -477,7 +442,10 @@ std::vector<polygon_with_holes_2> wrapped_nef_polygon::to_pwhs() const {
 	nef_polygon_2::Explorer e = wrapped->explorer();
 	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
 		if (f->mark()) {
-			res.push_back(create_pwh_2(e, f));
+			auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
+			if (pwh_maybe) {
+				res.push_back(*pwh_maybe);
+			}
 		}
 	}
 	return res;
@@ -500,12 +468,10 @@ polygon_2 wrapped_nef_polygon::outer() const {
 		}
 	}
 
-	SBT_ASSERT(!outer.is_empty(), "[Aborting - a wrapped_nef_polygon face had no standard points on its outer boundary.]\n");
-
 	return outer;
 }
 
-polygon_with_holes_2 wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f) {
+boost::optional<polygon_with_holes_2> wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Explorer & e, nef_polygon_2::Explorer::Face_const_handle f) {
 	polygon_2 outer;
 	std::vector<polygon_2> holes;
 	auto p = e.face_cycle(f);
@@ -517,9 +483,8 @@ polygon_with_holes_2 wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Expl
 	}
 	while (p != e.face_cycle(f));
 
-	if (outer.is_empty()) {
-		ERROR_MSG("[Aborting - a wrapped_nef_polygon face had no standard points on its outer boundary.]\n");
-		throw core_exception(SBT_ASSERTION_FAILED);
+	if (!geometry_common::cleanup_loop(&outer, g_opts.equality_tolerance)) {
+		return boost::optional<polygon_with_holes_2>();
 	}
 
 	for (auto h = e.holes_begin(f); h != e.holes_end(f); ++h) {
@@ -532,7 +497,7 @@ polygon_with_holes_2 wrapped_nef_polygon::create_pwh_2(const nef_polygon_2::Expl
 			}
 			++p;
 		}
-		if (holes.back().is_empty()) {
+		if (!geometry_common::cleanup_loop(&holes.back(), g_opts.equality_tolerance)) {
 			holes.pop_back();
 		}
 	}
@@ -545,12 +510,12 @@ polygon_2 wrapped_nef_polygon::to_single_polygon() const {
 	to_simple_polygons(std::back_inserter(polys));
 	if (polys.size() != 1) {
 		ERROR_MSG("[Aborting - tried to get a single polygon out of a nef polygon, but it didn't work (%u polys).]\n", polys.size());
-		throw core_exception(SBT_ASSERTION_FAILED);
+		abort();
 	}
 	return polys.front();
 }
 
-bool wrapped_nef_polygon::is_valid() const {
+bool wrapped_nef_polygon::is_valid(double eps) const {
 	if (wrapped->is_empty()) {
 		return true;
 	}
@@ -562,7 +527,7 @@ bool wrapped_nef_polygon::is_valid() const {
 				all_points.push_back(switch_point_kernel<espoint_2, epoint_2>(v->point()));
 			}
 		}
-		bool res = !equality_context::is_zero_squared(util::cgal::smallest_squared_distance(all_points.begin(), all_points.end()), g_opts.equality_tolerance);
+		bool res = !equality_context::is_zero_squared(util::cgal::smallest_squared_distance(all_points.begin(), all_points.end()), eps);
 		if (!res) {
 			ERROR_MSG("[Invalid polygon - some points were too close.]\n");
 		}

@@ -266,19 +266,17 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef) {
 				g_opts.error_func(buf);
 				return;
 			}
-			for (auto cycle = facet->facet_cycles_begin(); cycle != facet->facet_cycles_end(); ++cycle) {
-				s->rep.as_brep->faces.push_back(exact_face());
-				nef_polyhedron_3::SHalfedge_around_facet_const_circulator start(cycle);
-				nef_polyhedron_3::SHalfedge_around_facet_const_circulator end(cycle);
-				CGAL_For_all(start, end) {
-					exact_point_3 p = start->source()->center_vertex()->point();
-					point_3 req = g_numbers.request_point(
-						CGAL::to_double(p.x()),
-						CGAL::to_double(p.y()),
-						CGAL::to_double(p.z()));
-					s->rep.as_brep->faces.back().outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), req.z()));
-				}
-				break; // should only be one
+			auto cycle = facet->facet_cycles_begin();
+			s->rep.as_brep->faces.push_back(exact_face());
+			nef_polyhedron_3::SHalfedge_around_facet_const_circulator start(cycle);
+			nef_polyhedron_3::SHalfedge_around_facet_const_circulator end(cycle);
+			CGAL_For_all(start, end) {
+				exact_point_3 p = start->source()->center_vertex()->point();
+				point_3 req = g_numbers.request_point(
+					CGAL::to_double(p.x()),
+					CGAL::to_double(p.y()),
+					CGAL::to_double(p.z()));
+				s->rep.as_brep->faces.back().outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), req.z()));
 			}
 			++face_index;
 		}

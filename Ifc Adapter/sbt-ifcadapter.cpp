@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "edm_wrapper.h"
+#include "get_length_units_per_meter.h"
 #include "model_operations.h"
 #include "reassign_bounded_spaces.h"
 #include "unit_scaler.h"
@@ -68,7 +69,7 @@ void generate_sb_summary(sb_counts * counts, space_boundary ** sbs, size_t sb_co
 				++counts->virt[sp_ix];
 			}
 			else if (sbs[i]->level == 2) {
-				if (sbs[i]->opposite->lies_on_outside) {
+				if (!sbs[i]->opposite) {
 					++counts->level_2_physical_external[0];
 					++counts->level_2_physical_external[sp_ix];
 				}
@@ -78,14 +79,8 @@ void generate_sb_summary(sb_counts * counts, space_boundary ** sbs, size_t sb_co
 				}
 			}
 			else if (sbs[i]->level == 3) {
-				if (sbs[i]->opposite->lies_on_outside) {
-					++counts->level_3_external[0];
-					++counts->level_3_external[sp_ix];
-				}
-				else {
-					++counts->level_3_internal[0];
-					++counts->level_3_internal[sp_ix];
-				}
+				++counts->level_3_internal[0];
+				++counts->level_3_internal[sp_ix];
 			}
 			else if (sbs[i]->level == 4) {
 				++counts->level_4[0];
@@ -179,11 +174,9 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 		element_info ** elements;
 		space_boundary ** sbs;
 		space_info ** loaded_spaces;
-		space_info ** calculated_spaces;
 		size_t element_count;
 		size_t sb_count;
 		size_t loaded_space_count;
-		size_t calculated_space_count;
 		ifcadapter_return_t res = extract_from_model(
 			model, 
 			&element_count, 
@@ -193,12 +186,16 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count));
+		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
 			opts = options;
+			opts.max_pair_distance = length_units_per_meter * 3.0;
 			sbt_return_t generate_res = calculate_space_boundaries(element_count, elements, loaded_space_count, loaded_spaces, &sb_count, &sbs, opts);
 			if (generate_res == SBT_OK) {
 				generate_sb_summary(counts, sbs, sb_count);
+				sprintf(buf, "Generated count summary.\n");
+				options.notify_func(buf);
 				clear_sbs(&model);
 				// add_to_model figures out the right spaces by re-extracting them based on guids
 				if (add_to_model(model, sb_count, sbs, options.notify_func, unit_scaler::identity_scaler) == IFCADAPT_OK) {
@@ -254,9 +251,11 @@ ifcadapter_return_t load_and_run_from(
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count));
+		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
 			opts = options;
+			opts.max_pair_distance = length_units_per_meter * 3.0;
 			sbt_return_t generate_res = calculate_space_boundaries(*element_count, *elements, *space_count, *spaces, total_sb_count, sbs, opts);
 			if (generate_res == SBT_OK && output_filename != nullptr) {
 				// add_to_model figures out the right spaces by re-extracting them based on guids

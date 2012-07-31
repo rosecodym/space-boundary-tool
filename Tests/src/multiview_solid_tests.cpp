@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include "common.h"
 #include "element.h"
 #include "equality_context.h"
 #include "multiview_solid.h"
@@ -114,6 +115,37 @@ TEST(MultiviewSolid, SimpleExtrusionBaseReversed) {
 		EXPECT_EQ(match->second.p, f.height());
 		EXPECT_TRUE(f.backing_plane().has_on(match->second.example_point)) << "Backing plane with distance " << CGAL::to_double(plane_distance);
 	});
+}
+
+TEST(MultiviewSolid, ExtrusionWithDuplicateBasePoint) {
+	equality_context c(g_opts.equality_tolerance);
+
+	solid s = create_ext(0, 0, 1, 307.08661, create_face(5,
+		simple_point(0, 0, 0),
+		simple_point(393.70079, 0, 0),
+		simple_point(393.70079, 387.79528, 0),
+		simple_point(0, 387.79528, 0),
+		simple_point(0, 0, 0)));
+
+	multiview_solid ms(s, &c);
+	EXPECT_EQ(6, ms.oriented_faces(&c).size());
+}
+
+TEST(MultiviewSolid, ThreeStairs) {
+	equality_context c(g_opts.equality_tolerance);
+
+	solid s = create_ext(0, 0, 1, 300, create_face(8,
+		simple_point(0, 0, 0),
+		simple_point(0, 8250, 0),
+		simple_point(2105, 8250, 0),
+		simple_point(2105, 12120.109, 0),
+		simple_point(4050, 12120.109, 0),
+		simple_point(4050, 18195.109, 0),
+		simple_point(8200, 18195.109, 0),
+		simple_point(8200, 0, 0)));
+
+	multiview_solid ms(s, &c);
+	EXPECT_EQ(10, ms.oriented_faces(&c).size());
 }
 
 } // namespace

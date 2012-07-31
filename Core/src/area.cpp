@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "equality_context.h"
+#include "geometry_common.h"
 #include "printing-macros.h"
 
 #include "area.h"
@@ -19,7 +21,7 @@ area::area(const std::vector<std::vector<point_2>> & loops) : use_nef(loops.size
 
 area::area(const std::vector<polygon_2> & loops) : use_nef(loops.size() > 1) {
 	if (use_nef) {
-		nef_rep = wrapped_nef_polygon(loops | boost::adaptors::transformed([](const polygon_2 & poly) { return std::vector<point_2>(poly.vertices_begin(), poly.vertices_end()); }));
+		nef_rep = wrapped_nef_polygon(loops);
 	}
 	else {
 		simple_rep = loops.front();
@@ -91,6 +93,11 @@ bool area::any_points_satisfy_predicate(const std::function<bool(point_2)> & pre
 	}
 }
 
+area & area::operator *= (const area & other) {
+	*this = *this * other;
+	return *this;
+}
+
 area & area::operator -= (const area & other) {
 	if (is_empty() || other.is_empty()) { return *this; }
 	if (*this == other) {
@@ -146,7 +153,12 @@ area operator - (const area & a, const area & b) {
 }
 
 area operator * (const area & a, const area & b) {
-	PRINT_2D_OPERATIONS("Entered area intersection.\n");
+	if (FLAGGED(SBT_VERBOSE_BLOCKS) || FLAGGED(SBT_VERBOSE_STACKS)) {
+		NOTIFY_MSG("Entered area intersection. Intersecting\n");
+		a.print();
+		NOTIFY_MSG("with\n");
+		b.print();
+	}
 	if (a.is_empty() || b.is_empty() || !CGAL::do_overlap(a.bbox(), b.bbox())) { return area(); }
 	if (!a.use_nef && !b.use_nef && a.simple_rep == b.simple_rep) { return a; }
 	area::promote_both(a, b);

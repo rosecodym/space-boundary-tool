@@ -6,29 +6,39 @@
 
 class layer_information {
 private:
-	NT m_p_a;
-	boost::optional<NT> m_p_b;
+	NT m_height_a;
+	boost::optional<NT> m_height_b;
 	const element * e;
 
 public:
-	layer_information(const NT & p_a, const element & e) 
-		: m_p_a(p_a), e(&e) { }
-	layer_information(const NT & p_a, const NT & p_b, const element & e) 
-		: m_p_a(p_a), m_p_b(p_b), e(&e) { }
+	layer_information(const NT & height_a, const element & e) 
+		: m_height_a(height_a), e(&e) { }
+	layer_information(const NT & height_a, const NT & height_b, const element & e) 
+		: m_height_a(height_a), m_height_b(height_b), e(&e) { }
 
+	layer_information(const layer_information & src) { *this = src; }
 	layer_information(layer_information && src) { *this = std::move(src); }
 
+	layer_information & operator = (const layer_information & src) {
+		if (&src != this) {
+			m_height_a = src.m_height_a;
+			m_height_b = src.m_height_b;
+			e = src.e;
+		}
+		return *this;
+	}
 	layer_information & operator = (layer_information && src) {
 		if (&src != this) {
-			m_p_a = std::move(src.m_p_a);
-			m_p_b = std::move(src.m_p_b);
+			m_height_a = std::move(src.m_height_a);
+			m_height_b = std::move(src.m_height_b);
 			e = src.e;
 		}
 		return *this;
 	}
 
-	bool has_both_sides() const { return m_p_b.is_initialized(); }
-	NT p_a() const { return m_p_a; }
-	NT p_b() const { return *m_p_b; }
+	bool has_both_sides() const { return m_height_b.is_initialized(); }
+	NT height_a() const { return m_height_a; }
+	NT height_b() const { return *m_height_b; }
+	boost::optional<NT> thickness() const { return m_height_b ? CGAL::abs(m_height_a - *m_height_b) : boost::optional<NT>(); }
 	const element & layer_element() const { return *e; }
 };

@@ -50,17 +50,17 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
       <AdditionalOptions>%(AdditionalOptions) -Zm159 /F 0x200000</AdditionalOptions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\CGAL\lib;C:\Program Files (x86)\boost\boost_1_47\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\CGAL\lib;C:\Program Files (x86)\boost\boost_1_47\lib;C:\Program Files (x86)\boost\boost_1_44\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>user32.lib;"C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\lib\libgmp-10.lib";%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <ImportLibrary>
@@ -74,7 +74,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -97,12 +97,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\area.h" />
+    <ClInclude Include="src\assign_openings.h" />
     <ClInclude Include="src\block.h" />
+    <ClInclude Include="src\blockstack.h" />
     <ClInclude Include="src\build_blocks.h" />
+    <ClInclude Include="src\build_stacks.h" />
     <ClInclude Include="src\cgal-approx.h" />
     <ClInclude Include="src\cgal-util.h" />
     <ClInclude Include="src\core_exception.h" />
-    <ClInclude Include="src\geometry_2d_common.h" />
+    <ClInclude Include="src\geometry_common.h" />
     <ClInclude Include="src\guid_filter.h" />
     <ClInclude Include="src\element.h" />
     <ClInclude Include="src\halfblocks_for_base.h" />
@@ -124,7 +127,6 @@
     <ClInclude Include="src\scan_for_degenerate_halfblocks.h" />
     <ClInclude Include="src\simple_face.h" />
     <ClInclude Include="src\one_dimensional_equality_context.h" />
-    <ClInclude Include="src\operations.h" />
     <ClInclude Include="src\point_collection.h" />
     <ClInclude Include="src\precompiled.h" />
     <ClInclude Include="src\printing-util.h" />
@@ -133,26 +135,24 @@
     <ClInclude Include="src\solid_conversion_operations.h" />
     <ClInclude Include="src\solid_geometry_common.h" />
     <ClInclude Include="src\space.h" />
+    <ClInclude Include="src\space_face.h" />
+    <ClInclude Include="src\stackable.h" />
+    <ClInclude Include="src\stacking_graph.h" />
+    <ClInclude Include="src\stacking_sequence.h" />
     <ClInclude Include="src\surface.h" />
     <ClInclude Include="src\misc-util.h" />
     <ClInclude Include="src\surface_pair.h" />
+    <ClInclude Include="src\traverse.h" />
     <ClInclude Include="src\wrapped_nef_polygon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\area.cpp" />
-    <ClCompile Include="src\assign_openings.cpp" />
     <ClCompile Include="src\build_blocks.cpp" />
-    <ClCompile Include="src\build_blocks_.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="src\build_stacks.cpp" />
     <ClCompile Include="src\c-test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\geometry_2d_common.cpp" />
     <ClCompile Include="src\guid_filter.cpp" />
-    <ClCompile Include="src\extract_spaces.cpp" />
     <ClCompile Include="src\cgal-util.cpp" />
     <ClCompile Include="src\CreateGuid_64.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -171,7 +171,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\resolve_levels.cpp" />
     <ClCompile Include="src\sbt-core-helpers.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -180,8 +179,11 @@
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
     </ClCompile>
     <ClCompile Include="src\solid_conversion_operations.cpp" />
-    <ClCompile Include="src\surface.cpp" />
+    <ClCompile Include="src\stackable.cpp" />
+    <ClCompile Include="src\stacking_graph.cpp" />
+    <ClCompile Include="src\stacking_sequence.cpp" />
     <ClCompile Include="src\surface_pair.cpp" />
+    <ClCompile Include="src\traverse.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
