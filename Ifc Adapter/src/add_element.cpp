@@ -6,10 +6,14 @@
 
 namespace {
 
-cppw::Instance get_related_opening(const cppw::Instance & fen_inst) {
+boost::optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_inst) {
 	cppw::Set fillsVoids = fen_inst.get("FillsVoids");
-	assert(fillsVoids.count() == 1);
-	return (cppw::Instance)((cppw::Instance)fillsVoids.get_(0)).get("RelatingOpeningElement");
+	if (fillsVoids.count() == 1) {
+		return (cppw::Instance)((cppw::Instance)fillsVoids.get_(0)).get("RelatingOpeningElement");
+	}
+	else {
+		return boost::optional<cppw::Instance>();
+	}
 }
 
 } // namespace
@@ -31,8 +35,16 @@ void add_element(std::vector<element_info *> * infos, element_type type, const c
 
 	if (type == WINDOW || type == DOOR) {
 		exact_solid s;
-		ifc_to_solid(&s, get_related_opening(inst), scaler);
-		s.populate_inexact_version(&info->geometry);
+		auto related_opening = get_related_opening(inst);
+		if (related_opening) {
+			ifc_to_solid(&s, *related_opening, scaler);
+			s.populate_inexact_version(&info->geometry);
+		}
+		else {
+			sprintf(buf, "Warning: door or window element does not have a related opening. It will be skipped.\n");
+			msg_func(buf);
+			return; 
+		}
 	}
 	else {
 		exact_solid s;
