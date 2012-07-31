@@ -33,6 +33,7 @@ namespace GUI_Frontend
         {
             public SBTFlags flags;
             public double tolerance;
+            public double maxPairDistance;
             public int spaceVerificationTimeout;
             public IntPtr spaceFilter;
             public UInt32 spaceFilterCount;
@@ -75,6 +76,7 @@ namespace GUI_Frontend
             nativeOpts.spaceFilterCount = 0;
             nativeOpts.spaceFilter = IntPtr.Zero;
             nativeOpts.tolerance = 0.001;
+            nativeOpts.maxPairDistance = 3.0; // this gets ignored by the ifc adapter anyway
             nativeOpts.spaceVerificationTimeout = opts.spaceVerificationTimeout;
             nativeOpts.notifyFunc = opts.notifyFunc;
             nativeOpts.warnFunc = opts.warnFunc;
