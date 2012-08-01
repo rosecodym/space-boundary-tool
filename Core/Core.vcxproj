@@ -66,6 +66,9 @@
       <ImportLibrary>
       </ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutputPath)$(TargetFileName)" "$(SolutionDir)GUI\bin\$(Configuration)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -94,6 +97,9 @@
       <AdditionalDependencies>user32.lib;"C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\lib\libgmp-10.lib";%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutputPath)$(TargetFileName)" "$(SolutionDir)GUI\bin\$(Configuration)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\area.h" />
