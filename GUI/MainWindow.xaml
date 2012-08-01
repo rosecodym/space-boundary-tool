@@ -1,7 +1,7 @@
 ﻿<Window x:Class="GUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Space Boundary Tool" Height="455" Width="853">
+        Title="Space Boundary Tool" Height="455" Width="853" Closed="MainWindowClosed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -9,19 +9,16 @@ namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
     {
-        private string _inputIfcPath;
-        private string _outputIfcPath;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand BrowseToInputIfcFileCommand { get; private set; }
 
         public string InputIfcFilePath
         {
-            get { return _inputIfcPath; }
+            get { return Properties.Settings.Default.inputIfcFilename; }
             set
             {
-                _inputIfcPath = value;
+                Properties.Settings.Default.inputIfcFilename = value;
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("InputIfcFilePath"));

@@ -24,5 +24,11 @@ namespace GUI
             InitializeComponent();
             DataContext = new ViewModel();
         }
+
+        private void MainWindowClosed(object sender, EventArgs e)
+        {
+            // "no code in the code-behind" but it's just this one thing i swear
+            Properties.Settings.Default.Save();
+        }
     }
 }
