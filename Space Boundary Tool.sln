@@ -13,6 +13,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CL Frontend", "CL Frontend\
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedWrapper", "CSharpCoreWrapper\ManagedWrapper.csproj", "{2B180C45-2DA1-4C26-9850-F92B9369D626}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D703A763-8163-4B2E-A5E9-DECD31AE18C4} = {D703A763-8163-4B2E-A5E9-DECD31AE18C4}
+		{68821491-76E6-4090-B7A8-FA8C329FA2DB} = {68821491-76E6-4090-B7A8-FA8C329FA2DB}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{26E4360A-9FEC-4EEE-B36D-626CDD587D3E}"
 EndProject

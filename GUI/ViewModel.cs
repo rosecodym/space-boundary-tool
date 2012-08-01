@@ -9,10 +9,15 @@ namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
     {
+        private string logWindowText = String.Empty;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand BrowseToInputIfcFileCommand { get; private set; }
         public ICommand BrowseToOutputIfcFileCommand { get; private set; }
+        public ICommand ExecuteSbtCommand { get; private set; }
+
+        public BuildingInformation CurrentBuilding { get; set; }
 
         public int SelectedTabIndex
         {
@@ -84,10 +89,20 @@ namespace GUI
             }
         }
 
+        public string LogWindowText
+        {
+            get { return logWindowText; }
+            set
+            {
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("LogWindowText")); }
+            }
+        }
+
         public ViewModel()
         {
             BrowseToInputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToInputIfcFile(this));
             BrowseToOutputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToOutputIfcFile(this), (_) => this.WriteIfc);
+            ExecuteSbtCommand = new RelayCommand((_) => Commands.InvokeSbt(this));
         }
     }
 }
