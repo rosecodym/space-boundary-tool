@@ -19,10 +19,7 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.SelectedTabIndex = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("SelectedTabIndex"));
-                }
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SelectedTabIndex")); }
             }
         }
 
@@ -32,10 +29,37 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.InputIfcFilename = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("InputIfcFilePath"));
-                }
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("InputIfcFilePath")); }
+            }
+        }
+
+        public bool SkipWallColumnCheck
+        {
+            get { return Properties.Settings.Default.SkipWallColumnCheck; }
+            set
+            {
+                Properties.Settings.Default.SkipWallColumnCheck = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SkipWallColumnCheck")); }
+            }
+        }
+
+        public bool SkipSlabColumnCheck
+        {
+            get { return Properties.Settings.Default.SkipSlabColumnCheck; }
+            set
+            {
+                Properties.Settings.Default.SkipSlabColumnCheck = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SkipSlabColumnCheck")); }
+            }
+        }
+
+        public bool SkipWallSlabCheck
+        {
+            get { return Properties.Settings.Default.SkipWallSlabCheck; }
+            set
+            {
+                Properties.Settings.Default.SkipWallSlabCheck = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SkipWallSlabCheck")); }
             }
         }
 

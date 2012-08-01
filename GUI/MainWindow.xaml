@@ -45,9 +45,9 @@
                                                 <RowDefinition />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                            <CheckBox Content="Assume no wall/column intersections" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox1" VerticalAlignment="Center" />
-                                            <CheckBox Content="Assume no slab/column intersections" Grid.Row="1" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox2" VerticalAlignment="Center" />
-                                            <CheckBox Content="Assume no wall/slab intersections" Grid.Row="2" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox3" VerticalAlignment="Center" />
+                                            <CheckBox Content="Assume no wall/column intersections" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox1" VerticalAlignment="Center" IsChecked="{Binding SkipWallColumnCheck}"/>
+                                            <CheckBox Content="Assume no slab/column intersections" Grid.Row="1" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox2" VerticalAlignment="Center" IsChecked="{Binding SkipSlabColumnCheck}"/>
+                                            <CheckBox Content="Assume no wall/slab intersections" Grid.Row="2" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox3" VerticalAlignment="Center" IsChecked="{Binding SkipWallSlabCheck}"/>
                                         </Grid>
                                     </Grid>
                                 </GroupBox>

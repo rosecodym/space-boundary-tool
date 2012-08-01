@@ -46,5 +46,65 @@ namespace GUI.Properties {
                 this["SelectedTabIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OutputIfcFilename {
+            get {
+                return ((string)(this["OutputIfcFilename"]));
+            }
+            set {
+                this["OutputIfcFilename"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SkipWallColumnCheck {
+            get {
+                return ((bool)(this["SkipWallColumnCheck"]));
+            }
+            set {
+                this["SkipWallColumnCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SkipSlabColumnCheck {
+            get {
+                return ((bool)(this["SkipSlabColumnCheck"]));
+            }
+            set {
+                this["SkipSlabColumnCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SkipWallSlabCheck {
+            get {
+                return ((bool)(this["SkipWallSlabCheck"]));
+            }
+            set {
+                this["SkipWallSlabCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CreateOutputIfc {
+            get {
+                return ((bool)(this["CreateOutputIfc"]));
+            }
+            set {
+                this["CreateOutputIfc"] = value;
+            }
+        }
     }
 }
