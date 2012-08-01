@@ -33,6 +33,16 @@ namespace GUI
             }
         }
 
+        public string OutputIfcFilePath
+        {
+            get { return Properties.Settings.Default.OutputIfcFilename; }
+            set
+            {
+                Properties.Settings.Default.OutputIfcFilename = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("OutputIfcFilePath")); }
+            }
+        }
+
         public bool SkipWallColumnCheck
         {
             get { return Properties.Settings.Default.SkipWallColumnCheck; }
@@ -60,6 +70,16 @@ namespace GUI
             {
                 Properties.Settings.Default.SkipWallSlabCheck = value;
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SkipWallSlabCheck")); }
+            }
+        }
+
+        public bool WriteIfc
+        {
+            get { return Properties.Settings.Default.CreateOutputIfc; }
+            set
+            {
+                Properties.Settings.Default.CreateOutputIfc = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("WriteIfc")); }
             }
         }
 
