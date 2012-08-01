@@ -12,6 +12,7 @@ namespace GUI
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand BrowseToInputIfcFileCommand { get; private set; }
+        public ICommand BrowseToOutputIfcFileCommand { get; private set; }
 
         public int SelectedTabIndex
         {
@@ -85,7 +86,8 @@ namespace GUI
 
         public ViewModel()
         {
-            BrowseToInputIfcFileCommand = new DelegateCommand((_) => Commands.BrowseToInputIfcFile(this));
+            BrowseToInputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToInputIfcFile(this));
+            BrowseToOutputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToOutputIfcFile(this), (_) => this.WriteIfc);
         }
     }
 }
