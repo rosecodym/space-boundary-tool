@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
-using Microsoft.Win32;
-
 namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
@@ -33,36 +31,7 @@ namespace GUI
 
         public ViewModel()
         {
-            BrowseToInputIfcFileCommand = new DelegateCommand((_) => BrowseToInputIfcFile());
+            BrowseToInputIfcFileCommand = new DelegateCommand((_) => Commands.BrowseToInputIfcFile(this));
         }
-
-        private void BrowseToInputIfcFile()
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            bool? result = ofd.ShowDialog();
-            if (result.HasValue && result.Value == true)
-            {
-                InputIfcFilePath = ofd.FileName;
-            }
-        }
-
-        /*
-         *  
-
-        public ViewModel()
-        {
-            BrowseCommand = new DelegateCommand((o) => BrowseToFile());
-        }
-
-        private void BrowseToFile()
-        {
-            var openFileDialog = new OpenFileDialog();
-            var result = openFileDialog.ShowDialog();
-
-            if (result.HasValue && result.Value == true)
-            {
-                FilePath = openFileDialog.FileName;
-            }
-        }*/
     }
 }
