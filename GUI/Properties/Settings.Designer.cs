@@ -25,13 +25,25 @@ namespace GUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("derp")]
-        public string inputIfcFilename {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string InputIfcFilename {
             get {
-                return ((string)(this["inputIfcFilename"]));
+                return ((string)(this["InputIfcFilename"]));
             }
             set {
-                this["inputIfcFilename"] = value;
+                this["InputIfcFilename"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedTabIndex {
+            get {
+                return ((int)(this["SelectedTabIndex"]));
+            }
+            set {
+                this["SelectedTabIndex"] = value;
             }
         }
     }

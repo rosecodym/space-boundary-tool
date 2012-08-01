@@ -13,12 +13,25 @@ namespace GUI
 
         public ICommand BrowseToInputIfcFileCommand { get; private set; }
 
-        public string InputIfcFilePath
+        public int SelectedTabIndex
         {
-            get { return Properties.Settings.Default.inputIfcFilename; }
+            get { return Properties.Settings.Default.SelectedTabIndex; }
             set
             {
-                Properties.Settings.Default.inputIfcFilename = value;
+                Properties.Settings.Default.SelectedTabIndex = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("SelectedTabIndex"));
+                }
+            }
+        }
+
+        public string InputIfcFilePath
+        {
+            get { return Properties.Settings.Default.InputIfcFilename; }
+            set
+            {
+                Properties.Settings.Default.InputIfcFilename = value;
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("InputIfcFilePath"));
