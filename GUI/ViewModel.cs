@@ -94,6 +94,7 @@ namespace GUI
             get { return logWindowText; }
             set
             {
+                logWindowText = value;
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("LogWindowText")); }
             }
         }

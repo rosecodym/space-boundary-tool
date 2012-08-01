@@ -15,6 +15,7 @@ namespace Sbt
         {
             internal SbtFlags flags;
             internal double equalityTolerance;
+            internal double maxPairDistance;
             internal int spaceVerificationTimeout;
             internal IntPtr spaceFilter;
             internal uint spaceFilterCount;
@@ -89,7 +90,8 @@ namespace Sbt
             ICollection<CoreTypes.SpaceInfo> spaces,
             out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
             SbtFlags flags = SbtFlags.None,
-            double internalEpsilon = 0.0005,
+            double internalEpsilon = 0.01,
+            double maxPairDistance = 3.0,
             int spaceVerificationTimeout = -1,
             MessageDelegate notifyMsg = null,
             MessageDelegate warningMsg = null,
@@ -99,6 +101,7 @@ namespace Sbt
             opts.flags = flags;
             opts.spaceVerificationTimeout = spaceVerificationTimeout;
             opts.equalityTolerance = internalEpsilon;
+            opts.maxPairDistance = maxPairDistance;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;
@@ -153,7 +156,8 @@ namespace Sbt
             out ICollection<CoreTypes.SpaceInfo> spaces,
             out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
             SbtFlags flags = SbtFlags.None,
-            double internalEpsilon = 0.0005,
+            double internalEpsilon = 0.01,
+            double maxPairDistance = 3.0,
             int spaceVerificationTimeout = -1,
             MessageDelegate notifyMsg = null,
             MessageDelegate warningMsg = null,
@@ -163,6 +167,7 @@ namespace Sbt
             opts.flags = flags;
             opts.spaceVerificationTimeout = spaceVerificationTimeout;
             opts.equalityTolerance = internalEpsilon;
+            opts.maxPairDistance = maxPairDistance;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;

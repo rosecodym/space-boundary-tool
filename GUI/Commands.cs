@@ -62,10 +62,9 @@ namespace GUI
             p.InputFilename = vm.InputIfcFilePath;
             p.OutputFilename = vm.OutputIfcFilePath;
             p.Flags = Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck;
-            p.NotifyMessage = (msg) => worker.ReportProgress(0, msg);
-            p.WarnMessage = (msg) => worker.ReportProgress(0, msg);
-            p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
+            p.NotifyMessage = p.WarnMessage = p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
 
+            vm.SelectedTabIndex = 2;
             worker.RunWorkerAsync(p);
         }
 
@@ -85,7 +84,8 @@ namespace GUI
                     out spaceBoundaries,
                     p.Flags,
                     0.01,
-                    -1,
+                    3.0,
+                    0,
                     p.NotifyMessage,
                     p.WarnMessage,
                     p.ErrorMessage);

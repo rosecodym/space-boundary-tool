@@ -30,5 +30,11 @@ namespace GUI
             // "no code in the code-behind" but it's just this one thing i swear
             Properties.Settings.Default.Save();
         }
+
+        private void OutputTextChanged(object sender, TextChangedEventArgs e)
+        {
+            // whoops guess i was wrong about "one thing"
+            tbOutput.ScrollToEnd();
+        }
     }
 }
