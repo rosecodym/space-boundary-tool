@@ -14,6 +14,7 @@ namespace GUI
         static public void BrowseToInputIfcFile(ViewModel vm)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "IFC files|*.ifc";
             bool? result = ofd.ShowDialog();
             if (result.HasValue && result.Value == true)
             {
@@ -24,6 +25,7 @@ namespace GUI
         static public void BrowseToOutputIfcFile(ViewModel vm)
         {
             SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "IFC files|*.ifc";
             bool? result = sfd.ShowDialog();
             if (result.HasValue && result.Value == true)
             {
