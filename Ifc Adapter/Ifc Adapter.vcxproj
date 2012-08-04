@@ -127,6 +127,9 @@
       <AdditionalLibraryDirectories>C:\Program Files (x86)\boost\boost_1_47\lib;C:\Program Files %28x86%29\CGAL\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmicpp500_2010.lib;C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmikit500.lib;"C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\lib\libgmp-10.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutputPath)$(TargetFileName)" "$(SolutionDir)GUI\bin\$(Configuration)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -151,6 +154,9 @@
       <AdditionalDependencies>C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmicpp500_2010.lib;C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmikit500.lib;"C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\lib\libgmp-10.lib";C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\leda_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutputPath)$(TargetFileName)" "$(SolutionDir)GUI\bin\$(Configuration)\$(TargetFileName)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
