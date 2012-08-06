@@ -4,8 +4,6 @@
 
 #include "geometry_common.h"
 
-number_collection g_numbers(0.0005);
-
 transformation_3 build_flatten(const direction_3 & d) {
 	// use a quaternion
 

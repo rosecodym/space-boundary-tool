@@ -18,7 +18,7 @@ boost::optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_i
 
 } // namespace
 
-void add_element(std::vector<element_info *> * infos, element_type type, const cppw::Instance & inst, void (*msg_func)(char *), const unit_scaler & scaler) {
+void add_element(std::vector<element_info *> * infos, element_type type, const cppw::Instance & inst, void (*msg_func)(char *), const unit_scaler & scaler, number_collection * c) {
 	static int next_construction_id = 1;
 
 	char buf[256];
@@ -39,14 +39,14 @@ void add_element(std::vector<element_info *> * infos, element_type type, const c
 	if (type == WINDOW || type == DOOR) {
 		auto related_opening = get_related_opening(inst);
 		if (related_opening) {
-			got_geometry = ifc_to_solid(&s, *related_opening, scaler);
+			got_geometry = ifc_to_solid(&s, *related_opening, scaler, c);
 		}
 		else {
 			msg_func("Warning: door or window element does not have a related opening.\n");
 		}
 	}
 	else {
-		got_geometry = ifc_to_solid(&s, inst, scaler);
+		got_geometry = ifc_to_solid(&s, inst, scaler, c);
 	}
 
 	if (got_geometry == 0) {

@@ -3,6 +3,7 @@
 #include "cgal-typedefs.h"
 #include "geometry_common.h"
 #include "ifc-to-cgal.h"
+#include "number_collection.h"
 #include "unit_scaler.h"
 #include "util.h"
 
@@ -59,7 +60,7 @@ void transform_according_to(exact_face * f, const cppw::Select & trans, const un
 	});
 }
 
-exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s) {
+exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
 	if (inst.is_instance_of("IfcPolyline")) {
 		exact_face f;
 
@@ -74,12 +75,12 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s) {
 		return f;
 	}
 	else if (inst.is_instance_of("IfcCompositeCurveSegment")) {
-		return ifc_to_face((cppw::Instance)inst.get("ParentCurve"), s);
+		return ifc_to_face((cppw::Instance)inst.get("ParentCurve"), s, c);
 	}
 	else if (inst.is_instance_of("IfcCompositeCurve")) {
 		cppw::List components = inst.get("Segments");
 		assert(components.size() != 1);
-		return ifc_to_face((cppw::Instance)components.get_(0), s);
+		return ifc_to_face((cppw::Instance)components.get_(0), s, c);
 	}
 	else if (inst.is_instance_of("IfcPolyLoop")) {
 		exact_face face;
@@ -91,37 +92,37 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s) {
 		return face;
 	}
 	else if (inst.is_kind_of("IfcFaceBound")) {
-		return ifc_to_face((cppw::Instance)inst.get("Bound"), s);
+		return ifc_to_face((cppw::Instance)inst.get("Bound"), s, c);
 	}
 	else if (inst.is_instance_of("IfcFace")) {
 		exact_face f;
 		cppw::Set bounds = inst.get("Bounds");
 		for (bounds.move_first(); bounds.move_next(); ) {
-			exact_face thisbound = ifc_to_face((cppw::Instance)bounds.get_(), s);
+			exact_face thisbound = ifc_to_face((cppw::Instance)bounds.get_(), s, c);
 			std::copy(thisbound.outer_boundary.vertices.begin(), thisbound.outer_boundary.vertices.end(), std::back_inserter(f.outer_boundary.vertices));
 		}
 		return f;
 	}
 	else if (inst.is_instance_of("IfcCurveBoundedPlane")) {
-		exact_face face = ifc_to_face((cppw::Instance)inst.get("OuterBoundary"), s);
+		exact_face face = ifc_to_face((cppw::Instance)inst.get("OuterBoundary"), s, c);
 		transform_according_to(&face, inst.get("BasisSurface"), s);
 		return face;
 	}
 	else if (inst.is_instance_of("IfcArbitraryClosedProfileDef")) {
-		return ifc_to_face((cppw::Instance)inst.get("OuterCurve"), s);
+		return ifc_to_face((cppw::Instance)inst.get("OuterCurve"), s, c);
 	}
 	else if (inst.is_instance_of("IfcRectangleProfileDef")) {
 		double xdim = inst.get("XDim");
 		double ydim = inst.get("YDim");
 		exact_face f;
 		point_2 req;
-		req = g_numbers.request_point(s.length_in(-xdim) / 2, s.length_in(-ydim) / 2);
+		req = c->request_point(s.length_in(-xdim) / 2, s.length_in(-ydim) / 2);
 		f.outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), 0));
-		req = g_numbers.request_point(s.length_in(xdim) / 2, s.length_in(-ydim) / 2);
+		req = c->request_point(s.length_in(xdim) / 2, s.length_in(-ydim) / 2);
 		f.outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), 0));
-		req = g_numbers.request_point(s.length_in(xdim) / 2, s.length_in(ydim) / 2);
+		req = c->request_point(s.length_in(xdim) / 2, s.length_in(ydim) / 2);
 		f.outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), 0));
-		req = g_numbers.request_point(s.length_in(-xdim) / 2, s.length_in(ydim) / 2);
+		req = c->request_point(s.length_in(-xdim) / 2, s.length_in(ydim) / 2);
 		f.outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), 0));
 		transform_according_to(&f, inst.get("Position"), s);
 		return f;

@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "geometry_common.h"
+#include "number_collection.h"
 #include "sbt-ifcadapter.h"
 #include "unit_scaler.h"
 
@@ -8,25 +9,25 @@
 
 extern sb_calculation_options g_opts;
 
-point_3 build_point(const cppw::Instance & inst, const unit_scaler & s) {
+point_3 build_point(const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
 	assert(inst.is_kind_of("IfcCartesianPoint"));
 	cppw::List coords(inst.get("Coordinates"));
 	if ((cppw::Integer)inst.get("Dim") == 3) {
-		return g_numbers.request_point(s.length_in(coords.get_(0)), s.length_in(coords.get_(1)), s.length_in(coords.get_(2)));
+		return c->request_point(s.length_in(coords.get_(0)), s.length_in(coords.get_(1)), s.length_in(coords.get_(2)));
 	}
 	else {
-		return g_numbers.request_point(s.length_in(coords.get_(0)), s.length_in(coords.get_(1)), 0);
+		return c->request_point(s.length_in(coords.get_(0)), s.length_in(coords.get_(1)), 0);
 	}
 }
 
-direction_3 build_direction(const cppw::Instance & inst) {
+direction_3 build_direction(const cppw::Instance & inst, number_collection * c) {
 	assert(inst.is_instance_of("IfcDirection"));
 	cppw::List ratios = inst.get("DirectionRatios");
 	if ((cppw::Integer)inst.get("Dim") == 3) {
-		return g_numbers.request_direction(ratios.get_(0), ratios.get_(1), ratios.get_(2));
+		return c->request_direction(ratios.get_(0), ratios.get_(1), ratios.get_(2));
 	}
 	else {
-		return g_numbers.request_direction(ratios.get_(0), ratios.get_(1), 0);
+		return c->request_direction(ratios.get_(0), ratios.get_(1), 0);
 	}
 }
 

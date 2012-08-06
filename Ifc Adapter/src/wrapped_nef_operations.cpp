@@ -2,6 +2,7 @@
 
 #include "geometry_common.h"
 #include "ifc-to-face.h"
+#include "number_collection.h"
 #include "sbt-ifcadapter.h"
 #include "unit_scaler.h"
 
@@ -21,7 +22,7 @@ typedef nef_K::Plane_3							exact_plane_3;
 typedef nef_K::Aff_transformation_3				exact_transformation_3;
 
 typedef nef_K::FT NT;
-
+/*
 class numeric_context {
 	
 private:
@@ -145,31 +146,30 @@ public:
 		return d;
 	}
 };
+*/
 
-numeric_context nefs_context(0.0005);
-
-exact_point_3 to_exact_point(const cppw::Instance & inst) {
+exact_point_3 to_exact_point(const cppw::Instance & inst, number_collection * c) {
 	cppw::List coords = inst.get("Coordinates");
-	return nefs_context.request_point((cppw::Real)coords.get_(0), (cppw::Real)coords.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Real)coords.get_(2) : 0);
+	return c->request_point((cppw::Real)coords.get_(0), (cppw::Real)coords.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Real)coords.get_(2) : 0);
 }
 
-exact_direction_3 to_exact_direction(const cppw::Instance & inst) {
+exact_direction_3 to_exact_direction(const cppw::Instance & inst, number_collection * c) {
 	cppw::List ratios = inst.get("DirectionRatios");
-	return nefs_context.request_direction((cppw::Integer)ratios.get_(0), (cppw::Integer)ratios.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Integer)ratios.get_(2) : 0);
+	return c->request_direction((cppw::Integer)ratios.get_(0), (cppw::Integer)ratios.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Integer)ratios.get_(2) : 0);
 }
 
-nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s) {
+nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
 	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
-		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s);
+		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
 		std::vector<exact_point_3> base_points;
 		std::vector<exact_point_3> extruded_points;
 		std::transform(base.outer_boundary.vertices.begin(), base.outer_boundary.vertices.end(), std::back_inserter(base_points), [](const exact_point & p) {
-			return nefs_context.request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
+			return c->request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
 		});
 		exact_vector_3 extrusion_vec = to_exact_direction((cppw::Instance)inst.get("ExtrudedDirection")).vector();
-		nef_K::FT magnitude(nefs_context.request_coordinate(sqrt(CGAL::to_double(extrusion_vec.squared_length()))));
+		nef_K::FT magnitude(c->request_coordinate(sqrt(CGAL::to_double(extrusion_vec.squared_length()))));
 		extrusion_vec = extrusion_vec / magnitude;
-		extrusion_vec = extrusion_vec * nefs_context.request_coordinate((cppw::Real)inst.get("Depth"));
+		extrusion_vec = extrusion_vec * c->request_coordinate((cppw::Real)inst.get("Depth"));
 		exact_transformation_3 extrusion(CGAL::TRANSLATION, extrusion_vec);
 		std::transform(base_points.begin(), base_points.end(), std::back_inserter(extruded_points), [&extrusion](const exact_point_3 & p) {
 			return p.transform(extrusion);
@@ -204,7 +204,7 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s) 
 		exact_face base = ifc_to_face((cppw::Instance)inst.get("PolygonalBoundary"), s);
 		std::vector<exact_point_3> base_points;
 		std::transform(base.outer_boundary.vertices.begin(), base.outer_boundary.vertices.end(), std::back_inserter(base_points), [](const exact_point & p) {
-			return nefs_context.request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
+			return c->request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
 		});
 		std::vector<exact_plane_3> planes;
 		size_t pc = base_points.size();
@@ -254,7 +254,7 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s) 
 	}
 }
 
-void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef) {
+void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_collection * c) {
 	s->set_rep_type(REP_BREP);
 	nef_polyhedron_3::Halffacet_const_iterator facet;
 	int face_index = 0;
@@ -272,7 +272,7 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef) {
 			nef_polyhedron_3::SHalfedge_around_facet_const_circulator end(cycle);
 			CGAL_For_all(start, end) {
 				exact_point_3 p = start->source()->center_vertex()->point();
-				point_3 req = g_numbers.request_point(
+				point_3 req = c->request_point(
 					CGAL::to_double(p.x()),
 					CGAL::to_double(p.y()),
 					CGAL::to_double(p.z()));
@@ -287,25 +287,9 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef) {
 
 namespace wrapped_nef_operations {
 
-void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler) {
+void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection * c) {
 	g_opts.notify_func("(element requires nef processing)...");
-	convert_to_solid(s, create_nef(inst, scaler));
-	//nef_polyhedron_3 first = create_nef((cppw::Instance)inst.get("FirstOperand"), scaler);
-	//nef_polyhedron_3 second = create_nef((cppw::Instance)inst.get("SecondOperand"), scaler);
-	//cppw::String op = inst.get("Operator");
-	//if (op == "DIFFERENCE") {
-	//	convert_to_solid(s, (first - second).regularization());
-	//}
-	//else if (op == "INTERSECTION") {
-	//	convert_to_solid(s, (first * second).regularization());
-	//}
-	//else if (op == "UNION") {
-	//	convert_to_solid(s, (first + second).regularization());
-	//}
-	//else {
-	//	g_opts.error_func("[Aborting - invalid boolean result operator.]\n");
-	//	exit(IFCADAPT_UNKNOWN);
-	//}
+	convert_to_solid(s, create_nef(inst, scaler), c);
 }
 
 } // namespace wrapped_nef_operations
