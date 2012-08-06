@@ -201,7 +201,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 				options.notify_func(buf);
 				clear_sbs(&model);
 				// add_to_model figures out the right spaces by re-extracting them based on guids
-				if (add_to_model(model, sb_count, sbs, options.notify_func, unit_scaler::identity_scaler) == IFCADAPT_OK) {
+				if (add_to_model(model, sb_count, sbs, options.notify_func, unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
 					sprintf(buf, "Writing model to %s...", output_filename);
 					options.notify_func(buf);
 					edm.write_ifc_file(output_filename);
@@ -266,7 +266,7 @@ ifcadapter_return_t load_and_run_from(
 				// add_to_model figures out the right spaces by re-extracting them based on guids
 				clear_sbs(&model);
 				options.notify_func("Existing space boundaries removed from model.\n");
-				if (add_to_model(model, *total_sb_count, *sbs, options.notify_func, /*scaler*/unit_scaler::identity_scaler) == IFCADAPT_OK) {
+				if (add_to_model(model, *total_sb_count, *sbs, options.notify_func, /*scaler*/unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
 					sprintf(buf, "Writing model to %s...", output_filename);
 					options.notify_func(buf);
 					edm.write_ifc_file(output_filename);

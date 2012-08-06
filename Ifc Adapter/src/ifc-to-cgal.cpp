@@ -31,42 +31,42 @@ direction_3 build_direction(const cppw::Instance & inst, number_collection * c) 
 	}
 }
 
-transformation_3 build_transformation(const cppw::Select & sel, const unit_scaler & s) {
+transformation_3 build_transformation(const cppw::Select & sel, const unit_scaler & s, number_collection * c) {
 	if (sel.is_set()) {
 		cppw::Instance inst(sel);
 		if (inst.is_instance_of("IfcLocalPlacement")) {
-			return build_transformation(inst.get("PlacementRelTo"), s) * build_transformation(inst.get("RelativePlacement"), s);
+			return build_transformation(inst.get("PlacementRelTo"), s, c) * build_transformation(inst.get("RelativePlacement"), s, c);
 		}
 		else if (inst.is_instance_of("IfcAxis2Placement2D")) {
-			point_3 location = build_point((cppw::Instance)inst.get("Location"), s);
+			point_3 location = build_point((cppw::Instance)inst.get("Location"), s, c);
 			cppw::Aggregate p = inst.get("P");
-			auto xcol = normalize(build_direction((cppw::Instance)p.get_(0)).vector());
-			auto ycol = normalize(build_direction((cppw::Instance)p.get_(1)).vector());
+			auto xcol = normalize(build_direction((cppw::Instance)p.get_(0), c).vector());
+			auto ycol = normalize(build_direction((cppw::Instance)p.get_(1), c).vector());
 			vector_3 zcol(0, 0, 1);
 			return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
 									xcol.y(), ycol.y(), zcol.y(), location.y(),
 									xcol.z(), ycol.z(), zcol.z(), location.z());
 		}
 		else if (inst.is_instance_of("IfcAxis2Placement3D")) {
-			point_3 location = build_point((cppw::Instance)inst.get("Location"), s);
+			point_3 location = build_point((cppw::Instance)inst.get("Location"), s, c);
 			cppw::Aggregate p = inst.get("P");
-			auto xcol = normalize(build_direction((cppw::Instance)p.get_(0)).vector());
-			auto ycol = normalize(build_direction((cppw::Instance)p.get_(1)).vector());
-			auto zcol = normalize(build_direction((cppw::Instance)p.get_(2)).vector());
+			auto xcol = normalize(build_direction((cppw::Instance)p.get_(0), c).vector());
+			auto ycol = normalize(build_direction((cppw::Instance)p.get_(1), c).vector());
+			auto zcol = normalize(build_direction((cppw::Instance)p.get_(2), c).vector());
 			return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
 									xcol.y(), ycol.y(), zcol.y(), location.y(),
 									xcol.z(), ycol.z(), zcol.z(), location.z());
 		}
 		else if (inst.is_instance_of("IfcPlane")) {
-			return build_transformation(inst.get("Position"), s);
+			return build_transformation(inst.get("Position"), s, c);
 		}
 		else if (inst.is_instance_of("IfcCartesianTransformationOperator3D")) {
-			point_3 location = build_point((cppw::Instance)inst.get("LocalOrigin"), s);
+			point_3 location = build_point((cppw::Instance)inst.get("LocalOrigin"), s, c);
 			cppw::Aggregate p = inst.get("U");
 			double scale = (cppw::Real)inst.get("Scl");
-			auto xcol = normalize(build_direction((cppw::Instance)p.get_(0)).vector()) * scale;
-			auto ycol = normalize(build_direction((cppw::Instance)p.get_(1)).vector()) * scale;
-			auto zcol = normalize(build_direction((cppw::Instance)p.get_(2)).vector()) * scale;
+			auto xcol = normalize(build_direction((cppw::Instance)p.get_(0), c).vector()) * scale;
+			auto ycol = normalize(build_direction((cppw::Instance)p.get_(1), c).vector()) * scale;
+			auto zcol = normalize(build_direction((cppw::Instance)p.get_(2), c).vector()) * scale;
 			return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
 									xcol.y(), ycol.y(), zcol.y(), location.y(),
 									xcol.z(), ycol.z(), zcol.z(), location.z());

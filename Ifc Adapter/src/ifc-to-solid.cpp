@@ -36,18 +36,18 @@ void ifc_to_ext(exact_extruded_area_solid * e,const cppw::Instance & inst, const
 	}
 }
 
-void transform_according_to(exact_solid * s, const cppw::Select & trans, const unit_scaler & scaler) {
+void transform_according_to(exact_solid * s, const cppw::Select & trans, const unit_scaler & scaler, number_collection * c) {
 	if (!trans.is_set()) {
 		return;
 	}
 	if (s->rep_type() == REP_BREP) {
 		for (size_t i = 0; i < s->rep.as_brep->faces.size(); ++i) {
-			transform_according_to(&s->rep.as_brep->faces[i], trans, scaler);
+			transform_according_to(&s->rep.as_brep->faces[i], trans, scaler, c);
 		}
 	}
 	else if (s->rep_type() == REP_EXT) {
-		transform_according_to(&s->rep.as_ext->area, trans, scaler);
-		s->rep.as_ext->ext_dir = s->rep.as_ext->ext_dir.transform(build_transformation(trans, scaler));
+		transform_according_to(&s->rep.as_ext->area, trans, scaler, c);
+		s->rep.as_ext->ext_dir = s->rep.as_ext->ext_dir.transform(build_transformation(trans, scaler, c));
 	}
 	else {
 		g_opts.error_func("[Internal solid rep was of an unknown type!]\n");
@@ -62,7 +62,7 @@ int ifc_to_solid(exact_solid * s, const cppw::Instance & inst, const unit_scaler
 	if (inst.is_kind_of("IfcProduct")) {
 		int res = ifc_to_solid(s, (cppw::Instance)inst.get("Representation"), scaler, c);
 		if (res == 0) {
-			transform_according_to(s, inst.get("ObjectPlacement"), scaler);
+			transform_according_to(s, inst.get("ObjectPlacement"), scaler, c);
 		}
 		return res;
 	}
@@ -92,7 +92,7 @@ int ifc_to_solid(exact_solid * s, const cppw::Instance & inst, const unit_scaler
 	else if (inst.is_instance_of("IfcExtrudedAreaSolid")) {
 		s->set_rep_type(REP_EXT);
 		ifc_to_ext(s->rep.as_ext, inst, scaler, c);
-		transform_according_to(s, inst.get("Position"), scaler);
+		transform_according_to(s, inst.get("Position"), scaler, c);
 		return 0;
 	}
 
@@ -101,8 +101,8 @@ int ifc_to_solid(exact_solid * s, const cppw::Instance & inst, const unit_scaler
 		cppw::Instance mapped_rep = mapping_source.get("MappedRepresentation");
 		int res = ifc_to_solid(s, mapped_rep, scaler, c);
 		if (res == 0) {
-			transform_according_to(s, mapping_source.get("MappingOrigin"), scaler);
-			transform_according_to(s, inst.get("MappingTarget"), scaler);
+			transform_according_to(s, mapping_source.get("MappingOrigin"), scaler, c);
+			transform_according_to(s, inst.get("MappingTarget"), scaler, c);
 		}
 		return res;
 	}

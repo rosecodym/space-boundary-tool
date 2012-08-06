@@ -14,12 +14,12 @@ extern sb_calculation_options g_opts;
 
 namespace {
 
-exact_polyloop ifc_to_polyloop(const cppw::Instance & inst, const unit_scaler & s) {
+exact_polyloop ifc_to_polyloop(const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
 	if (inst.is_instance_of("IfcPolyline")) {
 		exact_polyloop loop;
 		cppw::List raw_points = inst.get("Points");
 		for (raw_points.move_first(); raw_points.move_next(); ) {
-			point_3 p = build_point((cppw::Instance)raw_points.get_(), s);
+			point_3 p = build_point((cppw::Instance)raw_points.get_(), s, c);
 			loop.vertices.push_back(exact_point(p.x(), p.y(), p.z()));
 		}
 		if (loop.vertices.front() == loop.vertices.back()) {
@@ -52,8 +52,8 @@ direction_3 find_normal(const std::vector<point_3> & points) {
 
 } // namespace
 
-void transform_according_to(exact_face * f, const cppw::Select & trans, const unit_scaler & s) {
-	transformation_3 t = build_transformation(trans, s);
+void transform_according_to(exact_face * f, const cppw::Select & trans, const unit_scaler & s, number_collection * c) {
+	transformation_3 t = build_transformation(trans, s, c);
 	transform_according_to(&f->outer_boundary, t);
 	std::for_each(f->voids.begin(), f->voids.end(), [&t](exact_polyloop & p) {
 		transform_according_to(&p, t);
@@ -66,7 +66,7 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 
 		cppw::List raw_points = inst.get("Points");
 		for (raw_points.move_first(); raw_points.move_next(); ) {
-			point_3 p = build_point((cppw::Instance)raw_points.get_(), s);
+			point_3 p = build_point((cppw::Instance)raw_points.get_(), s, c);
 			f.outer_boundary.vertices.push_back(exact_point(p.x(), p.y(), p.z()));
 		}
 		if (f.outer_boundary.vertices.front() == f.outer_boundary.vertices.back()) {
@@ -86,7 +86,7 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 		exact_face face;
 		cppw::List raw_points = inst.get("Polygon");
 		for (raw_points.move_first(); raw_points.move_next(); ) {
-			point_3 p = build_point((cppw::Instance)raw_points.get_(), s);
+			point_3 p = build_point((cppw::Instance)raw_points.get_(), s, c);
 			face.outer_boundary.vertices.push_back(exact_point(p.x(), p.y(), p.z()));
 		}
 		return face;
@@ -105,7 +105,7 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 	}
 	else if (inst.is_instance_of("IfcCurveBoundedPlane")) {
 		exact_face face = ifc_to_face((cppw::Instance)inst.get("OuterBoundary"), s, c);
-		transform_according_to(&face, inst.get("BasisSurface"), s);
+		transform_according_to(&face, inst.get("BasisSurface"), s, c);
 		return face;
 	}
 	else if (inst.is_instance_of("IfcArbitraryClosedProfileDef")) {
@@ -124,16 +124,16 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 		f.outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), 0));
 		req = c->request_point(s.length_in(-xdim) / 2, s.length_in(ydim) / 2);
 		f.outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), 0));
-		transform_according_to(&f, inst.get("Position"), s);
+		transform_according_to(&f, inst.get("Position"), s, c);
 		return f;
 	}
 	else if (inst.is_instance_of("IfcArbitraryProfileDefWithVoids")) {
 		found_freestanding = true;
 		exact_face f;
-		f.outer_boundary = ifc_to_polyloop((cppw::Instance)inst.get("OuterCurve"), s);
+		f.outer_boundary = ifc_to_polyloop((cppw::Instance)inst.get("OuterCurve"), s, c);
 		cppw::Set innerCurves = inst.get("InnerCurves");
 		for (innerCurves.move_first(); innerCurves.move_next(); ) {
-			f.voids.push_back(ifc_to_polyloop((cppw::Instance)innerCurves.get_(), s));
+			f.voids.push_back(ifc_to_polyloop((cppw::Instance)innerCurves.get_(), s, c));
 		}
 		return f;
 	}

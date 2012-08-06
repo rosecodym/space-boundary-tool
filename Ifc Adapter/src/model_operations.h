@@ -22,4 +22,5 @@ ifcadapter_return_t add_to_model(
 	size_t sb_count,
 	space_boundary ** space_boundaries,
 	void (*msg_func)(char *),
-	const unit_scaler & scaler);
+	const unit_scaler & scaler,
+	number_collection * c);
