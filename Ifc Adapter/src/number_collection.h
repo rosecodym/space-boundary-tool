@@ -21,14 +21,6 @@ private:
 
 	void init_constants();
 
-	static bool are_effectively_parallel(const direction_3 & a, const direction_3 & b, double eps) {
-		vector_3 v_a = a.to_vector();
-		v_a = v_a / CGAL::sqrt(v_a.squared_length());
-		vector_3 v_b = b.to_vector();
-		v_b = v_b / CGAL::sqrt(v_b.squared_length());
-		return one_dimensional_equality_context::is_zero_squared(CGAL::cross_product(v_a, v_b).squared_length(), eps);
-	}
-
 	static bool share_sense(const direction_3 & a, const direction_3 & b) {
 		return (a.to_vector() + b.to_vector()).squared_length() > a.to_vector().squared_length() + b.to_vector().squared_length();
 	}
@@ -56,6 +48,14 @@ public:
 			directions.push_back(requested);
 			return directions.back();
 		}
+	}
+
+	static bool are_effectively_parallel(const direction_3 & a, const direction_3 & b, double eps) {
+		vector_3 v_a = a.to_vector();
+		v_a = v_a / CGAL::sqrt(v_a.squared_length());
+		vector_3 v_b = b.to_vector();
+		v_b = v_b / CGAL::sqrt(v_b.squared_length());
+		return one_dimensional_equality_context::is_zero_squared(CGAL::cross_product(v_a, v_b).squared_length(), eps);
 	}
 
 };

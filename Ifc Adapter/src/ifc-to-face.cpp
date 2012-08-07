@@ -143,32 +143,39 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 	}
 }
 
+/*
+std::tuple<plane_3, point_3> calculate_plane_and_average_point(const loop & l) {
+	// http://cs.haifa.ac.il/~gordon/plane.pdf
+	NT a(0.0);
+	NT b(0.0);
+	NT c(0.0);
+	NT x(0.0);
+	NT y(0.0);
+	NT z(0.0);
+	for (size_t i = 0; i < l.size(); ++i) {
+		const point_3 & curr = l[i];
+		const point_3 & next = l[(i+1) % l.size()];
+		a += (curr.y() - next.y()) * (curr.z() + next.z());
+		b += (curr.z() - next.z()) * (curr.x() + next.x());
+		c += (curr.x() - next.x()) * (curr.y() + next.y());
+		x += curr.x();
+		y += curr.y();
+		z += curr.z();
+	}
+	vector_3 avg_vec(x / l.size(), y / l.size(), z / l.size());
+	return std::make_tuple(plane_3(a, b, c, -avg_vec * vector_3(a, b, c)), CGAL::ORIGIN + avg_vec);
+}*/
+
 bool normal_matches_extrusion(const exact_face & face, const direction_3 & ext_dir) {
-
-	std::vector<point_3> points_3;
-	std::transform(face.outer_boundary.vertices.begin(), face.outer_boundary.vertices.end(), std::back_inserter(points_3), [](const exact_point & p) {
-		return point_3(p.x, p.y, p.z);
-	});
-
-	direction_3 points_dir = find_normal(points_3);
-	
-	assert(ext_dir == points_dir || ext_dir == -points_dir);
-
-	if (face.outer_boundary.vertices.size() == 3) {
-		return points_dir == ext_dir;
+	// http://cs.haifa.ac.il/~gordon/plane.pdf
+	NT a(0.0), b(0.0), c(0.0);
+	auto & loop = face.outer_boundary.vertices;
+	for (size_t i = 0; i < loop.size(); ++i) {
+		auto & curr = loop[i];
+		auto & next = loop[(i+1) % loop.size()];
+		a += (curr.y - next.y) * (curr.z + next.z);
+		b += (curr.z - next.z) * (curr.x + next.x);
+		c += (curr.x - next.x) * (curr.y + next.y);
 	}
-
-	transformation_3 flatten = build_flatten(points_dir);
-
-	polygon_2 points_2;
-	for (auto p = points_3.begin(); p != points_3.end(); ++p) {
-		point_3 flat = p->transform(flatten);
-		points_2.push_back(point_2(flat.x(), flat.y()));
-	}
-
-	if ((CGAL::orientation(points_2[0], points_2[1], points_2[2]) == CGAL::LEFT_TURN) != points_2.is_counterclockwise_oriented()) {
-		points_dir = -points_dir;
-	}
-
-	return points_dir == ext_dir;
+	return number_collection::are_effectively_parallel(direction_3(a, b, c), ext_dir, g_opts.equality_tolerance);
 }
