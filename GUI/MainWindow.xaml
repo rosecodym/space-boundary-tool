@@ -86,7 +86,7 @@
                     <StackPanel Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="stackPanel1" VerticalAlignment="Stretch" Width="Auto" Orientation="Horizontal" FlowDirection="RightToLeft">
                         <Button Content="Save As..." Height="23" Name="button2" Width="75" IsEnabled="False" FlowDirection="LeftToRight" Margin="4" />
                     </StackPanel>
-                    <TextBox Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tbOutput" VerticalAlignment="Stretch" Width="Auto" IsReadOnly="True" Text="{Binding LogWindowText}" TextChanged="OutputTextChanged" />
+                    <TextBox Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tbOutput" VerticalAlignment="Stretch" Width="Auto" IsReadOnly="True" TextChanged="OutputTextChanged" FontFamily="Courier New" />
                 </Grid>
             </TabItem>
         </TabControl>

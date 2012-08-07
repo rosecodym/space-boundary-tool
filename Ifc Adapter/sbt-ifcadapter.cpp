@@ -3,6 +3,7 @@
 #include "edm_wrapper.h"
 #include "get_length_units_per_meter.h"
 #include "model_operations.h"
+#include "number_collection.h"
 #include "reassign_bounded_spaces.h"
 #include "unit_scaler.h"
 
@@ -166,6 +167,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 	char buf[256];
 	try {
 		g_opts = options;
+		number_collection ctxt(g_opts.equality_tolerance / 20);
 		sprintf(buf, "Processing file %s", input_filename);
 		options.notify_func(buf);
 		edm_wrapper edm;
@@ -185,7 +187,8 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			&loaded_spaces, 
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
-			create_guid_filter(options.element_filter, options.element_filter_count));
+			create_guid_filter(options.element_filter, options.element_filter_count),
+			&ctxt);
 		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
@@ -198,7 +201,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 				options.notify_func(buf);
 				clear_sbs(&model);
 				// add_to_model figures out the right spaces by re-extracting them based on guids
-				if (add_to_model(model, sb_count, sbs, options.notify_func, unit_scaler::identity_scaler) == IFCADAPT_OK) {
+				if (add_to_model(model, sb_count, sbs, options.notify_func, unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
 					sprintf(buf, "Writing model to %s...", output_filename);
 					options.notify_func(buf);
 					edm.write_ifc_file(output_filename);
@@ -236,6 +239,7 @@ ifcadapter_return_t load_and_run_from(
 	char buf[256];
 	try {
 		g_opts = options;
+		number_collection ctxt(g_opts.equality_tolerance / 20);
 		sprintf(buf, "Processing file %s", input_filename);
 		options.notify_func(buf);
 		edm_wrapper edm;
@@ -250,7 +254,8 @@ ifcadapter_return_t load_and_run_from(
 			spaces, 
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
-			create_guid_filter(options.element_filter, options.element_filter_count));
+			create_guid_filter(options.element_filter, options.element_filter_count),
+			&ctxt);
 		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
@@ -261,7 +266,7 @@ ifcadapter_return_t load_and_run_from(
 				// add_to_model figures out the right spaces by re-extracting them based on guids
 				clear_sbs(&model);
 				options.notify_func("Existing space boundaries removed from model.\n");
-				if (add_to_model(model, *total_sb_count, *sbs, options.notify_func, /*scaler*/unit_scaler::identity_scaler) == IFCADAPT_OK) {
+				if (add_to_model(model, *total_sb_count, *sbs, options.notify_func, /*scaler*/unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
 					sprintf(buf, "Writing model to %s...", output_filename);
 					options.notify_func(buf);
 					edm.write_ifc_file(output_filename);

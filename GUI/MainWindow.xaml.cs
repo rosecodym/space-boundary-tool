@@ -22,7 +22,9 @@ namespace GUI
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new ViewModel();
+            // this argument is because binding the output text to a ViewModel property is unusably slow
+            // i haven't figured out a better workaround yet
+            DataContext = new ViewModel(msg => tbOutput.AppendText(msg));
         }
 
         private void MainWindowClosed(object sender, EventArgs e)

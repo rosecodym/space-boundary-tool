@@ -89,21 +89,16 @@ namespace GUI
             }
         }
 
-        public string LogWindowText
-        {
-            get { return logWindowText; }
-            set
-            {
-                logWindowText = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("LogWindowText")); }
-            }
-        }
-
-        public ViewModel()
+        public ViewModel(Action<string> updateOutputDirectly)
         {
             BrowseToInputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToInputIfcFile(this));
             BrowseToOutputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToOutputIfcFile(this), (_) => this.WriteIfc);
             ExecuteSbtCommand = new RelayCommand((_) => Commands.InvokeSbt(this));
+            // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
+            // i haven't figured out a better workaround yet
+            UpdateOutputDirectly = updateOutputDirectly;
         }
+
+        public Action<string> UpdateOutputDirectly { get; private set; }
     }
 }

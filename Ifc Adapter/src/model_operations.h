@@ -3,6 +3,7 @@
 #include "precompiled.h"
 #include "sbt-ifcadapter.h"
 
+class number_collection;
 class unit_scaler;
 
 ifcadapter_return_t extract_from_model(
@@ -13,11 +14,13 @@ ifcadapter_return_t extract_from_model(
 	space_info *** spaces,
 	void (*msg_func)(char *),
 	const unit_scaler & scaler,
-	const std::function<bool(const char *)> & element_filter);
+	const std::function<bool(const char *)> & element_filter,
+	number_collection * c);
 
 ifcadapter_return_t add_to_model(
 	cppw::Open_model & model,
 	size_t sb_count,
 	space_boundary ** space_boundaries,
 	void (*msg_func)(char *),
-	const unit_scaler & scaler);
+	const unit_scaler & scaler,
+	number_collection * c);

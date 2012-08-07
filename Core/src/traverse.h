@@ -35,7 +35,7 @@ void begin_traversal(const stacking_graph & graph, stacking_graph::vertex_descri
 	as_face->remove_area(as_face->face_area());
 	double initial_height = CGAL::to_double(as_face->height());
 
-	PRINT_STACKS("Beginning initial traversal.\n");
+	PRINT_STACKS("Beginning initial traversal from space %s at height %f.\n", as_face->bounded_space()->global_id().c_str(), CGAL::to_double(as_face->height()));
 	std::vector<blockstack> stacks_from_this_face;
 	traverse(graph, &initial_sequence, initial_height, thickness_cutoff, height_eps, &stacks_from_this_face);
 	boost::copy(stacks_from_this_face, oi);

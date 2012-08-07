@@ -428,7 +428,17 @@ void multiview_solid::convert_to_nef(std::function<equality_context *(void)> laz
 void multiview_solid::print() const {
 	struct visitor : public boost::static_visitor<> {
 		void operator () (const simple_face_groups &) const { }
-		void operator () (const oriented_area_groups &) const { }
+		void operator () (const oriented_area_groups & groups) const {
+			boost::for_each(groups, [](const std::vector<oriented_area> & group) {
+				NOTIFY_MSG("Multiview solid oriented area group:\n");
+				boost::for_each(group, [](const oriented_area & oa) {
+					oa.print();
+					NOTIFY_MSG("converts to:\n");
+					oa.to_3d().front().print_outer();
+				});
+				NOTIFY_MSG("End multiview solid oriented area group.\n");
+			});
+		}
 		void operator () (const extrusion_information &) const { }
 		void operator () (const nef_polyhedron_3 & nef) const {
 			nef_halffacet_handle h;

@@ -12,6 +12,8 @@
 #include <cassert>
 #include <cstdio>
 
+#include <boost/range/algorithm.hpp>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Extended_cartesian.h>
 #include <CGAL/CORE_Expr.h>

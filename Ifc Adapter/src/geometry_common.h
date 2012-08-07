@@ -34,5 +34,3 @@ inline bool operator == (const point & lhs, const point & rhs) {
 }
 
 transformation_3 build_flatten(const direction_3 & d);
-
-extern number_collection g_numbers;

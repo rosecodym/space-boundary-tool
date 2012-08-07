@@ -132,17 +132,11 @@ cppw::Application_instance create_sb(
 	const cppw::Instance & space,
 	const cppw::Instance & element,
 	space_boundary * sb,
-	const unit_scaler & scaler)
+	const unit_scaler & scaler,
+	number_collection * c)
 {
-	//printf("Adding space boundary %s/%s/%s to the model\n",
-	//	sb->global_id,
-	//	sb->element_id,
-	//	sb->bounded_space->id);
-	//for (size_t i = 0; i < sb->geometry.vertex_count; ++i) {
-	//	printf("(%f, %f, %f)\n", sb->geometry.vertices[i].x, sb->geometry.vertices[i].y, sb->geometry.vertices[i].z);
-	//}
 
-	transformation_3 space_placement = build_transformation(space.get("ObjectPlacement"), scaler);
+	transformation_3 space_placement = build_transformation(space.get("ObjectPlacement"), scaler, c);
 
 	cppw::Application_instance inst = model.create("IfcRelSpaceBoundary");
 
@@ -218,7 +212,8 @@ ifcadapter_return_t add_to_model(
 	size_t sb_count, 
 	space_boundary ** sbs,
 	void (*msg_func)(char *),
-	const unit_scaler & scaler) 
+	const unit_scaler & scaler,
+	number_collection * c) 
 {
 	msg_func("Adding space boundaries to model");
 	cppw::Instance ownerhistory = create_owner_history(&model);
@@ -243,7 +238,7 @@ ifcadapter_return_t add_to_model(
 	for (size_t i = 0; i < sb_count; ++i) {
 		if (!sbs[i]->lies_on_outside) {
 			try {
-				create_sb(model, ownerhistory, ss.get(space_map[sbs[i]->bounded_space->id]), es.get(element_map[sbs[i]->element_id]), sbs[i], scaler);
+				create_sb(model, ownerhistory, ss.get(space_map[sbs[i]->bounded_space->id]), es.get(element_map[sbs[i]->element_id]), sbs[i], scaler, c);
 				++added_count;
 				msg_func(".");
 			}
