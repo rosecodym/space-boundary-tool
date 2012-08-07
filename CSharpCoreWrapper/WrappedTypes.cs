@@ -511,7 +511,7 @@ namespace Sbt.CoreTypes
         {
             get
             {
-                return Opposite != null && Opposite.LiesOnOutside;
+                return Opposite == null && Level == 2;
             }
         }
         private List<MaterialLayer> materialLayers;

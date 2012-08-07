@@ -91,13 +91,13 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Label Content="2nd-level physical space boundaries (internal):" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label3" VerticalAlignment="Center" />
-                            <Label Content="2nd-level physical space boundaries (external):" Grid.Row="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label4" VerticalAlignment="Center" />
+                            <Label Content="2nd-level physical space boundaries (external):" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label3" VerticalAlignment="Center" />
+                            <Label Content="2nd-level physical space boundaries (internal):" Grid.Row="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label4" VerticalAlignment="Center" />
                             <Label Content="3rd-level space boundaries:" Grid.Row="2" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label5" VerticalAlignment="Center" />
                             <Label Content="4th-level space boundaries:" Grid.Row="3" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label6" VerticalAlignment="Center" />
                             <Label Content="Virtual space boundaries:" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label7" VerticalAlignment="Center" />
-                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalInternalCountString}}" Grid.Column="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label8" VerticalAlignment="Center" />
-                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalExternalCountString}}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label9" VerticalAlignment="Center" />
+                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalExternalCountString}}" Grid.Column="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label8" VerticalAlignment="Center" />
+                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalInternalCountString}}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label9" VerticalAlignment="Center" />
                             <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo3rdLevelCountString}}" Grid.Column="1" Grid.Row="2" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label10" VerticalAlignment="Center" />
                             <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo4thLevelCountString}}" Grid.Column="1" Grid.Row="3" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label11" VerticalAlignment="Center" />
                             <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationToVirtualCountString}}" Grid.Column="1" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label12" VerticalAlignment="Center" />
