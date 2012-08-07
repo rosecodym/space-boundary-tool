@@ -9,7 +9,7 @@ namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
     {
-        private string logWindowText = String.Empty;
+        private BuildingInformation currentBuilding;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -17,7 +17,22 @@ namespace GUI
         public ICommand BrowseToOutputIfcFileCommand { get; private set; }
         public ICommand ExecuteSbtCommand { get; private set; }
 
-        public BuildingInformation CurrentBuilding { get; set; }
+        public BuildingInformation CurrentBuilding
+        {
+            get { return currentBuilding; }
+            set
+            {
+                currentBuilding = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SpaceBoundariesLoaded")); }
+            }
+        }
+        public bool SpaceBoundariesLoaded
+        {
+            get
+            {
+                return CurrentBuilding != null && CurrentBuilding.SpaceBoundaries != null;
+            }
+        }
 
         public int SelectedTabIndex
         {

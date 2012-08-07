@@ -94,7 +94,7 @@ namespace GUI
                 BuildingInformation resultingBuilding = new BuildingInformation();
                 resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
                 resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
-                resultingBuilding.SpaceBoundaries = new List<Sbt.CoreTypes.SpaceBoundary>(spaceBoundaries);
+                resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
                 e.Result = resultingBuilding;
             }
         }

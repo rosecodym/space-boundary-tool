@@ -11,6 +11,6 @@ namespace GUI
     {
         public List<ElementInfo> Elements { get; set; }
         public List<SpaceInfo> Spaces { get; set; }
-        public List<SpaceBoundary> SpaceBoundaries { get; set; }
+        public SpaceBoundaryCollection SpaceBoundaries { get; set; }
     }
 }
