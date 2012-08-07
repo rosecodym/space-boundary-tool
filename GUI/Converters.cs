@@ -13,7 +13,7 @@ namespace GUI.Converters
         {
             BuildingInformation info = value as BuildingInformation;
             if (info != null) { return "Space Boundary Summary (for " + info.IfcFilename + ")"; }
-            else { return "Space Boundary Summary (no building loaded)"; }
+            else { return "Space boundary summary (no building loaded)"; }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
