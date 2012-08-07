@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:GUI"
         Title="Space Boundary Tool" Height="502" Width="1156" Closed="MainWindowClosed" xmlns:my="clr-namespace:GUI.Converters">
     <Window.Resources>
-        <my:FalseToVisibleConverter x:Key="FalseToVisibleConverter" />
+        <my:BuildingInformationToSbSummaryTitleConverter x:Key="BuildingInformationToSbSummaryTitleConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -73,9 +73,26 @@
                             </Grid>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Row="2" Header="Space Boundary Summary" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox3" VerticalAlignment="Stretch" Width="Auto">
-                        <Grid>
-                            <Label Content="No space boundaries have been loaded." Height="28" HorizontalAlignment="Left" Margin="0" Name="label3" VerticalAlignment="Top" Visibility="{Binding SpaceBoundariesLoaded, Converter={StaticResource FalseToVisibleConverter}}" />
+                    <GroupBox Grid.Row="2" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox3" VerticalAlignment="Stretch" Width="Auto" Header="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationToSbSummaryTitleConverter}}">
+                        <Grid VerticalAlignment="Top">
+                            <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid7" VerticalAlignment="Stretch" Width="Auto" Panel.ZIndex="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Label Content="2nd-level physical space boundaries (internal):" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label4" VerticalAlignment="Center" Panel.ZIndex="0" />
+                                <Label Content="2nd-level physical space boundaries (external):" Grid.Row="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label5" VerticalAlignment="Center" />
+                                <Label Content="3rd-level space boundaries:" Grid.Row="2" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label6" VerticalAlignment="Center" />
+                                <Label Content="4th-level space boundaries:" Grid.Row="3" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label7" VerticalAlignment="Center" />
+                                <Label Content="Virtual space boundaries:" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label8" VerticalAlignment="Center" />
+                            </Grid>
                         </Grid>
                     </GroupBox>
                 </Grid>

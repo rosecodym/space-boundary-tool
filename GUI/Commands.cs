@@ -92,6 +92,7 @@ namespace GUI
                     p.WarnMessage,
                     p.ErrorMessage);
                 BuildingInformation resultingBuilding = new BuildingInformation();
+                resultingBuilding.IfcFilename = p.InputFilename;
                 resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
                 resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
                 resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);

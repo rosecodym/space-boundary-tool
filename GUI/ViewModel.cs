@@ -23,14 +23,7 @@ namespace GUI
             set
             {
                 currentBuilding = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SpaceBoundariesLoaded")); }
-            }
-        }
-        public bool SpaceBoundariesLoaded
-        {
-            get
-            {
-                return CurrentBuilding != null && CurrentBuilding.SpaceBoundaries != null;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentBuilding")); }
             }
         }
 
