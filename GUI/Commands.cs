@@ -52,7 +52,7 @@ namespace GUI
             worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
             {
                 string msg = e.UserState as string;
-                if (msg != null) { vm.LogWindowText += msg; }
+                if (msg != null) { vm.UpdateOutputDirectly(msg); }
             });
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
             {
