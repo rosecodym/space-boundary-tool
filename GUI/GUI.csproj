@@ -36,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LibIdf">
+      <HintPath>..\..\EPlus_IDF_Toolbox\Slice\bin\Release\LibIdf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -58,6 +61,10 @@
     <Compile Include="BuildingInformation.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Converters.cs" />
+    <Compile Include="IddManager.cs" />
+    <Compile Include="EnergyPlusVersion.cs" />
+    <Compile Include="IdfGeneration\Idf Creators\IdfCreator.cs" />
+    <Compile Include="IdfGeneration\Idf Creators\IdfV700Creator.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SpaceBoundaryCollection.cs" />
     <Compile Include="ViewModel.cs" />
@@ -105,6 +112,7 @@
       <Name>ManagedWrapper</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
