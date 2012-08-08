@@ -105,6 +105,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Resources\V7-1-0-Energy+.idd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
