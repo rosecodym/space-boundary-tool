@@ -97,6 +97,23 @@ namespace GUI
             }
         }
 
+        public List<EnergyPlusVersion> AvailableEPVersions
+        {
+            get
+            {
+                return new List<EnergyPlusVersion>(new EnergyPlusVersion[] { EnergyPlusVersion.V710 });
+            }
+        }
+
+        public EnergyPlusVersion EnergyPlusVersionToWrite
+        {
+            get { return (EnergyPlusVersion)Properties.Settings.Default.EnergyPlusVersionToWrite; }
+            set
+            {
+                Properties.Settings.Default.EnergyPlusVersionToWrite = (int)value;
+            }
+        }
+
         public ViewModel(Action<string> updateOutputDirectly)
         {
             BrowseToInputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToInputIfcFile(this));

@@ -105,7 +105,28 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Generate IDF" IsEnabled="False" />
+            <TabItem Header="Generate IDF">
+                <Grid Height="Auto" Name="grid7" Width="Auto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid8" VerticalAlignment="Stretch" Width="Auto">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Output IDF:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label13" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" Grid.ColumnSpan="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox2" VerticalAlignment="Center" Width="Auto" />
+                        <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button5" VerticalAlignment="Center" Width="75" IsEnabled="False" />
+                        <Button Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" IsEnabled="False" />
+                        <ComboBox Grid.Column="3" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionToWrite}"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
             <TabItem Header="Output">
                 <Grid Height="Auto" Name="grid2" Width="Auto">
                     <Grid.RowDefinitions>
