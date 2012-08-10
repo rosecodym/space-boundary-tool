@@ -17,6 +17,7 @@ namespace GUI
         public ICommand BrowseToInputIfcFileCommand { get; private set; }
         public ICommand BrowseToOutputIfcFileCommand { get; private set; }
         public ICommand ExecuteSbtCommand { get; private set; }
+        public ICommand GenerateIdfCommand { get; private set; }
 
         public BuildingInformation CurrentBuilding
         {
@@ -127,6 +128,7 @@ namespace GUI
                     PropertyChanged(this, new PropertyChangedEventArgs("Busy"));
                     // TODO: figure out how to make this not backwards
                     PropertyChanged(this, new PropertyChangedEventArgs("SbtInvokable"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("IdfGeneratable"));
                 }
             }
         }
@@ -136,11 +138,17 @@ namespace GUI
             get { return !Busy; }
         }
 
+        public bool IdfGeneratable
+        {
+            get { return !Busy; }
+        }
+
         public ViewModel(Action<string> updateOutputDirectly)
         {
             BrowseToInputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToInputIfcFile(this));
             BrowseToOutputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToOutputIfcFile(this), (_) => this.WriteIfc);
             ExecuteSbtCommand = new RelayCommand((_) => Commands.InvokeSbt(this));
+            GenerateIdfCommand = new RelayCommand((_) => Commands.GenerateIdf(this));
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;

@@ -82,6 +82,11 @@ namespace GUI
             }
         }
 
+        static public void GenerateIdf(ViewModel vm)
+        {
+            throw new NotImplementedException();
+        }
+
         static void DoSbtWork(object sender, DoWorkEventArgs e)
         {
             SbtParameters p = e.Argument as SbtParameters;
