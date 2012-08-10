@@ -154,7 +154,7 @@ namespace GUI
                     IdfGenerationParameters p = new IdfGenerationParameters();
                     p.OutputFilename = vm.OutputIdfFilePath;
                     p.Building = vm.CurrentBuilding;
-                    p.Notify = vm.UpdateOutputDirectly;
+                    p.Notify = msg => worker.ReportProgress(0, msg);
 
                     vm.SelectedTabIndex = 2;
                     worker.RunWorkerAsync(p);
