@@ -105,12 +105,13 @@ namespace GUI
             }
         }
 
-        public EnergyPlusVersion EnergyPlusVersionToWrite
+        public int EnergyPlusVersionIndexToWrite
         {
-            get { return (EnergyPlusVersion)Properties.Settings.Default.EnergyPlusVersionToWrite; }
+            get { return Properties.Settings.Default.EnergyPlusVersionIndexToWrite; }
             set
             {
-                Properties.Settings.Default.EnergyPlusVersionToWrite = (int)value;
+                Properties.Settings.Default.EnergyPlusVersionIndexToWrite = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("EnergyPlusVersionIndexToWrite")); }
             }
         }
 

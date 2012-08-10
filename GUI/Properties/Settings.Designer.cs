@@ -110,12 +110,12 @@ namespace GUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int EnergyPlusVersionToWrite {
+        public int EnergyPlusVersionIndexToWrite {
             get {
-                return ((int)(this["EnergyPlusVersionToWrite"]));
+                return ((int)(this["EnergyPlusVersionIndexToWrite"]));
             }
             set {
-                this["EnergyPlusVersionToWrite"] = value;
+                this["EnergyPlusVersionIndexToWrite"] = value;
             }
         }
     }
