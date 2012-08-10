@@ -105,6 +105,49 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
+            <TabItem Header="Materials">
+                <Grid Height="Auto" Name="grid9" Width="Auto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <GroupBox Grid.RowSpan="1" Header="Library Materials" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox5" VerticalAlignment="Stretch" Width="Auto">
+                        <Grid>
+                            <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid10" VerticalAlignment="Stretch" Width="Auto">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid11" VerticalAlignment="Center" Width="Auto">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="IDF Materials Library:" Height="28" HorizontalAlignment="Center" Margin="0" Name="label15" VerticalAlignment="Center" />
+                                    <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button7" VerticalAlignment="Center" Width="75" />
+                                    <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox4" VerticalAlignment="Stretch" Width="Auto" />
+                                    <Button Content="Load" Grid.Column="3" Height="23" HorizontalAlignment="Left" Margin="4" Name="button8" VerticalAlignment="Top" Width="75" />
+                                </Grid>
+                                <DataGrid AutoGenerateColumns="False" Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" />
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1" Header="Building Materials" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox6" VerticalAlignment="Stretch" Width="Auto">
+                        <Grid>
+                            <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid12" VerticalAlignment="Stretch" Width="Auto">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Button Content="Load" Height="23" HorizontalAlignment="Center" Margin="4" Name="button9" VerticalAlignment="Center" Width="75" />
+                                <DataGrid AutoGenerateColumns="False" Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" />
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
             <TabItem Header="Generate IDF">
                 <Grid Height="Auto" Name="grid7" Width="Auto">
                     <Grid.RowDefinitions>
