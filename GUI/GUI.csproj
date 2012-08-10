@@ -59,12 +59,15 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BuildingInformation.cs" />
-    <Compile Include="Commands.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="IddManager.cs" />
     <Compile Include="EnergyPlusVersion.cs" />
     <Compile Include="IdfGeneration\Idf Creators\IdfCreator.cs" />
     <Compile Include="IdfGeneration\Idf Creators\IdfV700Creator.cs" />
+    <Compile Include="Operations\IdfGeneration\Execute.cs" />
+    <Compile Include="Operations\IdfGeneration\Parameters.cs" />
+    <Compile Include="Operations\Miscellaneous.cs" />
+    <Compile Include="Operations\SbtInvocation.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SpaceBoundaryCollection.cs" />
     <Compile Include="ViewModel.cs" />

@@ -160,11 +160,11 @@ namespace GUI
 
         public ViewModel(Action<string> updateOutputDirectly)
         {
-            BrowseToInputIfcFileCommand = new RelayCommand(_ => Commands.BrowseToInputIfcFile(this));
-            BrowseToOutputIfcFileCommand = new RelayCommand(_ => Commands.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
-            BrowseToOutputIdfFileCommand = new RelayCommand(_ => Commands.BrowseToOutputIdfFile(this));
-            ExecuteSbtCommand = new RelayCommand(_ => Commands.InvokeSbt(this));
-            GenerateIdfCommand = new RelayCommand(_ => Commands.GenerateIdf(this));
+            BrowseToInputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToInputIfcFile(this));
+            BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
+            BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
+            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this));
+            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this));
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;

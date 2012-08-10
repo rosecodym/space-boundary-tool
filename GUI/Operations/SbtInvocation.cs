@@ -3,47 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Windows.Input;
 
-using Microsoft.Win32;
-
-namespace GUI
+namespace GUI.Operations
 {
-    static class Commands
+    static class SbtInvocation
     {
-        static public void BrowseToInputIfcFile(ViewModel vm)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "IFC files|*.ifc";
-            bool? result = ofd.ShowDialog();
-            if (result.HasValue && result.Value == true)
-            {
-                vm.InputIfcFilePath = ofd.FileName;
-            }
-        }
-
-        static public void BrowseToOutputIfcFile(ViewModel vm)
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "IFC files|*.ifc";
-            bool? result = sfd.ShowDialog();
-            if (result.HasValue && result.Value == true)
-            {
-                vm.OutputIfcFilePath = sfd.FileName;
-            }
-        }
-
-        static public void BrowseToOutputIdfFile(ViewModel vm)
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "IDF files|*.idf";
-            bool? result = sfd.ShowDialog();
-            if (result.HasValue && result.Value == true)
-            {
-                vm.OutputIdfFilePath = sfd.FileName;
-            }
-        }
-
         class SbtParameters
         {
             public string InputFilename { get; set; }
@@ -54,7 +18,7 @@ namespace GUI
             public Sbt.EntryPoint.MessageDelegate ErrorMessage { get; set; }
         }
 
-        static public void InvokeSbt(ViewModel vm)
+        static public void Execute(ViewModel vm)
         {
             if (!vm.Busy)
             {
@@ -120,58 +84,6 @@ namespace GUI
                 resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
                 resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
                 e.Result = resultingBuilding;
-            }
-        }
-
-        class IdfGenerationParameters
-        {
-            public string OutputFilename { get; set; }
-            public BuildingInformation Building { get; set; }
-            public Action<string> Notify { get; set; }
-        }
-
-        static public void GenerateIdf(ViewModel vm)
-        {
-            if (!vm.Busy)
-            {
-                try
-                {
-                    vm.Busy = true;
-                    // TODO: check for pre-existing building
-                    BackgroundWorker worker = new BackgroundWorker();
-                    worker.WorkerReportsProgress = true;
-                    worker.DoWork += new DoWorkEventHandler(DoIdfGenerationWork);
-                    worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
-                    {
-                        string msg = e.UserState as string;
-                        if (msg != null) { vm.UpdateOutputDirectly(msg); }
-                    });
-                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
-                    {
-                        vm.Busy = false;
-                    });
-
-                    IdfGenerationParameters p = new IdfGenerationParameters();
-                    p.OutputFilename = vm.OutputIdfFilePath;
-                    p.Building = vm.CurrentBuilding;
-                    p.Notify = msg => worker.ReportProgress(0, msg);
-
-                    vm.SelectedTabIndex = 2;
-                    worker.RunWorkerAsync(p);
-                }
-                catch (Exception)
-                {
-                    vm.Busy = false;
-                }
-            }
-        }
-
-        static void DoIdfGenerationWork(object sender, DoWorkEventArgs e)
-        {
-            IdfGenerationParameters p = e.Argument as IdfGenerationParameters;
-            if (p != null)
-            {
-                p.Notify("Success!\n");
             }
         }
     }
