@@ -41,5 +41,16 @@ namespace GUI.Operations
                 vm.OutputIdfFilePath = sfd.FileName;
             }
         }
+
+        static public void BrowseToMaterialsLibrary(ViewModel vm)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "IDF files|*.idf";
+            bool? result = ofd.ShowDialog();
+            if (result.HasValue && result.Value == true)
+            {
+                vm.MaterialsLibraryPath = ofd.FileName;
+            }
+        }
     }
 }

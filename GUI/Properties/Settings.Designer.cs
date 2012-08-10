@@ -130,5 +130,17 @@ namespace GUI.Properties {
                 this["OutputIdfFilename"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MaterialsLibraryFilename {
+            get {
+                return ((string)(this["MaterialsLibraryFilename"]));
+            }
+            set {
+                this["MaterialsLibraryFilename"] = value;
+            }
+        }
     }
 }

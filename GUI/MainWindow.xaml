@@ -126,9 +126,9 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Label Content="IDF Materials Library:" Height="28" HorizontalAlignment="Center" Margin="0" Name="label15" VerticalAlignment="Center" />
-                                    <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button7" VerticalAlignment="Center" Width="75" />
-                                    <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox4" VerticalAlignment="Stretch" Width="Auto" />
-                                    <Button Content="Load" Grid.Column="3" Height="23" HorizontalAlignment="Left" Margin="4" Name="button8" VerticalAlignment="Top" Width="75" />
+                                    <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button7" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToMaterialsLibraryCommand}"/>
+                                    <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox4" VerticalAlignment="Stretch" Width="Auto" Text="{Binding MaterialsLibraryPath}"/>
+                                    <Button Content="Load" Grid.Column="3" Height="23" HorizontalAlignment="Left" Margin="4" Name="button8" VerticalAlignment="Top" Width="75" IsEnabled="{Binding MaterialsLibraryLoadable}"/>
                                 </Grid>
                                 <DataGrid AutoGenerateColumns="False" Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" />
                             </Grid>

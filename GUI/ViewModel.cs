@@ -18,6 +18,7 @@ namespace GUI
         public ICommand BrowseToInputIfcFileCommand { get; private set; }
         public ICommand BrowseToOutputIfcFileCommand { get; private set; }
         public ICommand BrowseToOutputIdfFileCommand { get; private set; }
+        public ICommand BrowseToMaterialsLibraryCommand { get; private set; }
         public ICommand ExecuteSbtCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
 
@@ -72,6 +73,16 @@ namespace GUI
             {
                 Properties.Settings.Default.OutputIdfFilename = value;
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("OutputIdfFilePath")); }
+            }
+        }
+
+        public string MaterialsLibraryPath
+        {
+            get { return Properties.Settings.Default.MaterialsLibraryFilename; }
+            set
+            {
+                Properties.Settings.Default.MaterialsLibraryFilename = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryPath")); }
             }
         }
 
@@ -159,6 +170,14 @@ namespace GUI
             get { return !Busy && currentBuilding != null && OutputIdfFilePath != String.Empty; }
         }
 
+        public bool MaterialsLibraryLoadable
+        {
+            get
+            {
+                return !Busy;
+            }
+        }
+
         public IddManager Idds { get { return idds; } }
 
         public ViewModel(Action<string> updateOutputDirectly)
@@ -166,6 +185,7 @@ namespace GUI
             BrowseToInputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToInputIfcFile(this));
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
+            BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
             ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this));
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this));
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
