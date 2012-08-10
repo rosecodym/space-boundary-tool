@@ -118,5 +118,17 @@ namespace GUI.Properties {
                 this["EnergyPlusVersionIndexToWrite"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OutputIdfFilename {
+            get {
+                return ((string)(this["OutputIdfFilename"]));
+            }
+            set {
+                this["OutputIdfFilename"] = value;
+            }
+        }
     }
 }

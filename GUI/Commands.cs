@@ -33,6 +33,17 @@ namespace GUI
             }
         }
 
+        static public void BrowseToOutputIdfFile(ViewModel vm)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "IDF files|*.idf";
+            bool? result = sfd.ShowDialog();
+            if (result.HasValue && result.Value == true)
+            {
+                vm.OutputIdfFilePath = sfd.FileName;
+            }
+        }
+
         class SbtParameters
         {
             public string InputFilename { get; set; }
@@ -82,11 +93,6 @@ namespace GUI
             }
         }
 
-        static public void GenerateIdf(ViewModel vm)
-        {
-            throw new NotImplementedException();
-        }
-
         static void DoSbtWork(object sender, DoWorkEventArgs e)
         {
             SbtParameters p = e.Argument as SbtParameters;
@@ -114,6 +120,58 @@ namespace GUI
                 resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
                 resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
                 e.Result = resultingBuilding;
+            }
+        }
+
+        class IdfGenerationParameters
+        {
+            public string OutputFilename { get; set; }
+            public BuildingInformation Building { get; set; }
+            public Action<string> Notify { get; set; }
+        }
+
+        static public void GenerateIdf(ViewModel vm)
+        {
+            if (!vm.Busy)
+            {
+                try
+                {
+                    vm.Busy = true;
+                    // TODO: check for pre-existing building
+                    BackgroundWorker worker = new BackgroundWorker();
+                    worker.WorkerReportsProgress = true;
+                    worker.DoWork += new DoWorkEventHandler(DoIdfGenerationWork);
+                    worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
+                    {
+                        string msg = e.UserState as string;
+                        if (msg != null) { vm.UpdateOutputDirectly(msg); }
+                    });
+                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
+                    {
+                        vm.Busy = false;
+                    });
+
+                    IdfGenerationParameters p = new IdfGenerationParameters();
+                    p.OutputFilename = vm.OutputIdfFilePath;
+                    p.Building = vm.CurrentBuilding;
+                    p.Notify = vm.UpdateOutputDirectly;
+
+                    vm.SelectedTabIndex = 2;
+                    worker.RunWorkerAsync(p);
+                }
+                catch (Exception)
+                {
+                    vm.Busy = false;
+                }
+            }
+        }
+
+        static void DoIdfGenerationWork(object sender, DoWorkEventArgs e)
+        {
+            IdfGenerationParameters p = e.Argument as IdfGenerationParameters;
+            if (p != null)
+            {
+                p.Notify("Success!\n");
             }
         }
     }

@@ -16,6 +16,7 @@ namespace GUI
 
         public ICommand BrowseToInputIfcFileCommand { get; private set; }
         public ICommand BrowseToOutputIfcFileCommand { get; private set; }
+        public ICommand BrowseToOutputIdfFileCommand { get; private set; }
         public ICommand ExecuteSbtCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
 
@@ -25,7 +26,11 @@ namespace GUI
             set
             {
                 currentBuilding = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentBuilding")); }
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentBuilding"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("IdfGeneratable"));
+                }
             }
         }
 
@@ -56,6 +61,16 @@ namespace GUI
             {
                 Properties.Settings.Default.OutputIfcFilename = value;
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("OutputIfcFilePath")); }
+            }
+        }
+
+        public string OutputIdfFilePath
+        {
+            get { return Properties.Settings.Default.OutputIdfFilename; }
+            set
+            {
+                Properties.Settings.Default.OutputIdfFilename = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("OutputIdfFilePath")); }
             }
         }
 
@@ -140,15 +155,16 @@ namespace GUI
 
         public bool IdfGeneratable
         {
-            get { return !Busy; }
+            get { return !Busy && currentBuilding != null; }
         }
 
         public ViewModel(Action<string> updateOutputDirectly)
         {
-            BrowseToInputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToInputIfcFile(this));
-            BrowseToOutputIfcFileCommand = new RelayCommand((_) => Commands.BrowseToOutputIfcFile(this), (_) => this.WriteIfc);
-            ExecuteSbtCommand = new RelayCommand((_) => Commands.InvokeSbt(this));
-            GenerateIdfCommand = new RelayCommand((_) => Commands.GenerateIdf(this));
+            BrowseToInputIfcFileCommand = new RelayCommand(_ => Commands.BrowseToInputIfcFile(this));
+            BrowseToOutputIfcFileCommand = new RelayCommand(_ => Commands.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
+            BrowseToOutputIdfFileCommand = new RelayCommand(_ => Commands.BrowseToOutputIdfFile(this));
+            ExecuteSbtCommand = new RelayCommand(_ => Commands.InvokeSbt(this));
+            GenerateIdfCommand = new RelayCommand(_ => Commands.GenerateIdf(this));
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;
