@@ -32,6 +32,7 @@ namespace GUI.Operations
                     Parameters p = new Parameters();
                     p.OutputFilename = vm.OutputIdfFilePath;
                     p.Building = vm.CurrentBuilding;
+                    p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
                     vm.SelectedTabIndex = 2;
@@ -49,7 +50,16 @@ namespace GUI.Operations
             Parameters p = e.Argument as Parameters;
             if (p != null)
             {
-                p.Notify("Success!\n");
+                try
+                {
+                    p.Notify("Getting IDD.\n");
+                    p.GetIdd();
+                    p.Notify("Got IDD.\n");
+                }
+                catch (Exception ex)
+                {
+                    p.Notify("Operation failed: " + ex.Message + Environment.NewLine);
+                }
             }
         }
     }

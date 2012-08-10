@@ -11,6 +11,7 @@ namespace GUI
     {
         private BuildingInformation currentBuilding;
         private bool busy = false;
+        private readonly IddManager idds = new IddManager();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -155,8 +156,10 @@ namespace GUI
 
         public bool IdfGeneratable
         {
-            get { return !Busy && currentBuilding != null; }
+            get { return !Busy && currentBuilding != null && OutputIdfFilePath != String.Empty; }
         }
+
+        public IddManager Idds { get { return idds; } }
 
         public ViewModel(Action<string> updateOutputDirectly)
         {
