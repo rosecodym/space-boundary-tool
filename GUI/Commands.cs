@@ -45,29 +45,41 @@ namespace GUI
 
         static public void InvokeSbt(ViewModel vm)
         {
-            // TODO: check for pre-existing building
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += new DoWorkEventHandler(DoSbtWork);
-            worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
+            if (!vm.Busy)
             {
-                string msg = e.UserState as string;
-                if (msg != null) { vm.UpdateOutputDirectly(msg); }
-            });
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
-            {
-                BuildingInformation res = e.Result as BuildingInformation;
-                if (res != null) { vm.CurrentBuilding = res; }
-            });
+                try
+                {
+                    vm.Busy = true;
+                    // TODO: check for pre-existing building
+                    BackgroundWorker worker = new BackgroundWorker();
+                    worker.WorkerReportsProgress = true;
+                    worker.DoWork += new DoWorkEventHandler(DoSbtWork);
+                    worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
+                    {
+                        string msg = e.UserState as string;
+                        if (msg != null) { vm.UpdateOutputDirectly(msg); }
+                    });
+                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
+                    {
+                        BuildingInformation res = e.Result as BuildingInformation;
+                        if (res != null) { vm.CurrentBuilding = res; }
+                        vm.Busy = false;
+                    });
 
-            SbtParameters p = new SbtParameters();
-            p.InputFilename = vm.InputIfcFilePath;
-            p.OutputFilename = vm.OutputIfcFilePath;
-            p.Flags = Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck;
-            p.NotifyMessage = p.WarnMessage = p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
+                    SbtParameters p = new SbtParameters();
+                    p.InputFilename = vm.InputIfcFilePath;
+                    p.OutputFilename = vm.OutputIfcFilePath;
+                    p.Flags = Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck;
+                    p.NotifyMessage = p.WarnMessage = p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
 
-            vm.SelectedTabIndex = 2;
-            worker.RunWorkerAsync(p);
+                    vm.SelectedTabIndex = 2;
+                    worker.RunWorkerAsync(p);
+                }
+                catch (Exception)
+                {
+                    vm.Busy = false;
+                }
+            }
         }
 
         static void DoSbtWork(object sender, DoWorkEventArgs e)

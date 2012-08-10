@@ -10,6 +10,7 @@ namespace GUI
     class ViewModel : INotifyPropertyChanged
     {
         private BuildingInformation currentBuilding;
+        private bool busy = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -113,6 +114,26 @@ namespace GUI
                 Properties.Settings.Default.EnergyPlusVersionIndexToWrite = value;
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("EnergyPlusVersionIndexToWrite")); }
             }
+        }
+
+        public bool Busy
+        {
+            get { return busy; }
+            set
+            {
+                if (PropertyChanged != null)
+                {
+                    busy = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("Busy"));
+                    // TODO: figure out how to make this not backwards
+                    PropertyChanged(this, new PropertyChangedEventArgs("SbtInvokable"));
+                }
+            }
+        }
+
+        public bool SbtInvokable
+        {
+            get { return !Busy; }
         }
 
         public ViewModel(Action<string> updateOutputDirectly)
