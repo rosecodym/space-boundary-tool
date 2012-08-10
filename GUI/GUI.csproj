@@ -36,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="LibIdf">
       <HintPath>..\..\EPlus_IDF_Toolbox\Slice\bin\Release\LibIdf.dll</HintPath>
     </Reference>
@@ -62,9 +63,9 @@
     <Compile Include="Converters.cs" />
     <Compile Include="IddManager.cs" />
     <Compile Include="EnergyPlusVersion.cs" />
-    <Compile Include="IdfGeneration\Idf Creators\IdfCreator.cs" />
-    <Compile Include="IdfGeneration\Idf Creators\IdfV700Creator.cs" />
     <Compile Include="Operations\IdfGeneration\Execute.cs" />
+    <Compile Include="Operations\IdfGeneration\Idf Creators\IdfCreator.cs" />
+    <Compile Include="Operations\IdfGeneration\Idf Creators\IdfV710Creator.cs" />
     <Compile Include="Operations\IdfGeneration\Parameters.cs" />
     <Compile Include="Operations\Miscellaneous.cs" />
     <Compile Include="Operations\SbtInvocation.cs" />

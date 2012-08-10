@@ -53,8 +53,12 @@ namespace GUI.Operations
                 try
                 {
                     p.Notify("Getting IDD.\n");
-                    p.GetIdd();
+                    LibIdf.Idd.Idd idd = p.GetIdd();
                     p.Notify("Got IDD.\n");
+                    IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
+                    creator.AddConstantContents();
+                    creator.WriteToFile(p.OutputFilename);
+                    p.Notify("IDF written.\n");
                 }
                 catch (Exception ex)
                 {
