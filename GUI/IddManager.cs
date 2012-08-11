@@ -12,7 +12,7 @@ namespace GUI
     {
         private Dictionary<EnergyPlusVersion, Idd> loaded = new Dictionary<EnergyPlusVersion, Idd>();
 
-        Dictionary<EnergyPlusVersion, string> resources = new Dictionary<EnergyPlusVersion, string>()
+        private Dictionary<EnergyPlusVersion, string> resources = new Dictionary<EnergyPlusVersion, string>()
         {
             { EnergyPlusVersion.V710, Properties.Resources.V7_1_0_Energy_ }
         };

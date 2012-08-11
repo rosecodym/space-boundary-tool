@@ -10,8 +10,9 @@ namespace GUI
     class ViewModel : INotifyPropertyChanged
     {
         private BuildingInformation currentBuilding;
-        private bool busy = false;
+        private ICollection<Constructions.MaterialLayer> libraryMaterials = new List<Constructions.MaterialLayer>();
         private readonly IddManager idds = new IddManager();
+        private bool busy = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -20,6 +21,7 @@ namespace GUI
         public ICommand BrowseToOutputIdfFileCommand { get; private set; }
         public ICommand BrowseToMaterialsLibraryCommand { get; private set; }
         public ICommand ExecuteSbtCommand { get; private set; }
+        public ICommand LoadMaterialsLibraryCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
 
         public BuildingInformation CurrentBuilding
@@ -36,13 +38,13 @@ namespace GUI
             }
         }
 
-        public int SelectedTabIndex
+        public ICollection<Constructions.MaterialLayer> LibraryMaterials
         {
-            get { return Properties.Settings.Default.SelectedTabIndex; }
+            get { return libraryMaterials; }
             set
             {
-                Properties.Settings.Default.SelectedTabIndex = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SelectedTabIndex")); }
+                libraryMaterials = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("LibraryMaterials")); }
             }
         }
 
@@ -156,6 +158,7 @@ namespace GUI
                     // TODO: figure out how to make this not backwards
                     PropertyChanged(this, new PropertyChangedEventArgs("SbtInvokable"));
                     PropertyChanged(this, new PropertyChangedEventArgs("IdfGeneratable"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryLoadable"));
                 }
             }
         }
@@ -188,6 +191,7 @@ namespace GUI
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
             ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this));
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this));
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.LoadMaterialsLibrary.Execute(this));
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;

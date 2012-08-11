@@ -60,6 +60,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BuildingInformation.cs" />
+    <Compile Include="Constructions\GasType.cs" />
+    <Compile Include="Constructions\MaterialLayer.cs" />
+    <Compile Include="Constructions\MaterialLayerNoMass.cs" />
+    <Compile Include="Constructions\MaterialRoughness.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="IddManager.cs" />
     <Compile Include="EnergyPlusVersion.cs" />
@@ -67,6 +71,7 @@
     <Compile Include="Operations\IdfGeneration\Idf Creators\IdfCreator.cs" />
     <Compile Include="Operations\IdfGeneration\Idf Creators\IdfV710Creator.cs" />
     <Compile Include="Operations\IdfGeneration\Parameters.cs" />
+    <Compile Include="Operations\LoadMaterialsLibrary.cs" />
     <Compile Include="Operations\Miscellaneous.cs" />
     <Compile Include="Operations\SbtInvocation.cs" />
     <Compile Include="RelayCommand.cs" />

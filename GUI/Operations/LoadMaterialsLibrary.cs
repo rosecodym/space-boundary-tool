@@ -6,8 +6,14 @@ using System.Text;
 
 namespace GUI.Operations
 {
-    static partial class IdfGeneration
+    static class LoadMaterialsLibrary
     {
+        class Parameters
+        {
+            public string Path { get; set; }
+            public Action<string> Notify { get; set; }
+        }
+
         static public void Execute(ViewModel vm)
         {
             if (!vm.Busy)
@@ -15,10 +21,9 @@ namespace GUI.Operations
                 try
                 {
                     vm.Busy = true;
-                    // TODO: check for pre-existing building
                     BackgroundWorker worker = new BackgroundWorker();
                     worker.WorkerReportsProgress = true;
-                    worker.DoWork += new DoWorkEventHandler(DoIdfGenerationWork);
+                    worker.DoWork += new DoWorkEventHandler(DoLoadMaterialsLibraryWork);
                     worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
                     {
                         string msg = e.UserState as string;
@@ -26,13 +31,13 @@ namespace GUI.Operations
                     });
                     worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
                     {
+                        var res = e.Result as ICollection<Constructions.MaterialLayer>;
+                        if (res != null) { vm.LibraryMaterials = res; }
                         vm.Busy = false;
                     });
 
                     Parameters p = new Parameters();
-                    p.OutputFilename = vm.OutputIdfFilePath;
-                    p.Building = vm.CurrentBuilding;
-                    p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
+                    p.Path = vm.MaterialsLibraryPath;
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
                     worker.RunWorkerAsync(p);
@@ -44,25 +49,16 @@ namespace GUI.Operations
             }
         }
 
-        static void DoIdfGenerationWork(object sender, DoWorkEventArgs e)
+        static void DoLoadMaterialsLibraryWork(object sender, DoWorkEventArgs e)
         {
             Parameters p = e.Argument as Parameters;
             if (p != null)
             {
-                try
-                {
-                    p.Notify("Getting IDD.\n");
-                    LibIdf.Idd.Idd idd = p.GetIdd();
-                    p.Notify("Got IDD.\n");
-                    IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
-                    creator.AddConstantContents();
-                    creator.WriteToFile(p.OutputFilename);
-                    p.Notify("IDF written.\n");
-                }
-                catch (Exception ex)
-                {
-                    p.Notify("Operation failed: " + ex.Message + Environment.NewLine);
-                }
+                string versionGuess = LibIdf.Idf.Idf.GuessVersion(p.Path);
+                EnergyPlusVersion ver =
+                    versionGuess == "7.1" ? EnergyPlusVersion.V710 : EnergyPlusVersion.V710;
+                p.Notify("Loading materials library as IDD version " + ver.ToString() + ".\n");
+                e.Result = new List<Constructions.MaterialLayer>();
             }
         }
     }

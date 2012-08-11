@@ -47,7 +47,6 @@ namespace GUI.Operations
                     p.Flags = Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck;
                     p.NotifyMessage = p.WarnMessage = p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
 
-                    vm.SelectedTabIndex = 2;
                     worker.RunWorkerAsync(p);
                 }
                 catch (Exception)

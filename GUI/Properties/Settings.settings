@@ -5,9 +5,6 @@
     <Setting Name="InputIfcFilename" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="SelectedTabIndex" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
     <Setting Name="OutputIfcFilename" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
