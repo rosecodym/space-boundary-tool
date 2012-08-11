@@ -4,6 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+using LibIdf.Idd;
+using LibIdf.Idf;
+
 namespace GUI.Operations
 {
     static class LoadMaterialsLibrary
@@ -11,6 +14,7 @@ namespace GUI.Operations
         class Parameters
         {
             public string Path { get; set; }
+            public IddManager Idds { get; set; }
             public Action<string> Notify { get; set; }
         }
 
@@ -38,6 +42,7 @@ namespace GUI.Operations
 
                     Parameters p = new Parameters();
                     p.Path = vm.MaterialsLibraryPath;
+                    p.Idds = vm.Idds;
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
                     worker.RunWorkerAsync(p);
@@ -54,11 +59,28 @@ namespace GUI.Operations
             Parameters p = e.Argument as Parameters;
             if (p != null)
             {
-                string versionGuess = LibIdf.Idf.Idf.GuessVersion(p.Path);
+                string versionGuess = Idf.GuessVersion(p.Path);
                 EnergyPlusVersion ver =
                     versionGuess == "7.1" ? EnergyPlusVersion.V710 : EnergyPlusVersion.V710;
-                p.Notify("Loading materials library as IDD version " + ver.ToString() + ".\n");
-                e.Result = new List<Constructions.MaterialLayer>();
+                p.Notify("Treating materials library as IDD version " + ver.ToString() + ".\n");
+
+                p.Notify("Loading IDD...\n");
+                Idd idd = p.Idds.GetIddFor(ver, msg => p.Notify(msg + Environment.NewLine));
+                p.Notify("IDD loaded. Loading IDF...\n");
+                Idf idf = new Idf(p.Path, idd);
+                p.Notify("IDF loaded.\n");
+
+                List<Constructions.MaterialLayer> res = new List<Constructions.MaterialLayer>();
+                HashSet<IdfObject> objs = idf.GetObjectsByType("Material:NoMass", false);
+                foreach (IdfObject obj in objs) {
+                    res.Add(new Constructions.MaterialLayerNoMass(
+                        obj.Fields["Name"].Value,
+                        (Constructions.MaterialRoughness)Enum.Parse(typeof(Constructions.MaterialRoughness), obj.Fields["Roughness"].Value),
+                        obj.Fields["Thermal Resistance"].Value));
+                }
+
+                p.Notify("Found " + res.Count.ToString() + " materials.\n");
+                e.Result = res;
             }
         }
     }
