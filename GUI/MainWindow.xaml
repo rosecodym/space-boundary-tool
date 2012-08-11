@@ -130,7 +130,7 @@
                                     <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox4" VerticalAlignment="Stretch" Width="Auto" Text="{Binding MaterialsLibraryPath}"/>
                                     <Button Content="Load" Grid.Column="3" Height="23" HorizontalAlignment="Left" Margin="4" Name="button8" VerticalAlignment="Top" Width="75" IsEnabled="{Binding MaterialsLibraryLoadable}" Command="{Binding LoadMaterialsLibraryCommand}"/>
                                 </Grid>
-                                <DataGrid AutoGenerateColumns="False" Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding LibraryMaterials}"/>
+                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding LibraryMaterials}"></DataGrid>
                             </Grid>
                         </Grid>
                     </GroupBox>
