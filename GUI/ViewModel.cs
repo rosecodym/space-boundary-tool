@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Input;
 
 using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
+using IfcElement = IfcInformationExtractor.Element;
 
 namespace GUI
 {
@@ -25,9 +26,10 @@ namespace GUI
         public ICommand BrowseToMaterialsLibraryCommand { get; private set; }
         public ICommand ExecuteSbtCommand { get; private set; }
         public ICommand LoadMaterialsLibraryCommand { get; private set; }
+        public ICommand LoadIfcBuildingCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
 
-        public SbtBuildingInformation CurrentBuilding
+        public SbtBuildingInformation CurrentSbtBuilding
         {
             get { return sbtBuilding; }
             set
@@ -35,8 +37,22 @@ namespace GUI
                 sbtBuilding = value;
                 if (PropertyChanged != null)
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentBuilding"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentSbtBuilding"));
                     PropertyChanged(this, new PropertyChangedEventArgs("IdfGeneratable"));
+                }
+            }
+        }
+
+        public IfcBuildingInformation CurrentIfcBuilding
+        {
+            get { return ifcBuilding; }
+            set
+            {
+                ifcBuilding = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentIfcBuilding"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("IfcElements"));
                 }
             }
         }
@@ -48,6 +64,14 @@ namespace GUI
             {
                 libraryMaterials = value;
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("LibraryMaterials")); }
+            }
+        }
+
+        public ICollection<IfcElement> IfcElements
+        {
+            get
+            {
+                return ifcBuilding == null ? new List<IfcElement>() : ifcBuilding.Elements;
             }
         }
 
@@ -162,6 +186,7 @@ namespace GUI
                     PropertyChanged(this, new PropertyChangedEventArgs("SbtInvokable"));
                     PropertyChanged(this, new PropertyChangedEventArgs("IdfGeneratable"));
                     PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryLoadable"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("IfcBuildingLoadable"));
                 }
             }
         }
@@ -178,10 +203,12 @@ namespace GUI
 
         public bool MaterialsLibraryLoadable
         {
-            get
-            {
-                return !Busy;
-            }
+            get { return !Busy; }
+        }
+
+        public bool IfcBuildingLoadable
+        {
+            get { return !Busy && InputIfcFilePath != String.Empty; }
         }
 
         public IddManager Idds { get { return idds; } }
@@ -194,7 +221,8 @@ namespace GUI
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
             ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this));
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this));
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.LoadMaterialsLibrary.Execute(this));
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this));
+            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this));
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;

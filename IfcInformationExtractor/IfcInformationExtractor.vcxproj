@@ -47,27 +47,27 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmikit500.lib;C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmicpp500_2010.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmikit500.lib;C:\Users\Cody\Documents\Software Libraries\edm\edm5.00.0302.07\developerseat\lib\edmicpp500_2010.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -77,16 +77,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EdmSession.h" />
-    <ClInclude Include="IfcBuildingInformation.h" />
+    <ClInclude Include="Element.h" />
+    <ClInclude Include="BuildingInformation.h" />
+    <ClInclude Include="MaterialLayer.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="IfcBuildingInformation.cpp" />
+    <ClCompile Include="EdmSession.cpp" />
+    <ClCompile Include="Element.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Operations\BuildingLoad.cs" />
     <Compile Include="SbtBuildingInformation.cs" />
     <Compile Include="Constructions\GasType.cs" />
     <Compile Include="Constructions\MaterialLayer.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="Operations\IdfGeneration\Idf Creators\IdfCreator.cs" />
     <Compile Include="Operations\IdfGeneration\Idf Creators\IdfV710Creator.cs" />
     <Compile Include="Operations\IdfGeneration\Parameters.cs" />
-    <Compile Include="Operations\LoadMaterialsLibrary.cs" />
+    <Compile Include="Operations\MaterialsLibraryLoad.cs" />
     <Compile Include="Operations\Miscellaneous.cs" />
     <Compile Include="Operations\SbtInvocation.cs" />
     <Compile Include="RelayCommand.cs" />
@@ -115,6 +116,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Resources\IFC2X3_final.exp" />
     <None Include="Resources\V7-1-0-Energy+.idd" />
   </ItemGroup>
   <ItemGroup>

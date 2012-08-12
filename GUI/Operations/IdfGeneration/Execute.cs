@@ -31,7 +31,7 @@ namespace GUI.Operations
 
                     Parameters p = new Parameters();
                     p.OutputFilename = vm.OutputIdfFilePath;
-                    p.Building = vm.CurrentBuilding;
+                    p.Building = vm.CurrentSbtBuilding;
                     p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
                     p.Notify = msg => worker.ReportProgress(0, msg);
 

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "AllIfcInformation.h"
-#include "IfcElement.h"
-#include "IfcSpace.h"
-#include "UnitScaler.h"
+#include <cpp_edmi.h>
+
+#include "BuildingInformation.h"
 
 using namespace System;
 using namespace System::IO;
@@ -11,7 +10,7 @@ using namespace System::Collections::Generic;
 
 #define MAX_PATH 260
 
-namespace EdmWrapper {
+namespace IfcInformationExtractor {
 
 public ref class EdmSession {
 private:
@@ -21,11 +20,9 @@ private:
 	cppw::Open_repository * repository;
 	cppw::Open_model * model;
 
-	UnitScaler ^ unitScaler;
-
-	AllIfcInformation ^ ifcInfo;
-
 	void clear_db();
+
+	ICollection<Element ^> ^ GetElements();
 
 	static const char * const DB_NAME = "db";
 	static const char * const DB_PASS = "pass";
@@ -34,31 +31,18 @@ private:
 
 	static const char * const LICENSE_KEY = "EDM LICENSE KEY";
 
-	static UnitScaler ^ GetUnits(cppw::Open_model * model);
-	static Tuple<double, double, double, double> ^ GetLocationInformation(cppw::Open_model * model);
-	static IEnumerable<IfcSpace ^> ^ GetSpaces(cppw::Open_model * model, UnitScaler ^ unitScaler);
-	static IEnumerable<IfcElement ^> ^ GetElements(cppw::Open_model * model, IList<IfcConstruction ^> ^ constructions, UnitScaler ^ unitScaler);
-
 	static char * convert_to_chars(char dst[], String ^ src, size_t size);
 
 	static char * get_temp_path(char path[MAX_PATH]) { return convert_to_chars(path, Path::GetTempPath(), MAX_PATH); }
 
-public:
 	static EdmSession();
+public:
 	EdmSession(String ^ schemaPath, Action<String ^> ^ notify);
 	~EdmSession() { this->!EdmSession(); }
 	!EdmSession();
 
 	void LoadIfcFile(String ^ path);
-	void WriteIfcFile(String ^ path);
-
-	property AllIfcInformation ^ IfcInformation
-	{
-		AllIfcInformation ^ get() { return ifcInfo; }
-	}
-	
-	void RemoveAllSpaceBoundariesAndVirtualElements();
-	void AddSpaceBoundaries(IEnumerable<Sbt::CoreTypes::SpaceBoundary ^> ^ boundaries);
+	BuildingInformation ^ GetBuildingInformation();
 
 	ref class EdmException : public Exception {
 	public:
@@ -67,4 +51,4 @@ public:
 
 };
 
-} // namespace EdmWrapper
+} // namespace IfcInformationExtractor

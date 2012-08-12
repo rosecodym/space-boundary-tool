@@ -61,6 +61,48 @@ namespace GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (*
+        ///
+        ///Copyright by:
+        ///
+        ///International Alliance for Interoperability, 1996-2005
+        ///
+        ///
+        ///
+        ///All rights reserved. No part of this documentation may be
+        ///
+        ///reproduced, stored in a retrieval system, or transmitted
+        ///
+        ///in any form or by any means, without the prior written
+        ///
+        ///permission of the owner.
+        ///
+        ///
+        ///
+        ///Contents:
+        ///
+        ///full IFC object model EXPRESS definitions for the IFC2x Edition 3 final version
+        ///
+        ///
+        ///
+        ///
+        ///
+        ///- express longform distribution
+        ///
+        ///- compiled for EXPRESS version 1 technical corrigendum 2
+        ///
+        ///
+        ///
+        ///Issue date:
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IFC2X3_final {
+            get {
+                return ResourceManager.GetString("IFC2X3_final", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to !IDD_Version 7.1.0.012
         ///! **************************************************************************
         ///! This file is the Input Data Dictionary (IDD) for EnergyPlus.

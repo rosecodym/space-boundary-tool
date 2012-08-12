@@ -9,7 +9,7 @@ using LibIdf.Idf;
 
 namespace GUI.Operations
 {
-    static class LoadMaterialsLibrary
+    static class MaterialsLibraryLoad
     {
         class Parameters
         {

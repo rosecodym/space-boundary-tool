@@ -37,7 +37,7 @@ namespace GUI.Operations
                     worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
                     {
                         SbtBuildingInformation res = e.Result as SbtBuildingInformation;
-                        if (res != null) { vm.CurrentBuilding = res; }
+                        if (res != null) { vm.CurrentSbtBuilding = res; }
                         vm.Busy = false;
                     });
 

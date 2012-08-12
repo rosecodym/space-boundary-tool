@@ -22,16 +22,4 @@ public:
 	}
 };
 
-public ref class BuildingInformation {
-private:
-	initonly String ^ filename;
-public:
-	BuildingInformation(String ^ filename) : filename(filename) { }
-
-	property String ^ Filename
-	{
-		String ^ get() { return filename; }
-	}
-};
-
 } // namespace IfcInformationExtractor
