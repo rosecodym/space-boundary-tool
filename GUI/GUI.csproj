@@ -63,6 +63,7 @@
     <Compile Include="Constructions\GasType.cs" />
     <Compile Include="Constructions\MaterialLayer.cs" />
     <Compile Include="Constructions\MaterialLayerNoMass.cs" />
+    <Compile Include="Constructions\MaterialLayerOpaque.cs" />
     <Compile Include="Constructions\MaterialRoughness.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="IddManager.cs" />

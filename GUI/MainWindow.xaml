@@ -105,13 +105,13 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Materials">
+            <TabItem Header="Constructions &amp; Materials">
                 <Grid Height="Auto" Name="grid9" Width="Auto">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <GroupBox Grid.RowSpan="1" Header="Library Materials" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox5" VerticalAlignment="Stretch" Width="Auto">
+                    <GroupBox Grid.RowSpan="1" Header="Library Constructions &amp; Materials" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox5" VerticalAlignment="Stretch" Width="Auto">
                         <Grid>
                             <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid10" VerticalAlignment="Stretch" Width="Auto">
                                 <Grid.RowDefinitions>

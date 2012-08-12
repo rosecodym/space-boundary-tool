@@ -71,7 +71,23 @@ namespace GUI.Operations
                 p.Notify("IDF loaded.\n");
 
                 List<Constructions.MaterialLayer> res = new List<Constructions.MaterialLayer>();
-                HashSet<IdfObject> objs = idf.GetObjectsByType("Material:NoMass", false);
+                HashSet<IdfObject> objs;
+
+                objs = idf.GetObjectsByType("Material", false);
+                foreach (IdfObject obj in objs)
+                {
+                    res.Add(new Constructions.MaterialLayerOpaque(
+                        obj.Fields["Name"].Value,
+                        (Constructions.MaterialRoughness)Enum.Parse(typeof(Constructions.MaterialRoughness), obj.Fields["Roughness"].Value),
+                        obj.Fields["Conductivity"].Value,
+                        obj.Fields["Density"].Value,
+                        obj.Fields["Specific Heat"].Value,
+                        obj.Fields["Thermal Absorptance"].Value,
+                        obj.Fields["Solar Absorptance"].Value,
+                        obj.Fields["Visible Absorptance"].Value));
+                }
+
+                objs = idf.GetObjectsByType("Material:NoMass", false);
                 foreach (IdfObject obj in objs) {
                     res.Add(new Constructions.MaterialLayerNoMass(
                         obj.Fields["Name"].Value,
