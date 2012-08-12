@@ -8,7 +8,7 @@ using Sbt.CoreTypes;
 
 namespace GUI
 {
-    class BuildingInformation
+    class SbtBuildingInformation
     {
         public string IfcFilename { get; set; }
         public List<ElementInfo> Elements { get; set; }

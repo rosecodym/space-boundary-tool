@@ -59,7 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BuildingInformation.cs" />
+    <Compile Include="SbtBuildingInformation.cs" />
     <Compile Include="Constructions\GasType.cs" />
     <Compile Include="Constructions\MaterialLayer.cs" />
     <Compile Include="Constructions\MaterialLayerNoMass.cs" />
@@ -121,6 +121,10 @@
     <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
       <Project>{2B180C45-2DA1-4C26-9850-F92B9369D626}</Project>
       <Name>ManagedWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IfcInformationExtractor\IfcInformationExtractor.vcxproj">
+      <Project>{C30F68F1-3D01-419D-A925-05D517906CC0}</Project>
+      <Name>IfcInformationExtractor</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

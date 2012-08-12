@@ -5,11 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
+using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
+
 namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
     {
-        private BuildingInformation currentBuilding;
+        private SbtBuildingInformation sbtBuilding;
+        private IfcBuildingInformation ifcBuilding;
         private ICollection<Constructions.MaterialLayer> libraryMaterials = new List<Constructions.MaterialLayer>();
         private readonly IddManager idds = new IddManager();
         private bool busy = false;
@@ -24,12 +27,12 @@ namespace GUI
         public ICommand LoadMaterialsLibraryCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
 
-        public BuildingInformation CurrentBuilding
+        public SbtBuildingInformation CurrentBuilding
         {
-            get { return currentBuilding; }
+            get { return sbtBuilding; }
             set
             {
-                currentBuilding = value;
+                sbtBuilding = value;
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("CurrentBuilding"));
@@ -170,7 +173,7 @@ namespace GUI
 
         public bool IdfGeneratable
         {
-            get { return !Busy && currentBuilding != null && OutputIdfFilePath != String.Empty; }
+            get { return !Busy && sbtBuilding != null && OutputIdfFilePath != String.Empty; }
         }
 
         public bool MaterialsLibraryLoadable

@@ -141,7 +141,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <Button Content="Load" Height="23" HorizontalAlignment="Center" Margin="4" Name="button9" VerticalAlignment="Center" Width="75" />
+                                <Button Content="Load" Height="23" HorizontalAlignment="Right" Margin="4" Name="button9" VerticalAlignment="Center" Width="75" />
                                 <DataGrid AutoGenerateColumns="False" Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" />
                             </Grid>
                         </Grid>

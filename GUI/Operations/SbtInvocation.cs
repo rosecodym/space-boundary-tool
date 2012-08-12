@@ -36,7 +36,7 @@ namespace GUI.Operations
                     });
                     worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
                     {
-                        BuildingInformation res = e.Result as BuildingInformation;
+                        SbtBuildingInformation res = e.Result as SbtBuildingInformation;
                         if (res != null) { vm.CurrentBuilding = res; }
                         vm.Busy = false;
                     });
@@ -77,7 +77,7 @@ namespace GUI.Operations
                     p.NotifyMessage,
                     p.WarnMessage,
                     p.ErrorMessage);
-                BuildingInformation resultingBuilding = new BuildingInformation();
+                SbtBuildingInformation resultingBuilding = new SbtBuildingInformation();
                 resultingBuilding.IfcFilename = p.InputFilename;
                 resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
                 resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);

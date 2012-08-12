@@ -6,12 +6,12 @@ using System.Windows.Data;
 
 namespace GUI.Converters
 {
-    [ValueConversion(typeof(BuildingInformation), typeof(string))]
+    [ValueConversion(typeof(SbtBuildingInformation), typeof(string))]
     public class BuildingInformationToSbSummaryTitleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            BuildingInformation info = value as BuildingInformation;
+            SbtBuildingInformation info = value as SbtBuildingInformation;
             if (info != null) { return "Space Boundary Summary (for " + info.IfcFilename + ")"; }
             else { return "Space boundary summary (no building loaded)"; }
         }
@@ -22,12 +22,12 @@ namespace GUI.Converters
         }
     }
 
-    [ValueConversion(typeof(BuildingInformation), typeof(string))]
+    [ValueConversion(typeof(SbtBuildingInformation), typeof(string))]
     public class BuildingInformationTo2ndLevelPhysicalInternalCountString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            BuildingInformation info = value as BuildingInformation;
+            SbtBuildingInformation info = value as SbtBuildingInformation;
             if (info != null)
             {
                 SpaceBoundaryCollection sbs = info.SpaceBoundaries as SpaceBoundaryCollection;
@@ -42,12 +42,12 @@ namespace GUI.Converters
         }
     }
 
-    [ValueConversion(typeof(BuildingInformation), typeof(string))]
+    [ValueConversion(typeof(SbtBuildingInformation), typeof(string))]
     public class BuildingInformationTo2ndLevelPhysicalExternalCountString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            BuildingInformation info = value as BuildingInformation;
+            SbtBuildingInformation info = value as SbtBuildingInformation;
             if (info != null)
             {
                 SpaceBoundaryCollection sbs = info.SpaceBoundaries as SpaceBoundaryCollection;
@@ -62,12 +62,12 @@ namespace GUI.Converters
         }
     }
 
-    [ValueConversion(typeof(BuildingInformation), typeof(string))]
+    [ValueConversion(typeof(SbtBuildingInformation), typeof(string))]
     public class BuildingInformationTo3rdLevelCountString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            BuildingInformation info = value as BuildingInformation;
+            SbtBuildingInformation info = value as SbtBuildingInformation;
             if (info != null)
             {
                 SpaceBoundaryCollection sbs = info.SpaceBoundaries as SpaceBoundaryCollection;
@@ -82,12 +82,12 @@ namespace GUI.Converters
         }
     }
 
-    [ValueConversion(typeof(BuildingInformation), typeof(string))]
+    [ValueConversion(typeof(SbtBuildingInformation), typeof(string))]
     public class BuildingInformationTo4thLevelCountString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            BuildingInformation info = value as BuildingInformation;
+            SbtBuildingInformation info = value as SbtBuildingInformation;
             if (info != null)
             {
                 SpaceBoundaryCollection sbs = info.SpaceBoundaries as SpaceBoundaryCollection;
@@ -102,12 +102,12 @@ namespace GUI.Converters
         }
     }
 
-    [ValueConversion(typeof(BuildingInformation), typeof(string))]
+    [ValueConversion(typeof(SbtBuildingInformation), typeof(string))]
     public class BuildingInformationToVirtualCountString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            BuildingInformation info = value as BuildingInformation;
+            SbtBuildingInformation info = value as SbtBuildingInformation;
             if (info != null)
             {
                 SpaceBoundaryCollection sbs = info.SpaceBoundaries as SpaceBoundaryCollection;
