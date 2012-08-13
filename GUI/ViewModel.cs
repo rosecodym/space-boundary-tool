@@ -7,7 +7,6 @@ using System.Windows.Input;
 
 using IfcConstruction = IfcInformationExtractor.Construction;
 using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
-using IfcElement = IfcInformationExtractor.Element;
 
 namespace GUI
 {
@@ -16,6 +15,7 @@ namespace GUI
         private SbtBuildingInformation sbtBuilding;
         private IfcBuildingInformation ifcBuilding;
         private ICollection<Constructions.MaterialLayer> libraryMaterials = new List<Constructions.MaterialLayer>();
+        private ICollection<IfcConstruction> ifcConstructions;
         private readonly IddManager idds = new IddManager();
         private bool busy = false;
 
@@ -50,6 +50,7 @@ namespace GUI
             set
             {
                 ifcBuilding = value;
+                ifcConstructions = new List<IfcConstruction>(ifcBuilding.Constructions.Select(c => new IfcConstruction(c)));
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("CurrentIfcBuilding"));
@@ -68,11 +69,13 @@ namespace GUI
             }
         }
 
-        public IEnumerable<IfcConstruction> IfcConstructions
+        public ICollection<IfcConstruction> IfcConstructions
         {
-            get
+            get { return ifcConstructions; }
+            set
             {
-                return ifcBuilding == null ? null : ifcBuilding.Constructions;
+                ifcConstructions = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("IfcConstructions")); }
             }
         }
 

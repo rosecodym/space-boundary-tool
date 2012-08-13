@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IfcConstruction.cs" />
     <Compile Include="Operations\BuildingLoad.cs" />
     <Compile Include="SbtBuildingInformation.cs" />
     <Compile Include="Constructions\GasType.cs" />
