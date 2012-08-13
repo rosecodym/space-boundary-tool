@@ -53,6 +53,31 @@ Construction ^ createConstruction(const cppw::Instance & inst, String ^ elementG
 	}
 }
 
+Construction ^ createConstructionForWindow(const cppw::Instance & element, String ^ elementGuid) {
+	cppw::Set defined_by = element.get("IsDefinedBy");
+	for (defined_by.move_first(); defined_by.move_next(); ) {
+		cppw::Instance d = defined_by.get_();
+		if (d.is_instance_of("IfcRelDefinesByProperties")) {
+			cppw::Instance pset = d.get("RelatingPropertyDefinition");
+			if (pset.get("Name").is_set()) {
+				cppw::String name = pset.get("Name");
+				if (name.size() >= 11 && !strncmp(name.data(), "Pset_Window", 11)) {
+					cppw::Set props = pset.get("HasProperties");
+					for (props.move_first(); props.move_next(); ) {
+						cppw::Instance prop = props.get_();
+						if (prop.is_instance_of("IfcPropertySingleValue") && prop.get("NominalValue").is_set()) {
+							if (prop.get("Name") == "ConstructionName" || prop.get("Name") == "Reference") {
+								return gcnew CompositeConstruction(gcnew String(((cppw::String)prop.get("NominalValue")).data()));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return gcnew CompositeConstruction(String::Format("(undeterminable window construction - element {0})", elementGuid));
+}
+
 Construction ^ createConstructionForCommon(const cppw::Instance & element, String ^ elementGuid) {
 	cppw::Set relAssociates = element.get("HasAssociations");
 	for (relAssociates.move_first(); relAssociates.move_next(); ) {
@@ -65,7 +90,12 @@ Construction ^ createConstructionForCommon(const cppw::Instance & element, Strin
 }
 
 Construction ^ createConstructionFor(const cppw::Instance & buildingElement, String ^ elementGuid) {
-	return createConstructionForCommon(buildingElement, elementGuid);
+	if (buildingElement.is_kind_of("IfcWindow")) {
+		return createConstructionForWindow(buildingElement, elementGuid);
+	}
+	else {
+		return createConstructionForCommon(buildingElement, elementGuid);
+	}
 }
 
 } // namespace
