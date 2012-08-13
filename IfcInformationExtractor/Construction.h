@@ -17,7 +17,7 @@ public:
 			return this->Name->CompareTo(other->Name);
 		}
 		else {
-			return this->IsComposite ? -1 : 1;
+			return this->IsComposite ? 1 : -1;
 		}
 	}
 };
