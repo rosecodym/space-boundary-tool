@@ -87,14 +87,6 @@ namespace GUI.Operations
                         obj.Fields["Visible Absorptance"].Value));
                 }
 
-                objs = idf.GetObjectsByType("Material:NoMass", false);
-                foreach (IdfObject obj in objs) {
-                    res.Add(new Constructions.MaterialLayerNoMass(
-                        obj.Fields["Name"].Value,
-                        (Constructions.MaterialRoughness)Enum.Parse(typeof(Constructions.MaterialRoughness), obj.Fields["Roughness"].Value),
-                        obj.Fields["Thermal Resistance"].Value));
-                }
-
                 p.Notify("Found " + res.Count.ToString() + " materials.\n");
                 e.Result = res;
             }
