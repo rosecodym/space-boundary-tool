@@ -76,11 +76,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CompositeConstruction.h" />
     <ClInclude Include="EdmSession.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="BuildingInformation.h" />
-    <ClInclude Include="MaterialLayer.h" />
+    <ClInclude Include="Construction.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SingleMaterial.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />

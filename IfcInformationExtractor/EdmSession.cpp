@@ -105,6 +105,13 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 	}
 	BuildingInformation ^ res = gcnew BuildingInformation();
 	res->Elements = GetElements();
+
+	List<Construction ^> ^ constructions = gcnew List<Construction ^>(); // my kingdom for c++/cli lambdas~~~
+	for each(Element ^ e in res->Elements) {
+		constructions->Add(e->AssociatedConstruction);
+	}
+	res->Constructions = gcnew SortedSet<Construction ^>(constructions);
+
 	return res;
 }
 

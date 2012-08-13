@@ -2,7 +2,7 @@
 
 #include <cpp_edmi.h>
 
-#include "MaterialLayer.h"
+#include "Construction.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -12,7 +12,7 @@ namespace IfcInformationExtractor {
 public ref class Element {
 private:
 	initonly String ^ guid;
-	initonly IList<MaterialLayer ^> ^ construction;
+	initonly Construction ^ construction;
 public:
 	Element(const cppw::Instance & inst);
 
@@ -21,9 +21,9 @@ public:
 		String ^ get() { return guid; }
 	}
 
-	property IList<MaterialLayer ^> ^ Construction
+	property Construction ^ AssociatedConstruction
 	{
-		IList<MaterialLayer ^> ^ get() { return construction; }
+		Construction ^ get() { return construction; }
 	}
 };
 

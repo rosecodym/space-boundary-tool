@@ -24,10 +24,16 @@
     <ClInclude Include="Element.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialLayer.h">
+    <ClInclude Include="BuildingInformation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BuildingInformation.h">
+    <ClInclude Include="SingleMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeConstruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Construction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -39,7 +45,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Element.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

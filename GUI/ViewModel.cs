@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
+using IfcConstruction = IfcInformationExtractor.Construction;
 using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
 using IfcElement = IfcInformationExtractor.Element;
 
@@ -52,7 +53,7 @@ namespace GUI
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("CurrentIfcBuilding"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("IfcElements"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("IfcConstructions"));
                 }
             }
         }
@@ -67,11 +68,11 @@ namespace GUI
             }
         }
 
-        public ICollection<IfcElement> IfcElements
+        public IEnumerable<IfcConstruction> IfcConstructions
         {
             get
             {
-                return ifcBuilding == null ? new List<IfcElement>() : ifcBuilding.Elements;
+                return ifcBuilding == null ? new List<IfcConstruction>() : ifcBuilding.Constructions;
             }
         }
 
