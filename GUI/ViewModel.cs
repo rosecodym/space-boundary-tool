@@ -72,7 +72,7 @@ namespace GUI
         {
             get
             {
-                return ifcBuilding == null ? new List<IfcConstruction>() : ifcBuilding.Constructions;
+                return ifcBuilding == null ? null : ifcBuilding.Constructions;
             }
         }
 

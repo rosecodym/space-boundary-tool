@@ -142,7 +142,12 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Button Content="Load" Height="23" HorizontalAlignment="Right" Margin="4" Name="button9" VerticalAlignment="Center" Width="75" Command="{Binding LoadIfcBuildingCommand}" IsEnabled="{Binding IfcBuildingLoadable}"/>
-                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructions}"/>
+                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructions}" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                                        <DataGridTextColumn Header="Composite" Binding="{Binding IsComposite}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
                             </Grid>
                         </Grid>
                     </GroupBox>
