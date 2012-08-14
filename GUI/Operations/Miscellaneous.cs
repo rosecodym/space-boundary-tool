@@ -52,5 +52,13 @@ namespace GUI.Operations
                 vm.MaterialsLibraryPath = ofd.FileName;
             }
         }
+
+        static public void LinkCurrentlySelectedConstructions(ViewModel vm)
+        {
+            if (vm.SelectedIdfConstruction != null && vm.SelectedIfcConstruction != null)
+            {
+                vm.SelectedIfcConstruction.IdfMappingTarget = vm.SelectedIdfConstruction.Name;
+            }
+        }
     }
 }

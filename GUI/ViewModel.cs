@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,11 @@ namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
     {
+
         private SbtBuildingInformation sbtBuilding;
         private IfcBuildingInformation ifcBuilding;
-        private ICollection<Constructions.MaterialLayer> libraryMaterials = new List<Constructions.MaterialLayer>();
-        private ICollection<IfcConstruction> ifcConstructions;
+        private ICollection<Constructions.MaterialLayer> libraryMaterials;
+        private ObservableCollection<IfcConstruction> ifcConstructions;
         private readonly IddManager idds = new IddManager();
         private bool busy = false;
 
@@ -28,6 +30,7 @@ namespace GUI
         public ICommand ExecuteSbtCommand { get; private set; }
         public ICommand LoadMaterialsLibraryCommand { get; private set; }
         public ICommand LoadIfcBuildingCommand { get; private set; }
+        public ICommand LinkSelectedConstructionsCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
 
         public SbtBuildingInformation CurrentSbtBuilding
@@ -50,7 +53,7 @@ namespace GUI
             set
             {
                 ifcBuilding = value;
-                ifcConstructions = new List<IfcConstruction>(ifcBuilding.Constructions.Select(c => new IfcConstruction(c)));
+                ifcConstructions = new ObservableCollection<IfcConstruction>(ifcBuilding.Constructions.Select(c => new IfcConstruction(c)));
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("CurrentIfcBuilding"));
@@ -69,7 +72,7 @@ namespace GUI
             }
         }
 
-        public ICollection<IfcConstruction> IfcConstructions
+        public ObservableCollection<IfcConstruction> IfcConstructions
         {
             get { return ifcConstructions; }
             set
@@ -177,6 +180,9 @@ namespace GUI
             }
         }
 
+        public Constructions.MaterialLayer SelectedIdfConstruction { get; set; }
+        public IfcConstruction SelectedIfcConstruction { get; set; }
+
         public bool Busy
         {
             get { return busy; }
@@ -227,6 +233,7 @@ namespace GUI
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this));
             LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this));
             LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this));
+            LinkSelectedConstructionsCommand = new RelayCommand(_ => Operations.Miscellaneous.LinkCurrentlySelectedConstructions(this));
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;

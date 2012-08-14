@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -36,7 +37,7 @@ namespace GUI.Operations
                     worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
                     {
                         var res = e.Result as ICollection<Constructions.MaterialLayer>;
-                        if (res != null) { vm.LibraryMaterials = res; }
+                        if (res != null) { vm.LibraryMaterials = new ObservableCollection<Constructions.MaterialLayer>(res); }
                         vm.Busy = false;
                     });
 
