@@ -21,7 +21,7 @@ namespace GUI.Operations
 
         static public void Execute(ViewModel vm)
         {
-            if (!vm.Busy)
+            if (!vm.Busy && !String.IsNullOrWhiteSpace(vm.MaterialsLibraryPath))
             {
                 try
                 {

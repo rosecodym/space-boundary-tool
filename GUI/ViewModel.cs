@@ -121,7 +121,10 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.MaterialsLibraryFilename = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryPath")); }
+                if (PropertyChanged != null) { 
+                    PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryPath"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryLoadable"));
+                }
             }
         }
 
@@ -216,7 +219,7 @@ namespace GUI
 
         public bool MaterialsLibraryLoadable
         {
-            get { return !Busy; }
+            get { return !Busy && !String.IsNullOrWhiteSpace(this.MaterialsLibraryPath); }
         }
 
         public bool IfcBuildingLoadable
