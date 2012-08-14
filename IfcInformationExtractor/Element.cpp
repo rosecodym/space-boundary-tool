@@ -61,7 +61,7 @@ Construction ^ createConstructionForWindow(const cppw::Instance & element, Strin
 			cppw::Instance pset = d.get("RelatingPropertyDefinition");
 			if (pset.get("Name").is_set()) {
 				cppw::String name = pset.get("Name");
-				if (name.size() >= 11 && !strncmp(name.data(), "Pset_Window", 11)) {
+				if (name.size() >= 11 && !strncmp(name.data(), "PSet_Window", 11)) {
 					cppw::Set props = pset.get("HasProperties");
 					for (props.move_first(); props.move_next(); ) {
 						cppw::Instance prop = props.get_();
