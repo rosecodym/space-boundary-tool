@@ -7,7 +7,7 @@ using SpaceBoundary = Sbt.CoreTypes.SpaceBoundary;
 
 namespace GUI
 {
-    class SpaceBoundaryCollection
+    class SpaceBoundaryCollection : IEnumerable<SpaceBoundary>
     {
         private readonly ICollection<SpaceBoundary> spaceBoundaries;
 
@@ -35,5 +35,15 @@ namespace GUI
         public int ThirdLevelCount { get { return count3rdLevel; } }
         public int FourthLevelCount { get { return count4thLevel; } }
         public int VirtualCount { get { return countVirtual; } }
+
+        public IEnumerator<SpaceBoundary> GetEnumerator()
+        {
+            return spaceBoundaries.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return spaceBoundaries.GetEnumerator();
+        }
     }
 }

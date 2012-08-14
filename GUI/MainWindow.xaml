@@ -96,11 +96,11 @@
                             <Label Content="3rd-level space boundaries:" Grid.Row="2" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label5" VerticalAlignment="Center" />
                             <Label Content="4th-level space boundaries:" Grid.Row="3" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label6" VerticalAlignment="Center" />
                             <Label Content="Virtual space boundaries:" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label7" VerticalAlignment="Center" />
-                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalExternalCountString}}" Grid.Column="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label8" VerticalAlignment="Center" />
-                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalInternalCountString}}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label9" VerticalAlignment="Center" />
-                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo3rdLevelCountString}}" Grid.Column="1" Grid.Row="2" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label10" VerticalAlignment="Center" />
-                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationTo4thLevelCountString}}" Grid.Column="1" Grid.Row="3" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label11" VerticalAlignment="Center" />
-                            <Label Content="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationToVirtualCountString}}" Grid.Column="1" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label12" VerticalAlignment="Center" />
+                            <Label Content="{Binding CurrentSbtBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalExternalCountString}}" Grid.Column="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label8" VerticalAlignment="Center" />
+                            <Label Content="{Binding CurrentSbtBuilding, Converter={StaticResource BuildingInformationTo2ndLevelPhysicalInternalCountString}}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label9" VerticalAlignment="Center" />
+                            <Label Content="{Binding CurrentSbtBuilding, Converter={StaticResource BuildingInformationTo3rdLevelCountString}}" Grid.Column="1" Grid.Row="2" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label10" VerticalAlignment="Center" />
+                            <Label Content="{Binding CurrentSbtBuilding, Converter={StaticResource BuildingInformationTo4thLevelCountString}}" Grid.Column="1" Grid.Row="3" Grid.RowSpan="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label11" VerticalAlignment="Center" />
+                            <Label Content="{Binding CurrentSbtBuilding, Converter={StaticResource BuildingInformationToVirtualCountString}}" Grid.Column="1" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label12" VerticalAlignment="Center" />
                         </Grid>
                     </GroupBox>
                 </Grid>
@@ -145,6 +145,7 @@
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="Composite" Binding="{Binding IsComposite}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="Needs Mapping" Binding="{Binding ParticipatesInSpaceBoundary}"/>
                                         <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding IdfMappingTarget}" IsReadOnly="True" />
                                     </DataGrid.Columns>
                                 </DataGrid>

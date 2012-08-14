@@ -104,10 +104,14 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 		return nullptr;
 	}
 	BuildingInformation ^ res = gcnew BuildingInformation();
-	res->Elements = GetElements();
+	res->ElementsByGuid = gcnew Dictionary<String ^, Element ^>();
+	ICollection<Element ^> ^ elements = GetElements();
+	for each(Element ^ e in elements) {
+		res->ElementsByGuid[e->Guid] = e;
+	}
 
 	List<Construction ^> ^ constructions = gcnew List<Construction ^>(); // my kingdom for c++/cli lambdas~~~
-	for each(Element ^ e in res->Elements) {
+	for each(Element ^ e in res->ElementsByGuid->Values) {
 		constructions->Add(e->AssociatedConstruction);
 	}
 	res->Constructions = gcnew SortedSet<Construction ^>(constructions);

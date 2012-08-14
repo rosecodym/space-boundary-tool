@@ -10,11 +10,23 @@ namespace GUI
     {
         IfcInformationExtractor.Construction ifcInformation;
         string idfMappingTarget;
+        bool? participatesInSpaceBoundary;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Name { get { return ifcInformation.Name; } }
         public bool IsComposite { get { return ifcInformation.IsComposite; } }
+
+        public bool? ParticipatesInSpaceBoundary
+        {
+            get { return participatesInSpaceBoundary; }
+            set
+            {
+                participatesInSpaceBoundary = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("ParticipatesInSpaceBoundary")); }
+            }
+        }
+
         public string IdfMappingTarget
         {
             get { return idfMappingTarget; }

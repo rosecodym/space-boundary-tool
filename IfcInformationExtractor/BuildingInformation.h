@@ -12,7 +12,7 @@ public ref class BuildingInformation {
 public:
 	BuildingInformation() { }
 
-	property ICollection<Element ^> ^ Elements;
+	property IDictionary<String ^, Element ^> ^ ElementsByGuid;
 	property IEnumerable<Construction ^> ^ Constructions;
 };
 

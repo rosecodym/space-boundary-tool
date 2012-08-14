@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
-using IfcConstruction = IfcInformationExtractor.Construction;
 using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
+using IfcConstruction = IfcInformationExtractor.Construction;
+using IfcElement = IfcInformationExtractor.Element;
 
 namespace GUI
 {
@@ -39,6 +40,7 @@ namespace GUI
             set
             {
                 sbtBuilding = value;
+                CheckIfcConstructionsForSbParticipation();
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("CurrentSbtBuilding"));
@@ -78,6 +80,7 @@ namespace GUI
             set
             {
                 ifcConstructions = value;
+                CheckIfcConstructionsForSbParticipation();
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("IfcConstructions")); }
             }
         }
@@ -240,5 +243,31 @@ namespace GUI
         }
 
         public Action<string> UpdateOutputDirectly { get; private set; }
+
+        private void CheckIfcConstructionsForSbParticipation()
+        {
+            if (CurrentSbtBuilding != null && IfcConstructions != null)
+            {
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in this.CurrentSbtBuilding.SpaceBoundaries)
+                {
+                    foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
+                    {
+                        string elementGuid = this.CurrentSbtBuilding.Elements[layer.Id - 1].Guid;
+                        IfcElement ifcElement = this.CurrentIfcBuilding.ElementsByGuid[elementGuid];
+                        foreach (IfcConstruction c in this.IfcConstructions)
+                        {
+                            if (c.Name == ifcElement.AssociatedConstruction.Name)
+                            {
+                                c.ParticipatesInSpaceBoundary = true;
+                            }
+                        }
+                    }
+                }
+                foreach (IfcConstruction c in this.IfcConstructions)
+                {
+                    if (!c.ParticipatesInSpaceBoundary.HasValue) { c.ParticipatesInSpaceBoundary = false; }
+                }
+            }
+        }
     }
 }
