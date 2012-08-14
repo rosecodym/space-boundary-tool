@@ -53,11 +53,14 @@ namespace GUI.Operations
             }
         }
 
-        static public void LinkCurrentlySelectedConstructions(ViewModel vm)
+        static public void LinkConstructions(Constructions.MaterialLayer idfConstruction, IEnumerable<IfcConstruction> ifcConstructions)
         {
-            if (vm.SelectedIdfConstruction != null && vm.SelectedIfcConstruction != null)
+            if (idfConstruction != null && ifcConstructions != null)
             {
-                vm.SelectedIfcConstruction.IdfMappingTarget = vm.SelectedIdfConstruction.Name;
+                foreach (IfcConstruction c in ifcConstructions)
+                {
+                    c.IdfMappingTarget = idfConstruction.Name;
+                }
             }
         }
     }

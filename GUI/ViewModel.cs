@@ -31,7 +31,7 @@ namespace GUI
         public ICommand ExecuteSbtCommand { get; private set; }
         public ICommand LoadMaterialsLibraryCommand { get; private set; }
         public ICommand LoadIfcBuildingCommand { get; private set; }
-        public ICommand LinkSelectedConstructionsCommand { get; private set; }
+        public ICommand LinkConstructionsCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
 
         public SbtBuildingInformation CurrentSbtBuilding
@@ -187,7 +187,6 @@ namespace GUI
         }
 
         public Constructions.MaterialLayer SelectedIdfConstruction { get; set; }
-        public IfcConstruction SelectedIfcConstruction { get; set; }
 
         public bool Busy
         {
@@ -229,6 +228,15 @@ namespace GUI
 
         public IddManager Idds { get { return idds; } }
 
+        private static void test(ViewModel vm, object selectedIfcConstructions)
+        {
+            IEnumerable<object> casted = selectedIfcConstructions as IEnumerable<object>;
+            if (casted != null)
+            {
+                Operations.Miscellaneous.LinkConstructions(vm.SelectedIdfConstruction, casted.Select(obj => obj as IfcConstruction));
+            }
+        }
+
         public ViewModel(Action<string> updateOutputDirectly)
         {
             BrowseToInputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToInputIfcFile(this));
@@ -239,7 +247,14 @@ namespace GUI
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this));
             LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this));
             LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this));
-            LinkSelectedConstructionsCommand = new RelayCommand(_ => Operations.Miscellaneous.LinkCurrentlySelectedConstructions(this));
+            LinkConstructionsCommand = new RelayCommand(obj =>
+            {
+                IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
+                if (selectedIfcConstructions != null)
+                {
+                    Operations.Miscellaneous.LinkConstructions(this.SelectedIdfConstruction, selectedIfcConstructions.Select(c => c as IfcConstruction));
+                }
+            });
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;
