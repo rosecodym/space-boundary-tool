@@ -4,12 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+using MaterialLibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+
 namespace GUI
 {
     class IfcConstruction : INotifyPropertyChanged
     {
         IfcInformationExtractor.Construction ifcInformation;
-        Constructions.MaterialLayer idfMappingTarget;
+        MaterialLibraryEntry idfMappingTarget;
         bool? participatesInSpaceBoundary;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -27,7 +29,7 @@ namespace GUI
             }
         }
 
-        public Constructions.MaterialLayer IdfMappingTarget
+        public MaterialLibraryEntry IdfMappingTarget
         {
             get { return idfMappingTarget; }
             set

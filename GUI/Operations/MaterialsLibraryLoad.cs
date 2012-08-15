@@ -8,6 +8,8 @@ using System.Text;
 using LibIdf.Idd;
 using LibIdf.Idf;
 
+using MaterialLibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+
 namespace GUI.Operations
 {
     static class MaterialsLibraryLoad
@@ -36,8 +38,8 @@ namespace GUI.Operations
                     });
                     worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
                     {
-                        var res = e.Result as ICollection<Constructions.MaterialLayer>;
-                        if (res != null) { vm.LibraryMaterials = new ObservableCollection<Constructions.MaterialLayer>(res); }
+                        var res = e.Result as ICollection<MaterialLibraryEntry>;
+                        if (res != null) { vm.LibraryMaterials = res; }
                         vm.Busy = false;
                     });
 
@@ -71,21 +73,13 @@ namespace GUI.Operations
                 Idf idf = new Idf(p.Path, idd);
                 p.Notify("IDF loaded.\n");
 
-                List<Constructions.MaterialLayer> res = new List<Constructions.MaterialLayer>();
+                List<Materials.LibraryEntries.Opaque> res = new List<Materials.LibraryEntries.Opaque>();
                 HashSet<IdfObject> objs;
 
                 objs = idf.GetObjectsByType("Material", false);
                 foreach (IdfObject obj in objs)
                 {
-                    res.Add(new Constructions.MaterialLayerOpaque(
-                        obj.Fields["Name"].Value,
-                        (Constructions.MaterialRoughness)Enum.Parse(typeof(Constructions.MaterialRoughness), obj.Fields["Roughness"].Value),
-                        obj.Fields["Conductivity"].Value,
-                        obj.Fields["Density"].Value,
-                        obj.Fields["Specific Heat"].Value,
-                        obj.Fields["Thermal Absorptance"].Value,
-                        obj.Fields["Solar Absorptance"].Value,
-                        obj.Fields["Visible Absorptance"].Value));
+                    res.Add(new Materials.LibraryEntries.Opaque(obj));
                 }
 
                 p.Notify("Found " + res.Count.ToString() + " materials.\n");

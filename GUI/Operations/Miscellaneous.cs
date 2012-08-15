@@ -5,6 +5,8 @@ using System.Text;
 
 using Microsoft.Win32;
 
+using MaterialLibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+
 namespace GUI.Operations
 {
     static class Miscellaneous
@@ -53,7 +55,7 @@ namespace GUI.Operations
             }
         }
 
-        static public void LinkConstructions(Constructions.MaterialLayer idfConstruction, IEnumerable<IfcConstruction> ifcConstructions)
+        static public void LinkConstructions(MaterialLibraryEntry idfConstruction, IEnumerable<IfcConstruction> ifcConstructions)
         {
             if (idfConstruction != null && ifcConstructions != null)
             {

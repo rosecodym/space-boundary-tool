@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUI.Constructions
+using GUI.Materials.Enums;
+
+namespace GUI.Materials.Properties
 {
-    class MaterialLayerOpaque : MaterialLayer
+    class Opaque
     {
-        readonly string name;
         readonly MaterialRoughness roughness;
         readonly double conductivity;
         readonly double density;
@@ -16,7 +17,6 @@ namespace GUI.Constructions
         readonly double solarAbsorptance;
         readonly double visibleAbsorptance;
 
-        public override string Name { get { return name; } }
         public MaterialRoughness Roughness { get { return roughness; } }
         public double Conductivity { get { return conductivity; } }
         public double Density { get { return density; } }
@@ -25,8 +25,7 @@ namespace GUI.Constructions
         public double SolarAbsorptance { get { return solarAbsorptance; } }
         public double VisibleAbsorptance { get { return visibleAbsorptance; } }
 
-        public MaterialLayerOpaque(
-            string name,
+        public Opaque(
             MaterialRoughness roughness,
             double conductivity,
             double density,
@@ -35,7 +34,6 @@ namespace GUI.Constructions
             double solarAbsorptance,
             double visibleAbsorptance)
         {
-            this.name = name;
             this.roughness = roughness;
             this.conductivity = conductivity;
             this.density = density;
@@ -43,19 +41,6 @@ namespace GUI.Constructions
             this.thermalAbsorptance = thermalAbsorptance;
             this.solarAbsorptance = solarAbsorptance;
             this.visibleAbsorptance = visibleAbsorptance;
-        }
-
-        public override void AddToIdfV710(LibIdf.Idf.Idf idf)
-        {
-            LibIdf.Idf.IdfObject obj = idf.CreateObject("Material:NoMass");
-            obj.Fields["Name"].Value = Name;
-            obj.Fields["Roughness"].Value = roughness.ToString();
-            obj.Fields["Conductivity"].Value = conductivity;
-            obj.Fields["Density"].Value = density;
-            obj.Fields["Specific Heat"].Value = specificHeat;
-            obj.Fields["Thermal Absorptance"].Value = thermalAbsorptance;
-            obj.Fields["Solar Absorptance"].Value = solarAbsorptance;
-            obj.Fields["Visible Absorptance"].Value = visibleAbsorptance;
         }
     }
 }

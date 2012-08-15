@@ -59,16 +59,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Constructions\Construction.cs" />
     <Compile Include="IfcConstruction.cs" />
+    <Compile Include="Materials\Enums.cs" />
+    <Compile Include="Materials\LibraryEntries\Opaque.cs" />
+    <Compile Include="Materials\Output\Construction.cs" />
+    <Compile Include="Materials\Output\MaterialLayerOpaque.cs" />
     <Compile Include="Operations\BuildingLoad.cs" />
     <Compile Include="Operations\IdfGeneration\ConstructionManager.cs" />
     <Compile Include="SbtBuildingInformation.cs" />
-    <Compile Include="Constructions\GasType.cs" />
-    <Compile Include="Constructions\MaterialLayer.cs" />
-    <Compile Include="Constructions\MaterialLayerNoMass.cs" />
-    <Compile Include="Constructions\MaterialLayerOpaque.cs" />
-    <Compile Include="Constructions\MaterialRoughness.cs" />
+    <Compile Include="Materials\Output\MaterialLayer.cs" />
+    <Compile Include="Materials\Properties\Opaque.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="IddManager.cs" />
     <Compile Include="EnergyPlusVersion.cs" />

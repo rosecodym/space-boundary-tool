@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUI.Constructions
+namespace GUI.Materials.Output
 {
     abstract class MaterialLayer : IEquatable<MaterialLayer>
     {

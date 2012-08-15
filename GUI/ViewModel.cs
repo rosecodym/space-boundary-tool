@@ -10,6 +10,8 @@ using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
 using IfcConstruction = IfcInformationExtractor.Construction;
 using IfcElement = IfcInformationExtractor.Element;
 
+using MaterialLibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+
 namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
@@ -17,7 +19,7 @@ namespace GUI
 
         private SbtBuildingInformation sbtBuilding;
         private IfcBuildingInformation ifcBuilding;
-        private ICollection<Constructions.MaterialLayer> libraryMaterials;
+        private ICollection<MaterialLibraryEntry> libraryMaterials;
         private ObservableCollection<IfcConstruction> ifcConstructions;
         private readonly IddManager idds = new IddManager();
         private bool busy = false;
@@ -64,7 +66,7 @@ namespace GUI
             }
         }
 
-        public ICollection<Constructions.MaterialLayer> LibraryMaterials
+        public ICollection<MaterialLibraryEntry> LibraryMaterials
         {
             get { return libraryMaterials; }
             set
@@ -186,7 +188,7 @@ namespace GUI
             }
         }
 
-        public Constructions.MaterialLayer SelectedIdfConstruction { get; set; }
+        public MaterialLibraryEntry SelectedIdfConstruction { get; set; }
 
         public bool Busy
         {

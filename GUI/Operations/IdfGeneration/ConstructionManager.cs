@@ -3,36 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using LibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+using OutputLayer = GUI.Materials.Output.MaterialLayer;
+
 namespace GUI.Operations
 {
     static partial class IdfGeneration
     {
         class ConstructionManager
         {
-            private Func<int, Constructions.MaterialLayer> sbtMaterialIDToLibraryMaterial;
+            private Func<int, LibraryEntry> sbtMaterialIDToLibraryMaterial;
+            private HashSet<OutputLayer> allMaterials;
 
-            public ConstructionManager(Func<int, Constructions.MaterialLayer> sbtMaterialIDToLibraryMaterial)
+            public ConstructionManager(Func<int, LibraryEntry> sbtMaterialIDToLibraryMaterial)
             {
                 this.sbtMaterialIDToLibraryMaterial = sbtMaterialIDToLibraryMaterial;
             }
 
             public string ConstructionNameForMaterials(IList<Sbt.CoreTypes.MaterialLayer> materials)
             {
-                List<Constructions.MaterialLayer> inNewIdf = new List<Constructions.MaterialLayer>();
+                List<OutputLayer> inNewIdf = new List<OutputLayer>();
                 foreach (Sbt.CoreTypes.MaterialLayer layer in materials)
                 {
-                    Constructions.MaterialLayer inLibrary = sbtMaterialIDToLibraryMaterial(layer.Id);
+                    LibraryEntry inLibrary = sbtMaterialIDToLibraryMaterial(layer.Id);
                     if (inLibrary == null) { return "UNMAPPED CONSTRUCTION"; }
                     inNewIdf.Add(RetrieveMaterial(inLibrary, layer.Thickness));
                 }
                 return RetrieveConstruction(inNewIdf).Name;
             }
 
-            private Constructions.MaterialLayer RetrieveMaterial(Constructions.MaterialLayer libraryMaterial, double thickness)
+            private OutputLayer RetrieveMaterial(LibraryEntry libraryMaterial, double thickness)
             {
-                throw new NotImplementedException();
+                OutputLayer newLayer = new Materials.Output.MaterialLayerOpaque(libraryMaterial.Name, libraryMaterial.Properties, thickness);
+                allMaterials.Add(newLayer);
+                return newLayer;
             }
-            private Constructions.Construction RetrieveConstruction(IList<Constructions.MaterialLayer> materials)
+            private Materials.Output.Construction RetrieveConstruction(IList<OutputLayer> materials)
             {
                 throw new NotImplementedException();
             }
