@@ -63,9 +63,12 @@ namespace GUI.Operations
 
                     ConstructionManager constructionManager = new ConstructionManager(id =>
                     {
+                        if (id >= p.SbtBuilding.Elements.Count) { return null; }
                         string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
-                        IfcInformationExtractor.Element ifcElement = p.IfcBuilding.ElementsByGuid[elementGuid];
-                        return p.IfcConstructionsByName[ifcElement.AssociatedConstruction.Name].IdfMappingTarget;
+                        IfcInformationExtractor.Element ifcElement;
+                        if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
+                        IfcConstruction c;
+                        return p.IfcConstructionsByName.TryGetValue(ifcElement.AssociatedConstruction.Name, out c) ? c.IdfMappingTarget : null;
                     });
 
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
