@@ -23,6 +23,8 @@ namespace GUI.Materials.Output
             }
         }
 
+        public IList<string> LayerNames { get { return layerNames; } }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as Construction);

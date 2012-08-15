@@ -25,7 +25,7 @@ namespace GUI.Materials.Output
 
         public override void AddToIdfV710(LibIdf.Idf.Idf idf)
         {
-            LibIdf.Idf.IdfObject obj = idf.CreateObject("Material:NoMass");
+            LibIdf.Idf.IdfObject obj = idf.CreateObject("Material");
             obj.Fields["Name"].Value = Name;
             obj.Fields["Thickness"].Value = thickness;
             obj.Fields["Roughness"].Value = props.Roughness.ToString();

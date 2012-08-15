@@ -71,8 +71,17 @@ namespace GUI.Operations
                         return p.IfcConstructionsByName.TryGetValue(ifcElement.AssociatedConstruction.Name, out c) ? c.IdfMappingTarget : null;
                     });
 
+                    foreach (Sbt.CoreTypes.SpaceBoundary sb in p.SbtBuilding.SpaceBoundaries)
+                    {
+                        if (sb.Level == 2) { constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers); }
+                        else { constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId); }
+                    }
+
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
+
                     creator.AddConstantContents();
+                    foreach (Materials.Output.MaterialLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
+
                     creator.WriteToFile(p.OutputFilename);
                     p.Notify("IDF written.\n");
                 }

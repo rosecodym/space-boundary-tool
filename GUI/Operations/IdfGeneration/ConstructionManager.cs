@@ -22,21 +22,40 @@ namespace GUI.Operations
                 this.sbtMaterialIDToLibraryMaterial = sbtMaterialIDToLibraryMaterial;
             }
 
-            public string ConstructionNameForMaterials(IList<Sbt.CoreTypes.MaterialLayer> materials)
+            public IEnumerable<OutputLayer> AllMaterials { get { return allMaterials; } }
+            public IEnumerable<OutputConstruction> AllConstructions { get { return allConstructions; } }
+
+            public string ConstructionNameForLayerMaterials(IList<Sbt.CoreTypes.MaterialLayer> materials)
             {
                 List<OutputLayer> inNewIdf = new List<OutputLayer>();
                 foreach (Sbt.CoreTypes.MaterialLayer layer in materials)
                 {
                     LibraryEntry inLibrary = sbtMaterialIDToLibraryMaterial(layer.Id);
-                    if (inLibrary == null) { return "UNMAPPED CONSTRUCTION"; }
-                    inNewIdf.Add(RetrieveMaterial(inLibrary, layer.Thickness));
+                    if (inLibrary == null) { return "UNMAPPED LAYERED CONSTRUCTION"; }
+                    inNewIdf.Add(RetrieveLayerMaterial(inLibrary, layer.Thickness));
                 }
                 return RetrieveConstruction(inNewIdf).Name;
             }
 
-            private OutputLayer RetrieveMaterial(LibraryEntry libraryMaterial, double thickness)
+            public string ConstructionNameForSurfaceMaterial(int materialId)
+            {
+                List<OutputLayer> inNewIdf = new List<OutputLayer>();
+                LibraryEntry inLibrary = sbtMaterialIDToLibraryMaterial(materialId);
+                if (inLibrary == null) { return "UNMAPPED SURFACE CONSTRUCTION"; }
+                inNewIdf.Add(RetrieveSurfaceMaterial(inLibrary));
+                return RetrieveConstruction(inNewIdf).Name;
+            }
+
+            private OutputLayer RetrieveLayerMaterial(LibraryEntry libraryMaterial, double thickness)
             {
                 OutputLayer newLayer = new Materials.Output.MaterialLayerOpaque(libraryMaterial.Name, libraryMaterial.Properties, thickness);
+                allMaterials.Add(newLayer);
+                return newLayer;
+            }
+
+            private OutputLayer RetrieveSurfaceMaterial(LibraryEntry libraryMaterial)
+            {
+                OutputLayer newLayer = new Materials.Output.MaterialLayerOpaque(libraryMaterial.Name, libraryMaterial.Properties, 0.001);
                 allMaterials.Add(newLayer);
                 return newLayer;
             }
