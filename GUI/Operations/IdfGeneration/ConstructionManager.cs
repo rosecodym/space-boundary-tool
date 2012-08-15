@@ -13,7 +13,7 @@ namespace GUI.Operations
         class ConstructionManager
         {
             private Func<int, LibraryEntry> sbtMaterialIDToLibraryMaterial;
-            private HashSet<OutputLayer> allMaterials;
+            private HashSet<OutputLayer> allMaterials = new HashSet<OutputLayer>();
 
             public ConstructionManager(Func<int, LibraryEntry> sbtMaterialIDToLibraryMaterial)
             {
