@@ -31,7 +31,13 @@ namespace GUI.Operations
 
                     Parameters p = new Parameters();
                     p.OutputFilename = vm.OutputIdfFilePath;
-                    p.Building = vm.CurrentSbtBuilding;
+                    p.SbtBuilding = vm.CurrentSbtBuilding;
+                    p.IfcBuilding = vm.CurrentIfcBuilding;
+                    p.IfcConstructionsByName = new Dictionary<string, IfcConstruction>();
+                    foreach (IfcConstruction c in vm.IfcConstructions)
+                    {
+                        p.IfcConstructionsByName[c.Name] = c;
+                    }
                     p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
@@ -54,6 +60,14 @@ namespace GUI.Operations
                     p.Notify("Getting IDD.\n");
                     LibIdf.Idd.Idd idd = p.GetIdd();
                     p.Notify("Got IDD.\n");
+
+                    ConstructionManager constructionManager = new ConstructionManager(id =>
+                    {
+                        string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
+                        IfcInformationExtractor.Element ifcElement = p.IfcBuilding.ElementsByGuid[elementGuid];
+                        return p.IfcConstructionsByName[ifcElement.AssociatedConstruction.Name].IdfMappingTarget;
+                    });
+
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
                     creator.AddConstantContents();
                     creator.WriteToFile(p.OutputFilename);

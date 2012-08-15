@@ -9,7 +9,7 @@ namespace GUI
     class IfcConstruction : INotifyPropertyChanged
     {
         IfcInformationExtractor.Construction ifcInformation;
-        string idfMappingTarget;
+        Constructions.MaterialLayer idfMappingTarget;
         bool? participatesInSpaceBoundary;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -27,7 +27,7 @@ namespace GUI
             }
         }
 
-        public string IdfMappingTarget
+        public Constructions.MaterialLayer IdfMappingTarget
         {
             get { return idfMappingTarget; }
             set

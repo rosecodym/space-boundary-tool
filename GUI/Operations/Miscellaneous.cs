@@ -59,7 +59,7 @@ namespace GUI.Operations
             {
                 foreach (IfcConstruction c in ifcConstructions)
                 {
-                    c.IdfMappingTarget = idfConstruction.Name;
+                    c.IdfMappingTarget = idfConstruction;
                 }
             }
         }
