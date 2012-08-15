@@ -65,6 +65,18 @@ void EdmSession::clear_db() {
 	}
 }
 
+ICollection<Space ^> ^ EdmSession::GetSpaces() {
+	if (model == __nullptr) {
+		return nullptr;
+	}
+	cppw::Instance_set instances = model->get_set_of("IfcSpace", cppw::include_subtypes);
+	IList<Space ^> ^ spaces = gcnew List<Space ^>();
+	for (instances.move_first(); instances.move_next(); ) {
+		spaces->Add(gcnew Space(instances.get()));
+	}
+	return spaces;
+}
+
 ICollection<Element ^> ^ EdmSession::GetElements() {
 	if (model == __nullptr) {
 		return nullptr;
@@ -104,7 +116,14 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 		return nullptr;
 	}
 	BuildingInformation ^ res = gcnew BuildingInformation();
+	res->SpacesByGuid = gcnew Dictionary<String ^, Space ^>();
 	res->ElementsByGuid = gcnew Dictionary<String ^, Element ^>();
+
+	ICollection<Space ^> ^ spaces = GetSpaces();
+	for each(Space ^ s in spaces) {
+		res->SpacesByGuid[s->Guid] = s;
+	}
+
 	ICollection<Element ^> ^ elements = GetElements();
 	for each(Element ^ e in elements) {
 		res->ElementsByGuid[e->Guid] = e;

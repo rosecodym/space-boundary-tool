@@ -83,11 +83,13 @@
     <ClInclude Include="Construction.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SingleMaterial.h" />
+    <ClInclude Include="Space.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="EdmSession.cpp" />
     <ClCompile Include="Element.cpp" />
+    <ClCompile Include="Space.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />

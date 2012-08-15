@@ -22,6 +22,7 @@ private:
 
 	void clear_db();
 
+	ICollection<Space ^> ^ GetSpaces();
 	ICollection<Element ^> ^ GetElements();
 
 	static const char * const DB_NAME = "db";

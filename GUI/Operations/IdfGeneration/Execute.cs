@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+using IfcSpace = IfcInformationExtractor.Space;
+
 namespace GUI.Operations
 {
     static partial class IdfGeneration
@@ -50,7 +52,7 @@ namespace GUI.Operations
             }
         }
 
-        static void DoIdfGenerationWork(object sender, DoWorkEventArgs e)
+        static private void DoIdfGenerationWork(object sender, DoWorkEventArgs e)
         {
             Parameters p = e.Argument as Parameters;
             if (p != null)
@@ -80,6 +82,10 @@ namespace GUI.Operations
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
                     creator.AddConstantContents();
+                    foreach (string zoneName in GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid)).Values)
+                    {
+                        creator.AddZone(zoneName);
+                    }
                     foreach (Materials.Output.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
                     foreach (Materials.Output.MaterialLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
 
@@ -91,6 +97,52 @@ namespace GUI.Operations
                     p.Notify("Operation failed: " + ex.Message + Environment.NewLine);
                 }
             }
+        }
+
+        static private ICollection<IfcSpace> FindUsedSpaces(IEnumerable<Sbt.CoreTypes.SpaceBoundary> sbs, IDictionary<string, IfcSpace> spaces)
+        {
+            HashSet<string> usedGuids = new HashSet<string>(sbs.Select(sb => sb.BoundedSpace.Guid));
+            return new List<IfcSpace>(usedGuids.Select(guid => spaces[guid]));
+        }
+
+        static private IDictionary<string, string> GatherZoneNamesByGuid(ICollection<IfcSpace> usedSpaces)
+        {
+            IDictionary<string, string> res = new Dictionary<string, string>();
+
+            bool allLongNamesPresent = !usedSpaces.Any(s => String.IsNullOrWhiteSpace(s.LongName));
+            if (allLongNamesPresent)
+            {
+                if (usedSpaces.Select(s => s.LongName).Distinct().Count() == usedSpaces.Count)
+                {
+                    foreach (IfcSpace s in usedSpaces) { res[s.Guid] = s.LongName; }
+                    return res;
+                }
+            }
+
+            bool allNamesPresent = !usedSpaces.Any(s => String.IsNullOrWhiteSpace(s.Name));
+            if (allNamesPresent)
+            {
+                if (usedSpaces.Select(s => s.Name).Distinct().Count() == usedSpaces.Count)
+                {
+                    foreach (IfcSpace s in usedSpaces) { res[s.Guid] = s.Name; }
+                }
+            }
+
+            if (allNamesPresent && allLongNamesPresent)
+            {
+                // all names and long names present but not independently unique
+                var combined = usedSpaces.Select(s => String.Format("{0} {1}", s.LongName, s.Name));
+                if (combined.Distinct().Count() == usedSpaces.Count)
+                {
+                    foreach (IfcSpace s in usedSpaces) { res[s.Guid] = String.Format("{0} {1}", s.LongName, s.Name); }
+                    return res;
+                }
+            }
+
+            // fall back to guids
+            // TODO: check for case-sensitivity collisions here (ugh revit)
+            foreach (IfcSpace s in usedSpaces) { res[s.Guid] = s.Guid; }
+            return res;
         }
     }
 }

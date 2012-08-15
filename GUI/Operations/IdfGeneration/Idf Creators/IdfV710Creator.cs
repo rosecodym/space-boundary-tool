@@ -35,6 +35,12 @@ namespace GUI.Operations
             {
                 layer.AddToIdfV710(idf);
             }
+
+            public override void AddZone(string name)
+            {
+                LibIdf.Idf.IdfObject obj = idf.CreateObject("Zone");
+                obj.Fields["Name"].Value = name;
+            }
         }
     }
 }
