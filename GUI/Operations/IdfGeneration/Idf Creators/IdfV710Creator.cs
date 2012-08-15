@@ -16,8 +16,28 @@ namespace GUI.Operations
 
             public override void AddConstantContents()
             {
-                IdfObject obj = idf.CreateObject("Version");
-                obj.Fields["Version Identifier"].Value = "7.1";
+                IdfObject obj;
+                
+                idf.CreateObject("Version").Fields["Version Identifier"].Value = "7.1";
+
+                obj = idf.CreateObject("GlobalGeometryRules");
+                obj.Fields["Starting Vertex Position"].Value = "UpperLeftCorner";
+                obj.Fields["Vertex Entry Direction"].Value = "Counterclockwise";
+                obj.Fields["Coordinate System"].Value = "Relative";
+                
+                idf.CreateObject("Output:Surfaces:Drawing").Fields["Report Type"].Value = "DXF";
+                idf.CreateObject("Output:Surfaces:List").Fields["Report Type"].Value = "DetailsWithVertices";
+                idf.CreateObject("Output:Surfaces:List").Fields["Report Type"].Value = "ViewFactorInfo";
+
+                obj = idf.CreateObject("Output:Surfaces:List");
+                obj.Fields["Report Type"].Value = "Lines";
+                obj.Fields["Report Specifications"].Value = "IDF";
+
+                obj = idf.CreateObject("Output:Diagnostics");
+                obj.Fields["Key 1"].Value = "DoNotMirrorDetachedShading";
+                obj.Fields["Key 2"].Value = "DisplayAdvancedReportVariables";
+
+                idf.CreateObject("Output:Diagnostics").Fields["Key 1"].Value = "DisplayExtraWarnings";
             }
 
             public override void AddConstruction(Materials.Output.Construction c)
@@ -36,10 +56,11 @@ namespace GUI.Operations
                 layer.AddToIdfV710(idf);
             }
 
-            public override void AddZone(string name)
+            public override void AddZone(string name, string sourceGuid)
             {
                 LibIdf.Idf.IdfObject obj = idf.CreateObject("Zone");
                 obj.Fields["Name"].Value = name;
+                obj.AddComment("! space GUID is " + sourceGuid);
             }
         }
     }
