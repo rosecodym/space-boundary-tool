@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using LibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+using OutputConstruction = GUI.Materials.Output.Construction;
 using OutputLayer = GUI.Materials.Output.MaterialLayer;
 
 namespace GUI.Operations
@@ -14,6 +15,7 @@ namespace GUI.Operations
         {
             private Func<int, LibraryEntry> sbtMaterialIDToLibraryMaterial;
             private HashSet<OutputLayer> allMaterials = new HashSet<OutputLayer>();
+            private HashSet<OutputConstruction> allConstructions = new HashSet<OutputConstruction>();
 
             public ConstructionManager(Func<int, LibraryEntry> sbtMaterialIDToLibraryMaterial)
             {
@@ -38,9 +40,12 @@ namespace GUI.Operations
                 allMaterials.Add(newLayer);
                 return newLayer;
             }
-            private Materials.Output.Construction RetrieveConstruction(IList<OutputLayer> materials)
+
+            private OutputConstruction RetrieveConstruction(IList<OutputLayer> materials)
             {
-                throw new NotImplementedException();
+                OutputConstruction newC = new OutputConstruction(materials);
+                allConstructions.Add(newC);
+                return newC;
             }
         }
     }

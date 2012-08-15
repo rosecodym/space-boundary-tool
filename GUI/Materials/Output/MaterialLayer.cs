@@ -28,8 +28,7 @@ namespace GUI.Materials.Output
         {
             if (Object.ReferenceEquals(a, null))
             {
-                if (Object.ReferenceEquals(b, null)) { return true; }
-                else { return false; }
+                return Object.ReferenceEquals(b, null);
             }
             return a.Equals(b);
         }
