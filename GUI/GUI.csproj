@@ -65,6 +65,7 @@
     <Compile Include="Materials\Output\Construction.cs" />
     <Compile Include="Materials\Output\MaterialLayerOpaque.cs" />
     <Compile Include="Operations\BuildingLoad.cs" />
+    <Compile Include="Operations\IdfGeneration\BuildingSurface.cs" />
     <Compile Include="Operations\IdfGeneration\ConstructionManager.cs" />
     <Compile Include="SbtBuildingInformation.cs" />
     <Compile Include="Materials\Output\MaterialLayer.cs" />

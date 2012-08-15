@@ -73,19 +73,30 @@ namespace GUI.Operations
                         return p.IfcConstructionsByName.TryGetValue(ifcElement.AssociatedConstruction.Name, out c) ? c.IdfMappingTarget : null;
                     });
 
-                    foreach (Sbt.CoreTypes.SpaceBoundary sb in p.SbtBuilding.SpaceBoundaries)
+                    IDictionary<string, string> zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid));
+
+                    IList<BuildingSurface> surfaces = new List<BuildingSurface>(p.SbtBuilding.SpaceBoundaries
+                        .Where(sb => sb.IsVirtual || !sb.Element.IsFenestration)
+                        .Select(sb =>
                     {
-                        if (sb.Level == 2) { constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers); }
-                        else { constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId); }
-                    }
+                        if (sb.Level == 2)
+                        {
+                            return new BuildingSurface(sb, constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers), zoneNamesByGuid[sb.BoundedSpace.Guid], false);
+                        }
+                        else
+                        {
+                            return new BuildingSurface(sb, constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId), zoneNamesByGuid[sb.BoundedSpace.Guid], false);
+                        }
+                    }));
 
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
                     creator.AddConstantContents();
-                    foreach (KeyValuePair<string, string> zone in GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid)))
+                    foreach (KeyValuePair<string, string> zone in zoneNamesByGuid)
                     {
                         creator.AddZone(zone.Value, zone.Key);
                     }
+                    foreach (BuildingSurface surf in surfaces) { creator.AddBuildingSurface(surf); }
                     foreach (Materials.Output.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
                     foreach (Materials.Output.MaterialLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
 
