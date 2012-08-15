@@ -19,11 +19,18 @@ namespace GUI.Materials.Output
             get
             {
                 if (layerNames.Count == 1) { return layerNames[0]; }
-                else { return String.Format("Unnamed composite (id {0})", layerNames.GetHashCode()); }
+                else { return String.Format("Unnamed composite (id {0})", NameHashCodesXored()); }
             }
         }
 
         public IList<string> LayerNames { get { return layerNames; } }
+
+        private int NameHashCodesXored()
+        {
+            int code = 0;
+            foreach (string name in LayerNames) { code ^= name.GetHashCode(); }
+            return code;
+        }
 
         public override bool Equals(object obj)
         {
@@ -34,7 +41,12 @@ namespace GUI.Materials.Output
         {
             if (Object.ReferenceEquals(other, null)) { return false; }
             if (Object.ReferenceEquals(this, other)) { return true; }
-            return this.layerNames == other.layerNames;
+            if (this.LayerNames.Count != other.LayerNames.Count) { return false; }
+            for (int i = 0; i < layerNames.Count; ++i)
+            {
+                if (this.LayerNames[i] != other.LayerNames[i]) { return false; }
+            }
+            return true;
         }
 
         public static bool operator ==(Construction a, Construction b)
@@ -53,7 +65,7 @@ namespace GUI.Materials.Output
 
         public override int GetHashCode()
         {
-            return layerNames.GetHashCode();
+            return NameHashCodesXored();
         }
     }
 }

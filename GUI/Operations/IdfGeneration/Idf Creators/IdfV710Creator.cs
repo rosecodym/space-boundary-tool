@@ -22,7 +22,7 @@ namespace GUI.Operations
 
             public override void AddConstruction(Materials.Output.Construction c)
             {
-                LibIdf.Idf.IdfObject obj = idf.CreateObject("Material:NoMass");
+                LibIdf.Idf.IdfObject obj = idf.CreateObject("Construction");
                 obj.Fields["Name"].Value = c.Name;
                 obj.Fields["Outside Layer"].Value = c.LayerNames[0];
                 for (int i = 1; i < c.LayerNames.Count; ++i)

@@ -80,6 +80,7 @@ namespace GUI.Operations
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
                     creator.AddConstantContents();
+                    foreach (Materials.Output.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
                     foreach (Materials.Output.MaterialLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
 
                     creator.WriteToFile(p.OutputFilename);
