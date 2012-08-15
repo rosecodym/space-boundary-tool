@@ -228,15 +228,6 @@ namespace GUI
 
         public IddManager Idds { get { return idds; } }
 
-        private static void test(ViewModel vm, object selectedIfcConstructions)
-        {
-            IEnumerable<object> casted = selectedIfcConstructions as IEnumerable<object>;
-            if (casted != null)
-            {
-                Operations.Miscellaneous.LinkConstructions(vm.SelectedIdfConstruction, casted.Select(obj => obj as IfcConstruction));
-            }
-        }
-
         public ViewModel(Action<string> updateOutputDirectly)
         {
             BrowseToInputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToInputIfcFile(this));
