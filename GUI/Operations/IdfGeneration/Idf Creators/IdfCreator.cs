@@ -38,6 +38,7 @@ namespace GUI.Operations
                 }
             }
 
+            public abstract void AddBuilding(double northAxis, double loadsConvergence, double tempConvergence, SolarDistribution solarDistribution, BuildingTerrain terrain);
             public abstract void AddBuildingSurface(BuildingSurface surf);
             public abstract void AddConstantContents();
             public abstract void AddConstruction(Materials.Output.Construction c);

@@ -31,7 +31,10 @@ namespace GUI.Operations
             public string LocationName { get; set; }
             public double TimeZone { get; set; }
             public SolarDistribution SolarDistribution { get; set; }
+            public double NorthAxis { get; set; }
             public BuildingTerrain BuildingTerrain { get; set; }
+            public double LoadsConvergenceTolerance { get; set; }
+            public double TemperatureConvergenceTolerance { get; set; }
             public SbtBuildingInformation SbtBuilding { get; set; }
             public IfcInformationExtractor.BuildingInformation IfcBuilding { get; set; }
             public IDictionary<string, IfcConstruction> IfcConstructionsByName { get; set; }

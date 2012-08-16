@@ -66,6 +66,16 @@ namespace GUI.Operations
 
             public IdfV710Creator(Idf idf, Action<string> notify) : base(idf, notify) { }
 
+            public override void AddBuilding(double northAxis, double loadsConvergence, double tempConvergence, SolarDistribution solarDistribution, BuildingTerrain terrain)
+            {
+                IdfObject obj = idf.CreateObject("Building");
+                obj.Fields["North Axis"].Value = northAxis;
+                obj.Fields["Terrain"].Value = terrain.ToString();
+                obj.Fields["Loads Convergence Tolerance Value"].Value = loadsConvergence;
+                obj.Fields["Temperature Convergence Tolerance Value"].Value = tempConvergence;
+                obj.Fields["Solar Distribution"].Value = solarDistribution.ToString();
+            }
+
             public override void AddBuildingSurface(BuildingSurface surf)
             {
                 if (surf.IsLargeEnoughForWriting(0.01))

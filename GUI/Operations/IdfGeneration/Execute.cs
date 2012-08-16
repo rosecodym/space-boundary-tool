@@ -32,12 +32,17 @@ namespace GUI.Operations
                     });
 
                     Parameters p = new Parameters();
+
                     p.OutputFilename = vm.OutputIdfFilePath;
                     p.LocationName = vm.BuildingLocation;
                     p.TimeZone = vm.TimeZone;
                     p.SolarDistribution = vm.SolarDistribution;
+                    p.LoadsConvergenceTolerance = vm.LoadsConvergenceTolerance;
+                    p.TemperatureConvergenceTolerance = vm.TemperatureConvergenceTolerance;
+
                     p.SbtBuilding = vm.CurrentSbtBuilding;
                     p.IfcBuilding = vm.CurrentIfcBuilding;
+
                     p.IfcConstructionsByName = new Dictionary<string, IfcConstruction>();
                     foreach (IfcConstruction c in vm.IfcConstructions)
                     {
@@ -108,6 +113,7 @@ namespace GUI.Operations
 
                     creator.AddConstantContents();
                     creator.AddLocation(p.LocationName, p.TimeZone, p.IfcBuilding.Latitude, p.IfcBuilding.Longitude, p.IfcBuilding.Elevation);
+                    creator.AddBuilding(p.NorthAxis, p.LoadsConvergenceTolerance, p.TemperatureConvergenceTolerance, p.SolarDistribution, p.BuildingTerrain);
                     foreach (KeyValuePair<string, string> zone in zoneNamesByGuid) { creator.AddZone(zone.Value, zone.Key); }
                     foreach (BuildingSurface surf in surfaces) { creator.AddBuildingSurface(surf); }
                     foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }
