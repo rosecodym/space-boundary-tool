@@ -195,6 +195,15 @@ namespace GUI.Operations
                 layer.AddToIdfV710(idf);
             }
 
+            public override void AddRunPeriod(int startMonth, int startDay, int endMonth, int endDay)
+            {
+                IdfObject obj = idf.CreateObject("RunPeriod");
+                obj.Fields["Begin Month"].Value = startMonth;
+                obj.Fields["Begin Day of Month"].Value = startDay;
+                obj.Fields["End Month"].Value = endMonth;
+                obj.Fields["End Day of Month"].Value = endDay;
+            }
+
             public override void AddZone(string name, string sourceGuid)
             {
                 IdfObject obj = idf.CreateObject("Zone");

@@ -40,6 +40,11 @@ namespace GUI.Operations
                     p.LoadsConvergenceTolerance = vm.LoadsConvergenceTolerance;
                     p.TemperatureConvergenceTolerance = vm.TemperatureConvergenceTolerance;
 
+                    p.StartMonth = vm.StartMonth;
+                    p.StartDay = vm.StartDay;
+                    p.EndMonth = vm.EndMonth;
+                    p.EndDay = vm.EndDay;
+
                     p.SbtBuilding = vm.CurrentSbtBuilding;
                     p.IfcBuilding = vm.CurrentIfcBuilding;
 
@@ -114,6 +119,7 @@ namespace GUI.Operations
                     creator.AddConstantContents();
                     creator.AddLocation(p.LocationName, p.TimeZone, p.IfcBuilding.Latitude, p.IfcBuilding.Longitude, p.IfcBuilding.Elevation);
                     creator.AddBuilding(p.NorthAxis, p.LoadsConvergenceTolerance, p.TemperatureConvergenceTolerance, p.SolarDistribution, p.BuildingTerrain);
+                    creator.AddRunPeriod(p.StartMonth, p.StartDay, p.EndMonth, p.EndDay);
                     foreach (KeyValuePair<string, string> zone in zoneNamesByGuid) { creator.AddZone(zone.Value, zone.Key); }
                     foreach (BuildingSurface surf in surfaces) { creator.AddBuildingSurface(surf); }
                     foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }

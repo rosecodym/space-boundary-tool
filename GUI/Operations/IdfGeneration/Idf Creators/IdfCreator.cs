@@ -45,6 +45,7 @@ namespace GUI.Operations
             public abstract void AddFenestration(FenestrationSurface fen);
             public abstract void AddLocation(string name, double timeZone, double latitude, double longitude, double elevation);
             public abstract void AddMaterial(Materials.Output.MaterialLayer layer);
+            public abstract void AddRunPeriod(int startMonth, int startDay, int endMonth, int endDay);
             public abstract void AddZone(string name, string sourceGuid);
         }
     }

@@ -35,6 +35,10 @@ namespace GUI.Operations
             public BuildingTerrain BuildingTerrain { get; set; }
             public double LoadsConvergenceTolerance { get; set; }
             public double TemperatureConvergenceTolerance { get; set; }
+            public int StartMonth { get; set; }
+            public int StartDay { get; set; }
+            public int EndMonth { get; set; }
+            public int EndDay { get; set; }
             public SbtBuildingInformation SbtBuilding { get; set; }
             public IfcInformationExtractor.BuildingInformation IfcBuilding { get; set; }
             public IDictionary<string, IfcConstruction> IfcConstructionsByName { get; set; }
