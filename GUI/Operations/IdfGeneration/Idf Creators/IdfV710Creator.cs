@@ -147,6 +147,26 @@ namespace GUI.Operations
                 }
             }
 
+            public override void AddFenestration(FenestrationSurface fenestration)
+            {
+                if (fenestration.IsLargeEnoughForWriting(0.01))
+                {
+                    IdfObject obj = idf.CreateObject("FenestrationSurface:Detailed");
+
+                    obj.Fields["Name"].Value = fenestration.Name;
+                    obj.Fields["Surface Type"].Value = fenestration.Type.ToString();
+                    obj.Fields["Construction Name"].Value = fenestration.ConstructionName;
+                    obj.Fields["Building Surface Name"].Value = fenestration.ContainingSurfaceName;
+                    obj.Fields["Outside Boundary Condition Object"].Value = fenestration.OtherSideName;
+                    foreach (var pair in VertexOrderRotatedGeometry(fenestration.Geometry, ComparePointsForUpperLeftness).Select((point, index) => new { Point = point, Index = index }))
+                    {
+                        obj.Fields[String.Format("Vertex {0} X-coordinate", pair.Index + 1)].Value = pair.Point.X;
+                        obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = pair.Point.Y;
+                        obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = pair.Point.Z;
+                    }
+                }
+            }
+
             public override void AddMaterial(Materials.Output.MaterialLayer layer)
             {
                 layer.AddToIdfV710(idf);

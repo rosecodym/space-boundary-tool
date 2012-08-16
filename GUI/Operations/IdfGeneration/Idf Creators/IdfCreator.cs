@@ -41,6 +41,7 @@ namespace GUI.Operations
             public abstract void AddBuildingSurface(BuildingSurface surf);
             public abstract void AddConstantContents();
             public abstract void AddConstruction(Materials.Output.Construction c);
+            public abstract void AddFenestration(FenestrationSurface fen);
             public abstract void AddMaterial(Materials.Output.MaterialLayer layer);
             public abstract void AddZone(string name, string sourceGuid);
         }
