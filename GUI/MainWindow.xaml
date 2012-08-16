@@ -199,6 +199,8 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="29" />
+                                    <RowDefinition Height="29" />
                                     <RowDefinition Height="199*" />
                                 </Grid.RowDefinitions>
                                 <TextBox Height="23" Name="textBox5" Width="160" Grid.Column="1" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding BuildingLocation}"/>
@@ -209,6 +211,10 @@
                                 <ComboBox Grid.Column="1" Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="0" Name="comboBox2" VerticalAlignment="Center" Width="Auto" ItemsSource="{Binding AvailableSolarDistributions}" SelectedItem="{Binding SolarDistribution}"/>
                                 <Label Content="Building terrain:" Grid.Row="3" Height="28" HorizontalAlignment="Left" Margin="0" Name="label18" VerticalAlignment="Center" />
                                 <ComboBox Grid.Column="1" Grid.Row="3" Height="23" HorizontalAlignment="Left" Margin="0" Name="comboBox3" VerticalAlignment="Center" Width="Auto" ItemsSource="{Binding AvailableBuildingTerrains}" SelectedItem="{Binding BuildingTerrain}"/>
+                                <Label Content="Loads convergance tolerance:" Grid.Row="4" Height="28" HorizontalAlignment="Left" Margin="0" Name="label19" VerticalAlignment="Center" />
+                                <Label Content="Temperature convergence tolerance:" Grid.Row="5" Height="28" HorizontalAlignment="Left" Margin="0" Name="label20" VerticalAlignment="Center" />
+                                <TextBox Grid.Column="1" Grid.Row="4" Height="23" HorizontalAlignment="Left" Margin="0" Name="textBox7" VerticalAlignment="Center" Width="60" Text="{Binding LoadsConvergenceTolerance}"/>
+                                <TextBox Grid.Column="1" Grid.Row="5" Height="23" HorizontalAlignment="Left" Margin="0" Name="textBox8" VerticalAlignment="Center" Width="60" Text="{Binding TemperatureConvergenceTolerance}"/>
                             </Grid>
                         </Grid>
                     </GroupBox>

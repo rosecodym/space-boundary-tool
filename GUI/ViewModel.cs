@@ -264,6 +264,18 @@ namespace GUI
             set { Properties.Settings.Default.BuildingTerrain = value.ToString(); }
         }
 
+        public double LoadsConvergenceTolerance
+        {
+            get { return Properties.Settings.Default.LoadsConverganceTolerance; }
+            set { Properties.Settings.Default.LoadsConverganceTolerance = value; }
+        }
+
+        public double TemperatureConvergenceTolerance
+        {
+            get { return Properties.Settings.Default.TemperatureConvergenceTolerance; }
+            set { Properties.Settings.Default.TemperatureConvergenceTolerance = value; }
+        }
+
         public bool Busy
         {
             get { return busy; }

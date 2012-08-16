@@ -178,5 +178,29 @@ namespace GUI.Properties {
                 this["BuildingTerrain"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.04")]
+        public double LoadsConverganceTolerance {
+            get {
+                return ((double)(this["LoadsConverganceTolerance"]));
+            }
+            set {
+                this["LoadsConverganceTolerance"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.4")]
+        public double TemperatureConvergenceTolerance {
+            get {
+                return ((double)(this["TemperatureConvergenceTolerance"]));
+            }
+            set {
+                this["TemperatureConvergenceTolerance"] = value;
+            }
+        }
     }
 }

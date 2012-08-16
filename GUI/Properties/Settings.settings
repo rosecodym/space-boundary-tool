@@ -41,5 +41,11 @@
     <Setting Name="BuildingTerrain" Type="System.String" Scope="User">
       <Value Profile="(Default)">Suburbs</Value>
     </Setting>
+    <Setting Name="LoadsConverganceTolerance" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.04</Value>
+    </Setting>
+    <Setting Name="TemperatureConvergenceTolerance" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.4</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
