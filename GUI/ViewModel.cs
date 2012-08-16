@@ -206,6 +206,14 @@ namespace GUI
             }
         }
 
+        public IEnumerable<int> AvailableMonths
+        {
+            get { return Enumerable.Range(1, 12); } 
+        }
+
+        public IEnumerable<int> AvailableStartDays { get { return AvailableDaysForMonth(StartMonth); } }
+        public IEnumerable<int> AvailableEndDays { get { return AvailableDaysForMonth(EndMonth); } }
+
         public int EnergyPlusVersionIndexToWrite
         {
             get { return Properties.Settings.Default.EnergyPlusVersionIndexToWrite; }
@@ -274,6 +282,46 @@ namespace GUI
         {
             get { return Properties.Settings.Default.TemperatureConvergenceTolerance; }
             set { Properties.Settings.Default.TemperatureConvergenceTolerance = value; }
+        }
+
+        public int StartMonth
+        {
+            get { return Properties.Settings.Default.StartMonth; }
+            set
+            {
+                Properties.Settings.Default.StartMonth = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("StartMonth"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("AvailableStartDays"));
+                }
+            }
+        }
+
+        public int StartDay
+        {
+            get { return Properties.Settings.Default.StartDay; }
+            set { Properties.Settings.Default.StartDay = value; }
+        }
+
+        public int EndMonth
+        {
+            get { return Properties.Settings.Default.EndMonth; }
+            set
+            {
+                Properties.Settings.Default.EndMonth = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("EndMonth"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("AvailableEndDays"));
+                }
+            }
+        }
+
+        public int EndDay
+        {
+            get { return Properties.Settings.Default.EndDay; }
+            set { Properties.Settings.Default.EndDay = value; }
         }
 
         public bool Busy
@@ -365,6 +413,16 @@ namespace GUI
                     if (!c.ParticipatesInSpaceBoundary.HasValue) { c.ParticipatesInSpaceBoundary = false; }
                 }
             }
+        }
+
+        static private IEnumerable<int> AvailableDaysForMonth(int month)
+        {
+            return Enumerable.Range(1,
+                month == 2 ? 28 :
+                month == 4 ? 30 :
+                month == 6 ? 30 :
+                month == 9 ? 30 :
+                month == 11 ? 30 : 31);
         }
     }
 }

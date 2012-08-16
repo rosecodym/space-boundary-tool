@@ -202,5 +202,53 @@ namespace GUI.Properties {
                 this["TemperatureConvergenceTolerance"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int StartMonth {
+            get {
+                return ((int)(this["StartMonth"]));
+            }
+            set {
+                this["StartMonth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int StartDay {
+            get {
+                return ((int)(this["StartDay"]));
+            }
+            set {
+                this["StartDay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int EndMonth {
+            get {
+                return ((int)(this["EndMonth"]));
+            }
+            set {
+                this["EndMonth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int EndDay {
+            get {
+                return ((int)(this["EndDay"]));
+            }
+            set {
+                this["EndDay"] = value;
+            }
+        }
     }
 }

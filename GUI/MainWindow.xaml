@@ -201,6 +201,8 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="29" />
                                     <RowDefinition Height="29" />
+                                    <RowDefinition Height="29" />
+                                    <RowDefinition Height="29" />
                                     <RowDefinition Height="199*" />
                                 </Grid.RowDefinitions>
                                 <TextBox Height="23" Name="textBox5" Width="160" Grid.Column="1" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding BuildingLocation}"/>
@@ -215,6 +217,18 @@
                                 <Label Content="Temperature convergence tolerance:" Grid.Row="5" Height="28" HorizontalAlignment="Left" Margin="0" Name="label20" VerticalAlignment="Center" />
                                 <TextBox Grid.Column="1" Grid.Row="4" Height="23" HorizontalAlignment="Left" Margin="0" Name="textBox7" VerticalAlignment="Center" Width="60" Text="{Binding LoadsConvergenceTolerance}"/>
                                 <TextBox Grid.Column="1" Grid.Row="5" Height="23" HorizontalAlignment="Left" Margin="0" Name="textBox8" VerticalAlignment="Center" Width="60" Text="{Binding TemperatureConvergenceTolerance}"/>
+                                <Label Content="Start day:" Grid.Row="6" Height="28" HorizontalAlignment="Left" Margin="0" Name="label21" VerticalAlignment="Center" />
+                                <Label Content="End day:" Grid.Row="7" Height="28" HorizontalAlignment="Left" Margin="0" Name="label22" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Grid.Row="6" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="stackPanel2" VerticalAlignment="Stretch" Width="Auto" Orientation="Horizontal">
+                                    <ComboBox Height="23" Name="comboBox4" Width="40" ItemsSource="{Binding AvailableMonths}" SelectedItem="{Binding StartMonth}" />
+                                    <Label Content="/" Height="28" Name="label23" />
+                                    <ComboBox Height="23" Name="comboBox5" Width="40" ItemsSource="{Binding AvailableStartDays}" SelectedItem="{Binding StartDay}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Grid.Row="7" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="stackPanel3" VerticalAlignment="Stretch" Width="Auto" Orientation="Horizontal">
+                                    <ComboBox Height="23" Name="comboBox6" Width="40" ItemsSource="{Binding AvailableMonths}" SelectedItem="{Binding EndMonth}" />
+                                    <Label Content="/" Height="28" Name="label24" />
+                                    <ComboBox Height="23" Name="comboBox7" Width="40" ItemsSource="{Binding AvailableEndDays}" SelectedItem="{Binding EndDay}" />
+                                </StackPanel>
                             </Grid>
                         </Grid>
                     </GroupBox>
