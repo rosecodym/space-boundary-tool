@@ -164,6 +164,8 @@ namespace GUI.Operations
                         obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = pair.Point.Y;
                         obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = pair.Point.Z;
                     }
+                    obj.AddComment("  ! IFC element GUID: " + fenestration.ElementGuid);
+                    obj.AddComment(String.Format("  ! Normal: <{0}, {1}, {2}>", fenestration.Normal.Item1, fenestration.Normal.Item2, fenestration.Normal.Item3));
                 }
             }
 

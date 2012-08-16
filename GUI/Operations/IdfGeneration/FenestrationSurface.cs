@@ -52,6 +52,8 @@ namespace GUI.Operations
             public string ContainingSurfaceName { get { return sbtInfo.ContainingBoundary.Guid; } }
             public string OtherSideName { get { return sbtInfo.Opposite != null ? sbtInfo.Opposite.Guid : null; } }
             public Polyloop Geometry { get { return PullVerticesTowardCenter(sbtInfo.Geometry); } }
+            public string ElementGuid { get { return sbtInfo.Element.Guid; } }
+            public Tuple<double, double, double> Normal { get { return sbtInfo.Normal; } }
 
             private Polyloop PullVerticesTowardCenter(Polyloop original)
             {

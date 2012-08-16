@@ -97,6 +97,10 @@ namespace GUI.Operations
                         }
                     }));
 
+                    IList<FenestrationSurface> fenestrations = new List<FenestrationSurface>(p.SbtBuilding.SpaceBoundaries
+                        .Where(sb => !sb.IsVirtual && sb.Element.IsFenestration)
+                        .Select(sb => new FenestrationSurface(sb, constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers))));
+
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
                     creator.AddConstantContents();
@@ -105,6 +109,7 @@ namespace GUI.Operations
                         creator.AddZone(zone.Value, zone.Key);
                     }
                     foreach (BuildingSurface surf in surfaces) { creator.AddBuildingSurface(surf); }
+                    foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }
                     foreach (Materials.Output.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
                     foreach (Materials.Output.MaterialLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
 
