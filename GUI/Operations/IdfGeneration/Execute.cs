@@ -81,11 +81,19 @@ namespace GUI.Operations
                     {
                         if (sb.Level == 2)
                         {
-                            return new BuildingSurface(sb, constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers), zoneNamesByGuid[sb.BoundedSpace.Guid], false);
+                            return new BuildingSurface(
+                                sb,
+                                constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers),
+                                zoneNamesByGuid[sb.BoundedSpace.Guid],
+                                !sb.IsVirtual && p.IfcBuilding.ElementsByGuid[sb.Element.Guid].IsConnectedToGround);
                         }
                         else
                         {
-                            return new BuildingSurface(sb, constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId), zoneNamesByGuid[sb.BoundedSpace.Guid], false);
+                            return new BuildingSurface(
+                                sb, 
+                                constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId), 
+                                zoneNamesByGuid[sb.BoundedSpace.Guid], 
+                                false);
                         }
                     }));
 
