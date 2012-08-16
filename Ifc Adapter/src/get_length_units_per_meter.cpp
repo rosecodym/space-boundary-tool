@@ -10,28 +10,28 @@ double get_scale_for(const cppw::Instance & inst) {
 		if (sel.is_set()) {
 			cppw::String prefix = sel;
 			if (prefix == "MEGA") {
-				return 10e-6;
+				return 1e-6;
 			}
 			else if (prefix == "KILO") {
-				return 10e-3;
+				return 1e-3;
 			}
 			else if (prefix == "HECTO") {
-				return 10e-2;
+				return 1e-2;
 			}
 			else if (prefix == "DECA") {
-				return 10e-1;
+				return 1e-1;
 			}
 			else if (prefix == "DECI") {
-				return 10e1;
+				return 1e1;
 			}
 			else if (prefix == "CENTI") {
-				return 10e2;
+				return 1e2;
 			}
 			else if (prefix == "MILLI") {
-				return 10e3;
+				return 1e3;
 			}
 			else if (prefix == "MICRO") {
-				return 10e6;
+				return 1e6;
 			}
 			else {
 				return 1.0;
