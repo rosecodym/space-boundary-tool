@@ -199,10 +199,11 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="29" />
-                                    <RowDefinition Height="29" />
-                                    <RowDefinition Height="29" />
-                                    <RowDefinition Height="29" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="199*" />
                                 </Grid.RowDefinitions>
                                 <TextBox Height="23" Name="textBox5" Width="160" Grid.Column="1" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding BuildingLocation}"/>
@@ -229,6 +230,8 @@
                                     <Label Content="/" Height="28" Name="label24" />
                                     <ComboBox Height="23" Name="comboBox7" Width="40" ItemsSource="{Binding AvailableEndDays}" SelectedItem="{Binding EndDay}" />
                                 </StackPanel>
+                                <Label Content="Number of timesteps per hour:" Grid.Row="8" Height="28" HorizontalAlignment="Left" Margin="0" Name="label25" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Grid.Row="8" Height="23" HorizontalAlignment="Left" Margin="0" Name="comboBox8" VerticalAlignment="Center" Width="40" ItemsSource="{Binding AvailableTimesteps}" SelectedItem="{Binding Timestep}" />
                             </Grid>
                         </Grid>
                     </GroupBox>

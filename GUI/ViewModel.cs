@@ -191,7 +191,6 @@ namespace GUI
                 };
             }
         }
-
         public Operations.IdfGeneration.BuildingTerrain[] AvailableBuildingTerrains
         {
             get
@@ -205,14 +204,13 @@ namespace GUI
                 };
             }
         }
-
         public IEnumerable<int> AvailableMonths
         {
             get { return Enumerable.Range(1, 12); } 
         }
-
         public IEnumerable<int> AvailableStartDays { get { return AvailableDaysForMonth(StartMonth); } }
         public IEnumerable<int> AvailableEndDays { get { return AvailableDaysForMonth(EndMonth); } }
+        public int[] AvailableTimesteps { get { return new int[] { 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60 }; } }
 
         public int EnergyPlusVersionIndexToWrite
         {
@@ -238,7 +236,6 @@ namespace GUI
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("BuildingLocation")); }
             }
         }
-
         public double TimeZone
         {
             get
@@ -251,7 +248,6 @@ namespace GUI
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("TimeZone")); }
             }
         }
-
         public Operations.IdfGeneration.SolarDistribution SolarDistribution
         {
             get
@@ -261,7 +257,6 @@ namespace GUI
             }
             set { Properties.Settings.Default.SolarDistribution = value.ToString(); }
         }
-
         public Operations.IdfGeneration.BuildingTerrain BuildingTerrain
         {
             get
@@ -271,19 +266,16 @@ namespace GUI
             }
             set { Properties.Settings.Default.BuildingTerrain = value.ToString(); }
         }
-
         public double LoadsConvergenceTolerance
         {
             get { return Properties.Settings.Default.LoadsConverganceTolerance; }
             set { Properties.Settings.Default.LoadsConverganceTolerance = value; }
         }
-
         public double TemperatureConvergenceTolerance
         {
             get { return Properties.Settings.Default.TemperatureConvergenceTolerance; }
             set { Properties.Settings.Default.TemperatureConvergenceTolerance = value; }
         }
-
         public int StartMonth
         {
             get { return Properties.Settings.Default.StartMonth; }
@@ -297,13 +289,11 @@ namespace GUI
                 }
             }
         }
-
         public int StartDay
         {
             get { return Properties.Settings.Default.StartDay; }
             set { Properties.Settings.Default.StartDay = value; }
         }
-
         public int EndMonth
         {
             get { return Properties.Settings.Default.EndMonth; }
@@ -317,11 +307,15 @@ namespace GUI
                 }
             }
         }
-
         public int EndDay
         {
             get { return Properties.Settings.Default.EndDay; }
             set { Properties.Settings.Default.EndDay = value; }
+        }
+        public int Timestep
+        {
+            get { return Properties.Settings.Default.Timestep; }
+            set { Properties.Settings.Default.Timestep = value; }
         }
 
         public bool Busy

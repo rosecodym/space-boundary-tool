@@ -39,6 +39,7 @@ namespace GUI.Operations
             public int StartDay { get; set; }
             public int EndMonth { get; set; }
             public int EndDay { get; set; }
+            public int Timestep { get; set; }
             public SbtBuildingInformation SbtBuilding { get; set; }
             public IfcInformationExtractor.BuildingInformation IfcBuilding { get; set; }
             public IDictionary<string, IfcConstruction> IfcConstructionsByName { get; set; }

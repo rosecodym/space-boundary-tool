@@ -204,6 +204,11 @@ namespace GUI.Operations
                 obj.Fields["End Day of Month"].Value = endDay;
             }
 
+            public override void AddTimestep(int timestep)
+            {
+                idf.CreateObject("Timestep").Fields["Number of Timesteps per Hour"].Value = timestep;
+            }
+
             public override void AddZone(string name, string sourceGuid)
             {
                 IdfObject obj = idf.CreateObject("Zone");

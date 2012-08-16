@@ -45,6 +45,8 @@ namespace GUI.Operations
                     p.EndMonth = vm.EndMonth;
                     p.EndDay = vm.EndDay;
 
+                    p.Timestep = vm.Timestep;
+
                     p.SbtBuilding = vm.CurrentSbtBuilding;
                     p.IfcBuilding = vm.CurrentIfcBuilding;
 
@@ -119,6 +121,7 @@ namespace GUI.Operations
                     creator.AddConstantContents();
                     creator.AddLocation(p.LocationName, p.TimeZone, p.IfcBuilding.Latitude, p.IfcBuilding.Longitude, p.IfcBuilding.Elevation);
                     creator.AddBuilding(p.NorthAxis, p.LoadsConvergenceTolerance, p.TemperatureConvergenceTolerance, p.SolarDistribution, p.BuildingTerrain);
+                    creator.AddTimestep(p.Timestep);
                     creator.AddRunPeriod(p.StartMonth, p.StartDay, p.EndMonth, p.EndDay);
                     foreach (KeyValuePair<string, string> zone in zoneNamesByGuid) { creator.AddZone(zone.Value, zone.Key); }
                     foreach (BuildingSurface surf in surfaces) { creator.AddBuildingSurface(surf); }

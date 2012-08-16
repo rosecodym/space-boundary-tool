@@ -250,5 +250,17 @@ namespace GUI.Properties {
                 this["EndDay"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int Timestep {
+            get {
+                return ((int)(this["Timestep"]));
+            }
+            set {
+                this["Timestep"] = value;
+            }
+        }
     }
 }
