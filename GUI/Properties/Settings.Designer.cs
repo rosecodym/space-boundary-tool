@@ -130,5 +130,29 @@ namespace GUI.Properties {
                 this["MaterialsLibraryFilename"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BuildingLocation {
+            get {
+                return ((string)(this["BuildingLocation"]));
+            }
+            set {
+                this["BuildingLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double TimeZone {
+            get {
+                return ((double)(this["TimeZone"]));
+            }
+            set {
+                this["TimeZone"] = value;
+            }
+        }
     }
 }

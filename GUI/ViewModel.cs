@@ -190,6 +190,32 @@ namespace GUI
 
         public MaterialLibraryEntry SelectedIdfConstruction { get; set; }
 
+        public string BuildingLocation
+        {
+            get
+            {
+                return Properties.Settings.Default.BuildingLocation;
+            }
+            set
+            {
+                Properties.Settings.Default.BuildingLocation = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("BuildingLocation")); }
+            }
+        }
+
+        public double TimeZone
+        {
+            get
+            {
+                return Properties.Settings.Default.TimeZone;
+            }
+            set
+            {
+                Properties.Settings.Default.TimeZone = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("TimeZone")); }
+            }
+        }
+
         public bool Busy
         {
             get { return busy; }

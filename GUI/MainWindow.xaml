@@ -187,7 +187,25 @@
                         <Button Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" Command="{Binding GenerateIdfCommand}"/>
                         <ComboBox Grid.Column="3" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionIndexToWrite}"/>
                     </Grid>
-                    <Label Content="Options go here" Height="28" HorizontalAlignment="Center" Margin="0" Name="label14" VerticalAlignment="Center" />
+                    <GroupBox Header="Simulation control parameters" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox7" VerticalAlignment="Stretch" Width="Auto">
+                        <Grid>
+                            <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid14" VerticalAlignment="Stretch" Width="Auto">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBox Height="23" Name="textBox5" Width="160" Grid.Column="1" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding BuildingLocation}"/>
+                                <Label Content="Building location:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label14" VerticalAlignment="Center" />
+                                <Label Content="Time zone:" Grid.Row="1" Height="28" HorizontalAlignment="Left" Margin="0" Name="label16" VerticalAlignment="Center" />
+                                <TextBox Grid.Column="1" Grid.Row="1" Height="23" HorizontalAlignment="Left" Margin="0" Name="textBox6" VerticalAlignment="Center" Width="160" Text="{Binding TimeZone}"/>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
             <TabItem Header="Output">
