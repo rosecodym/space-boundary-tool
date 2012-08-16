@@ -38,5 +38,8 @@
     <Setting Name="SolarDistribution" Type="System.String" Scope="User">
       <Value Profile="(Default)">FullExterior</Value>
     </Setting>
+    <Setting Name="BuildingTerrain" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Suburbs</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

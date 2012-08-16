@@ -166,5 +166,17 @@ namespace GUI.Properties {
                 this["SolarDistribution"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Suburbs")]
+        public string BuildingTerrain {
+            get {
+                return ((string)(this["BuildingTerrain"]));
+            }
+            set {
+                this["BuildingTerrain"] = value;
+            }
+        }
     }
 }

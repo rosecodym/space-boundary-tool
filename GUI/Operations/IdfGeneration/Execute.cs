@@ -35,6 +35,7 @@ namespace GUI.Operations
                     p.OutputFilename = vm.OutputIdfFilePath;
                     p.LocationName = vm.BuildingLocation;
                     p.TimeZone = vm.TimeZone;
+                    p.SolarDistribution = vm.SolarDistribution;
                     p.SbtBuilding = vm.CurrentSbtBuilding;
                     p.IfcBuilding = vm.CurrentIfcBuilding;
                     p.IfcConstructionsByName = new Dictionary<string, IfcConstruction>();

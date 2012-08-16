@@ -192,6 +192,20 @@ namespace GUI
             }
         }
 
+        public Operations.IdfGeneration.BuildingTerrain[] AvailableBuildingTerrains
+        {
+            get
+            {
+                return new Operations.IdfGeneration.BuildingTerrain[] {
+                    Operations.IdfGeneration.BuildingTerrain.Country,
+                    Operations.IdfGeneration.BuildingTerrain.Suburbs,
+                    Operations.IdfGeneration.BuildingTerrain.City,
+                    Operations.IdfGeneration.BuildingTerrain.Ocean,
+                    Operations.IdfGeneration.BuildingTerrain.Urban
+                };
+            }
+        }
+
         public int EnergyPlusVersionIndexToWrite
         {
             get { return Properties.Settings.Default.EnergyPlusVersionIndexToWrite; }
@@ -232,8 +246,22 @@ namespace GUI
 
         public Operations.IdfGeneration.SolarDistribution SolarDistribution
         {
-            get { return (Operations.IdfGeneration.SolarDistribution)Enum.Parse(typeof(Operations.IdfGeneration.SolarDistribution), Properties.Settings.Default.SolarDistribution); }
+            get
+            {
+                Operations.IdfGeneration.SolarDistribution res;
+                return Enum.TryParse<Operations.IdfGeneration.SolarDistribution>(Properties.Settings.Default.SolarDistribution, out res) ? res : Operations.IdfGeneration.SolarDistribution.FullExterior;
+            }
             set { Properties.Settings.Default.SolarDistribution = value.ToString(); }
+        }
+
+        public Operations.IdfGeneration.BuildingTerrain BuildingTerrain
+        {
+            get
+            {
+                Operations.IdfGeneration.BuildingTerrain res;
+                return Enum.TryParse<Operations.IdfGeneration.BuildingTerrain>(Properties.Settings.Default.BuildingTerrain, out res) ? res : Operations.IdfGeneration.BuildingTerrain.Suburbs;
+            }
+            set { Properties.Settings.Default.BuildingTerrain = value.ToString(); }
         }
 
         public bool Busy
