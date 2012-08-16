@@ -33,6 +33,8 @@ namespace GUI.Operations
 
                     Parameters p = new Parameters();
                     p.OutputFilename = vm.OutputIdfFilePath;
+                    p.LocationName = vm.BuildingLocation;
+                    p.TimeZone = vm.TimeZone;
                     p.SbtBuilding = vm.CurrentSbtBuilding;
                     p.IfcBuilding = vm.CurrentIfcBuilding;
                     p.IfcConstructionsByName = new Dictionary<string, IfcConstruction>();
@@ -104,10 +106,8 @@ namespace GUI.Operations
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
                     creator.AddConstantContents();
-                    foreach (KeyValuePair<string, string> zone in zoneNamesByGuid)
-                    {
-                        creator.AddZone(zone.Value, zone.Key);
-                    }
+                    creator.AddLocation(p.LocationName, p.TimeZone, p.IfcBuilding.Latitude, p.IfcBuilding.Longitude, p.IfcBuilding.Elevation);
+                    foreach (KeyValuePair<string, string> zone in zoneNamesByGuid) { creator.AddZone(zone.Value, zone.Key); }
                     foreach (BuildingSurface surf in surfaces) { creator.AddBuildingSurface(surf); }
                     foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }
                     foreach (Materials.Output.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }

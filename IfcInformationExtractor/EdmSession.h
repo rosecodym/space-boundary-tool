@@ -22,9 +22,6 @@ private:
 
 	void clear_db();
 
-	ICollection<Space ^> ^ GetSpaces();
-	ICollection<Element ^> ^ GetElements();
-
 	static const char * const DB_NAME = "db";
 	static const char * const DB_PASS = "pass";
 	static const char * const REPO_NAME = "repo";

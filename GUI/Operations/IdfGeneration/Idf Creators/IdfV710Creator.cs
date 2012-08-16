@@ -169,6 +169,17 @@ namespace GUI.Operations
                 }
             }
 
+            public override void AddLocation(string name, double timeZone, double latitude, double longitude, double elevation)
+            {
+                IdfObject obj = idf.CreateObject("Site:Location");
+
+                obj.Fields["Name"].Value = name;
+                obj.Fields["Time Zone"].Value = timeZone;
+                obj.Fields["Latitude"].Value = latitude;
+                obj.Fields["Longitude"].Value = longitude;
+                obj.Fields["Elevation"].Value = elevation;
+            }
+
             public override void AddMaterial(Materials.Output.MaterialLayer layer)
             {
                 layer.AddToIdfV710(idf);
@@ -176,7 +187,7 @@ namespace GUI.Operations
 
             public override void AddZone(string name, string sourceGuid)
             {
-                LibIdf.Idf.IdfObject obj = idf.CreateObject("Zone");
+                IdfObject obj = idf.CreateObject("Zone");
                 obj.Fields["Name"].Value = name;
                 obj.AddComment("! space GUID is " + sourceGuid);
             }

@@ -42,6 +42,7 @@ namespace GUI.Operations
             public abstract void AddConstantContents();
             public abstract void AddConstruction(Materials.Output.Construction c);
             public abstract void AddFenestration(FenestrationSurface fen);
+            public abstract void AddLocation(string name, double timeZone, double latitude, double longitude, double elevation);
             public abstract void AddMaterial(Materials.Output.MaterialLayer layer);
             public abstract void AddZone(string name, string sourceGuid);
         }

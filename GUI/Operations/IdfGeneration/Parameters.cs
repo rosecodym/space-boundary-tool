@@ -10,6 +10,8 @@ namespace GUI.Operations
         class Parameters
         {
             public string OutputFilename { get; set; }
+            public string LocationName { get; set; }
+            public double TimeZone { get; set; }
             public SbtBuildingInformation SbtBuilding { get; set; }
             public IfcInformationExtractor.BuildingInformation IfcBuilding { get; set; }
             public IDictionary<string, IfcConstruction> IfcConstructionsByName { get; set; }

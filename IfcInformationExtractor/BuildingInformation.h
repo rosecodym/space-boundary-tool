@@ -13,6 +13,11 @@ public ref class BuildingInformation {
 public:
 	BuildingInformation() { }
 
+	property double NorthAxis;
+	property double Latitude;
+	property double Longitude;
+	property double Elevation;
+
 	property IDictionary<String ^, Space ^> ^ SpacesByGuid;
 	property IDictionary<String ^, Element ^> ^ ElementsByGuid;
 	property IEnumerable<Construction ^> ^ Constructions;

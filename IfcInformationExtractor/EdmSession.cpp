@@ -7,6 +7,50 @@ using namespace System::Runtime::InteropServices;
 
 namespace IfcInformationExtractor {
 
+namespace {
+
+void GetLocationInformation(cppw::Open_model * model, double % /*northAxis*/, double % latitude, double % longitude, double % elevation) {
+	cppw::Instance site = model->get_set_of("IfcSite").get_(0);
+	cppw::Select sel;
+	if ((sel = site.get("RefLatitude")).is_set()) {
+		cppw::List lat = sel;
+		latitude = (cppw::Real)lat.get_(0) + (cppw::Real)lat.get_(1) / 60.0 + (cppw::Real)lat.get_(2) / 360.0;
+	}
+	if ((sel = site.get("RefLongitude")).is_set()) {
+		cppw::List lng = sel;
+		longitude = (cppw::Real)lng.get_(0) + (cppw::Real)lng.get_(1) / 60.0 + (cppw::Real)lng.get_(2) / 360.0;
+	}
+	if ((sel = site.get("RefElevation")).is_set()) {
+		elevation = (cppw::Real)sel;
+	}
+}
+
+ICollection<Space ^> ^ GetSpaces(cppw::Open_model * model) {
+	if (model == __nullptr) {
+		return nullptr;
+	}
+	cppw::Instance_set instances = model->get_set_of("IfcSpace", cppw::include_subtypes);
+	IList<Space ^> ^ spaces = gcnew List<Space ^>();
+	for (instances.move_first(); instances.move_next(); ) {
+		spaces->Add(gcnew Space(instances.get()));
+	}
+	return spaces;
+}
+
+ICollection<Element ^> ^ GetElements(cppw::Open_model * model) {
+	if (model == __nullptr) {
+		return nullptr;
+	}
+	cppw::Instance_set instances = model->get_set_of("IfcBuildingElement", cppw::include_subtypes);
+	IList<Element ^> ^ elements = gcnew List<Element ^>();
+	for (instances.move_first(); instances.move_next(); ) {
+		elements->Add(gcnew Element(instances.get()));
+	}
+	return elements;
+}
+
+} // namespace
+
 static EdmSession::EdmSession() {
 	sdai::tSdaiSelect mySelect;
 	mySelect.value.stringVal = sdai::SdaiString(LICENSE_KEY);
@@ -65,30 +109,6 @@ void EdmSession::clear_db() {
 	}
 }
 
-ICollection<Space ^> ^ EdmSession::GetSpaces() {
-	if (model == __nullptr) {
-		return nullptr;
-	}
-	cppw::Instance_set instances = model->get_set_of("IfcSpace", cppw::include_subtypes);
-	IList<Space ^> ^ spaces = gcnew List<Space ^>();
-	for (instances.move_first(); instances.move_next(); ) {
-		spaces->Add(gcnew Space(instances.get()));
-	}
-	return spaces;
-}
-
-ICollection<Element ^> ^ EdmSession::GetElements() {
-	if (model == __nullptr) {
-		return nullptr;
-	}
-	cppw::Instance_set instances = model->get_set_of("IfcBuildingElement", cppw::include_subtypes);
-	IList<Element ^> ^ elements = gcnew List<Element ^>();
-	for (instances.move_first(); instances.move_next(); ) {
-		elements->Add(gcnew Element(instances.get()));
-	}
-	return elements;
-}
-
 char * EdmSession::convert_to_chars(char dst[], String ^ src, size_t size) {
 	char * str = (char *)(Marshal::StringToHGlobalAnsi(src)).ToPointer();
 	strncpy_s(dst, size, str, size - 1);
@@ -119,12 +139,14 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 	res->SpacesByGuid = gcnew Dictionary<String ^, Space ^>();
 	res->ElementsByGuid = gcnew Dictionary<String ^, Element ^>();
 
-	ICollection<Space ^> ^ spaces = GetSpaces();
+	GetLocationInformation(model, res->NorthAxis, res->Latitude, res->Longitude, res->Elevation);
+
+	ICollection<Space ^> ^ spaces = GetSpaces(model);
 	for each(Space ^ s in spaces) {
 		res->SpacesByGuid[s->Guid] = s;
 	}
 
-	ICollection<Element ^> ^ elements = GetElements();
+	ICollection<Element ^> ^ elements = GetElements(model);
 	for each(Element ^ e in elements) {
 		res->ElementsByGuid[e->Guid] = e;
 	}
