@@ -197,12 +197,15 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBox Height="23" Name="textBox5" Width="160" Grid.Column="1" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding BuildingLocation}"/>
                                 <Label Content="Building location:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label14" VerticalAlignment="Center" />
                                 <Label Content="Time zone:" Grid.Row="1" Height="28" HorizontalAlignment="Left" Margin="0" Name="label16" VerticalAlignment="Center" />
                                 <TextBox Grid.Column="1" Grid.Row="1" Height="23" HorizontalAlignment="Left" Margin="0" Name="textBox6" VerticalAlignment="Center" Width="160" Text="{Binding TimeZone}"/>
+                                <Label Content="Solar distribution:" Grid.ColumnSpan="2" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="0" Name="label17" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="0" Name="comboBox2" VerticalAlignment="Center" Width="Auto" ItemsSource="{Binding AvailableSolarDistributions}" SelectedItem="{Binding SolarDistribution}"/>
                             </Grid>
                         </Grid>
                     </GroupBox>

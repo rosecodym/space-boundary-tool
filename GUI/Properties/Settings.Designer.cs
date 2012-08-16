@@ -154,5 +154,17 @@ namespace GUI.Properties {
                 this["TimeZone"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("FullExterior")]
+        public string SolarDistribution {
+            get {
+                return ((string)(this["SolarDistribution"]));
+            }
+            set {
+                this["SolarDistribution"] = value;
+            }
+        }
     }
 }

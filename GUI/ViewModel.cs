@@ -178,6 +178,20 @@ namespace GUI
             }
         }
 
+        public Operations.IdfGeneration.SolarDistribution[] AvailableSolarDistributions
+        {
+            get
+            {
+                return new Operations.IdfGeneration.SolarDistribution[] { 
+                    Operations.IdfGeneration.SolarDistribution.MinimalShadowing,
+                    Operations.IdfGeneration.SolarDistribution.FullExterior, 
+                    Operations.IdfGeneration.SolarDistribution.FullExteriorWithReflections, 
+                    Operations.IdfGeneration.SolarDistribution.FullInteriorAndExterior, 
+                    Operations.IdfGeneration.SolarDistribution.FullInteriorAndExteriorWithReflections
+                };
+            }
+        }
+
         public int EnergyPlusVersionIndexToWrite
         {
             get { return Properties.Settings.Default.EnergyPlusVersionIndexToWrite; }
@@ -214,6 +228,12 @@ namespace GUI
                 Properties.Settings.Default.TimeZone = value;
                 if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("TimeZone")); }
             }
+        }
+
+        public Operations.IdfGeneration.SolarDistribution SolarDistribution
+        {
+            get { return (Operations.IdfGeneration.SolarDistribution)Enum.Parse(typeof(Operations.IdfGeneration.SolarDistribution), Properties.Settings.Default.SolarDistribution); }
+            set { Properties.Settings.Default.SolarDistribution = value.ToString(); }
         }
 
         public bool Busy

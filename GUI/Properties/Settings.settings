@@ -35,5 +35,8 @@
     <Setting Name="TimeZone" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="SolarDistribution" Type="System.String" Scope="User">
+      <Value Profile="(Default)">FullExterior</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
