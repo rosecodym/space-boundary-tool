@@ -40,24 +40,24 @@ namespace GUI.Operations
                 this.connectedToGround = connectedToGround;
             }
 
-            public bool IsLargeEnoughForWriting(double epsilon)
-            {
-                Func<Point, Point, double> distance =
-                (a, b) => Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z));
+            //public bool IsLargeEnoughForWriting(double epsilon)
+            //{
+            //    Func<Point, Point, double> distance =
+            //    (a, b) => Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z));
 
-                var vertices = Geometry.Vertices;
+            //    var vertices = Geometry.Vertices;
 
-                int tooCloseCount = 0;
-                for (int i = 0; i < vertices.Count; ++i)
-                {
-                    if (distance(vertices[i], vertices[(i + 1) % vertices.Count]) < epsilon)
-                    {
-                        ++tooCloseCount;
-                    }
-                }
+            //    int tooCloseCount = 0;
+            //    for (int i = 0; i < vertices.Count; ++i)
+            //    {
+            //        if (distance(vertices[i], vertices[(i + 1) % vertices.Count]) < epsilon)
+            //        {
+            //            ++tooCloseCount;
+            //        }
+            //    }
 
-                return tooCloseCount < vertices.Count - 2;
-            }
+            //    return tooCloseCount < vertices.Count - 2;
+            //}
 
             public string Name { get { return sbtInfo.Guid; } }
             public string ZoneName { get { return zoneName; } }
@@ -91,7 +91,7 @@ namespace GUI.Operations
                     return sbtInfo.Opposite != null ? sbtInfo.Opposite.Guid : null;
                 }
             }
-            public Sbt.CoreTypes.Polyloop Geometry { get { return sbtInfo.Geometry; } }
+            public Sbt.CoreTypes.Polyloop Geometry { get { return sbtInfo.Geometry.Cleaned(0.01); } }
             public Tuple<double, double, double> Normal { get { return sbtInfo.Normal; } }
         }
     }

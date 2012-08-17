@@ -29,31 +29,13 @@ namespace GUI.Operations
                 this.containingSurface = containingSurface;
                 this.constructionName = constructionName;
             }
-            public bool IsLargeEnoughForWriting(double epsilon)
-            {
-                Func<Point, Point, double> distance =
-                (a, b) => Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z));
-
-                var vertices = Geometry.Vertices;
-
-                int tooCloseCount = 0;
-                for (int i = 0; i < vertices.Count; ++i)
-                {
-                    if (distance(vertices[i], vertices[(i + 1) % vertices.Count]) < epsilon)
-                    {
-                        ++tooCloseCount;
-                    }
-                }
-
-                return tooCloseCount < vertices.Count - 2;
-            }
 
             public string Name { get { return sbtInfo.Guid; } }
             public FenestrationType Type { get { return sbtInfo.Element.Type == ElementType.Window ? FenestrationType.Window : FenestrationType.Door; } }
             public string ConstructionName { get { return constructionName; } }
             public BuildingSurface ContainingSurface { get { return containingSurface; } }
             public string OtherSideName { get { return sbtInfo.Opposite != null ? sbtInfo.Opposite.Guid : null; } }
-            public Polyloop Geometry { get { return PullVerticesTowardCenter(sbtInfo.Geometry); } }
+            public Polyloop Geometry { get { return PullVerticesTowardCenter(sbtInfo.Geometry).Cleaned(0.01); } }
             public string ElementGuid { get { return sbtInfo.Element.Guid; } }
             public Tuple<double, double, double> Normal { get { return sbtInfo.Normal; } }
 

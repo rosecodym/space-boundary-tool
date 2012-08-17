@@ -78,7 +78,7 @@ namespace GUI.Operations
 
             public override void AddBuildingSurface(BuildingSurface surf)
             {
-                if (surf.IsLargeEnoughForWriting(0.01))
+                if (surf.Geometry.Vertices.Count > 0)
                 {
                     IdfObject obj = idf.CreateObject("BuildingSurface:Detailed");
 
@@ -156,7 +156,7 @@ namespace GUI.Operations
 
             public override void AddFenestration(FenestrationSurface fenestration)
             {
-                if (fenestration.ContainingSurface.OtherSideCondition != BuildingSurface.OtherSideConditionType.Adiabatic && fenestration.IsLargeEnoughForWriting(0.01))
+                if (fenestration.ContainingSurface.OtherSideCondition != BuildingSurface.OtherSideConditionType.Adiabatic && fenestration.Geometry.Vertices.Count > 0)
                 {
                     IdfObject obj = idf.CreateObject("FenestrationSurface:Detailed");
 
