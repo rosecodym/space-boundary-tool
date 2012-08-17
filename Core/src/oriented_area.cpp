@@ -187,7 +187,3 @@ plane_3 oriented_area::base_plane() const {
 	vector_3 n = normalized_vector(o->direction());
 	return plane_3(n.x(), n.y(), n.z(), 0.0);
 }
-
-polygon_2 oriented_area::project_onto_self(const polygon_2 & other_area, const oriented_area & backing_geometry) const {
-	return this->project_onto_self(oriented_area(backing_geometry, area(other_area))).area_2d().outer_bound();
-}

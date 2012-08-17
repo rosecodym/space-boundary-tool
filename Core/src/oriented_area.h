@@ -45,6 +45,10 @@ public:
 	oriented_area(const oriented_area & src, area && new_area)
 		: o(src.o), a(std::move(new_area)), p(src.p), flipped(src.flipped) { }
 
+	oriented_area(const orientation_t * o, const NT & height, const area & a, bool sense) {
+		*this = oriented_area(o, a, height, !sense);
+	}
+
 	oriented_area(const oriented_area & src) { *this = src; }
 	oriented_area(oriented_area && src) { *this = std::move(src); }
 
@@ -92,15 +96,6 @@ public:
 
 	// DEPRECATED
 	plane_3 base_plane() const;
-	std::vector<ray_3> drape_rays() const { return drape(); }
-	polygon_2 project_onto_self(const polygon_2 & poly, const oriented_area & backing_geometry) const;
-	oriented_area(const oriented_area & src, std::shared_ptr<equality_context>) { *this = src; }
-	oriented_area(const orientation_t * o, const NT & p, const polygon_2 & geometry, bool sense, std::shared_ptr<equality_context>) {
-		*this = oriented_area(o, area(geometry), p, sense); 
-	}
-	oriented_area(const orientation_t * o, const NT & height, const area & geometry, bool sense) {
-		*this = oriented_area(o, geometry, -height, sense); 
-	}
 };
 
 inline oriented_area operator - (const oriented_area & lhs, const oriented_area & rhs) {
