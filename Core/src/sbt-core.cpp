@@ -164,18 +164,11 @@ sbt_return_t calculate_space_boundaries(
 
 		std::shared_ptr<equality_context> whole_building_context(new equality_context(g_opts.equality_tolerance));
 
-		auto corrector = [&whole_building_context](const point_3 & p) -> point_3 { 
-			return whole_building_context->snap(p);
-		};
-
-		std::vector<std::shared_ptr<element>> elements = load_elements(element_count, element_infos, whole_building_context, corrector, element_filter);
+		std::vector<element> elements = load_elements(element_infos, element_count, whole_building_context.get(), element_filter);
 
 		std::vector<space> spaces = load_spaces(space_infos, space_count, whole_building_context.get(), space_filter);
 
-		std::vector<element> elements_derefed;
-		boost::copy(elements | boost::adaptors::indirected, std::back_inserter(elements_derefed));
-
-		auto blocks = blocking::build_blocks(elements_derefed, whole_building_context.get());
+		auto blocks = blocking::build_blocks(elements, whole_building_context.get());
 
 		auto stacks = stacking::build_stacks(blocks, spaces, g_opts.max_pair_distance, whole_building_context.get());
 
