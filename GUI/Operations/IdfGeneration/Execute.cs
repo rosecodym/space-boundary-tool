@@ -90,13 +90,12 @@ namespace GUI.Operations
 
                     IDictionary<string, string> zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid));
 
-                    IList<BuildingSurface> surfaces = new List<BuildingSurface>(p.SbtBuilding.SpaceBoundaries
-                        .Where(sb => sb.IsVirtual || !sb.Element.IsFenestration)
-                        .Select(sb =>
+                    IDictionary<string, BuildingSurface> surfacesByGuid = new Dictionary<string, BuildingSurface>();
+                    foreach (Sbt.CoreTypes.SpaceBoundary sb in p.SbtBuilding.SpaceBoundaries.Where(sb => sb.IsVirtual || !sb.Element.IsFenestration))
                     {
                         if (sb.Level == 2)
                         {
-                            return new BuildingSurface(
+                            surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
                                 constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers),
                                 zoneNamesByGuid[sb.BoundedSpace.Guid],
@@ -104,17 +103,17 @@ namespace GUI.Operations
                         }
                         else
                         {
-                            return new BuildingSurface(
-                                sb, 
-                                constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId), 
-                                zoneNamesByGuid[sb.BoundedSpace.Guid], 
+                            surfacesByGuid[sb.Guid] = new BuildingSurface(
+                                sb,
+                                constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId),
+                                zoneNamesByGuid[sb.BoundedSpace.Guid],
                                 false);
                         }
-                    }));
+                    }
 
                     IList<FenestrationSurface> fenestrations = new List<FenestrationSurface>(p.SbtBuilding.SpaceBoundaries
                         .Where(sb => !sb.IsVirtual && sb.Element.IsFenestration)
-                        .Select(sb => new FenestrationSurface(sb, constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers))));
+                        .Select(sb => new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers))));
 
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
@@ -124,7 +123,7 @@ namespace GUI.Operations
                     creator.AddTimestep(p.Timestep);
                     creator.AddRunPeriod(p.StartMonth, p.StartDay, p.EndMonth, p.EndDay);
                     foreach (KeyValuePair<string, string> zone in zoneNamesByGuid) { creator.AddZone(zone.Value, zone.Key); }
-                    foreach (BuildingSurface surf in surfaces) { creator.AddBuildingSurface(surf); }
+                    foreach (BuildingSurface surf in surfacesByGuid.Values) { creator.AddBuildingSurface(surf); }
                     foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }
                     foreach (Materials.Output.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
                     foreach (Materials.Output.MaterialLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }

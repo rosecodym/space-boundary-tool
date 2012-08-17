@@ -86,14 +86,11 @@ namespace GUI.Operations
                     obj.Fields["Zone Name"].Value = surf.ZoneName;
                     obj.Fields["Surface Type"].Value = surf.Type.ToString();
 
-                    if (surf.IsConnectedToGround) { obj.Fields["Outside Boundary Condition"].Value = "Ground"; }
-                    else if (surf.IsExternal) { obj.Fields["Outside Boundary Condition"].Value = "Outdoors"; }
-                    else if (surf.OtherSideName != null)
+                    obj.Fields["Outside Boundary Condition"].Value = surf.OtherSideCondition.ToString();
+                    if (surf.OtherSideCondition == BuildingSurface.OtherSideConditionType.Surface)
                     {
-                        obj.Fields["Outside Boundary Condition"].Value = "Surface";
                         obj.Fields["Outside Boundary Condition Object"].Value = surf.OtherSideName;
                     }
-                    else { obj.Fields["Outside Boundary Condition"].Value = "Adiabatic"; }
 
                     Func<Point, Point, int> vertexOrderComparer =
                         surf.Type == BuildingSurface.SurfaceType.Floor ? ComparePointsForRighterLownessFlat :
@@ -107,7 +104,7 @@ namespace GUI.Operations
                         obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = pair.Point.Z;
                     }
 
-                    if (!surf.IsExternal || surf.Type == BuildingSurface.SurfaceType.Floor)
+                    if (surf.OtherSideCondition != BuildingSurface.OtherSideConditionType.Outdoors || surf.Type == BuildingSurface.SurfaceType.Floor)
                     {
                         obj.Fields["Sun Exposure"].Value = "NoSun";
                         obj.Fields["Wind Exposure"].Value = "NoWind";
@@ -159,14 +156,14 @@ namespace GUI.Operations
 
             public override void AddFenestration(FenestrationSurface fenestration)
             {
-                if (fenestration.IsLargeEnoughForWriting(0.01))
+                if (fenestration.ContainingSurface.OtherSideCondition != BuildingSurface.OtherSideConditionType.Adiabatic && fenestration.IsLargeEnoughForWriting(0.01))
                 {
                     IdfObject obj = idf.CreateObject("FenestrationSurface:Detailed");
 
                     obj.Fields["Name"].Value = fenestration.Name;
                     obj.Fields["Surface Type"].Value = fenestration.Type.ToString();
                     obj.Fields["Construction Name"].Value = fenestration.ConstructionName;
-                    obj.Fields["Building Surface Name"].Value = fenestration.ContainingSurfaceName;
+                    obj.Fields["Building Surface Name"].Value = fenestration.ContainingSurface.Name;
                     obj.Fields["Outside Boundary Condition Object"].Value = fenestration.OtherSideName;
                     foreach (var pair in VertexOrderRotatedGeometry(fenestration.Geometry, ComparePointsForUpperLeftness).Select((point, index) => new { Point = point, Index = index }))
                     {

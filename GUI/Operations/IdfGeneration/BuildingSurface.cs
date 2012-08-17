@@ -19,6 +19,14 @@ namespace GUI.Operations
                 Roof
             }
 
+            public enum OtherSideConditionType
+            {
+                Adiabatic,
+                Surface,
+                Outdoors,
+                Ground
+            }
+
             readonly SpaceBoundary sbtInfo;
             readonly string constructionName;
             readonly string zoneName;
@@ -60,11 +68,20 @@ namespace GUI.Operations
                 {
                     if (Normal.Item1 != 0 || Normal.Item2 != 0) { return SurfaceType.Wall; }
                     else if (Normal.Item3 < 0) { return SurfaceType.Floor; }
-                    else { return IsExternal ? SurfaceType.Roof : SurfaceType.Ceiling; }
+                    else { return OtherSideCondition == OtherSideConditionType.Outdoors ? SurfaceType.Roof : SurfaceType.Ceiling; }
                 }
             }
-            public bool IsConnectedToGround { get { return connectedToGround; } }
-            public bool IsExternal { get { return sbtInfo.IsExternal; } }
+            public OtherSideConditionType OtherSideCondition
+            {
+                get
+                {
+                    return
+                        connectedToGround ? OtherSideConditionType.Ground :
+                        sbtInfo.IsExternal ? OtherSideConditionType.Outdoors :
+                        sbtInfo.Opposite != null ? OtherSideConditionType.Surface : OtherSideConditionType.Adiabatic;
+                }
+            }
+
             public bool IsVirtual { get { return sbtInfo.IsVirtual; } }
             public string ElementGuid { get { return sbtInfo.Element != null ? sbtInfo.Element.Guid : null; } }
             public string OtherSideName

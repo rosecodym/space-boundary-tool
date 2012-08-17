@@ -9,7 +9,7 @@ namespace GUI.Operations
 {
     static partial class IdfGeneration
     {
-        public class FenestrationSurface
+        class FenestrationSurface
         {
             const double VertexAdjustmentAmount = 0.01;
 
@@ -19,12 +19,14 @@ namespace GUI.Operations
                 Window
             }
 
-            SpaceBoundary sbtInfo;
-            string constructionName;
+            readonly SpaceBoundary sbtInfo;
+            readonly BuildingSurface containingSurface;
+            readonly string constructionName;
 
-            public FenestrationSurface(SpaceBoundary sbtInfo, string constructionName)
+            public FenestrationSurface(SpaceBoundary sbtInfo, BuildingSurface containingSurface, string constructionName)
             {
                 this.sbtInfo = sbtInfo;
+                this.containingSurface = containingSurface;
                 this.constructionName = constructionName;
             }
             public bool IsLargeEnoughForWriting(double epsilon)
@@ -49,7 +51,7 @@ namespace GUI.Operations
             public string Name { get { return sbtInfo.Guid; } }
             public FenestrationType Type { get { return sbtInfo.Element.Type == ElementType.Window ? FenestrationType.Window : FenestrationType.Door; } }
             public string ConstructionName { get { return constructionName; } }
-            public string ContainingSurfaceName { get { return sbtInfo.ContainingBoundary.Guid; } }
+            public BuildingSurface ContainingSurface { get { return containingSurface; } }
             public string OtherSideName { get { return sbtInfo.Opposite != null ? sbtInfo.Opposite.Guid : null; } }
             public Polyloop Geometry { get { return PullVerticesTowardCenter(sbtInfo.Geometry); } }
             public string ElementGuid { get { return sbtInfo.Element.Guid; } }
