@@ -77,4 +77,13 @@ inline bool is_valid(const polygon_2 & poly, double eps) {
 	return true;
 }
 
+inline bool is_axis_aligned(const polygon_2 & poly) {
+	for (auto edge = poly.edges_begin(); edge != poly.edges_end(); ++edge) {
+		if (!(edge->is_vertical() || edge->is_horizontal())) {
+			return false;
+		}
+	}
+	return true;
+}
+
 } // namespace geometry_common

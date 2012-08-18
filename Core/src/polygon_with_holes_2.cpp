@@ -202,8 +202,8 @@ void polygon_with_holes_2::reverse() {
 
 bool polygon_with_holes_2::is_axis_aligned() const {
 	return 
-		util::cgal::is_axis_aligned(m_outer) &&
-		boost::find_if(m_holes, [](const polygon_2 & hole) { return !util::cgal::is_axis_aligned(hole); }) == m_holes.end();
+		geometry_common::is_axis_aligned(m_outer) &&
+		boost::find_if(m_holes, [](const polygon_2 & hole) { return !geometry_common::is_axis_aligned(hole); }) == m_holes.end();
 }
 
 std::vector<polygon_2> polygon_with_holes_2::all_polygons() const { 

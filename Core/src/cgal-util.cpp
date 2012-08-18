@@ -35,18 +35,6 @@ bool polygon_has_no_adjacent_duplicates(const polygon_2 & p, equality_context * 
 	return true;
 }
 
-bool is_axis_aligned(const polygon_2 & poly) {
-	PRINT_2D_OPERATIONS("Entered util::cgal::is_axis_aligned.\n");
-	for (auto edge = poly.edges_begin(); edge != poly.edges_end(); ++edge) {
-		if (!(edge->is_vertical() || edge->is_horizontal())) {
-			PRINT_2D_OPERATIONS("Exiting util::cgal::is_axis_aligned (result = false).\n");
-			return false;
-		}
-	}
-	PRINT_2D_OPERATIONS("Exiting util::cgal::is_axis_aligned (result = true).\n");
-	return true;
-}
-
 bbox_3 nef_bounding_box(const nef_polyhedron_3 & nef) {
 	nef_vertex_handle v;
 	boost::optional<bbox_3> res;

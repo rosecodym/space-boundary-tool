@@ -365,7 +365,7 @@ wrapped_nef_polygon::wrapped_nef_polygon(const nef_polygon_2 & nef, bool aligned
 }
 
 wrapped_nef_polygon::wrapped_nef_polygon(const polygon_2 & poly)
-	: wrapped(new nef_polygon_2(create_nef_polygon(poly))), m_is_axis_aligned(util::cgal::is_axis_aligned(poly))
+	: wrapped(new nef_polygon_2(create_nef_polygon(poly))), m_is_axis_aligned(geometry_common::is_axis_aligned(poly))
 {
 	PRINT_2D_OPERATIONS("Entered wrapped_nef_polygon ctor body (from polygon_2).\n");
 }

@@ -20,8 +20,6 @@ inline VecT normalize(const VecT & v) {
 
 bool polygon_has_no_adjacent_duplicates(const polygon_2 & p, equality_context * c);
 
-bool is_axis_aligned(const polygon_2 & poly);
-
 template <class PointIter>
 NT smallest_squared_distance(PointIter begin, PointIter end) {
 	NT distance;
