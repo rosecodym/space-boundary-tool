@@ -2,6 +2,7 @@
 
 #include "precompiled.h"
 
+#include "cleanup_loop.h"
 #include "geometry_common.h"
 #include "polygon_with_holes_2.h"
 #include "printing-macros.h"

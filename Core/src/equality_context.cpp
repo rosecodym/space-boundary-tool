@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "cgal-util.h"
+#include "geometry_common.h"
 #include "misc-util.h"
 #include "printing-util.h"
 #include "sbt-core.h"
@@ -33,7 +33,7 @@ void equality_context::init_constants()
 }
 
 direction_3 equality_context::snap(const direction_3 & d) {
-	vector_3 v = util::cgal::normalize(d.to_vector());
+	vector_3 v = geometry_common::normalize(d.to_vector());
 	for (auto p = directions.begin(); p != directions.end(); ++p) {
 		if (p->first == d) {
 			return d;
@@ -67,7 +67,7 @@ std::tuple<orientation *, bool> equality_context::request_orientation(const dire
 		return are_effectively_parallel(o->direction(), d);
 	});
 	if (exists != orientations.end()) {
-		return std::make_tuple(exists->get(), util::cgal::share_sense((*exists)->direction(), d));
+		return std::make_tuple(exists->get(), geometry_common::share_sense((*exists)->direction(), d));
 	}
 	else {
 		orientations.push_back(std::unique_ptr<orientation>(new orientation(d)));

@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "cleanup_loop.h"
 #include "equality_context.h"
 #include "geometry_common.h"
 #include "misc-util.h"
@@ -25,6 +26,24 @@ extern sb_calculation_options g_opts;
 namespace geometry_2d {
 
 namespace {
+
+template <class PointIter>
+NT smallest_squared_distance(PointIter begin, PointIter end) {
+	NT distance;
+	bool got_first = false;
+	for (auto p = begin; p != end; ++p) {
+		for (auto q = p; q != end; ++q) {
+			if (p != q) {
+				NT this_dist = CGAL::square(p->x() - q->x()) + CGAL::square(p->y() - q->y());
+				if (!got_first || this_dist < distance) {
+					distance = this_dist;
+					got_first = true;
+				}
+			}
+		}
+	}
+	return distance;
+}
 
 template <class OutT, class InT>
 OutT switch_point_kernel(const InT & p) {
@@ -527,7 +546,7 @@ bool wrapped_nef_polygon::is_valid(double eps) const {
 				all_points.push_back(switch_point_kernel<espoint_2, epoint_2>(v->point()));
 			}
 		}
-		bool res = !equality_context::is_zero_squared(util::cgal::smallest_squared_distance(all_points.begin(), all_points.end()), eps);
+		bool res = !equality_context::is_zero_squared(smallest_squared_distance(all_points.begin(), all_points.end()), eps);
 		if (!res) {
 			ERROR_MSG("[Invalid polygon - some points were too close.]\n");
 		}

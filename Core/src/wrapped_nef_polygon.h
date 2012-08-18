@@ -2,7 +2,6 @@
 
 #include "precompiled.h"
 
-#include "cgal-util.h"
 #include "geometry_common.h"
 #include "misc-util.h"
 #include "polygon_with_holes_2.h"

@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "cgal-util.h"
 #include "equality_context.h"
 #include "poly_builder.h"
 #include "sbt-core.h"
@@ -14,6 +13,20 @@ namespace solid_geometry {
 using namespace impl;
 
 namespace {
+
+bbox_3 nef_bounding_box(const nef_polyhedron_3 & nef) {
+	nef_vertex_handle v;
+	boost::optional<bbox_3> res;
+	CGAL_forall_vertices(v, nef) {
+		if (!res.is_initialized()) {
+			res = v->point().bbox();
+		}
+		else {
+			res = *res + v->point().bbox();
+		}
+	}
+	return *res;
+}
 
 void print_halffacet(nef_halffacet_handle h) {
 	for (auto cycle = h->facet_cycles_begin(); cycle != h->facet_cycles_end(); ++cycle) {
@@ -36,7 +49,7 @@ std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
 }
 
 extrusion_information get_extrusion_information(const extruded_area_solid & e, equality_context * c) {
-	return std::make_tuple(simple_face(e.area, c), util::cgal::normalize(c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz)).to_vector()) * e.extrusion_depth);
+	return std::make_tuple(simple_face(e.area, c), geometry_common::normalize(c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz)).to_vector()) * e.extrusion_depth);
 }
 
 enum face_status { FLIP = -1, NOT_DECIDED = 0, OK = 1};
@@ -281,7 +294,7 @@ bbox_3 multiview_solid::bounding_box() const {
 			return res;
 		}
 		bbox_3 operator () (const nef_polyhedron_3 & nef) const {
-			return util::cgal::nef_bounding_box(nef);
+			return nef_bounding_box(nef);
 		}
 	};
 	return boost::apply_visitor(bounding_box_visitor(), geometry);

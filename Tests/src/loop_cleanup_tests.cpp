@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "geometry_common.h"
+#include "cleanup_loop.h"
 
 namespace geometry_2d {
 

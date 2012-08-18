@@ -88,12 +88,12 @@
   <ItemGroup>
     <ClCompile Include="..\Core\src\area.cpp" />
     <ClCompile Include="..\Core\src\build_blocks.cpp" />
-    <ClCompile Include="..\Core\src\cgal-util.cpp" />
     <ClCompile Include="..\Core\src\CreateGuid_64.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Core\src\equality_context.cpp" />
+    <ClCompile Include="..\Core\src\geometry_common.cpp" />
     <ClCompile Include="..\Core\src\multiview_solid.cpp" />
     <ClCompile Include="..\Core\src\one_dimensional_equality_context.cpp" />
     <ClCompile Include="..\Core\src\orientation.cpp" />

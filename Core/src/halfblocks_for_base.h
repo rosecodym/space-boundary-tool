@@ -2,7 +2,6 @@
 
 #include "precompiled.h"
 
-#include "cgal-util.h"
 #include "geometry_common.h"
 #include "printing-macros.h"
 #include "surface_pair.h"
