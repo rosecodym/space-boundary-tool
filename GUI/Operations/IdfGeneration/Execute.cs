@@ -69,7 +69,6 @@ namespace GUI.Operations
 
         static private void DoIdfGenerationWork(object sender, DoWorkEventArgs e)
         {
-            System.Diagnostics.Debugger.Launch();
             Parameters p = e.Argument as Parameters;
             if (p != null)
             {
@@ -113,7 +112,7 @@ namespace GUI.Operations
                     }
 
                     IList<FenestrationSurface> fenestrations = new List<FenestrationSurface>(p.SbtBuilding.SpaceBoundaries
-                        .Where(sb => !sb.IsVirtual && sb.Element.IsFenestration)
+                        .Where(sb => !sb.IsVirtual && sb.Element.IsFenestration && sb.ContainingBoundary != null) // all fenestration sbs *should* have a containing boundary, but...
                         .Select(sb => new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers))));
 
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
