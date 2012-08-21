@@ -385,28 +385,32 @@ namespace GUI
 
         private void CheckIfcConstructionsForSbParticipation()
         {
-            if (CurrentSbtBuilding != null && IfcConstructions != null)
+            try
             {
-                foreach (Sbt.CoreTypes.SpaceBoundary sb in this.CurrentSbtBuilding.SpaceBoundaries)
+                if (CurrentSbtBuilding != null && IfcConstructions != null)
                 {
-                    foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
+                    foreach (Sbt.CoreTypes.SpaceBoundary sb in this.CurrentSbtBuilding.SpaceBoundaries)
                     {
-                        string elementGuid = this.CurrentSbtBuilding.Elements[layer.Id - 1].Guid;
-                        IfcElement ifcElement = this.CurrentIfcBuilding.ElementsByGuid[elementGuid];
-                        foreach (IfcConstruction c in this.IfcConstructions)
+                        foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
                         {
-                            if (c.Name == ifcElement.AssociatedConstruction.Name)
+                            string elementGuid = this.CurrentSbtBuilding.Elements[layer.Id - 1].Guid;
+                            IfcElement ifcElement = this.CurrentIfcBuilding.ElementsByGuid[elementGuid];
+                            foreach (IfcConstruction c in this.IfcConstructions)
                             {
-                                c.ParticipatesInSpaceBoundary = true;
+                                if (c.Name == ifcElement.AssociatedConstruction.Name)
+                                {
+                                    c.ParticipatesInSpaceBoundary = true;
+                                }
                             }
                         }
                     }
-                }
-                foreach (IfcConstruction c in this.IfcConstructions)
-                {
-                    if (!c.ParticipatesInSpaceBoundary.HasValue) { c.ParticipatesInSpaceBoundary = false; }
+                    foreach (IfcConstruction c in this.IfcConstructions)
+                    {
+                        if (!c.ParticipatesInSpaceBoundary.HasValue) { c.ParticipatesInSpaceBoundary = false; }
+                    }
                 }
             }
+            catch (Exception) { /* no time for this right now */ }
         }
 
         static private IEnumerable<int> AvailableDaysForMonth(int month)

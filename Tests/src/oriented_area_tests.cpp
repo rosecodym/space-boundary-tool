@@ -188,4 +188,21 @@ TEST(OrientedArea, CouldFormBlock) {
 	EXPECT_TRUE(oriented_area::could_form_block(b, a));
 }
 
+TEST(OrientedArea, ExplicitCreation) {
+	equality_context c(0.01);
+
+	oriented_area oa(simple_face(create_face(4,
+		simple_point(4050, 12120, 300),
+		simple_point(4050, 18195, 300),
+		simple_point(8200, 18195, 300),
+		simple_point(8200, 12120, 300)), &c), &c);
+
+	oriented_area copy(&oa.orientation(), oa.height(), oa.area_2d(), oa.sense());
+
+	EXPECT_EQ(&oa.orientation(), &copy.orientation());
+	EXPECT_EQ(oa.height(), copy.height());
+	EXPECT_EQ(oa.area_2d(), copy.area_2d());
+	EXPECT_EQ(oa.sense(), copy.sense());
+}
+
 } // namespace

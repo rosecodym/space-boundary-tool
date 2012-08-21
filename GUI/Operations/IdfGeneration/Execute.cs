@@ -69,6 +69,7 @@ namespace GUI.Operations
 
         static private void DoIdfGenerationWork(object sender, DoWorkEventArgs e)
         {
+            System.Diagnostics.Debugger.Launch();
             Parameters p = e.Argument as Parameters;
             if (p != null)
             {

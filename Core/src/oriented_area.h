@@ -46,7 +46,7 @@ public:
 		: o(src.o), a(std::move(new_area)), p(src.p), flipped(src.flipped) { }
 
 	oriented_area(const orientation_t * o, const NT & height, const area & a, bool sense) {
-		*this = oriented_area(o, a, height, !sense);
+		*this = oriented_area(o, a, -height, !sense);
 	}
 
 	oriented_area(const oriented_area & src) { *this = src; }
