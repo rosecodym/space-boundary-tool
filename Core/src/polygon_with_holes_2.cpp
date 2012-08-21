@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "cgal-util.h"
+#include "cleanup_loop.h"
 #include "geometry_common.h"
 #include "printing-macros.h"
 #include "sbt-core.h"

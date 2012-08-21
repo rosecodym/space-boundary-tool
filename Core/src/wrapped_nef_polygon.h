@@ -69,6 +69,7 @@ public:
 	bool is_empty() const;
 
 	bbox_2 bbox() const;
+	std::vector<polygon_2> to_simple_convex_pieces() const;
 
 	wrapped_nef_polygon interior() const { return wrapped_nef_polygon(wrapped->interior(), m_is_axis_aligned); }
 	
@@ -76,7 +77,7 @@ public:
 
 	std::vector<polygon_with_holes_2> to_pwhs() const;
 
-	polygon_2 outer() const;
+	boost::optional<polygon_2> outer() const;
 	polygon_2 to_single_polygon() const;
 	bool is_valid(double eps) const;
 	bool is_axis_aligned() const { return m_is_axis_aligned; }

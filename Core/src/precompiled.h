@@ -85,6 +85,7 @@ typedef nef_polyhedron_3::SFace_const_handle		nef_sface_handle;
 typedef CGAL::Extended_cartesian<NT>	eK;
 typedef eK::Point_2						epoint_2;
 typedef eK::Segment_2					esegment_2;
+typedef eK::Vector_2					evector_2;
 typedef eK::Line_2						eline_2;
 typedef CGAL::Nef_polyhedron_2<eK>		nef_polygon_2;
 typedef eK::Standard_point_2			espoint_2;

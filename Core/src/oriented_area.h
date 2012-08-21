@@ -75,12 +75,9 @@ public:
 
 	template <typename OutputIterator>
 	void to_pieces(OutputIterator oi) const {
-		auto pwhs = a.to_pwhs();
-		for (auto pwh = pwhs.begin(); pwh != pwhs.end(); ++pwh) {
-			boost::transform(pwh->to_simple_polygons(), oi, [this](const polygon_2 & poly) {
-				return oriented_area(*this, area(poly));
-			});
-		}
+		boost::transform(a.to_simple_convex_pieces(), oi, [this](const polygon_2 & piece) {
+			return oriented_area(*this, area(piece));
+		});
 	}
 
 	void print() const;

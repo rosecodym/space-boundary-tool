@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
-#include "cgal-util.h"
 #include "equality_context.h"
+#include "geometry_common.h"
 
 #include "orientation.h"
 
@@ -13,13 +13,13 @@ transformation_3 build_flatten(const direction_3 & d) {
 	NT ZERO(0.0);
 	NT ONE(1.0);
 
-	auto dir = util::cgal::normalize(d.vector());
+	auto dir = geometry_common::normalize(d.vector());
 
 	auto zhat = vector_3(ZERO, ZERO, ONE);
 	if (dir == -zhat) {
 		dir = vector_3(ZERO, ZERO, ZERO - ONE - ONE); // something arbitrary
 	}
-	auto v = util::cgal::normalize(dir + zhat);
+	auto v = geometry_common::normalize(dir + zhat);
 
 	auto qv = CGAL::cross_product(v, zhat);
 	auto qw = v * zhat;

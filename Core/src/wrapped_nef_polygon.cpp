@@ -456,6 +456,44 @@ bbox_2 wrapped_nef_polygon::bbox() const {
 	return *res;
 }
 
+std::vector<polygon_2> wrapped_nef_polygon::to_simple_convex_pieces() const {
+	nef_polygon_2::Explorer e = wrapped->explorer();
+
+	boost::optional<polygon_2> outer = this->outer();
+	if (outer && outer->is_convex()) { return std::vector<polygon_2>(1, *outer); }
+
+	std::set<NT> xcoords;
+	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
+		if (e.is_standard(v)) {
+			xcoords.insert(eK().standard_point(v->point()).x());
+		}
+	}
+
+	std::vector<line_2> cut_lines;
+	boost::transform(xcoords, std::back_inserter(cut_lines), [](const NT & x) { return line_2(point_2(x, 0), vector_2(0, 1)); });
+
+	std::vector<nef_polygon_2> sections;
+	for (size_t i = 0; i < cut_lines.size() - 1; ++i) {
+		sections.push_back(nef_polygon_2(cut_lines[i].opposite(), nef_polygon_2::EXCLUDED) * nef_polygon_2(cut_lines[i + 1], nef_polygon_2::EXCLUDED));
+	}
+
+	std::vector<polygon_2> res;
+	boost::for_each(sections, [&res, this](const nef_polygon_2 & section) {
+		nef_polygon_2 intr = section * *wrapped;
+		nef_polygon_2::Explorer e = intr.explorer();
+		for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
+			if (f->mark()) {
+				auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
+				if (pwh_maybe) {
+					res.push_back(pwh_maybe->outer());
+				}
+			}
+		}
+	});
+
+	return res;
+}
+
 std::vector<polygon_with_holes_2> wrapped_nef_polygon::to_pwhs() const {
 	std::vector<polygon_with_holes_2> res;
 	nef_polygon_2::Explorer e = wrapped->explorer();
@@ -470,11 +508,15 @@ std::vector<polygon_with_holes_2> wrapped_nef_polygon::to_pwhs() const {
 	return res;
 }
 
-polygon_2 wrapped_nef_polygon::outer() const {
+boost::optional<polygon_2> wrapped_nef_polygon::outer() const {
 	polygon_2 outer;
 	nef_polygon_2::Explorer e = wrapped->explorer();
+	bool found_face = false;
 	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
 		if (f->mark()) {
+			if (found_face) { return boost::optional<polygon_2>(); }
+			else { found_face = true; }
+			if (e.holes_begin(f) != e.holes_end(f)) { return boost::optional<polygon_2>(); }
 			auto p = e.face_cycle(f);
 			do {
 				if (e.is_standard(p->vertex())) {
@@ -483,10 +525,8 @@ polygon_2 wrapped_nef_polygon::outer() const {
 				++p;
 			}
 			while (p != e.face_cycle(f));
-			break;
 		}
 	}
-
 	return outer;
 }
 
