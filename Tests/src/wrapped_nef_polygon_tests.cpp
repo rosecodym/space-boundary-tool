@@ -95,6 +95,19 @@ TEST(WrappedNefPolygon, BoundingBoxesFilterIntersectionCorrectly) {
 	EXPECT_TRUE(CGAL::do_overlap(larger.bbox(), smaller.bbox()));
 }
 
+TEST(WrappedNefPolygon, OuterBoundary) {
+	point_2 pts[] = {
+		point_2(0, 0),
+		point_2(393, 0),
+		point_2(393, 387),
+		point_2(0, 387)
+	};
+
+	boost::optional<polygon_2> outer = wrapped_nef_polygon(polygon_2(pts, pts + 4)).outer();
+	ASSERT_TRUE(outer);
+	EXPECT_EQ(polygon_2(pts, pts + 4).container(), outer->container());
+}
+
 TEST(WrappedNefPolygon, SingleConvexToPieces) {
 	point_2 pts[] = {
 		point_2(0, 0),
