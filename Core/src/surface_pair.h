@@ -161,9 +161,9 @@ public:
 					NOTIFY_MSG("Projection is bad!\n");
 					PRINT_POLYGON(projection);
 					NOTIFY_MSG("from\n");
-					pair.other().to_3d().front().print_outer();
+					NOTIFY_MSG(pair.other().to_3d().front().to_string().c_str());
 					NOTIFY_MSG("to\n");
-					pair.base().to_3d().front().print_outer();
+					NOTIFY_MSG(pair.base().to_3d().front().to_string().c_str());
 					abort();
 				}
 				

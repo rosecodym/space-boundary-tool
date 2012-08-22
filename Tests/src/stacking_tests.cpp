@@ -210,7 +210,10 @@ TEST(Stacking, FloorAndRoom) {
 	target_geom.push_back(c.request_point(0, 387.79528, 0));
 	target_geom.push_back(c.request_point(393.70079, 387.79528, 0));
 	target_geom.push_back(c.request_point(393.70079, 0, 0));
-	EXPECT_EQ(geom.front(), polygon_with_holes_3(target_geom, std::vector<std::vector<point_3>>()));
+	polygon_with_holes_3 actual(target_geom, std::vector<std::vector<point_3>>());
+	EXPECT_EQ(geom.front(), actual)
+		<< "Expected\n" << geom.front().to_string()
+		<< "Got\n" << actual.to_string();
 }
 
 TEST(Stacking, SecondLevel) {

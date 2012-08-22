@@ -447,7 +447,7 @@ void multiview_solid::print() const {
 				boost::for_each(group, [](const oriented_area & oa) {
 					oa.print();
 					NOTIFY_MSG("converts to:\n");
-					oa.to_3d().front().print_outer();
+					NOTIFY_MSG(oa.to_3d().front().to_string().c_str());
 				});
 				NOTIFY_MSG("End multiview solid oriented area group.\n");
 			});

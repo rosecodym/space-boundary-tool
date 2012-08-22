@@ -58,7 +58,19 @@ public:
 			}));
 	}
 
-	void print_outer() const { PRINT_LOOP_3(m_outer); }
+	std::string to_string() const {
+		auto loop_to_string = [](const std::vector<point_3> & loop) -> std::string {
+			std::stringstream ss;
+			boost::for_each(loop, [&ss](const point_3 & p) { ss << "(" << CGAL::to_double(p.x()) << ", " << CGAL::to_double(p.y()) << ", " << CGAL::to_double(p.z()) << ")\n"; });
+			return ss.str();
+		};
+		std::stringstream ss;
+		ss << "Outer:\n" << loop_to_string(outer());
+		boost::for_each(m_holes, [&ss, &loop_to_string](const std::vector<point_3> & hole) {
+			ss << "Hole:\n" << loop_to_string(hole);
+		});
+		return ss.str();
+	}
 
 	friend bool operator == (const polygon_with_holes_3 & a, const polygon_with_holes_3 & b);
 };

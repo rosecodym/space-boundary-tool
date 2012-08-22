@@ -96,6 +96,21 @@ TEST(Area, SubtractionIsValidVertexOnDiagonal) {
 	EXPECT_TRUE(res.is_valid(g_opts.equality_tolerance));
 }
 
+TEST(Area, LargerIntersection) {
+	point_2 smaller[] = {
+		point_2(0, 0),
+		point_2(393, 0),
+		point_2(393, 387),
+		point_2(0, 387)
+	};
+	point_2 larger[] = {
+		point_2(0, -8),
+		point_2(803, -8),
+		point_2(803, 401),
+		point_2(0, 401)
+	};
+	EXPECT_EQ(area(polygon_2(smaller, smaller + 4)), area(polygon_2(smaller, smaller + 4)) * area(polygon_2(larger, larger + 4)));
+}
 
 } // namespace
 
