@@ -94,12 +94,6 @@ nef_polygon_2 create_nef_polygon(const std::vector<point_2> & loop) {
 	return create_nef_polygon(polygon_2(loop.begin(), loop.end()));
 }
 
-bool matches(const epoint_2 & epoint, const point_2 & p, std::shared_ptr<equality_context> c) {
-	espoint_2 espoint = eK().standard_point(epoint);
-	NT squared_distance = CGAL::square(espoint.x() - p.x()) + CGAL::square(espoint.y() - p.y());
-	return c->is_zero_squared(squared_distance);
-}
-
 bool remove_duplicate_points(nef_polygon_2 * n) {
 	const nef_polygon_2 & nef = *n;
 
