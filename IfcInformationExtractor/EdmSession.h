@@ -20,6 +20,8 @@ private:
 	cppw::Open_repository * repository;
 	cppw::Open_model * model;
 
+	String ^ currentIfcPath;
+
 	void clear_db();
 
 	static const char * const DB_NAME = "db";

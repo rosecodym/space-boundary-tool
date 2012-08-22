@@ -118,6 +118,7 @@ char * EdmSession::convert_to_chars(char dst[], String ^ src, size_t size) {
 
 void EdmSession::LoadIfcFile(String ^ path) {
 	try {
+		currentIfcPath = path;
 		cppw::String repo_name(REPO_NAME);
 		cppw::String model_name(MODEL_NAME);
 		char ifc_path[MAX_PATH];
@@ -138,6 +139,8 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 	BuildingInformation ^ res = gcnew BuildingInformation();
 	res->SpacesByGuid = gcnew Dictionary<String ^, Space ^>();
 	res->ElementsByGuid = gcnew Dictionary<String ^, Element ^>();
+
+	res->Filename = currentIfcPath;
 
 	GetLocationInformation(model, res->NorthAxis, res->Latitude, res->Longitude, res->Elevation);
 

@@ -16,8 +16,35 @@ namespace GUI.Operations
             {
                 try
                 {
-                    vm.Busy = true;
-                    // TODO: check for pre-existing building
+                    if (vm.CurrentIfcBuilding == null)
+                    {
+                        System.Windows.MessageBox.Show(
+                            "IFC constructions and materials have not been loaded. Please load and assign library mappings to the IFC model's constructions and materials in the \"Constructions & Materials\" tab before attempting to generate an IDF.",
+                            "Cannot generate IDF",
+                            System.Windows.MessageBoxButton.OK,
+                            System.Windows.MessageBoxImage.Error);
+                        return;
+                    }
+
+                    if (vm.CurrentSbtBuilding == null)
+                    {
+                        System.Windows.MessageBox.Show(
+                            "Space boundaries have not been loaded. Please load space boundaries in the \"Space Boundaries\" tab before attempting to generate an IDF.",
+                            "Cannot generate IDF",
+                            System.Windows.MessageBoxButton.OK,
+                            System.Windows.MessageBoxImage.Error);
+                        return;
+                    }
+
+                    if (vm.CurrentSbtBuilding.IfcFilename != vm.CurrentIfcBuilding.Filename)
+                    {
+                        System.Windows.MessageBox.Show(
+                            "The filename that space boundaries have been loaded for is not the same filename for the constructions and materials mapping. Either re-load space boundaries or re-load the model's constructions and materials.",
+                            "Cannot generate IDF",
+                            System.Windows.MessageBoxButton.OK,
+                            System.Windows.MessageBoxImage.Error);
+                    }
+
                     BackgroundWorker worker = new BackgroundWorker();
                     worker.WorkerReportsProgress = true;
                     worker.DoWork += new DoWorkEventHandler(DoIdfGenerationWork);
@@ -58,6 +85,7 @@ namespace GUI.Operations
                     p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
+                    vm.Busy = true;
                     worker.RunWorkerAsync(p);
                 }
                 catch (Exception)

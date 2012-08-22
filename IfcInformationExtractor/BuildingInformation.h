@@ -13,6 +13,8 @@ public ref class BuildingInformation {
 public:
 	BuildingInformation() { }
 
+	property String ^ Filename;
+
 	property double NorthAxis;
 	property double Latitude;
 	property double Longitude;
