@@ -185,7 +185,32 @@ TEST(Stacking, FloorAndRoom) {
 	std::vector<element> elements(1, element(e_info, &c));
 
 	auto stacks = stacking::build_stacks(blocking::build_blocks(elements, &c), spaces, 3000, &c);
-	EXPECT_EQ(1, stacks.size());
+	ASSERT_EQ(1, stacks.size());
+	
+	std::vector<std::unique_ptr<surface>> surfaces;
+	stacks.front().to_surfaces(std::back_inserter(surfaces));
+	ASSERT_EQ(1, surfaces.size());
+
+	surface * s = surfaces.front().get();
+
+	EXPECT_EQ(s->bounded_space().original_info(), s_info);
+	EXPECT_EQ(1, s->material_layers().size());
+	EXPECT_EQ(nullptr, s->other_side());
+	EXPECT_EQ(nullptr, s->parent());
+	EXPECT_FALSE(s->is_virtual());
+	EXPECT_FALSE(s->is_fenestration());
+	EXPECT_TRUE(s->is_external());
+	EXPECT_FALSE(s->has_other_side());
+	EXPECT_FALSE(s->shares_space_with_other_side());
+
+	std::vector<polygon_with_holes_3> geom = s->geometry().to_3d();
+	ASSERT_EQ(1, geom.size());
+	std::vector<point_3> target_geom;
+	target_geom.push_back(c.request_point(0, 0, 0));
+	target_geom.push_back(c.request_point(0, 387.79528, 0));
+	target_geom.push_back(c.request_point(393.70079, 387.79528, 0));
+	target_geom.push_back(c.request_point(393.70079, 0, 0));
+	EXPECT_EQ(geom.front(), polygon_with_holes_3(target_geom, std::vector<std::vector<point_3>>()));
 }
 
 TEST(Stacking, SecondLevel) {

@@ -59,4 +59,30 @@ public:
 	}
 
 	void print_outer() const { PRINT_LOOP_3(m_outer); }
+
+	friend bool operator == (const polygon_with_holes_3 & a, const polygon_with_holes_3 & b);
 };
+
+inline bool operator == (const polygon_with_holes_3 & a, const polygon_with_holes_3 & b) {
+	auto loops_equal = [](const std::vector<point_3> & a, const std::vector<point_3> & b) -> bool {
+		if (a.size() != b.size()) { return false; }
+		auto b_match = b.begin();
+		for (; b_match != b.end(); ++b_match) { if (*b_match == a.front()) { break; } }
+		if (b_match == b.end()) { return false; }
+		auto next_b = [&b_match, &b]() -> point_3 {
+			if (b_match == b.end()) { b_match = b.begin(); }
+			return *b_match++;
+		};
+		for (auto p = a.begin(); p != a.end(); ++p) {
+			if (*p != next_b()) { return false; }
+		}
+		return true;
+	};
+
+	if (a.m_holes.size() != b.m_holes.size()) { return false; }
+	if (!loops_equal(a.outer(), b.outer())) { return false; }
+	for (size_t i = 0; i < a.m_holes.size(); ++i) {
+		if (!loops_equal(a.m_holes[i], b.m_holes[i])) { return false; }
+	}
+	return true;
+}

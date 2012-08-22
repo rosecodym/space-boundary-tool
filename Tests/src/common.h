@@ -2,6 +2,7 @@
 
 #include "precompiled.h"
 
+#include "polygon_with_holes_3.h"
 #include "sbt-core.h"
 
 struct simple_point {
