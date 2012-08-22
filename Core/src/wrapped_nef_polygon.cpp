@@ -520,7 +520,8 @@ boost::optional<polygon_2> wrapped_nef_polygon::outer() const {
 			auto p = e.face_cycle(f);
 			do {
 				if (e.is_standard(p->vertex())) {
-					outer.push_back(point_2(p->vertex()->point().x().content(), p->vertex()->point().y().content()));
+					espoint_2 standard = eK().standard_point(p->vertex()->point());
+					outer.push_back(point_2(standard.x(), standard.y()));
 				}
 				++p;
 			}
