@@ -95,6 +95,19 @@ TEST(WrappedNefPolygon, BoundingBoxesFilterIntersectionCorrectly) {
 	EXPECT_TRUE(CGAL::do_overlap(larger.bbox(), smaller.bbox()));
 }
 
+TEST(WrappedNefPolygon, SingleConvexToPieces) {
+	point_2 pts[] = {
+		point_2(0, 0),
+		point_2(393, 0),
+		point_2(393, 387),
+		point_2(0, 387)
+	};
+	
+	std::vector<polygon_2> pieces = wrapped_nef_polygon(polygon_2(pts, pts + 4)).to_simple_convex_pieces();
+	ASSERT_EQ(1, pieces.size());
+	EXPECT_EQ(polygon_2(pts, pts + 4).container(), pieces.front().container());
+}
+
 } // namespace
 
 } // namespace geometry_2d
