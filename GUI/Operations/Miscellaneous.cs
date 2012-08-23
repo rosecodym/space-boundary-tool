@@ -68,5 +68,13 @@ namespace GUI.Operations
                 }
             }
         }
+
+        static public void ViewIdf(string idfPath)
+        {
+            if (File.Exists(idfPath))
+            {
+                System.Diagnostics.Process.Start(idfPath);
+            }
+        }
     }
 }

@@ -35,6 +35,7 @@ namespace GUI
         public ICommand LoadIfcBuildingCommand { get; private set; }
         public ICommand LinkConstructionsCommand { get; private set; }
         public ICommand GenerateIdfCommand { get; private set; }
+        public ICommand ViewIdfCommand { get; private set; }
 
         public SbtBuildingInformation CurrentSbtBuilding
         {
@@ -376,6 +377,8 @@ namespace GUI
                     Operations.Miscellaneous.LinkConstructions(this.SelectedIdfConstruction, selectedIfcConstructions.Select(c => c as IfcConstruction));
                 }
             });
+            ViewIdfCommand = new RelayCommand(_ => Operations.Miscellaneous.ViewIdf(this.OutputIdfFilePath), _ => System.IO.File.Exists(this.OutputIdfFilePath));
+            
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
             // i haven't figured out a better workaround yet
             UpdateOutputDirectly = updateOutputDirectly;
