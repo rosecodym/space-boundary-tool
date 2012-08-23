@@ -13,7 +13,6 @@ public ref class Element {
 private:
 	initonly String ^ guid;
 	initonly Construction ^ construction;
-	initonly bool connectedToGround;
 public:
 	Element(const cppw::Instance & inst);
 
@@ -25,11 +24,6 @@ public:
 	property Construction ^ AssociatedConstruction
 	{
 		Construction ^ get() { return construction; }
-	}
-
-	property bool IsConnectedToGround
-	{
-		bool get() { return connectedToGround; }
 	}
 };
 

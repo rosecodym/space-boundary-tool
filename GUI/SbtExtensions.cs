@@ -93,5 +93,10 @@ namespace GUI
             if (pointList.Count < 3) { return new Polyloop(new Point[] { }); }
             else { return new Polyloop(pointList); }
         }
+
+        public static bool IsConnectedToGround(this SpaceBoundary sb)
+        {
+            return !sb.Geometry.Vertices.Any(p => p.Z > 0.0);
+        }
     }
 }

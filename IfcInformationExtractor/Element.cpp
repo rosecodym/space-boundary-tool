@@ -104,12 +104,9 @@ Construction ^ createConstructionFor(const cppw::Instance & buildingElement, Str
 
 } // namespace
 
-Element::Element(const cppw::Instance & inst) : guid(gcnew String(((cppw::String)inst.get("GlobalId")).data()))
-{ 
-	construction = createConstructionFor(inst, guid);
-	connectedToGround = 
-		inst.is_kind_of("IfcWall") && inst.get("ObjectType").is_set() && (cppw::String)inst.get("ObjectType") == "BASEWALL" ||
-		inst.is_kind_of("IfcSlab") && inst.get("PredefinedType").is_set() && (cppw::String)inst.get("PredefinedType") == "BASESLAB";
-}
+Element::Element(const cppw::Instance & inst) 
+	: guid(gcnew String(((cppw::String)inst.get("GlobalId")).data())),
+	construction(createConstructionFor(inst, guid))
+{ }
 
 } // namespace IfcInformationExtractor

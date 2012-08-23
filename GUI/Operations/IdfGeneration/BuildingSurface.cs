@@ -30,14 +30,12 @@ namespace GUI.Operations
             readonly SpaceBoundary sbtInfo;
             readonly string constructionName;
             readonly string zoneName;
-            readonly bool connectedToGround;
 
-            public BuildingSurface(SpaceBoundary sb, string constructionName, string zoneName, bool connectedToGround)
+            public BuildingSurface(SpaceBoundary sb, string constructionName, string zoneName)
             {
                 this.sbtInfo = sb;
                 this.constructionName = constructionName;
                 this.zoneName = zoneName;
-                this.connectedToGround = connectedToGround;
             }
 
             public string Name { get { return sbtInfo.Guid; } }
@@ -57,7 +55,7 @@ namespace GUI.Operations
                 get
                 {
                     return
-                        connectedToGround ? OtherSideConditionType.Ground :
+                        sbtInfo.IsConnectedToGround() ? OtherSideConditionType.Ground :
                         sbtInfo.IsExternal ? OtherSideConditionType.Outdoors :
                         sbtInfo.Opposite != null && sbtInfo.Opposite.BoundedSpace != sbtInfo.BoundedSpace ? OtherSideConditionType.Surface : OtherSideConditionType.Adiabatic;
                 }

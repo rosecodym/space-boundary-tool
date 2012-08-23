@@ -129,16 +129,14 @@ namespace GUI.Operations
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
                                 constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers),
-                                zoneNamesByGuid[sb.BoundedSpace.Guid],
-                                !sb.IsVirtual && p.IfcBuilding.ElementsByGuid[sb.Element.Guid].IsConnectedToGround);
+                                zoneNamesByGuid[sb.BoundedSpace.Guid]);
                         }
                         else
                         {
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
                                 constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId),
-                                zoneNamesByGuid[sb.BoundedSpace.Guid],
-                                false);
+                                zoneNamesByGuid[sb.BoundedSpace.Guid]);
                         }
                     }
 
