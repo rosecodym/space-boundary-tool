@@ -174,8 +174,8 @@ namespace Sbt
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;
 
-            var actualSpaceFilter = new List<string>(spaceFilter.Where(guid => !String.IsNullOrWhiteSpace(guid)));
-            var actualElementFilter = new List<string>(elementFilter.Where(guid => !String.IsNullOrWhiteSpace(guid)));
+            var actualSpaceFilter = spaceFilter == null ? new List<string>() : new List<string>(spaceFilter.Where(guid => !String.IsNullOrWhiteSpace(guid)));
+            var actualElementFilter = elementFilter == null ? new List<string>() : new List<string>(elementFilter.Where(guid => !String.IsNullOrWhiteSpace(guid)));
 
             if (actualSpaceFilter == null)
             {
