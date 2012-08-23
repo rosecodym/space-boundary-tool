@@ -58,11 +58,10 @@ namespace GUI
             set
             {
                 ifcBuilding = value;
-                ifcConstructions = new ObservableCollection<IfcConstruction>(ifcBuilding.Constructions.Select(c => new IfcConstruction(c)));
+                IfcConstructions = new ObservableCollection<IfcConstruction>(ifcBuilding.Constructions.Select(c => new IfcConstruction(c)));
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("CurrentIfcBuilding"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("IfcConstructions"));
                 }
             }
         }
