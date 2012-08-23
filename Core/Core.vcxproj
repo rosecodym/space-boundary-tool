@@ -108,7 +108,6 @@
     <ClInclude Include="src\blockstack.h" />
     <ClInclude Include="src\build_blocks.h" />
     <ClInclude Include="src\build_stacks.h" />
-    <ClInclude Include="src\cgal-approx.h" />
     <ClInclude Include="src\cleanup_loop.h" />
     <ClInclude Include="src\core_exception.h" />
     <ClInclude Include="src\geometry_common.h" />

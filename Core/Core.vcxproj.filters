@@ -63,9 +63,6 @@
     <ClInclude Include="src\equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>
-    <ClInclude Include="src\cgal-approx.h">
-      <Filter>cgal</Filter>
-    </ClInclude>
     <ClInclude Include="src\point_collection.h">
       <Filter>geometry</Filter>
     </ClInclude>
