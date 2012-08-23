@@ -11,12 +11,16 @@ namespace {
 
 Construction ^ createSingleMaterial(const cppw::Instance & inst, String ^ elementGuid) {
 	if (inst.is_kind_of("IfcMaterial")) {
-		return gcnew SingleMaterial(gcnew String(((cppw::String)inst.get("Name")).data()));
+		String ^ name = gcnew String(((cppw::String)inst.get("Name")).data());
+		if (String::IsNullOrWhiteSpace(name)) {
+			name = String::Format("(material with empty name - element {0})", elementGuid);
+		}
+		return gcnew SingleMaterial(name);
 	}
 	else if (inst.is_kind_of("IfcMaterialLayer")) {
 		cppw::Select mat = inst.get("Material");
-		return gcnew SingleMaterial(mat.is_set() ?
-			gcnew String(((cppw::String)((cppw::Instance)mat).get("Name")).data()) : String::Format("(unset material name for layer - element {0})", elementGuid));
+		if (mat.is_set()) { return createSingleMaterial((cppw::Instance)mat, elementGuid); }
+		else { return gcnew SingleMaterial(String::Format("(unset material name for layer - element {0})", elementGuid)); }
 	}
 	else {
 		return gcnew SingleMaterial(String::Format("(material name for unknown source - element {0})", elementGuid));
