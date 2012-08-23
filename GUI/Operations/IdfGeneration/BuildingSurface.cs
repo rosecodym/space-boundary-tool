@@ -40,25 +40,6 @@ namespace GUI.Operations
                 this.connectedToGround = connectedToGround;
             }
 
-            //public bool IsLargeEnoughForWriting(double epsilon)
-            //{
-            //    Func<Point, Point, double> distance =
-            //    (a, b) => Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z));
-
-            //    var vertices = Geometry.Vertices;
-
-            //    int tooCloseCount = 0;
-            //    for (int i = 0; i < vertices.Count; ++i)
-            //    {
-            //        if (distance(vertices[i], vertices[(i + 1) % vertices.Count]) < epsilon)
-            //        {
-            //            ++tooCloseCount;
-            //        }
-            //    }
-
-            //    return tooCloseCount < vertices.Count - 2;
-            //}
-
             public string Name { get { return sbtInfo.Guid; } }
             public string ZoneName { get { return zoneName; } }
             public string ConstructionName { get { return constructionName; } }
@@ -78,7 +59,7 @@ namespace GUI.Operations
                     return
                         connectedToGround ? OtherSideConditionType.Ground :
                         sbtInfo.IsExternal ? OtherSideConditionType.Outdoors :
-                        sbtInfo.Opposite != null ? OtherSideConditionType.Surface : OtherSideConditionType.Adiabatic;
+                        sbtInfo.Opposite != null && sbtInfo.Opposite.BoundedSpace != sbtInfo.BoundedSpace ? OtherSideConditionType.Surface : OtherSideConditionType.Adiabatic;
                 }
             }
 
