@@ -85,6 +85,8 @@ namespace GUI.Operations
                     p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
+                    p.AttachDebugger = vm.AttachDebuggerPriorToIdfGeneration;
+
                     vm.Busy = true;
                     worker.RunWorkerAsync(p);
                 }
@@ -100,6 +102,7 @@ namespace GUI.Operations
             Parameters p = e.Argument as Parameters;
             if (p != null)
             {
+                if (p.AttachDebugger) { System.Diagnostics.Debugger.Launch(); }
                 try
                 {
                     p.Notify("Getting IDD.\n");

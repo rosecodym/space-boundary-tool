@@ -158,6 +158,8 @@ namespace Sbt
             SbtFlags flags = SbtFlags.None,
             double internalEpsilon = 0.01,
             double maxPairDistance = 3.0,
+            IEnumerable<string> spaceFilter = null,
+            IEnumerable<string> elementFilter = null,
             int spaceVerificationTimeout = -1,
             MessageDelegate notifyMsg = null,
             MessageDelegate warningMsg = null,
@@ -171,10 +173,39 @@ namespace Sbt
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;
-            opts.elementFilter = IntPtr.Zero;
-            opts.elementFilterCount = 0;
-            opts.spaceFilter = IntPtr.Zero;
-            opts.spaceFilterCount = 0;
+
+            var actualSpaceFilter = new List<string>(spaceFilter.Where(guid => !String.IsNullOrWhiteSpace(guid)));
+            var actualElementFilter = new List<string>(elementFilter.Where(guid => !String.IsNullOrWhiteSpace(guid)));
+
+            if (actualSpaceFilter == null)
+            {
+                opts.spaceFilter = IntPtr.Zero;
+                opts.spaceFilterCount = 0;
+            }
+            else
+            {
+                opts.spaceFilterCount = (uint)actualSpaceFilter.Count;
+                opts.spaceFilter = Marshal.AllocHGlobal(actualSpaceFilter.Count * Marshal.SizeOf(typeof(IntPtr)));
+                for (int i = 0; i < actualSpaceFilter.Count; ++i)
+                {
+                    Marshal.WriteIntPtr(opts.spaceFilter, i * Marshal.SizeOf(typeof(IntPtr)), Marshal.StringToHGlobalAnsi(actualSpaceFilter[i]));
+                }
+            }
+
+            if (actualElementFilter == null)
+            {
+                opts.elementFilter = IntPtr.Zero;
+                opts.elementFilterCount = 0;
+            }
+            else
+            {
+                opts.elementFilterCount = (uint)actualElementFilter.Count;
+                opts.elementFilter = Marshal.AllocHGlobal(actualElementFilter.Count * Marshal.SizeOf(typeof(IntPtr)));
+                for (int i = 0; i < actualElementFilter.Count; ++i)
+                {
+                    Marshal.WriteIntPtr(opts.elementFilter, i * Marshal.SizeOf(typeof(IntPtr)), Marshal.StringToHGlobalAnsi(actualElementFilter[i]));
+                }
+            }
 
             uint elementCount;
             uint spaceCount;

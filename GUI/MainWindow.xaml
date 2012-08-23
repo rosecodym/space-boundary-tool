@@ -237,6 +237,26 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
+            <TabItem Header="Debug">
+                <Grid Height="Auto" Name="grid15" Width="Auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="29" />
+                        <RowDefinition Height="29" />
+                        <RowDefinition Height="29" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Label Content="Attach debugger prior to IDF generation:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label26" VerticalAlignment="Center" />
+                    <Label Content="Calculate space boundaries for only these space GUIDs (separated by spaces):" Grid.Row="1" Height="28" HorizontalAlignment="Left" Margin="0" Name="label27" VerticalAlignment="Center" />
+                    <Label Content="Calculate space boundaries for only these element GUIDs (separated by spaces):" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="0" Name="label28" VerticalAlignment="Center" />
+                    <CheckBox Grid.Column="1" Height="16" HorizontalAlignment="Left" Margin="2" Name="checkBox5" VerticalAlignment="Center" IsChecked="{Binding AttachDebuggerPriorToIdfGeneration}" />
+                    <TextBox Grid.Column="1" Grid.Row="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox9" VerticalAlignment="Stretch" Width="Auto" Text="{Binding SbSpaceFilter}" />
+                    <TextBox Grid.Column="1" Grid.Row="2" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox10" VerticalAlignment="Center" Width="Auto" Text="{Binding SbElementFilter}" />
+                </Grid>
+            </TabItem>
             <TabItem Header="Output">
                 <Grid Height="Auto" Name="grid2" Width="Auto">
                     <Grid.RowDefinitions>

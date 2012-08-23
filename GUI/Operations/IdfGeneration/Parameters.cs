@@ -46,6 +46,7 @@ namespace GUI.Operations
             public EnergyPlusVersion EPVersion { get; set; }
             public Func<LibIdf.Idd.Idd> GetIdd { get; set; }
             public Action<string> Notify { get; set; }
+            public bool AttachDebugger { get; set; }
         }
     }
 }

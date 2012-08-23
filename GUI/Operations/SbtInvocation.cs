@@ -13,6 +13,8 @@ namespace GUI.Operations
             public string InputFilename { get; set; }
             public string OutputFilename { get; set; }
             public Sbt.EntryPoint.SbtFlags Flags { get; set; }
+            public IList<string> SpaceGuidFilter { get; set; }
+            public IList<string> ElementGuidFilter { get; set; }
             public Sbt.EntryPoint.MessageDelegate NotifyMessage { get; set; }
             public Sbt.EntryPoint.MessageDelegate WarnMessage { get; set; }
             public Sbt.EntryPoint.MessageDelegate ErrorMessage { get; set; }
@@ -44,6 +46,10 @@ namespace GUI.Operations
                     SbtParameters p = new SbtParameters();
                     p.InputFilename = vm.InputIfcFilePath;
                     p.OutputFilename = vm.OutputIfcFilePath;
+
+                    if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
+                    if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
+
                     p.Flags = Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck;
                     p.NotifyMessage = p.WarnMessage = p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
 
@@ -73,6 +79,8 @@ namespace GUI.Operations
                     p.Flags,
                     0.01,
                     3.0,
+                    p.SpaceGuidFilter,
+                    p.ElementGuidFilter,
                     0,
                     p.NotifyMessage,
                     p.WarnMessage,

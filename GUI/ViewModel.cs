@@ -357,6 +357,10 @@ namespace GUI
             get { return !Busy && InputIfcFilePath != String.Empty; }
         }
 
+        public bool AttachDebuggerPriorToIdfGeneration { get; set; }
+        public string SbSpaceFilter { get; set; }
+        public string SbElementFilter { get; set; }
+
         public IddManager Idds { get { return idds; } }
 
         public ViewModel(Action<string> updateOutputDirectly)
