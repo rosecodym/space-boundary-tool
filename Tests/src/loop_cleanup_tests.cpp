@@ -57,8 +57,6 @@ TEST(LoopCleanup, DirectionChangePoint2) {
 	EXPECT_EQ(4, vec.size());
 }
 
-// strictly speaking, this test is capturing a bug
-// (specifically, "cleaned" loops coming out of cleanup_loop aren't necessarily clean!)
 TEST(LoopCleanup, ComplexTwoPassesPoint2) {
 	point_2 pts[] = {
 		point_2(-9.000000, 205.650477),
@@ -71,8 +69,6 @@ TEST(LoopCleanup, ComplexTwoPassesPoint2) {
 		point_2(0.000000, 205.650477)
 	};
 	std::vector<point_2> vec(pts, pts + 8);
-	ASSERT_TRUE(geometry_common::cleanup_loop(&vec, 0.01));
-	ASSERT_EQ(5, vec.size());
 	ASSERT_TRUE(geometry_common::cleanup_loop(&vec, 0.01));
 	EXPECT_EQ(4, vec.size());
 }

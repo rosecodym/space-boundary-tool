@@ -9,38 +9,52 @@ namespace geometry_common {
 namespace impl {
 
 template <typename Loop>
-std::deque<typename Loop::value_type> create_cleaned_loop(const Loop & loop, double eps) {
+std::list<typename Loop::value_type> create_cleaned_loop(const Loop & loop, double eps) {
 	typedef typename Loop::value_type point_t;
-	std::deque<point_t> res;
-	boost::for_each(loop, [&res, eps](const point_t & p) {
-		if (res.empty()) {
-			res.push_back(p);
+	typedef typename std::list<point_t>::iterator iter_t;
+
+	if (boost::distance(loop) < 3) { return std::list<point_t>(); }
+
+	std::list<point_t> points(loop.begin(), loop.end());
+	iter_t window[3];
+
+	auto collapse = [&points, eps](iter_t w[3]) -> bool {
+		if (equality_context::are_effectively_same(*w[1], *w[2], eps)) {
+			points.erase(w[2]);
+			return true;
 		}
-		else if (!equality_context::are_effectively_same(p, res.back(), eps)) {
-			if (res.size() == 1 || !equality_context::are_effectively_collinear(p, res.back(), res[res.size() - 2], eps)) {
-				res.push_back(p);
-			}
-			else {
-				res.back() = p;
-			}
+		else if (equality_context::are_effectively_same(*w[0], *w[2], eps)) {
+			points.erase(w[1]);
+			points.erase(w[2]);
+			return true;
 		}
-	});
-	while (res.size() >= 3) {
-		if (equality_context::are_effectively_same(res.front(), res.back(), eps)) {
-			res.pop_back();
-			continue;
+		else if (
+			equality_context::are_effectively_same(*w[0], *w[1], eps) ||
+			equality_context::are_effectively_collinear(*w[0], *w[1], *w[2], eps))
+		{
+			points.erase(w[1]);
+			return true;
 		}
-		if (equality_context::are_effectively_collinear(res[res.size() - 2], res.back(), res.front(), eps)) {
-			res.pop_back();
-			continue;
+		return false;
+	};
+
+	auto next = [&points](iter_t iter) {
+		return ++iter == points.end() ? points.begin() : iter;
+	};
+
+	window[0] = points.begin();
+	int steps_since_last_change = 0;
+	while (points.size() >= 3 && steps_since_last_change < points.size()) {
+		window[1] = next(window[0]);
+		window[2] = next(window[1]);
+		if (!collapse(window)) {
+			window[0] = next(window[0]);
+			++steps_since_last_change;
 		}
-		if (equality_context::are_effectively_collinear(res.back(), res[0], res[1], eps)) {
-			res.pop_front();
-			continue;
-		}
-		break;
+		else { steps_since_last_change = 0; }
 	}
-	return res;
+
+	return points.size() >= 3 ? points : std::list<point_t>();
 }
 
 } // namespace impl
