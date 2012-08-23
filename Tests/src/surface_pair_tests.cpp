@@ -5,11 +5,8 @@
 #include "area.h"
 #include "equality_context.h"
 #include "oriented_area.h"
-#include "sbt-core.h"
 #include "sbt-core-helpers.h"
 #include "surface_pair.h"
-
-extern sb_calculation_options g_opts;
 
 namespace blocking {
 
@@ -18,7 +15,7 @@ namespace impl {
 namespace {
 
 TEST(SurfacePair, StrictSubsetParallelRectangles) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f.void_count = 0;
@@ -44,7 +41,7 @@ TEST(SurfacePair, StrictSubsetParallelRectangles) {
 }
 
 TEST(SurfacePair, Nonparallel) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f.void_count = 0;
@@ -75,7 +72,7 @@ TEST(SurfacePair, Nonparallel) {
 }
 
 TEST(SurfacePair, NonparallelAdjoiningIrrelevant) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f.void_count = 0;

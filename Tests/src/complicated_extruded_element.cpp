@@ -8,13 +8,10 @@
 #include "halfblocks_for_base.h"
 #include "is_hexahedral_prismatoid.h"
 #include "is_right_cuboid.h"
-#include "sbt-core.h"
 #include "sbt-core-helpers.h"
 #include "scan_for_degenerate_halfblocks.h"
 #include "surface.h"
 #include "surface_pair.h"
-
-extern sb_calculation_options g_opts;
 
 namespace blocking {
 
@@ -28,7 +25,7 @@ protected:
 	boost::optional<element> e;
 	equality_context c;
 
-	ComplicatedExtrudedElement() : c(g_opts.equality_tolerance) {
+	ComplicatedExtrudedElement() : c(0.01) {
 		element_info info;
 		strcpy(info.id, "complicated extruded element");
 		info.type = SLAB;

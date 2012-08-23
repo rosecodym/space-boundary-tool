@@ -8,11 +8,8 @@
 #include "halfblocks_for_base.h"
 #include "link_halfblocks.h"
 #include "oriented_area.h"
-#include "sbt-core.h"
 #include "simple_face.h"
 #include "surface_pair.h"
-
-extern sb_calculation_options g_opts;
 
 namespace blocking {
 
@@ -21,7 +18,7 @@ namespace impl {
 namespace {
 
 TEST(Blocking, ParallelPairHalfblocks) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	std::vector<oriented_area> surfaces;
 
@@ -63,7 +60,7 @@ TEST(Blocking, ParallelPairHalfblocks) {
 }
 
 TEST(Blocking, TwoStairs) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	std::vector<oriented_area> surfaces;
 
@@ -182,7 +179,7 @@ TEST(Blocking, TwoStairs) {
 }
 
 TEST(Blocking, ThreeStairsHalfblocks) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	std::vector<oriented_area> surfaces;
 
@@ -252,7 +249,7 @@ TEST(Blocking, ThreeStairsHalfblocks) {
 }
 
 TEST(Blocking, ThreeStairsElement) { 
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	element_info * e_info = create_element("element", UNKNOWN, 1, create_ext(0, 0, 1, 300, create_face(8,
 		simple_point(0, 0, 0),
@@ -271,7 +268,7 @@ TEST(Blocking, ThreeStairsElement) {
 }
 
 TEST(Blocking, NonparallelPairHalfblocksForSmallerBase) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	std::vector<oriented_area> surfaces;
 
@@ -299,7 +296,7 @@ TEST(Blocking, NonparallelPairHalfblocksForSmallerBase) {
 }
 
 TEST(Blocking, HalfblocksWithNonParallelOthers) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	
 	std::vector<oriented_area> surfaces;
 
@@ -340,7 +337,7 @@ TEST(Blocking, HalfblocksWithNonParallelOthers) {
 }
 
 TEST(Blocking, Boot) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	element_info * e_info = create_element("boot element", UNKNOWN, 1, create_ext(0, 0, 1, 300, create_face(5,
 		simple_point(4050, 12120.109, 0),
@@ -356,7 +353,7 @@ TEST(Blocking, Boot) {
 }
 
 TEST(Blocking, SinglePairLink) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 
@@ -393,7 +390,7 @@ TEST(Blocking, SinglePairLink) {
 }
 
 TEST(Blocking, RightCuboid) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	element_info * e = create_element("column", COLUMN, 1, create_ext(0, 0, 1, 4000, create_face(4,
 		simple_point(0, 0, 0),
@@ -410,7 +407,7 @@ TEST(Blocking, RightCuboid) {
 }
 
 TEST(Blocking, Sense) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	element_info * e_info = create_element("floor", SLAB, 1, create_ext(0, 0, 1, 7.8740157, create_face(5,
 		simple_point(0, 0, -7.8740157),

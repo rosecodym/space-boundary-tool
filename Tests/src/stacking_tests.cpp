@@ -5,10 +5,7 @@
 #include "build_blocks.h"
 #include "build_stacks.h"
 #include "common.h"
-#include "sbt-core.h"
 #include "space.h"
-
-extern sb_calculation_options g_opts;
 
 namespace stacking {
 
@@ -17,7 +14,7 @@ namespace impl {
 namespace {
 
 TEST(Stacking, DoConnect) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f = create_face(4,
@@ -58,7 +55,7 @@ TEST(Stacking, DoConnect) {
 
 	boost::optional<stackable_connection> cnct;
 
-	double eps = g_opts.equality_tolerance;
+	double eps = 0.01;
 	EXPECT_FALSE(stackable_connection::do_connect(bottom_lower_face_s, bottom_lower_face_s, eps));
 	EXPECT_FALSE(stackable_connection::do_connect(bottom_lower_face_s, bottom_upper_face_s, eps));
 	EXPECT_FALSE(stackable_connection::do_connect(bottom_lower_face_s, top_lower_face_s, eps));
@@ -95,7 +92,7 @@ TEST(Stacking, DoConnect) {
 }
 
 TEST(Stacking, SingleSpaceFaces) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	space_info * s_info = create_space("space", create_ext(0, 0, 1, 307.08661, create_face(5,
 		simple_point(0, 0, 0),
@@ -112,7 +109,7 @@ TEST(Stacking, SingleSpaceFaces) {
 }
 
 TEST(Stacking, IsolatedSpace) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	space_info * s_info = create_space("space", create_ext(0, 0, 1, 307.08661, create_face(5,
 		simple_point(0, 0, 0),
@@ -124,11 +121,11 @@ TEST(Stacking, IsolatedSpace) {
 	std::vector<space> spaces(1, space(s_info, &c));
 	std::vector<block> blocks;
 
-	EXPECT_EQ(0, stacking::build_stacks(blocks, spaces, g_opts.equality_tolerance, &c).size());
+	EXPECT_EQ(0, stacking::build_stacks(blocks, spaces, 0.01, &c).size());
 }
 
 TEST(Stacking, FloorAndRoomStackingGraph) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	space_info * s_info = create_space("space", create_ext(0, 0, 1, 307.08661, create_face(5,
 		simple_point(0, 0, 0),
@@ -153,7 +150,7 @@ TEST(Stacking, FloorAndRoomStackingGraph) {
 	auto space_faces = get_space_faces_by_orientation(spaces, &c);
 	for (auto o = space_faces.begin(); o != space_faces.end(); ++o) {
 		if (o->first->direction() == direction_3(0, 0, 1)) {
-			auto g = create_stacking_graph(&o->second, oriented_blocks[o->first], g_opts.equality_tolerance);
+			auto g = create_stacking_graph(&o->second, oriented_blocks[o->first], 0.01);
 			auto vertices = boost::vertices(g);
 			EXPECT_EQ(3, std::distance(vertices.first, vertices.second));
 			auto edges = boost::edges(g);
@@ -165,7 +162,7 @@ TEST(Stacking, FloorAndRoomStackingGraph) {
 }
 
 TEST(Stacking, FloorAndRoom) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	space_info * s_info = create_space("space", create_ext(0, 0, 1, 307.08661, create_face(5,
 		simple_point(0, 0, 0),
@@ -217,7 +214,7 @@ TEST(Stacking, FloorAndRoom) {
 }
 
 TEST(Stacking, SecondLevel) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 
@@ -260,7 +257,7 @@ TEST(Stacking, SecondLevel) {
 }
 
 TEST(Stacking, EmptyAfterFaceSplit) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	space_info * s_info;
@@ -306,10 +303,10 @@ TEST(Stacking, EmptyAfterFaceSplit) {
 
 	std::vector<const block *> blocks(1, &b);
 
-	stacking_graph g = create_stacking_graph(&faces, blocks, g_opts.equality_tolerance);
+	stacking_graph g = create_stacking_graph(&faces, blocks, 0.01);
 
 	std::vector<blockstack> stacks;
-	begin_traversal(g, 0, std::get<0>(c.request_orientation(direction_3(0, 0, 1))), 300, g_opts.equality_tolerance, std::back_inserter(stacks));
+	begin_traversal(g, 0, std::get<0>(c.request_orientation(direction_3(0, 0, 1))), 300, 0.01, std::back_inserter(stacks));
 
 	ASSERT_EQ(1, stacks.size());
 	EXPECT_FALSE(stacks.front().stack_area().is_empty());

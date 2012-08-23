@@ -5,16 +5,13 @@
 #include "common.h"
 #include "equality_context.h"
 #include "oriented_area.h"
-#include "sbt-core.h"
 #include "sbt-core-helpers.h"
 #include "simple_face.h"
-
-extern sb_calculation_options g_opts;
 
 namespace {
 
 TEST(OrientedArea, SimpleFaceConstruction) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	face f = create_face(4,
 		simple_point(0, 0, 0),
 		simple_point(10, 0, 0),
@@ -24,7 +21,7 @@ TEST(OrientedArea, SimpleFaceConstruction) {
 }
 
 TEST(OrientedArea, PositiveZAtZero) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	face f;
 	f.void_count = 0;
 	f.voids = nullptr;
@@ -42,7 +39,7 @@ TEST(OrientedArea, PositiveZAtZero) {
 }
 
 TEST(OrientedArea, PositiveZAboveZero) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	face f;
 	f.void_count = 0;
 	f.voids = nullptr;
@@ -60,7 +57,7 @@ TEST(OrientedArea, PositiveZAboveZero) {
 }
 
 TEST(OrientedArea, NegativeYAtZero) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	face f;
 	f.void_count = 0;
 	f.voids = nullptr;
@@ -79,7 +76,7 @@ TEST(OrientedArea, NegativeYAtZero) {
 }
 
 TEST(OrientedArea, ProjectionsIntersection) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f.void_count = 0;
@@ -104,7 +101,7 @@ TEST(OrientedArea, ProjectionsIntersection) {
 }
 
 TEST(OrientedArea, BackingPlanePointPlacement) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f.void_count = 0;
@@ -126,7 +123,7 @@ TEST(OrientedArea, BackingPlanePointPlacement) {
 }
 
 TEST(OrientedArea, To3d) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f.void_count = 0;
@@ -157,7 +154,7 @@ TEST(OrientedArea, To3d) {
 }
 
 TEST(OrientedArea, CouldFormBlock) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f;
 	f.void_count = 0;

@@ -6,10 +6,7 @@
 #include "element.h"
 #include "equality_context.h"
 #include "multiview_solid.h"
-#include "sbt-core.h"
 #include "sbt-core-helpers.h"
-
-extern sb_calculation_options g_opts;
 
 namespace {
 
@@ -26,7 +23,7 @@ struct face_information {
 };
 
 TEST(MultiviewSolid, SimpleExtrusion) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	solid s;
 	set_to_extruded_area_solid(&s, 0, 0, 1, 300);
 	face * a = get_area_handle(&s);
@@ -72,7 +69,7 @@ TEST(MultiviewSolid, SimpleExtrusion) {
 }
 
 TEST(MultiviewSolid, SimpleExtrusionBaseReversed) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	solid s;
 	set_to_extruded_area_solid(&s, 0, 0, 1, 300);
 	face * a = get_area_handle(&s);
@@ -118,7 +115,7 @@ TEST(MultiviewSolid, SimpleExtrusionBaseReversed) {
 }
 
 TEST(MultiviewSolid, ExtrusionWithDuplicateBasePoint) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	solid s = create_ext(0, 0, 1, 307.08661, create_face(5,
 		simple_point(0, 0, 0),
@@ -132,7 +129,7 @@ TEST(MultiviewSolid, ExtrusionWithDuplicateBasePoint) {
 }
 
 TEST(MultiviewSolid, ThreeStairs) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	solid s = create_ext(0, 0, 1, 300, create_face(8,
 		simple_point(0, 0, 0),

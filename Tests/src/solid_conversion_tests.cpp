@@ -3,12 +3,9 @@
 #include <gtest/gtest.h>
 
 #include "equality_context.h"
-#include "sbt-core.h"
 #include "sbt-core-helpers.h"
 #include "simple_face.h"
 #include "solid_conversion_operations.h"
-
-extern sb_calculation_options g_opts;
 
 namespace solid_geometry {
 
@@ -46,7 +43,7 @@ struct face_information {
 };
 
 TEST(SolidConversion, SimpleExtrusion) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	face f;
 	f.void_count = 0;
 	f.voids = nullptr;
@@ -124,7 +121,7 @@ TEST(SolidConversion, SimpleExtrusion) {
 }
 
 TEST(SolidConversion, ReversedBaseExtrusion) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	face f;
 	f.void_count = 0;
 	f.voids = nullptr;

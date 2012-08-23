@@ -8,16 +8,13 @@
 #include "equality_context.h"
 #include "layer_information.h"
 #include "oriented_area.h"
-#include "sbt-core.h"
 #include "space.h"
 #include "surface.h"
-
-extern sb_calculation_options g_opts;
 
 namespace {
 
 TEST(Blockstack, SimpleSecondLevelSurfaces) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 
 	face f = create_face(4,
 		simple_point(10, 0, 0),
@@ -56,7 +53,7 @@ TEST(Blockstack, SimpleSecondLevelSurfaces) {
 }
 
 TEST(Blockstack, FifthLevelSurface) {
-		equality_context c(g_opts.equality_tolerance);
+		equality_context c(0.01);
 
 	face f = create_face(4,
 		simple_point(10, 0, 0),

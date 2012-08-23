@@ -4,9 +4,6 @@
 
 #include "area.h"
 #include "equality_context.h"
-#include "sbt-core.h"
-
-extern sb_calculation_options g_opts;
 
 namespace geometry_2d {
 
@@ -74,7 +71,7 @@ TEST(Area, TwoFaces) {
 }
 
 TEST(Area, SubtractionIsValidVertexOnDiagonal) {
-	equality_context c(g_opts.equality_tolerance);
+	equality_context c(0.01);
 	point_2 op1[] = {
 		point_2(27.443970, 8.339190),
 		point_2(28.769285, 8.339190),
@@ -93,7 +90,7 @@ TEST(Area, SubtractionIsValidVertexOnDiagonal) {
 		c.snap(&op2[i]);
 	}
 	area res = area(polygon_2(op1, op1 + 4)) - area(polygon_2(op2, op2 + 4));
-	EXPECT_TRUE(res.is_valid(g_opts.equality_tolerance));
+	EXPECT_TRUE(res.is_valid(0.01));
 }
 
 TEST(Area, LargerIntersection) {
