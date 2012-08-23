@@ -19,18 +19,11 @@ namespace GUI.Materials.Output
             get
             {
                 if (layerNames.Count == 1) { return layerNames[0]; }
-                else { return String.Format("Unnamed composite (id {0})", NameHashCodesXored()); }
+                else { return String.Format("Unnamed composite (id {0})", this.GetHashCode()); }
             }
         }
 
         public IList<string> LayerNames { get { return layerNames; } }
-
-        private int NameHashCodesXored()
-        {
-            int code = 0;
-            foreach (string name in LayerNames) { code ^= name.GetHashCode(); }
-            return code;
-        }
 
         public override bool Equals(object obj)
         {
@@ -65,7 +58,8 @@ namespace GUI.Materials.Output
 
         public override int GetHashCode()
         {
-            return NameHashCodesXored();
+            // i use '!' as a separator because it can't legally appear in E+ construction names
+            return String.Join("!", LayerNames).GetHashCode();
         }
     }
 }
