@@ -8,7 +8,7 @@ namespace GUI.Operations
 {
     static class SbtInvocation
     {
-        class SbtParameters
+        class Parameters
         {
             public string InputFilename { get; set; }
             public string OutputFilename { get; set; }
@@ -43,14 +43,18 @@ namespace GUI.Operations
                         vm.Busy = false;
                     });
 
-                    SbtParameters p = new SbtParameters();
+                    Parameters p = new Parameters();
                     p.InputFilename = vm.InputIfcFilePath;
                     p.OutputFilename = vm.OutputIfcFilePath;
 
                     if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
                     if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
 
-                    p.Flags = Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck;
+                    p.Flags = Sbt.EntryPoint.SbtFlags.None;
+                    if (vm.SkipWallColumnCheck) { p.Flags |= Sbt.EntryPoint.SbtFlags.SkipWallColumnCheck; }
+                    if (vm.SkipSlabColumnCheck) { p.Flags |= Sbt.EntryPoint.SbtFlags.SkipSlabColumnCheck; }
+                    if (vm.SkipWallSlabCheck) { p.Flags |= Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck; }
+
                     p.NotifyMessage = p.WarnMessage = p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
 
                     worker.RunWorkerAsync(p);
@@ -64,7 +68,7 @@ namespace GUI.Operations
 
         static void DoSbtWork(object sender, DoWorkEventArgs e)
         {
-            SbtParameters p = e.Argument as SbtParameters;
+            Parameters p = e.Argument as Parameters;
             if (p != null)
             {
                 IList<Sbt.CoreTypes.ElementInfo> elements;
