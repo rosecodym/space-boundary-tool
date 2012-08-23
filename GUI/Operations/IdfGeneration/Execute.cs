@@ -108,7 +108,7 @@ namespace GUI.Operations
 
                     ConstructionManager constructionManager = new ConstructionManager(id =>
                     {
-                        if (id >= p.SbtBuilding.Elements.Count) { return null; }
+                        if (id > p.SbtBuilding.Elements.Count) { return null; }
                         string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
                         IfcInformationExtractor.Element ifcElement;
                         if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
