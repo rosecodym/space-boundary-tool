@@ -21537,7 +21537,6 @@ HVACTemplate:Zone:PTHP,
       \minimum> 0.0
       \autosizable
       \default autosize
-      \units W
  N16, \field Heat Pump Heating Coil Rated COP
       \note Heat Pump Heating Coil Rated Capacity divided by power input to the compressor and outdoor fan,
       \note Does not include supply air fan heat or supply air fan electrical energy
@@ -22114,7 +22113,6 @@ HVACTemplate:Zone:WaterToAirHeatPump,
       \minimum> 0.0
       \autosizable
       \default autosize
-      \units W
  N16, \field Heat Pump Heating Coil Rated COP
       \note Heat Pump Heating Coil Rated Capacity divided by power input to the compressor and outdoor fan,
       \note does not include supply air fan heat or supply air fan electrical energy
@@ -22561,7 +22559,6 @@ HVACTemplate:System:UnitaryHeatPump:AirToAir,
       \minimum> 0.0
       \autosizable
       \default autosize
-      \units W
  N14, \field Heat Pump Heating Coil Rated COP
       \note Heat Pump Heating Coil Rated Capacity divided by power input to the compressor and outdoor fan,
       \note does not include supply air fan heat or supply air fan electrical energy.
@@ -25032,7 +25029,6 @@ ZoneHVAC:IdealLoadsAirSystem,
        \key LimitFlowRate
        \key LimitCapacity
        \key LimitFlowRateAndCapacity
-       \default NoLimit
        \default NoLimit
   N5 , \field Maximum Heating Air Flow Rate
        \note This field is ignored if Heating Limit = NoLimit
@@ -40126,7 +40122,7 @@ AirConditioner:VariableRefrigerantFlow,
        \note Enter the total number of compressor. This input is used only for crankcase
        \note heater calculations.
   N17, \field Ratio of Compressor Size to Total Compressor Capacity
-       \type integer
+       \type real
        \default 0.5
        \note Enter the ratio of the first stage compressor to total compressor capacity.
        \note All other compressors are assumed to be equally sized. This inputs is used
