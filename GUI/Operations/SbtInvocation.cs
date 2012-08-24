@@ -45,7 +45,7 @@ namespace GUI.Operations
 
                     Parameters p = new Parameters();
                     p.InputFilename = vm.InputIfcFilePath;
-                    p.OutputFilename = vm.OutputIfcFilePath;
+                    p.OutputFilename = vm.WriteIfc ? vm.OutputIfcFilePath : null;
 
                     if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
                     if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
@@ -69,32 +69,39 @@ namespace GUI.Operations
         static void DoSbtWork(object sender, DoWorkEventArgs e)
         {
             Parameters p = e.Argument as Parameters;
-            if (p != null)
+            try
             {
-                IList<Sbt.CoreTypes.ElementInfo> elements;
-                ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
-                ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
-                Sbt.EntryPoint.CalculateSpaceBoundariesFromIfc(
-                    p.InputFilename,
-                    p.OutputFilename,
-                    out elements,
-                    out spaces,
-                    out spaceBoundaries,
-                    p.Flags,
-                    0.01,
-                    3.0,
-                    p.SpaceGuidFilter,
-                    p.ElementGuidFilter,
-                    0,
-                    p.NotifyMessage,
-                    p.WarnMessage,
-                    p.ErrorMessage);
-                SbtBuildingInformation resultingBuilding = new SbtBuildingInformation();
-                resultingBuilding.IfcFilename = p.InputFilename;
-                resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
-                resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
-                resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
-                e.Result = resultingBuilding;
+                if (p != null)
+                {
+                    IList<Sbt.CoreTypes.ElementInfo> elements;
+                    ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
+                    ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
+                    Sbt.EntryPoint.CalculateSpaceBoundariesFromIfc(
+                        p.InputFilename,
+                        p.OutputFilename,
+                        out elements,
+                        out spaces,
+                        out spaceBoundaries,
+                        p.Flags,
+                        0.01,
+                        3.0,
+                        p.SpaceGuidFilter,
+                        p.ElementGuidFilter,
+                        0,
+                        p.NotifyMessage,
+                        p.WarnMessage,
+                        p.ErrorMessage);
+                    SbtBuildingInformation resultingBuilding = new SbtBuildingInformation();
+                    resultingBuilding.IfcFilename = p.InputFilename;
+                    resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
+                    resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
+                    resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
+                    e.Result = resultingBuilding;
+                }
+            }
+            catch (Exception ex)
+            {
+                p.ErrorMessage(ex.Message);
             }
         }
     }
