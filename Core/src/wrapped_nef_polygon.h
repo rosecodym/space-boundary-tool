@@ -78,7 +78,6 @@ public:
 	std::vector<polygon_with_holes_2> to_pwhs() const;
 
 	boost::optional<polygon_2> outer() const;
-	polygon_2 to_single_polygon() const;
 	bool is_valid(double eps) const;
 	bool is_axis_aligned() const { return m_is_axis_aligned; }
 	bool any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
@@ -92,20 +91,6 @@ public:
 	friend bool operator >= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
-
-	// deprecated
-	template <class OutputIterator>
-	void to_simple_polygons(OutputIterator oi) const {
-		nef_polygon_2::Explorer e = wrapped->explorer();
-		for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
-			if (f->mark()) {
-				auto pwh_maybe = create_pwh_2(e, f); // if the face is too small there won't be anything
-				if (pwh_maybe) {
-					boost::copy(pwh_maybe->to_simple_polygons(), oi);
-				}
-			}
-		}
-	}
 };
 
 inline bool operator == (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {

@@ -559,16 +559,6 @@ boost::optional<polygon_with_holes_2> wrapped_nef_polygon::create_pwh_2(const ne
 	return polygon_with_holes_2(outer, holes);
 }
 
-polygon_2 wrapped_nef_polygon::to_single_polygon() const {
-	std::vector<polygon_2> polys;
-	to_simple_polygons(std::back_inserter(polys));
-	if (polys.size() != 1) {
-		ERROR_MSG("[Aborting - tried to get a single polygon out of a nef polygon, but it didn't work (%u polys).]\n", polys.size());
-		abort();
-	}
-	return polys.front();
-}
-
 bool wrapped_nef_polygon::is_valid(double eps) const {
 	if (wrapped->is_empty()) {
 		return true;
