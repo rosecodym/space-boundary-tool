@@ -122,10 +122,16 @@ plane_3 oriented_area::parallel_plane_through_origin() const {
 
 std::vector<ray_3> oriented_area::drape() const {
 	std::vector<ray_3> res;
-	boost::transform(to_3d(a.to_pwhs().front().outer()), std::back_inserter(res), [this](const point_3 & pt) {
-		return ray_3(pt, flipped ? -o->direction() : o->direction());
-	});
-	return res;
+	auto outer = a.outer_bound();
+	if (outer) {
+		boost::transform(to_3d(a.to_pwhs().front().outer()), std::back_inserter(res), [this](const point_3 & pt) {
+			return ray_3(pt, flipped ? -o->direction() : o->direction());
+		});
+		return res;
+	}
+	else {
+		return std::vector<ray_3>();
+	}
 }
 
 bool oriented_area::any_point_in_halfspace(const plane_3 & defining, equality_context * c3d) const {

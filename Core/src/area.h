@@ -37,12 +37,17 @@ public:
 	
 	area & operator = (const area & src);
 	area & operator = (area && src);
-
+	
 	bool								is_empty() const { return use_nef ? nef_rep.is_empty() : simple_rep.is_empty(); }
 	bbox_2								bbox() const { return use_nef ? nef_rep.bbox() : simple_rep.bbox(); }
+	boost::optional<polygon_2>			outer_bound() const;
 	std::vector<polygon_2>				to_simple_convex_pieces() const;
+	std::vector<polygon_with_holes_2>	to_pwhs() const;
 	bool								any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
-	const area &						print() const { if (use_nef) { nef_rep.print_with(g_opts.notify_func); } else { PRINT_POLYGON(simple_rep); } return *this; }
+
+	const area & print() const { if (use_nef) { nef_rep.print_with(g_opts.notify_func); } else { PRINT_POLYGON(simple_rep); } return *this; }
+
+	void clear();
 
 	bool is_valid(double eps) const { return use_nef ? nef_rep.is_valid(eps) : geometry_common::is_valid(simple_rep, eps); }
 	
@@ -57,13 +62,6 @@ public:
 
 	friend area operator - (const area & a, const area & b);
 	friend area operator * (const area & a, const area & b);
-
-	// DEPRECATED
-	template <typename T> void print_with(T) const { print(); }
-	void clear();
-	polygon_2 to_single_polygon() const { return to_pwhs().front().outer(); }
-	polygon_2 outer_bound() const { return to_pwhs().front().outer(); }
-	std::vector<polygon_with_holes_2> to_pwhs() const;
 };
 
 } // namespace geometry_2d

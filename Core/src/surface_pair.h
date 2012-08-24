@@ -101,7 +101,8 @@ public:
 	}
 
 	polygon_2 projected_other_area() const {
-		return get_projection_onto_base().area_2d().outer_bound();
+		auto outer = get_projection_onto_base().area_2d().outer_bound();
+		return outer ? *outer : polygon_2();
 	}
 
 	surface_pair opposite() const { return surface_pair(m_other, m_base, c3d, m_areas_match); }

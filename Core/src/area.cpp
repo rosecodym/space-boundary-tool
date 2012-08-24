@@ -71,6 +71,11 @@ void area::validate() const {
 	}
 }
 
+boost::optional<polygon_2> area::outer_bound() const {
+	auto pwhs = to_pwhs();
+	return pwhs.size() == 1 ? pwhs.front().outer() : boost::optional<polygon_2>();
+}
+
 std::vector<polygon_2> area::to_simple_convex_pieces() const {
 	if (!use_nef && simple_rep.is_convex()) { return std::vector<polygon_2>(1, simple_rep); }
 	else {
@@ -161,7 +166,6 @@ area operator * (const area & a, const area & b) {
 	return area(a.nef_rep * b.nef_rep);
 }
 
-// DEPRECATED
 void area::clear() {
 	simple_rep.clear();
 	nef_rep.clear();

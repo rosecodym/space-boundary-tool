@@ -309,8 +309,6 @@ TEST(Blocking, HalfblocksWithNonParallelOthers) {
 		simple_point(4050, 12120.109, 0));
 	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
 
-	ASSERT_EQ(4, surfaces.back().area_2d().outer_bound().size());
-
 	f = create_face(4,
 		simple_point(8200, 17181.249, 0),
 		simple_point(8200, 18195.109, 0),
@@ -318,16 +316,12 @@ TEST(Blocking, HalfblocksWithNonParallelOthers) {
 		simple_point(8200, 17181.249, 300));
 	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
 
-	ASSERT_EQ(4, surfaces.back().area_2d().outer_bound().size());
-
 	f = create_face(4,
 		simple_point(8200, 17181.249, 300),
 		simple_point(29200, 11991.913, 300),
 		simple_point(29200, 11991.913, 0),
 		simple_point(8200, 17181.249, 0));
 	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
-
-	ASSERT_EQ(4, surfaces.back().area_2d().outer_bound().size());
 
 	auto rels = build_relations_grid(surfaces, &c);
 
