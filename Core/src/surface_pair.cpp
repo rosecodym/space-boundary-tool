@@ -59,7 +59,7 @@ double surface_pair::relative_height_at(const point_2 & p) const {
 	// source: my notebook
 	vector_3 base_vec = base().orientation().direction().to_vector();
 	vector_3 other_vec = other().orientation().direction().to_vector();
-	point_2 intr_point = other().base_plane().to_2d(CGAL::ORIGIN + CGAL::cross_product(base_vec, other_vec));
+	point_2 intr_point = other().parallel_plane_through_origin().to_2d(CGAL::ORIGIN + CGAL::cross_product(base_vec, other_vec));
 	double point_angle = atan2(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
 	double intr_angle = atan2(CGAL::to_double(intr_point.x()), CGAL::to_double(intr_point.y()));
 	double local_x_angle_scale = sin(CGAL::to_double(point_angle - intr_angle));

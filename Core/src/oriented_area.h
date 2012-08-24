@@ -60,6 +60,7 @@ public:
 	NT						height() const { return -p; }
 	bool					sense() const { return !flipped; }
 	plane_3					backing_plane() const;
+	plane_3					parallel_plane_through_origin() const;
 	std::vector<ray_3>		drape() const;
 	bbox_3					bounding_box() const { return m_bounding_box; }
 	oriented_area			reverse() const { return oriented_area(o, a, p, !flipped); }
@@ -67,7 +68,6 @@ public:
 	bool					any_point_in_halfspace(const plane_3 & defining, equality_context * context_3d) const;
 
 	// THIS METHOD DOESN'T ACCOUNT FOR SENSE INFORMATION
-	// for some reason doing that causes level resolution to not work
 	// the caller should flip the result themselves if they care
 	std::vector<polygon_with_holes_3> to_3d() const;
 
@@ -90,9 +90,6 @@ public:
 	static bool areas_match(const oriented_area & a, const oriented_area & b) { return a.a == b.a; }
 	static bool same_height(const oriented_area & a, const oriented_area & b) { return a.p == b.p; }
 	static boost::optional<NT> could_form_block(const oriented_area & a, const oriented_area & b);
-
-	// DEPRECATED
-	plane_3 base_plane() const;
 };
 
 inline oriented_area operator - (const oriented_area & lhs, const oriented_area & rhs) {

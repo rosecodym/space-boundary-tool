@@ -115,6 +115,11 @@ plane_3 oriented_area::backing_plane() const {
 	return flipped ? plane_3(n.x(), n.y(), n.z(), p).opposite() : plane_3(n.x(), n.y(), n.z(), p);
 }
 
+plane_3 oriented_area::parallel_plane_through_origin() const {
+	vector_3 n = normalized_vector(o->direction());
+	return plane_3(n.x(), n.y(), n.z(), 0.0);
+}
+
 std::vector<ray_3> oriented_area::drape() const {
 	std::vector<ray_3> res;
 	boost::transform(to_3d(a.to_pwhs().front().outer()), std::back_inserter(res), [this](const point_3 & pt) {
@@ -133,12 +138,6 @@ bool oriented_area::any_point_in_halfspace(const plane_3 & defining, equality_co
 std::vector<polygon_with_holes_3> oriented_area::to_3d() const {
 	std::vector<polygon_with_holes_3> res;
 	std::vector<polygon_with_holes_2> pwhs = a.to_pwhs();
-	// see note in header file
-	//if (!sense()) {
-	//	boost::for_each(pwhs, [](polygon_with_holes_2 & pwh) {
-	//		pwh.reverse();
-	//	});
-	//}
 	for (auto pwh = pwhs.begin(); pwh != pwhs.end(); ++pwh) {
 		res.push_back(polygon_with_holes_3(to_3d(pwh->outer()), pwh->holes() | transformed([this](const polygon_2 & hole) { return to_3d(hole); })));
 	}
@@ -179,11 +178,4 @@ boost::optional<NT> oriented_area::could_form_block(const oriented_area & a, con
 	{
 		return boost::optional<NT>();
 	}
-}
-
-// DEPRECATED
-
-plane_3 oriented_area::base_plane() const {
-	vector_3 n = normalized_vector(o->direction());
-	return plane_3(n.x(), n.y(), n.z(), 0.0);
 }

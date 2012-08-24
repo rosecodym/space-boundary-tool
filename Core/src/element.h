@@ -78,7 +78,4 @@ public:
 			NOTIFY_MSG("done.\n");
 		}
 	}
-
-	// DEPRECATED
-	const std::string & source() { return source_id(); }
 };

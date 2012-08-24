@@ -36,7 +36,7 @@ private:
 		c3d(context_3d),
 		m_areas_match(areas_match)
 	{ 
-		rotation = dihedral_angle(base->base_plane(), other->base_plane());
+		rotation = dihedral_angle(base->parallel_plane_through_origin(), other->parallel_plane_through_origin());
 	}
 
 	bool areas_match() const {
@@ -76,7 +76,7 @@ private:
 public:
 	surface_pair() : m_base(nullptr), m_other(nullptr), c3d(nullptr) { }
 	surface_pair(const oriented_area & base, const oriented_area & other, equality_context * context_3d)
-		: m_base(&base), m_other(&other), c3d(context_3d), rotation(dihedral_angle(base.base_plane(), other.base_plane())) { }
+		: m_base(&base), m_other(&other), c3d(context_3d), rotation(dihedral_angle(base.parallel_plane_through_origin(), other.parallel_plane_through_origin())) { }
 
 	const oriented_area & base() const { return *m_base; }
 	const oriented_area & other() const { return *m_other; }
@@ -229,8 +229,8 @@ public:
  			// plane1: a1*x + b1*y + c1*z + d1 = 0  , c1 != 0
  			// plane2: a2*x + b2*y + c2*z + d2 = 0  , c2 != 0
 
-			const plane_3 & plane1 = surf1.other().base_plane();
-			const plane_3 & plane2 = surf2.other().base_plane();
+			const plane_3 & plane1 = surf1.other().parallel_plane_through_origin();
+			const plane_3 & plane2 = surf2.other().parallel_plane_through_origin();
 
 			NT a1 = plane1.a(), b1 = plane1.b(), c1 = plane1.c();
 			NT a2 = plane2.a(), b2 = plane2.b(), c2 = plane2.c();

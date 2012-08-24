@@ -25,11 +25,4 @@ public:
 			m_geometry->subtract(g, c);
 		}
 	}
-
-	// DEPRECATED
-	explicit space(std::shared_ptr<equality_context> &) : guid(util::misc::new_guid_as_string()), m_original_info(nullptr) { }
-	space(space_info * info, std::shared_ptr<equality_context> & c, const std::function<point_3(point_3)> & /*corrector*/) {
-		*this = space(info, c.get());
-	}
-	bool is_outside_space() const { return m_original_info == nullptr; }
 };
