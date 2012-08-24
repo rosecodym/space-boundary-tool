@@ -12,7 +12,7 @@ namespace GUI.Operations
     {
         static public void Execute(ViewModel vm)
         {
-            if (!vm.Busy)
+            if (!vm.CurrentlyGeneratingIdf)
             {
                 try
                 {
@@ -55,7 +55,7 @@ namespace GUI.Operations
                     });
                     worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
                     {
-                        vm.Busy = false;
+                        vm.CurrentlyGeneratingIdf = false;
                     });
 
                     Parameters p = new Parameters();
@@ -87,12 +87,12 @@ namespace GUI.Operations
 
                     p.AttachDebugger = vm.AttachDebuggerPriorToIdfGeneration;
 
-                    vm.Busy = true;
+                    vm.CurrentlyGeneratingIdf = true;
                     worker.RunWorkerAsync(p);
                 }
                 catch (Exception)
                 {
-                    vm.Busy = false;
+                    vm.CurrentlyGeneratingIdf = false;
                 }
             }
         }

@@ -23,11 +23,11 @@ namespace GUI.Operations
 
         static public void Execute(ViewModel vm)
         {
-            if (!vm.Busy && !String.IsNullOrWhiteSpace(vm.MaterialsLibraryPath))
+            if (!vm.CurrentlyLoadingMaterialLibrary && !String.IsNullOrWhiteSpace(vm.MaterialsLibraryPath))
             {
                 try
                 {
-                    vm.Busy = true;
+                    vm.CurrentlyLoadingMaterialLibrary = true;
                     BackgroundWorker worker = new BackgroundWorker();
                     worker.WorkerReportsProgress = true;
                     worker.DoWork += new DoWorkEventHandler(DoLoadMaterialsLibraryWork);
@@ -40,7 +40,7 @@ namespace GUI.Operations
                     {
                         var res = e.Result as ICollection<MaterialLibraryEntry>;
                         if (res != null) { vm.LibraryMaterials = res; }
-                        vm.Busy = false;
+                        vm.CurrentlyLoadingMaterialLibrary = false;
                     });
 
                     Parameters p = new Parameters();
@@ -52,7 +52,7 @@ namespace GUI.Operations
                 }
                 catch (Exception)
                 {
-                    vm.Busy = false;
+                    vm.CurrentlyLoadingMaterialLibrary = false;
                 }
             }
         }

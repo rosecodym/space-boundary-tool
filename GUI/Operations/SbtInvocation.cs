@@ -22,11 +22,11 @@ namespace GUI.Operations
 
         static public void Execute(ViewModel vm)
         {
-            if (!vm.Busy)
+            if (!vm.CurrentlyCalculatingSBs)
             {
                 try
                 {
-                    vm.Busy = true;
+                    vm.CurrentlyCalculatingSBs = true;
                     // TODO: check for pre-existing building
                     BackgroundWorker worker = new BackgroundWorker();
                     worker.WorkerReportsProgress = true;
@@ -40,7 +40,7 @@ namespace GUI.Operations
                     {
                         SbtBuildingInformation res = e.Result as SbtBuildingInformation;
                         if (res != null) { vm.CurrentSbtBuilding = res; }
-                        vm.Busy = false;
+                        vm.CurrentlyCalculatingSBs = false;
                     });
 
                     Parameters p = new Parameters();
@@ -61,7 +61,7 @@ namespace GUI.Operations
                 }
                 catch (Exception)
                 {
-                    vm.Busy = false;
+                    vm.CurrentlyCalculatingSBs = false;
                 }
             }
         }

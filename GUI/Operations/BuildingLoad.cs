@@ -18,11 +18,11 @@ namespace GUI.Operations
 
         static public void Execute(ViewModel vm)
         {
-            if (!vm.Busy)
+            if (!vm.CurrentlyLoadingIfcModel)
             {
                 try
                 {
-                    vm.Busy = true;
+                    vm.CurrentlyLoadingIfcModel = true;
                     BackgroundWorker worker = new BackgroundWorker();
                     worker.WorkerReportsProgress = true;
                     worker.DoWork += new DoWorkEventHandler(DoBuildingLoadWork);
@@ -35,7 +35,7 @@ namespace GUI.Operations
                     {
                         var res = e.Result as IfcBuildingInformation;
                         if (res != null) { vm.CurrentIfcBuilding = res; }
-                        vm.Busy = false;
+                        vm.CurrentlyLoadingIfcModel = false;
                     });
 
                     Parameters p = new Parameters();
@@ -46,7 +46,7 @@ namespace GUI.Operations
                 }
                 catch (Exception)
                 {
-                    vm.Busy = false;
+                    vm.CurrentlyLoadingIfcModel = false;
                 }
             }
         }

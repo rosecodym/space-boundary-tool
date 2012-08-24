@@ -22,7 +22,11 @@ namespace GUI
         private ICollection<MaterialLibraryEntry> libraryMaterials;
         private ObservableCollection<IfcConstruction> ifcConstructions;
         private readonly IddManager idds = new IddManager();
-        private bool busy = false;
+
+        private bool calculatingSBs = false;
+        private bool loadingMaterialLibrary = false;
+        private bool loadingIfcModel = false;
+        private bool generatingIdf = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -136,7 +140,6 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.SkipWallColumnCheck = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SkipWallColumnCheck")); }
             }
         }
 
@@ -318,42 +321,41 @@ namespace GUI
             set { Properties.Settings.Default.Timestep = value; }
         }
 
-        public bool Busy
+        public bool CurrentlyCalculatingSBs
         {
-            get { return busy; }
+            get { return calculatingSBs; }
             set
             {
-                if (PropertyChanged != null)
-                {
-                    busy = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("Busy"));
-                    // TODO: figure out how to make this not backwards
-                    PropertyChanged(this, new PropertyChangedEventArgs("SbtInvokable"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("IdfGeneratable"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryLoadable"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("IfcBuildingLoadable"));
-                }
+                calculatingSBs = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")); }
             }
         }
-
-        public bool SbtInvokable
+        public bool CurrentlyLoadingMaterialLibrary
         {
-            get { return !Busy; }
+            get { return loadingMaterialLibrary; }
+            set
+            {
+                loadingMaterialLibrary = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")); }
+            }
         }
-
-        public bool IdfGeneratable
+        public bool CurrentlyLoadingIfcModel
         {
-            get { return !Busy && sbtBuilding != null && OutputIdfFilePath != String.Empty; }
+            get { return loadingIfcModel; }
+            set
+            {
+                loadingIfcModel = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")); }
+            }
         }
-
-        public bool MaterialsLibraryLoadable
+        public bool CurrentlyGeneratingIdf
         {
-            get { return !Busy && !String.IsNullOrWhiteSpace(this.MaterialsLibraryPath); }
-        }
-
-        public bool IfcBuildingLoadable
-        {
-            get { return !Busy && InputIfcFilePath != String.Empty; }
+            get { return generatingIdf; }
+            set
+            {
+                generatingIdf = value;
+                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIdf")); }
+            }
         }
 
         public bool AttachDebuggerPriorToIdfGeneration { get; set; }
@@ -368,10 +370,10 @@ namespace GUI
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this));
-            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this));
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this));
-            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this));
+            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
+            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => !CurrentlyGeneratingIdf);
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary);
+            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
             LinkConstructionsCommand = new RelayCommand(obj =>
             {
                 IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
