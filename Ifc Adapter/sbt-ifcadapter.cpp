@@ -278,7 +278,7 @@ ifcadapter_return_t load_and_run_from(
 				}
 			}
 			else {
-				res = IFCADAPT_UNKNOWN;
+				res = generate_res == SBT_OK ? IFCADAPT_OK : IFCADAPT_UNKNOWN;
 			}
 		}
 		return res;
