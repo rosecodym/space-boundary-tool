@@ -79,7 +79,15 @@ namespace GUI.Operations
                 objs = idf.GetObjectsByType("Material", false);
                 foreach (IdfObject obj in objs)
                 {
-                    res.Add(new Materials.LibraryEntries.Opaque(obj));
+                    try
+                    {
+                        res.Add(new Materials.LibraryEntries.Opaque(obj));
+                    }
+                    catch (Exception)
+                    {
+                        string objName = String.IsNullOrWhiteSpace(obj.Name) ? "<unnamed-object>" : obj.Name;
+                        p.Notify(String.Format("Warning: Failed to load material library object '{0}'. Check the definition in the IDF.\n", objName));
+                    }
                 }
 
                 p.Notify("Found " + res.Count.ToString() + " materials.\n");
