@@ -3,7 +3,6 @@
 #include "assign_openings.h"
 #include "build_blocks.h"
 #include "build_stacks.h"
-#include "core_exception.h"
 #include "equality_context.h"
 #include "geometry_common.h"
 #include "guid_filter.h"
@@ -148,44 +147,37 @@ sbt_return_t calculate_space_boundaries(
 	guid_filter space_filter = create_guid_filter(g_opts.space_filter, g_opts.space_filter_count);
 
 	sbt_return_t retval;
-	
-	try {
 
-		NOTIFY_MSG("Beginning processing for %u building elements.\n", element_count);
-		if (g_opts.flags & SBT_SKIP_WALL_SLAB_CHECK) {
-			NOTIFY_MSG("Assuming no wall/slab intersections.\n");
-		}
-		if (g_opts.flags & SBT_SKIP_WALL_COLUMN_CHECK) {
-			NOTIFY_MSG("Assuming no wall/column intersections.\n");
-		}
-		if (g_opts.flags & SBT_SKIP_SLAB_COLUMN_CHECK) {
-			NOTIFY_MSG("Assuming no slab/column intersections.\n");
-		}
-
-		std::shared_ptr<equality_context> whole_building_context(new equality_context(g_opts.equality_tolerance));
-
-		std::vector<element> elements = load_elements(element_infos, element_count, whole_building_context.get(), element_filter);
-
-		std::vector<space> spaces = load_spaces(space_infos, space_count, whole_building_context.get(), space_filter);
-
-		auto blocks = blocking::build_blocks(elements, whole_building_context.get());
-
-		auto stacks = stacking::build_stacks(blocks, spaces, g_opts.max_pair_distance, whole_building_context.get());
-
-		std::vector<std::unique_ptr<surface>> surfaces;
-		boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
-
-		opening_assignment::assign_openings(&surfaces, g_opts.equality_tolerance);
-
-		NOTIFY_MSG("Converting internal structures to interface structures");
-		retval = convert_to_space_boundaries(surfaces, space_boundaries);
-		*space_boundary_count = surfaces.size();
-		NOTIFY_MSG("done.\n");
+	NOTIFY_MSG("Beginning processing for %u building elements.\n", element_count);
+	if (g_opts.flags & SBT_SKIP_WALL_SLAB_CHECK) {
+		NOTIFY_MSG("Assuming no wall/slab intersections.\n");
+	}
+	if (g_opts.flags & SBT_SKIP_WALL_COLUMN_CHECK) {
+		NOTIFY_MSG("Assuming no wall/column intersections.\n");
+	}
+	if (g_opts.flags & SBT_SKIP_SLAB_COLUMN_CHECK) {
+		NOTIFY_MSG("Assuming no slab/column intersections.\n");
 	}
 
-	catch (core_exception & e) {
-		retval = e.code();
-	}
+	std::shared_ptr<equality_context> whole_building_context(new equality_context(g_opts.equality_tolerance));
+
+	std::vector<element> elements = load_elements(element_infos, element_count, whole_building_context.get(), element_filter);
+
+	std::vector<space> spaces = load_spaces(space_infos, space_count, whole_building_context.get(), space_filter);
+
+	auto blocks = blocking::build_blocks(elements, whole_building_context.get());
+
+	auto stacks = stacking::build_stacks(blocks, spaces, g_opts.max_pair_distance, whole_building_context.get());
+
+	std::vector<std::unique_ptr<surface>> surfaces;
+	boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
+
+	opening_assignment::assign_openings(&surfaces, g_opts.equality_tolerance);
+
+	NOTIFY_MSG("Converting internal structures to interface structures");
+	retval = convert_to_space_boundaries(surfaces, space_boundaries);
+	*space_boundary_count = surfaces.size();
+	NOTIFY_MSG("done.\n");
 
 	return retval;
 }

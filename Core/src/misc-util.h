@@ -3,28 +3,7 @@
 #include "precompiled.h"
 
 #include "CreateGuid_64.h"
-#include "core_exception.h"
 #include "sbt-core.h"
-
-#define SBT_ASSERT(cond, ...) \
-	do { \
-		if (!(cond)) { \
-			sprintf(g_msgbuf, __VA_ARGS__); \
-			g_opts.error_func(g_msgbuf); \
-			throw core_exception(SBT_ASSERTION_FAILED); \
-		} \
-	} \
-	while (false);
-
-#define SBT_EXPENSIVE_ASSERT(cond, ...) \
-	do { \
-		if ((g_opts.flags & SBT_EXPENSIVE_CHECKS) && !(cond)) { \
-			sprintf(g_msgbuf, __VA_ARGS__); \
-			g_opts.error_func(g_msgbuf); \
-			throw core_exception(SBT_ASSERTION_FAILED); \
-		} \
-	} \
-	while (false);
 
 #define FLAGGED(flag) (g_opts.flags & (flag))
 

@@ -57,9 +57,6 @@
     <ClInclude Include="src\misc-util.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="src\core_exception.h">
-      <Filter>types</Filter>
-    </ClInclude>
     <ClInclude Include="src\equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>
