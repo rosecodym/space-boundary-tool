@@ -45,7 +45,7 @@ namespace GUI.Operations
 
                     Parameters p = new Parameters();
                     p.InputFilename = vm.InputIfcFilePath;
-                    p.OutputFilename = vm.WriteIfc ? vm.OutputIfcFilePath : null;
+                    p.OutputFilename = (vm.WriteIfc && !String.IsNullOrWhiteSpace(vm.OutputIfcFilePath)) ? vm.OutputIfcFilePath : null;
 
                     if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
                     if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
