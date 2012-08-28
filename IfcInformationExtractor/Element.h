@@ -3,6 +3,7 @@
 #include <cpp_edmi.h>
 
 #include "Construction.h"
+#include "ConstructionFactory.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -14,7 +15,7 @@ private:
 	initonly String ^ guid;
 	initonly Construction ^ construction;
 public:
-	Element(const cppw::Instance & inst);
+	Element(const cppw::Instance & inst, ConstructionFactory ^ constructionFactory);
 
 	property String ^ Guid
 	{

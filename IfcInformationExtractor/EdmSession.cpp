@@ -1,5 +1,7 @@
 #include <cpp_edmi.h>
 
+#include "ConstructionFactory.h"
+
 #include "EdmSession.h"
 
 using namespace System;
@@ -37,14 +39,14 @@ ICollection<Space ^> ^ GetSpaces(cppw::Open_model * model) {
 	return spaces;
 }
 
-ICollection<Element ^> ^ GetElements(cppw::Open_model * model) {
+ICollection<Element ^> ^ GetElements(cppw::Open_model * model, ConstructionFactory ^ constructionFactory) {
 	if (model == __nullptr) {
 		return nullptr;
 	}
 	cppw::Instance_set instances = model->get_set_of("IfcBuildingElement", cppw::include_subtypes);
 	IList<Element ^> ^ elements = gcnew List<Element ^>();
 	for (instances.move_first(); instances.move_next(); ) {
-		elements->Add(gcnew Element(instances.get()));
+		elements->Add(gcnew Element(instances.get(), constructionFactory));
 	}
 	return elements;
 }
@@ -142,6 +144,8 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 
 	res->Filename = currentIfcPath;
 
+	ConstructionFactory ^ cFactory = gcnew ConstructionFactory();
+
 	GetLocationInformation(model, res->NorthAxis, res->Latitude, res->Longitude, res->Elevation);
 
 	ICollection<Space ^> ^ spaces = GetSpaces(model);
@@ -149,7 +153,7 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 		res->SpacesByGuid[s->Guid] = s;
 	}
 
-	ICollection<Element ^> ^ elements = GetElements(model);
+	ICollection<Element ^> ^ elements = GetElements(model, cFactory);
 	for each(Element ^ e in elements) {
 		res->ElementsByGuid[e->Guid] = e;
 	}
