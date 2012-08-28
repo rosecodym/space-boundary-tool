@@ -10,6 +10,8 @@ public ref class Construction abstract : IComparable<Construction ^> {
 public:
 	property String ^ Name { virtual String ^ get() abstract; }
 	property bool IsComposite { virtual bool get() abstract; }
+	property String ^ Summary { virtual String ^ get() abstract; }
+	property String ^ Details { virtual String ^ get() abstract; }
 
 	virtual Int32 CompareTo(Construction ^ other) {
 		if (other == nullptr) { return 1; }

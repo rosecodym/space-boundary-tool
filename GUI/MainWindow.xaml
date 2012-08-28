@@ -147,7 +147,17 @@
                                 </Grid.RowDefinitions>
                                 <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructions}" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" />
+                                        <DataGridTemplateColumn Header="Name" IsReadOnly="True">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}">
+                                                        <TextBlock.ToolTip>
+                                                            <TextBlock Text="{Binding Summary}" />
+                                                        </TextBlock.ToolTip>
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
                                         <DataGridTextColumn Header="Composite" Binding="{Binding IsComposite}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="Needs Mapping" Binding="{Binding ParticipatesInSpaceBoundary}"/>
                                         <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding IdfMappingTarget}" IsReadOnly="True" />

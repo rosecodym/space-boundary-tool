@@ -14,6 +14,8 @@ public:
 
 	property String ^ Name { virtual String ^ get() override { return name; } }
 	property bool IsComposite { virtual bool get() override { return false; } } 
+	property String ^ Summary { virtual String ^ get() override { return Name; } }
+	property String ^ Details { virtual String ^ get() override { return nullptr; } }
 };
 
 } // namespace IfcInformationExtractor
