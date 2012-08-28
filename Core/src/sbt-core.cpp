@@ -4,15 +4,16 @@
 #include "build_blocks.h"
 #include "build_stacks.h"
 #include "equality_context.h"
+#include "exceptions.h"
 #include "geometry_common.h"
 #include "guid_filter.h"
 #include "load_elements.h"
 #include "load_spaces.h"
+#include "misc-util.h"
+#include "printing-util.h"
 #include "sbt-core-helpers.h"
 #include "space.h"
 #include "surface.h"
-#include "misc-util.h"
-#include "printing-util.h"
 
 #include "sbt-core.h"
 
@@ -125,6 +126,16 @@ sbt_return_t convert_to_space_boundaries(const std::vector<std::unique_ptr<surfa
 
 void do_nothing(char * /*msg*/) { }
 
+void exception_translator(unsigned int code, struct _EXCEPTION_POINTERS *) {
+	if (code == EXCEPTION_STACK_OVERFLOW) {
+		// don't call _resetskoflow() here yet - the stack isn't unwound. or something.
+		throw stack_overflow_exception();
+	}
+	else {
+		throw sbt_exception();
+	}
+}
+
 } // namespace
 
 sbt_return_t calculate_space_boundaries(
@@ -136,7 +147,6 @@ sbt_return_t calculate_space_boundaries(
 	space_boundary *** space_boundaries,
 	sb_calculation_options opts)
 {
-
 	g_opts = opts;
 
 	if (g_opts.notify_func == NULL) { g_opts.notify_func = &do_nothing; }
@@ -147,6 +157,8 @@ sbt_return_t calculate_space_boundaries(
 	guid_filter space_filter = create_guid_filter(g_opts.space_filter, g_opts.space_filter_count);
 
 	sbt_return_t retval;
+
+	_set_se_translator(&exception_translator);
 
 	try {
 		NOTIFY_MSG("Beginning processing for %u building elements.\n", element_count);
@@ -180,8 +192,12 @@ sbt_return_t calculate_space_boundaries(
 		*space_boundary_count = surfaces.size();
 		NOTIFY_MSG("done.\n");
 	}
-	catch (...) {
-		retval = SBT_UNKNOWN;
+	catch (sbt_exception & ex) {
+		retval = ex.code();
+	}
+
+	if (retval == SBT_TOO_COMPLICATED) {
+		_resetstkoflw();
 	}
 
 	return retval;

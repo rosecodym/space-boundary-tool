@@ -37,7 +37,7 @@ namespace Sbt
             SBCalculationOptions opts);
 
         [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "load_and_run_from")]
-        private static extern int LoadAndRunFrom(
+        private static extern IfcAdapterResult LoadAndRunFrom(
             string inputFilename,
             string outputFilename,
             SBCalculationOptions opts,
@@ -78,8 +78,16 @@ namespace Sbt
         public enum SbtResult : int
         {
             Ok = 0,
-            Unknown = -1,
-            AssertionFailed = -2
+            TooComplicated = 1,
+            Unknown = -1
+        }
+
+        public enum IfcAdapterResult : int
+        {
+            Ok = 0,
+            EdmError = 1,
+            TooComplicated = 2,
+            Unknown = -1
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -138,9 +146,9 @@ namespace Sbt
                         CoreTypes.SpaceBoundary.LinkSpaces(spaceBoundaries, spaces);
                         CoreTypes.SpaceBoundary.LinkElements(spaceBoundaries, elements);
                     }
-                    else if (res == SbtResult.AssertionFailed)
+                    else if (res == SbtResult.TooComplicated)
                     {
-                        throw new Exceptions.SbtAssertionFailedException();
+                        throw new Exceptions.TooComplicatedException();
                     }
                     else {
                         throw new Exceptions.SbtException();
@@ -215,12 +223,19 @@ namespace Sbt
             IntPtr nativeSpaces;
             IntPtr nativeSbs;
 
-            int res = LoadAndRunFrom(inputFilename, outputFilename, opts, out nativeElements, out elementCount, out nativeSpaces, out spaceCount, out nativeSbs, out spaceBoundaryCount);
+            IfcAdapterResult res = LoadAndRunFrom(inputFilename, outputFilename, opts, out nativeElements, out elementCount, out nativeSpaces, out spaceCount, out nativeSbs, out spaceBoundaryCount);
 
-            if (res != 0)
+            if (res == IfcAdapterResult.EdmError)
             {
-                throw new Exception("Processing from the IFC file failed.");
+                throw new Exception("There was a problem reading or writing an IFC file.\n");
             }
+            else if (res == IfcAdapterResult.TooComplicated)
+            {
+                throw new Exception("Geometry too complicated! Try simplifying the geometry around where the error occurred.\n");
+            }
+            else if (res == IfcAdapterResult.Unknown) {
+                throw new Exception("Unknown error during processing.\n");
+                }
 
             elements = new List<CoreTypes.ElementInfo>();
             for (uint i = 0; i < elementCount; ++i)

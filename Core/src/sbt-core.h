@@ -56,8 +56,8 @@ END(element_type)
 // this list to be expanded later
 BEGINENUM(sbt_return_t)
 	SBT_OK = 0,
-	SBT_UNKNOWN = -1,
-	SBT_ASSERTION_FAILED = -2
+	SBT_TOO_COMPLICATED = 1,
+	SBT_UNKNOWN = -1
 END(sbt_return_t)
 
 // points

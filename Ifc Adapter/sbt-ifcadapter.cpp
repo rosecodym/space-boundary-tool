@@ -210,6 +210,9 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 				}
 				free_sb_list(sbs, sb_count);
 			}
+			else if (generate_res == SBT_TOO_COMPLICATED) {
+				res = IFCADAPT_TOO_COMPLICATED;
+			}
 			else {
 				res = IFCADAPT_UNKNOWN;
 			}
@@ -221,7 +224,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 	catch (cppw::Error & e) {
 		sprintf(buf, "edm error: %s\n", e.message.data());
 		options.error_func(buf);
-		return IFCADAPT_EDM_ERR;
+		return IFCADAPT_EDM_ERROR;
 	}
 }
 
@@ -277,6 +280,9 @@ ifcadapter_return_t load_and_run_from(
 					res = IFCADAPT_OK;
 				}
 			}
+			else if (generate_res == SBT_TOO_COMPLICATED) {
+				res = IFCADAPT_TOO_COMPLICATED;
+			}
 			else {
 				res = generate_res == SBT_OK ? IFCADAPT_OK : IFCADAPT_UNKNOWN;
 			}
@@ -286,7 +292,7 @@ ifcadapter_return_t load_and_run_from(
 	catch (cppw::Error & e) {
 		sprintf(buf, "edm error: %s\n", e.message.data());
 		options.error_func(buf);
-		return IFCADAPT_EDM_ERR;
+		return IFCADAPT_EDM_ERROR;
 	}
 }
 

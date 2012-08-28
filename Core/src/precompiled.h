@@ -28,6 +28,9 @@
 #include <cstdio>
 #include <ctime>
 
+#include <windows.h>
+#include <eh.h>
+
 #include <boost/multi_array.hpp>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>

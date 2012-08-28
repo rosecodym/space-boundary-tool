@@ -143,6 +143,7 @@
     <ClInclude Include="src\stackable.h" />
     <ClInclude Include="src\stacking_graph.h" />
     <ClInclude Include="src\stacking_sequence.h" />
+    <ClInclude Include="src\exceptions.h" />
     <ClInclude Include="src\surface.h" />
     <ClInclude Include="src\misc-util.h" />
     <ClInclude Include="src\surface_pair.h" />

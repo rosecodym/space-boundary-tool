@@ -177,6 +177,9 @@
     <ClInclude Include="src\cleanup_loop.h">
       <Filter>geometry</Filter>
     </ClInclude>
+    <ClInclude Include="src\exceptions.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">

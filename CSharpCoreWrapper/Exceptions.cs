@@ -9,6 +9,6 @@ namespace Sbt
     {
         public class SbtException : Exception { }
 
-        public class SbtAssertionFailedException : SbtException { }
+        public class TooComplicatedException : SbtException { }
     }
 }
