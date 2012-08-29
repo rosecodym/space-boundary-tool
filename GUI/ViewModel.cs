@@ -10,7 +10,7 @@ using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
 using IfcConstruction = IfcInformationExtractor.Construction;
 using IfcElement = IfcInformationExtractor.Element;
 
-using MaterialLibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+using MaterialLibraryEntry = MaterialLibrary.LibraryEntry;
 
 namespace GUI
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using LibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+using LibraryEntry = MaterialLibrary.LibraryEntry;
 using OutputConstruction = GUI.Materials.Output.Construction;
 using OutputLayer = GUI.Materials.Output.MaterialLayer;
 

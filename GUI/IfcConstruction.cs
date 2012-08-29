@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-using MaterialLibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+using MaterialLibraryEntry = MaterialLibrary.LibraryEntry;
 
 namespace GUI
 {

@@ -6,7 +6,7 @@ using System.Text;
 
 using Microsoft.Win32;
 
-using MaterialLibraryEntry = GUI.Materials.LibraryEntries.Opaque;
+using MaterialLibraryEntry = MaterialLibrary.LibraryEntry;
 
 namespace GUI.Operations
 {

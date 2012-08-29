@@ -136,6 +136,10 @@
       <Project>{C30F68F1-3D01-419D-A925-05D517906CC0}</Project>
       <Name>IfcInformationExtractor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MaterialLibrary\MaterialLibrary.fsproj">
+      <Project>{39A5C20B-7748-4E42-A231-FF6E1F4BF7B9}</Project>
+      <Name>MaterialLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
