@@ -18,9 +18,7 @@ boost::optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_i
 
 } // namespace
 
-void add_element(std::vector<element_info *> * infos, element_type type, const cppw::Instance & inst, void (*msg_func)(char *), const unit_scaler & scaler, number_collection * c) {
-	static int next_construction_id = 1;
-
+void add_element(std::vector<element_info *> * infos, element_type type, const cppw::Instance & inst, void (*msg_func)(char *), const unit_scaler & scaler, int * next_material_id, number_collection * c) {
 	char buf[256];
 
 	sprintf(buf, "Extracting element %s...", ((cppw::String)inst.get("GlobalId")).data());
@@ -31,7 +29,8 @@ void add_element(std::vector<element_info *> * infos, element_type type, const c
 
 	strncpy(info->id, ((cppw::String)inst.get("GlobalID")).data(), ELEMENT_ID_MAX_LEN);
 	info->type = type;
-	info->material = next_construction_id++;
+	info->material = *next_material_id;
+	*next_material_id = *next_material_id + 1;
 
 	exact_solid s;
 	int got_geometry = -1;

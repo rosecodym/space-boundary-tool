@@ -10,6 +10,8 @@ namespace {
 size_t get_elements(cppw::Open_model & model, element_info *** elements, void (*msg_func)(char *), const unit_scaler & s, const std::function<bool(const char *)> & passes_filter, number_collection * c) {
 	std::vector<element_info *> infos;
 
+	int next_material_id = 1;
+
 	auto building_elements = model.get_set_of("IfcBuildingElement", cppw::include_subtypes);
 	for (building_elements.move_first(); building_elements.move_next(); ) {
 		auto elem = building_elements.get();
@@ -22,7 +24,7 @@ size_t get_elements(cppw::Open_model & model, element_info *** elements, void (*
 			elem.is_kind_of("IfcWindow") ? WINDOW : 
 			(elem.is_kind_of("IfcCovering") && elem.get("PredefinedType").is_set() && (cppw::String)elem.get("PredefinedType") == "CEILING") ? SLAB : UNKNOWN;
 		if (type != UNKNOWN && passes_filter(((cppw::String)elem.get("GlobalId")).data())) {
-			add_element(&infos, type, elem, msg_func, s, c);
+			add_element(&infos, type, elem, msg_func, s, &next_material_id, c);
 		}
 	}
 
