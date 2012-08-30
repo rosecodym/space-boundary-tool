@@ -386,7 +386,7 @@ namespace GUI
                 obj =>
                 {
                     IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
-                    if (selectedIfcConstructions != null)
+                    if (this.SelectedIdfConstruction != null && selectedIfcConstructions != null)
                     {
                         return selectedIfcConstructions.All(c => c is IfcConstruction && ((IfcConstruction)c).IsForWindows == this.SelectedIdfConstruction.IsForWindows);
                     }
