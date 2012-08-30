@@ -42,6 +42,9 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LibraryEntryOpaque.fs" />
+    <Compile Include="LibraryEntryGas.fs" />
+    <Compile Include="LibraryEntryGlazing.fs" />
     <Compile Include="LibraryEntry.fs" />
     <Compile Include="Loader.fs" />
     <None Include="Script.fsx" />
