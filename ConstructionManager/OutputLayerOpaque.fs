@@ -5,7 +5,7 @@ open MaterialLibrary
 
 type internal OutputLayerOpaque (name, libraryEntry:MaterialLibrary.LibraryEntryOpaque, thickness) =
     inherit OutputLayer()
-    override this.Name = sprintf "%s (%f)" name thickness
+    override this.Name = sprintf "%s (%.3f)" name thickness
 
     override this.AddToIdfV710(idf) =
         let obj = idf.CreateObject("Material")
