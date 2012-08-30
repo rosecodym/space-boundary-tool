@@ -18,12 +18,12 @@ type Manager (sbtMaterialIDToLibraryEntry:Func<int, MaterialLibrary.LibraryEntry
         newC
 
     let retrieveOpaqueLayer (libraryEntry:LibraryEntryOpaque) thickness =
-        let newLayer = OutputLayerOpaque(libraryEntry.Name.ToString(), libraryEntry, thickness) :> OutputLayer
+        let newLayer = OutputLayerOpaque(sprintf "%s (%.3f)" (libraryEntry.Name.ToString()) thickness, libraryEntry, thickness) :> OutputLayer
         allMaterials <- Set.add newLayer allMaterials
         newLayer
 
     let retrieveOpaqueSurface (libraryEntry:LibraryEntryOpaque) =
-        let newLayer = OutputLayerOpaque(libraryEntry.Name.ToString(), libraryEntry, 0.001) :> OutputLayer
+        let newLayer = OutputLayerOpaque(sprintf "%s (surface only)" (libraryEntry.Name.ToString()), libraryEntry, 0.001) :> OutputLayer
         allMaterials <- Set.add newLayer allMaterials
         newLayer
 
