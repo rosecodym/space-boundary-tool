@@ -160,6 +160,7 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                         <DataGridTextColumn Header="Composite" Binding="{Binding IsComposite}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="Needs Mapping" Binding="{Binding ParticipatesInSpaceBoundary}"/>
                                         <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding IdfMappingTarget}" IsReadOnly="True" />
                                     </DataGrid.Columns>

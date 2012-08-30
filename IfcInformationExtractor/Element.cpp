@@ -14,7 +14,7 @@ Construction ^ createSingleMaterial(const cppw::Instance & inst, String ^ elemen
 		if (String::IsNullOrWhiteSpace(name)) {
 			return constructionFactory->GetUnnamedMaterial(elementGuid);
 		}
-		return constructionFactory->GetSingleMaterial(name);
+		return constructionFactory->GetSingleMaterial(name, false);
 	}
 	else if (inst.is_kind_of("IfcMaterialLayer")) {
 		cppw::Select mat = inst.get("Material");
@@ -31,7 +31,7 @@ Construction ^ createConstructionForLayerSet(const cppw::Instance & inst, String
 	if (mats.count() > 1) {
 		cppw::Select name = inst.get("LayerSetName");
 		return name.is_set() ?
-			constructionFactory->GetComposite(gcnew String(((cppw::String)name).data())) : constructionFactory->GetUnnamedComposite(elementGuid);
+			constructionFactory->GetComposite(gcnew String(((cppw::String)name).data()), false) : constructionFactory->GetUnnamedComposite(elementGuid);
 	}
 	else {
 		return createSingleMaterial((cppw::Instance)mats.get_(0), elementGuid, constructionFactory);
@@ -70,7 +70,7 @@ Construction ^ createConstructionForWindow(const cppw::Instance & element, Strin
 						cppw::Instance prop = props.get_();
 						if (prop.is_instance_of("IfcPropertySingleValue") && prop.get("NominalValue").is_set()) {
 							if (prop.get("Name") == "ConstructionName" || prop.get("Name") == "Reference") {
-								return gcnew CompositeConstruction(gcnew String(((cppw::String)prop.get("NominalValue")).data()));
+								return constructionFactory->GetComposite(gcnew String(((cppw::String)prop.get("NominalValue")).data()), true);
 							}
 						}
 					}

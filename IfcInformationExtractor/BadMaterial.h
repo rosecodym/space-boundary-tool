@@ -11,13 +11,15 @@ public ref class BadMaterial : Construction {
 private:
 	String ^ name;
 	String ^ summary;
+	bool isForWindows;
 	ICollection<String ^> ^ sources;
 
 public:
-	BadMaterial(String ^ name, String ^ summary) : name(name), summary(summary), sources(gcnew List<String ^>()) { }
+	BadMaterial(String ^ name, String ^ summary, bool forWindows) : name(name), summary(summary), isForWindows(forWindows), sources(gcnew List<String ^>()) { }
 
 	property String ^ Name { virtual String ^ get() override { return name; } }
 	property bool IsComposite { virtual bool get() override { return false; } } 
+	property bool IsForWindows { virtual bool get() override { return isForWindows; } }
 	property String ^ Summary { virtual String ^ get() override { 
 		return summary + (sources->Count == 1 ? " 1 element uses this construction." : String::Format(" {0} elements use this construction.", sources->Count));
 	} }

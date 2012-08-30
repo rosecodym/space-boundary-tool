@@ -18,6 +18,7 @@ namespace GUI
 
         public string Name { get { return ifcInformation.Name; } }
         public bool IsComposite { get { return ifcInformation.IsComposite; } }
+        public bool IsForWindows { get { return ifcInformation.IsForWindows; } }
         public string Summary { get { return ifcInformation.Summary; } }
         public string Details { get { return ifcInformation.Details; } }
 
