@@ -128,6 +128,10 @@
     <None Include="Resources\V7-1-0-Energy+.idd" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ConstructionManager\ConstructionManager.fsproj">
+      <Project>{F4D996A3-4B9B-46BE-91CD-2AA604549840}</Project>
+      <Name>ConstructionManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
       <Project>{2B180C45-2DA1-4C26-9850-F92B9369D626}</Project>
       <Name>ManagedWrapper</Name>

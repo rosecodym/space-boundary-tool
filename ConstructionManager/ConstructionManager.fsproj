@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{39a5c20b-7748-4e42-a231-ff6e1f4bf7b9}</ProjectGuid>
+    <ProjectGuid>{f4d996a3-4b9b-46be-91cd-2aa604549840}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MaterialLibraryLoader</RootNamespace>
-    <AssemblyName>MaterialLibraryLoader</AssemblyName>
+    <RootNamespace>ConstructionManager</RootNamespace>
+    <AssemblyName>ConstructionManager</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>MaterialLibraryLoader</Name>
+    <Name>ConstructionManager</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\MaterialLibraryLoader.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\ConstructionManager.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,7 +29,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\MaterialLibraryLoader.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\ConstructionManager.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LibIdf">
@@ -42,9 +42,24 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LibraryEntry.fs" />
-    <Compile Include="Loader.fs" />
+    <Compile Include="OutputLayer.fs" />
+    <Compile Include="OutputLayerOpaque.fs" />
+    <Compile Include="Construction.fs" />
+    <Compile Include="LayerPatterns.fs" />
+    <Compile Include="Manager.fs" />
     <None Include="Script.fsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
+      <Name>ManagedWrapper</Name>
+      <Project>{2b180c45-2da1-4c26-9850-f92b9369d626}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\MaterialLibrary\MaterialLibrary.fsproj">
+      <Name>MaterialLibrary</Name>
+      <Project>{39a5c20b-7748-4e42-a231-ff6e1f4bf7b9}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
