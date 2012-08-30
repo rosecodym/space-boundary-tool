@@ -133,6 +133,7 @@
                                 <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding LibraryMaterials}" SelectionMode="Single" SelectedItem="{Binding SelectedIdfConstruction}" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>

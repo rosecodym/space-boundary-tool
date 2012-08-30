@@ -17,10 +17,10 @@ type LibraryEntry =
             | Glazing(properties) -> properties.Name.ToString()
             | Opaque(properties) -> properties.Name.ToString()
 
-        member this.IsForWindow =
+        member this.IsForWindows =
             match this with
             | AirGap(_) -> false
-            | Composite(_, layers) -> layers |> Seq.exists (fun layer -> not layer.IsForWindow) |> not
+            | Composite(_, layers) -> layers |> Seq.exists (fun layer -> not layer.IsForWindows) |> not
             | Gas(_) -> true
             | Glazing(_) -> true
             | Opaque(_) -> false
@@ -28,7 +28,7 @@ type LibraryEntry =
         member this.DisplayToUser =
             match this with
             | AirGap(_) -> false
-            | Composite(_, layers) -> this.IsForWindow
+            | Composite(_, layers) -> this.IsForWindows
             | Gas(_) -> false
             | Glazing(_) -> false
             | Opaque(_) -> true
