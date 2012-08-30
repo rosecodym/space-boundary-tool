@@ -109,7 +109,7 @@ namespace GUI.Operations
                     LibIdf.Idd.Idd idd = p.GetIdd();
                     p.Notify("Got IDD.\n");
 
-                    ConstructionManager constructionManager = new ConstructionManager(id =>
+                    ConstructionManager.Manager constructionManager = new ConstructionManager.Manager(id =>
                     {
                         if (id > p.SbtBuilding.Elements.Count) { return null; }
                         string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
@@ -128,21 +128,21 @@ namespace GUI.Operations
                         {
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
-                                constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers),
+                                constructionManager.ConstructionNameForLayers(sb.MaterialLayers),
                                 zoneNamesByGuid[sb.BoundedSpace.Guid]);
                         }
                         else
                         {
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
-                                constructionManager.ConstructionNameForSurfaceMaterial(sb.Element.MaterialId),
+                                constructionManager.ConstructionNameForSurface(sb.Element.MaterialId),
                                 zoneNamesByGuid[sb.BoundedSpace.Guid]);
                         }
                     }
 
                     IList<FenestrationSurface> fenestrations = new List<FenestrationSurface>(p.SbtBuilding.SpaceBoundaries
                         .Where(sb => !sb.IsVirtual && sb.Element.IsFenestration && sb.ContainingBoundary != null) // all fenestration sbs *should* have a containing boundary, but...
-                        .Select(sb => new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], constructionManager.ConstructionNameForLayerMaterials(sb.MaterialLayers))));
+                        .Select(sb => new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], constructionManager.ConstructionNameForLayers(sb.MaterialLayers))));
 
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
@@ -154,8 +154,8 @@ namespace GUI.Operations
                     foreach (KeyValuePair<string, string> zone in zoneNamesByGuid) { creator.AddZone(zone.Value, zone.Key); }
                     foreach (BuildingSurface surf in surfacesByGuid.Values) { creator.AddBuildingSurface(surf); }
                     foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }
-                    foreach (Materials.Output.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
-                    foreach (Materials.Output.MaterialLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
+                    foreach (ConstructionManager.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
+                    foreach (ConstructionManager.OutputLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
 
                     creator.WriteToFile(p.OutputFilename);
                     p.Notify("IDF written.\n");

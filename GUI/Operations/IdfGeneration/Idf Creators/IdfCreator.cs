@@ -41,10 +41,10 @@ namespace GUI.Operations
             public abstract void AddBuilding(double northAxis, double loadsConvergence, double tempConvergence, SolarDistribution solarDistribution, BuildingTerrain terrain);
             public abstract void AddBuildingSurface(BuildingSurface surf);
             public abstract void AddConstantContents();
-            public abstract void AddConstruction(Materials.Output.Construction c);
+            public abstract void AddConstruction(ConstructionManager.Construction c);
             public abstract void AddFenestration(FenestrationSurface fen);
             public abstract void AddLocation(string name, double timeZone, double latitude, double longitude, double elevation);
-            public abstract void AddMaterial(Materials.Output.MaterialLayer layer);
+            public abstract void AddMaterial(ConstructionManager.OutputLayer layer);
             public abstract void AddRunPeriod(int startMonth, int startDay, int endMonth, int endDay);
             public abstract void AddTimestep(int timestep);
             public abstract void AddZone(string name, string sourceGuid);

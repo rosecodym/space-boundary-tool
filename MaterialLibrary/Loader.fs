@@ -12,5 +12,5 @@ let public Load(idf:Idf, notify:Action<string>) : ICollection<LibraryEntry> =
             try Some(LibraryEntry.Construct(obj))
             with | _ ->
                 let objName = if String.IsNullOrWhiteSpace(obj.Name) then "<unnamed-object>" else obj.Name
-                notify.Invoke(sprintf "Warning: Failed to load material library object '%s'. Check the definition in the IDF." objName)
+                notify.Invoke(sprintf "Warning: Failed to load material library object '%s'. Check the definition in the IDF.\n" objName)
                 None)) :> ICollection<LibraryEntry>

@@ -3,7 +3,7 @@
 open LibIdf.Base
 open MaterialLibrary
 
-type OutputLayerOpaque (name, libraryEntry:MaterialLibrary.LibraryEntryOpaque, thickness) =
+type internal OutputLayerOpaque (name, libraryEntry:MaterialLibrary.LibraryEntryOpaque, thickness) =
     inherit OutputLayer()
     override this.Name = sprintf "%s (%f)" name thickness
 

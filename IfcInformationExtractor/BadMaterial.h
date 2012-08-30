@@ -19,7 +19,7 @@ public:
 	property String ^ Name { virtual String ^ get() override { return name; } }
 	property bool IsComposite { virtual bool get() override { return false; } } 
 	property String ^ Summary { virtual String ^ get() override { 
-		return summary + (sources->Count == 1 ? "1 element uses this construction." : String::Format(" {0} elements use this construction.", sources->Count));
+		return summary + (sources->Count == 1 ? " 1 element uses this construction." : String::Format(" {0} elements use this construction.", sources->Count));
 	} }
 	property String ^ Details { 
 		virtual String ^ get() override { 

@@ -41,3 +41,7 @@ type Manager (sbtMaterialIDToLibraryEntry:Func<int, MaterialLibrary.LibraryEntry
             (retrieveConstruction outputLayers).Name
         | _ -> "UNMAPPED CONSTRUCTION"
 
+    member this.ConstructionNameForSurface(id) =
+        match lookupLibraryEntry id with
+        | Opaque(entry) -> retrieveConstruction(Array.create 1 (retrieveOpaqueSurface entry)).Name
+

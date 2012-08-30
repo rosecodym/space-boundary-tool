@@ -143,7 +143,7 @@ namespace GUI.Operations
                 idf.CreateObject("Output:Diagnostics").Fields["Key 1"].Value = "DisplayExtraWarnings";
             }
 
-            public override void AddConstruction(Materials.Output.Construction c)
+            public override void AddConstruction(ConstructionManager.Construction c)
             {
                 LibIdf.Idf.IdfObject obj = idf.CreateObject("Construction");
                 obj.Fields["Name"].Value = c.Name;
@@ -187,7 +187,7 @@ namespace GUI.Operations
                 obj.Fields["Elevation"].Value = elevation;
             }
 
-            public override void AddMaterial(Materials.Output.MaterialLayer layer)
+            public override void AddMaterial(ConstructionManager.OutputLayer layer)
             {
                 layer.AddToIdfV710(idf);
             }

@@ -73,23 +73,6 @@ namespace GUI.Operations
                 Idf idf = new Idf(p.Path, idd);
                 p.Notify("IDF loaded.\n");
 
-                //List<Materials.LibraryEntries.Opaque> res = new List<Materials.LibraryEntries.Opaque>();
-                //HashSet<IdfObject> objs;
-
-                //objs = idf.GetObjectsByType("Material", false);
-                //foreach (IdfObject obj in objs)
-                //{
-                //    try
-                //    {
-                //        res.Add(new Materials.LibraryEntries.Opaque(obj));
-                //    }
-                //    catch (Exception)
-                //    {
-                //        string objName = String.IsNullOrWhiteSpace(obj.Name) ? "<unnamed-object>" : obj.Name;
-                //        p.Notify(String.Format("Warning: Failed to load material library object '{0}'. Check the definition in the IDF.\n", objName));
-                //    }
-                //}
-
                 var res = MaterialLibrary.Loader.Load(idf, p.Notify);
 
                 p.Notify("Found " + res.Count.ToString() + " materials.\n");

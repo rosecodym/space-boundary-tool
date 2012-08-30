@@ -19,7 +19,7 @@ type LibraryEntryOpaque = {
             Roughness = obj.Fields.["Roughness"].Value
             Conductivity = obj.Fields.["Conductivity"].Value
             Density = obj.Fields.["Density"].Value
-            SpecificHeat = obj.Fields.["SpecificHeat"].Value
+            SpecificHeat = obj.Fields.["Specific Heat"].Value
             ThermalAbsorptance = obj.Fields.["Thermal Absorptance"].Value
             SolarAbsorptance = obj.Fields.["Solar Absorptance"].Value
             VisibleAbsorptance = obj.Fields.["Visible Absorptance"].Value
@@ -31,6 +31,7 @@ type LibraryEntry =
         member this.Name =
             match this with
             | Opaque(properties) -> properties.Name.ToString()
+        override this.ToString() = this.Name
         static member Construct (obj:IdfObject) =
             match obj.Type with
             | "Material" -> Opaque(LibraryEntryOpaque.Construct(obj))

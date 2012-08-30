@@ -62,16 +62,11 @@
     <Compile Include="IfcConstruction.cs" />
     <Compile Include="Materials\Enums.cs" />
     <Compile Include="Materials\LibraryEntries\Opaque.cs" />
-    <Compile Include="Materials\Output\Construction.cs" />
-    <Compile Include="Materials\Output\MaterialLayerGlazing.cs" />
-    <Compile Include="Materials\Output\MaterialLayerOpaque.cs" />
     <Compile Include="Materials\Properties\Glazing.cs" />
     <Compile Include="Operations\BuildingLoad.cs" />
     <Compile Include="Operations\IdfGeneration\BuildingSurface.cs" />
-    <Compile Include="Operations\IdfGeneration\ConstructionManager.cs" />
     <Compile Include="Operations\IdfGeneration\FenestrationSurface.cs" />
     <Compile Include="SbtBuildingInformation.cs" />
-    <Compile Include="Materials\Output\MaterialLayer.cs" />
     <Compile Include="Materials\Properties\Opaque.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="IddManager.cs" />
