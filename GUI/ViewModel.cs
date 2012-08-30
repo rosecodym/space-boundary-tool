@@ -374,14 +374,24 @@ namespace GUI
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => !CurrentlyGeneratingIdf);
             LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary);
             LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
-            LinkConstructionsCommand = new RelayCommand(obj =>
-            {
-                IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
-                if (selectedIfcConstructions != null)
+            LinkConstructionsCommand = new RelayCommand(
+                obj =>
                 {
-                    Operations.Miscellaneous.LinkConstructions(this.SelectedIdfConstruction, selectedIfcConstructions.Select(c => c as IfcConstruction));
-                }
-            });
+                    IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
+                    if (selectedIfcConstructions != null)
+                    {
+                        Operations.Miscellaneous.LinkConstructions(this.SelectedIdfConstruction, selectedIfcConstructions.Select(c => c as IfcConstruction));
+                    }
+                },
+                obj =>
+                {
+                    IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
+                    if (selectedIfcConstructions != null)
+                    {
+                        return selectedIfcConstructions.All(c => c is IfcConstruction && ((IfcConstruction)c).IsForWindows == this.SelectedIdfConstruction.IsForWindows);
+                    }
+                    return false;
+                });
             ViewIdfCommand = new RelayCommand(_ => Operations.Miscellaneous.ViewIdf(this.OutputIdfFilePath), _ => System.IO.File.Exists(this.OutputIdfFilePath));
             
             // "UpdateOutputDirectly" is because binding the output text to a property is unusably slow
