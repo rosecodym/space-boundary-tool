@@ -42,6 +42,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LibraryEntryAirGap.fs" />
     <Compile Include="LibraryEntryOpaque.fs" />
     <Compile Include="LibraryEntryGas.fs" />
     <Compile Include="LibraryEntryGlazing.fs" />

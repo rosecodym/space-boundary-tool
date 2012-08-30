@@ -3,13 +3,15 @@
 open LibIdf.Idf
 
 type LibraryEntry =
-    | Composite of string * ((LibraryEntry * double) array)
+    | AirGap of LibraryEntryAirGap
+    | Composite of string * (LibraryEntry array)
     | Gas of LibraryEntryGas
     | Glazing of LibraryEntryGlazing
     | Opaque of LibraryEntryOpaque
     with
         member this.Name =
             match this with
+            | AirGap(properties) -> properties.Name.ToString()
             | Composite(name, _) -> name
             | Gas(properties) -> properties.Name.ToString()
             | Glazing(properties) -> properties.Name.ToString()
@@ -17,13 +19,15 @@ type LibraryEntry =
 
         member this.IsForWindow =
             match this with
-            | Composite(_, layers) -> layers |> Seq.map fst |> Seq.exists (fun layer -> not layer.IsForWindow) |> not
+            | AirGap(_) -> false
+            | Composite(_, layers) -> layers |> Seq.exists (fun layer -> not layer.IsForWindow) |> not
             | Gas(_) -> true
             | Glazing(_) -> true
             | Opaque(_) -> false
 
         member this.DisplayToUser =
             match this with
+            | AirGap(_) -> false
             | Composite(_, layers) -> this.IsForWindow
             | Gas(_) -> false
             | Glazing(_) -> false
@@ -31,12 +35,10 @@ type LibraryEntry =
 
         override this.ToString() = this.Name
 
-        static member private CreateLayerThicknessTupleMaybe obj =
+        static member private CreateLayerMaybe obj =
             if obj = Unchecked.defaultof<IdfObject> then None
             else
-                let layer = LibraryEntry.Construct obj
-                let thickness = float obj.Fields.["Thickness"].Value
-                Some(layer, thickness)
+                Some(LibraryEntry.Construct obj)
 
         static member Construct (obj:IdfObject) =
             match obj.Type with
@@ -55,9 +57,10 @@ type LibraryEntry =
                         "Layer 9"
                         "Layer 10"
                     |]
-                    |> Array.choose (fun fieldName -> LibraryEntry.CreateLayerThicknessTupleMaybe obj.Fields.[fieldName].RefersTo)
+                    |> Array.choose (fun fieldName -> LibraryEntry.CreateLayerMaybe obj.Fields.[fieldName].RefersTo)
                 Composite(name, layers)
             | "Material" -> Opaque(LibraryEntryOpaque.Construct(obj))
+            | "Material:AirGap" -> AirGap(LibraryEntryAirGap.Construct(obj))
             | "WindowMaterial:Gas" -> Gas(LibraryEntryGas.Construct(obj))
             | "WindowMaterial:Glazing" -> Glazing(LibraryEntryGlazing.Construct(obj))
             | _ -> failwith (sprintf "Tried to build a library entry out of an unknown type '%s'." obj.Type)
