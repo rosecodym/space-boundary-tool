@@ -43,6 +43,16 @@ namespace GUI.Operations
                             "Cannot generate IDF",
                             System.Windows.MessageBoxButton.OK,
                             System.Windows.MessageBoxImage.Error);
+                        return;
+                    }
+
+                    if (vm.IfcConstructions.Any(c => c.ParticipatesInSpaceBoundary.HasValue && c.ParticipatesInSpaceBoundary.Value && c.IdfMappingTarget == null)) {
+                        System.Windows.MessageBox.Show(
+                            "There are some IFC constructions that have not been mapped to material library entries. Please ensure that all IFC constructions are mapped in the \"Constructions & Materials\" tab.",
+                            "Cannot generate IDF",
+                            System.Windows.MessageBoxButton.OK,
+                            System.Windows.MessageBoxImage.Error);
+                        return;
                     }
 
                     BackgroundWorker worker = new BackgroundWorker();
