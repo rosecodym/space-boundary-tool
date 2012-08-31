@@ -1,0 +1,32 @@
+[33mtag v1.2.0[m
+Tagger: cmrose <cmrose@lbl.gov>
+Date:   Mon Jul 30 18:33:22 2012 -0700
+
+Version 1.2.0. New (faster stacking) algorithm, new approach to non-2nd-level boundaries. This is the second version since the beginning of the Simergy integration (1.1.1 was the first).
+
+[33mcommit 151da321039646dbd56516eabb45c2932582175e[m
+Author: cmrose <cmrose@lbl.gov>
+Date:   Mon Jul 30 18:31:41 2012 -0700
+
+    added maxpairdistance support to the gui frontend
+
+[1mdiff --git a/GUI Frontend/SBTInterface.cs b/GUI Frontend/SBTInterface.cs[m
+[1mindex fd36a01..bd6445e 100755[m
+[1m--- a/GUI Frontend/SBTInterface.cs[m	
+[1m+++ b/GUI Frontend/SBTInterface.cs[m	
+[36m@@ -33,6 +33,7 @@[m [mnamespace GUI_Frontend[m
+         {[m
+             public SBTFlags flags;[m
+             public double tolerance;[m
+[32m+[m[32m            public double maxPairDistance;[m[41m[m
+             public int spaceVerificationTimeout;[m
+             public IntPtr spaceFilter;[m
+             public UInt32 spaceFilterCount;[m
+[36m@@ -75,6 +76,7 @@[m [mnamespace GUI_Frontend[m
+             nativeOpts.spaceFilterCount = 0;[m
+             nativeOpts.spaceFilter = IntPtr.Zero;[m
+             nativeOpts.tolerance = 0.001;[m
+[32m+[m[32m            nativeOpts.maxPairDistance = 3.0; // this gets ignored by the ifc adapter anyway[m[41m[m
+             nativeOpts.spaceVerificationTimeout = opts.spaceVerificationTimeout;[m
+             nativeOpts.notifyFunc = opts.notifyFunc;[m
+             nativeOpts.warnFunc = opts.warnFunc;[m

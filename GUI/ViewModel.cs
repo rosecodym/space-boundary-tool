@@ -343,7 +343,7 @@ namespace GUI
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
             ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => !CurrentlyGeneratingIdf);
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary);
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary && !String.IsNullOrWhiteSpace(this.MaterialsLibraryPath));
             LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
