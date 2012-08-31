@@ -329,6 +329,24 @@ namespace GUI
             }
         }
 
+        public bool CanGenerateIdf
+        {
+            get
+            {
+                return
+                    !this.CurrentlyGeneratingIdf &&
+                    this.CurrentSbtBuilding != null &&
+                    this.CurrentIfcBuilding != null &&
+                    !String.IsNullOrWhiteSpace(this.OutputIdfFilePath) &&
+                    !String.IsNullOrWhiteSpace(this.BuildingLocation) &&
+                    this.StartDay >= 1 && this.StartDay <= 31 &&
+                    this.StartMonth >= 1 && this.StartMonth <= 12 &&
+                    this.EndDay >= 1 && this.EndDay <= 31 &&
+                    this.EndMonth >= 1 && this.EndMonth <= 12 &&
+                    new DateTime(DateTime.Now.Year, EndMonth, EndDay) >= new DateTime(DateTime.Now.Year, StartMonth, StartDay);
+            }
+        }
+
         public bool AttachDebuggerPriorToIdfGeneration { get; set; }
         public string SbSpaceFilter { get; set; }
         public string SbElementFilter { get; set; }
@@ -342,7 +360,7 @@ namespace GUI
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
             ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
-            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => !CurrentlyGeneratingIdf);
+            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => CanGenerateIdf);
             LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary && !String.IsNullOrWhiteSpace(this.MaterialsLibraryPath));
             LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
             LinkConstructionsCommand = new RelayCommand(
@@ -402,10 +420,11 @@ namespace GUI
             catch (Exception) { /* no time for this right now */ }
         }
 
+        // there's a DateTime method I could use here but I don't want to be too much smarter than E+
         static private IEnumerable<int> AvailableDaysForMonth(int month)
         {
             return Enumerable.Range(1,
-                month == 2 ? 28 :
+                month == 2 ? 29 :
                 month == 4 ? 30 :
                 month == 6 ? 30 :
                 month == 9 ? 30 :
