@@ -117,6 +117,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6D08BC21EF664B65936D8C646A7E1C69"
+        "OwnerKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6D08BC21EF664B65936D8C646A7E1C69"
+        "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6D9BD3D14863428DA4C548339B38BBD8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -125,24 +137,6 @@
         {
         "MsmKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
-        "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
-        "OwnerKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
-        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -202,12 +196,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -253,6 +241,12 @@
         "OwnerKey" = "8:_2AF80722B3404079830896066C44F115"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -271,6 +265,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -1342,7 +1344,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9E1EF3F81AAB4F9299B638B26BD75CE9"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_6D08BC21EF664B65936D8C646A7E1C69"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
