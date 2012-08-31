@@ -121,7 +121,6 @@ namespace GUI
             {
                 Properties.Settings.Default.MaterialsLibraryFilename = value;
                 Updated("MaterialsLibraryPath");
-                Updated("MaterialsLibraryLoadable");
             }
         }
 
@@ -237,7 +236,6 @@ namespace GUI
             {
                 Properties.Settings.Default.StartMonth = value;
                 Updated("StartMonth");
-                Updated("AvailableStartDays");
             }
         }
         public int StartDay
@@ -256,7 +254,6 @@ namespace GUI
             {
                 Properties.Settings.Default.EndMonth = value;
                 Updated("EndMonth");
-                Updated("AvailableEndDays");
             }
         }
         public int EndDay
@@ -352,7 +349,9 @@ namespace GUI
                         "EndDay",
                         "EndMonth"
                     }
-                }
+                },
+                new { Dependent = "AvailableStartDays", DependentOn = new[] { "StartMonth" } },
+                new { Dependent = "AvailableEndDays", DependentOn = new[] { "EndMonth" } }
             };
 
             this.PropertyChanged += (_, args) =>
