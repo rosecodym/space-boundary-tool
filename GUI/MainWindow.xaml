@@ -182,7 +182,11 @@
                         <Label Content="Output IDF:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label13" VerticalAlignment="Center" />
                         <TextBox Grid.Column="1" Grid.ColumnSpan="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox2" VerticalAlignment="Center" Width="Auto" Text="{Binding OutputIdfFilePath}"/>
                         <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button5" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIdfFileCommand}"/>
-                        <Button Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" Command="{Binding GenerateIdfCommand}"/>
+                        <Button 
+                            Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" 
+                            Command="{Binding GenerateIdfCommand}"
+                            ToolTipService.ShowOnDisabled="True" 
+                            ToolTip="{Binding ReasonForDisabledIdfGeneration}" />
                         <ComboBox Grid.Column="3" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionIndexToWrite}"/>
                     </Grid>
                     <GroupBox Header="Simulation control parameters" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox7" VerticalAlignment="Stretch" Width="Auto">
