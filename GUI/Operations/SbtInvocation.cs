@@ -81,7 +81,7 @@ namespace GUI.Operations
                         out spaceBoundaries,
                         p.Flags,
                         0.01,
-                        3.0,
+                        0.5,
                         p.SpaceGuidFilter,
                         p.ElementGuidFilter,
                         0,

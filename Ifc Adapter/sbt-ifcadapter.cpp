@@ -193,7 +193,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
 			opts = options;
-			opts.max_pair_distance = length_units_per_meter * 3.0;
+			opts.max_pair_distance *= length_units_per_meter;
 			sbt_return_t generate_res = calculate_space_boundaries(element_count, elements, loaded_space_count, loaded_spaces, &sb_count, &sbs, opts);
 			if (generate_res == SBT_OK) {
 				generate_sb_summary(counts, sbs, sb_count);
@@ -263,7 +263,7 @@ ifcadapter_return_t load_and_run_from(
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
 			opts = options;
-			opts.max_pair_distance = length_units_per_meter * 3.0;
+			opts.max_pair_distance *= length_units_per_meter;
 			sbt_return_t generate_res = calculate_space_boundaries(*element_count, *elements, *space_count, *spaces, total_sb_count, sbs, opts);
 			if (generate_res == SBT_OK && output_filename != nullptr) {
 				// add_to_model figures out the right spaces by re-extracting them based on guids
