@@ -123,26 +123,26 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_6F810D61CED9484CA804D8C3E13600AC"
+        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
+        "MsmKey" = "8:_6F810D61CED9484CA804D8C3E13600AC"
         "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
+        "MsmKey" = "8:_6F810D61CED9484CA804D8C3E13600AC"
         "OwnerKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
-        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
+        "MsmKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -202,12 +202,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -253,6 +247,12 @@
         "OwnerKey" = "8:_2AF80722B3404079830896066C44F115"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -271,6 +271,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -555,7 +563,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4626.20801, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4626.24060, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_603184890994A476E3CA19B344A8E788"
@@ -812,7 +820,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
         "ProductCode" = "8:{3762DED7-24D1-41F6-9246-B9A18EB22B2C}"
-        "PackageCode" = "8:{29FD57A9-0D66-4F92-AB38-A355DF6FB14E}"
+        "PackageCode" = "8:{1DB2EC2F-19E8-4135-9D83-E304AED7EE96}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1342,7 +1350,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9E1EF3F81AAB4F9299B638B26BD75CE9"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_6F810D61CED9484CA804D8C3E13600AC"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
