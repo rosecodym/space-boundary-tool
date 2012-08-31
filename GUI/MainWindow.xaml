@@ -46,20 +46,6 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <GroupBox Header="Building element checks" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="groupBox4" VerticalAlignment="Center" Width="Auto">
-                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid5" VerticalAlignment="Stretch" Width="Auto">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <CheckBox Content="Assume no wall/column intersections" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox1" VerticalAlignment="Center" IsChecked="{Binding SkipWallColumnCheck}"/>
-                                            <CheckBox Content="Assume no slab/column intersections" Grid.Row="1" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox2" VerticalAlignment="Center" IsChecked="{Binding SkipSlabColumnCheck}"/>
-                                            <CheckBox Content="Assume no wall/slab intersections" Grid.Row="2" Height="16" HorizontalAlignment="Left" Margin="0" Name="checkBox3" VerticalAlignment="Center" IsChecked="{Binding SkipWallSlabCheck}"/>
-                                        </Grid>
-                                    </Grid>
-                                </GroupBox>
                                 <Grid Grid.Column="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid6" VerticalAlignment="Stretch" Width="Auto">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />

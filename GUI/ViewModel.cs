@@ -134,35 +134,6 @@ namespace GUI
             }
         }
 
-        public bool SkipWallColumnCheck
-        {
-            get { return Properties.Settings.Default.SkipWallColumnCheck; }
-            set
-            {
-                Properties.Settings.Default.SkipWallColumnCheck = value;
-            }
-        }
-
-        public bool SkipSlabColumnCheck
-        {
-            get { return Properties.Settings.Default.SkipSlabColumnCheck; }
-            set
-            {
-                Properties.Settings.Default.SkipSlabColumnCheck = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SkipSlabColumnCheck")); }
-            }
-        }
-
-        public bool SkipWallSlabCheck
-        {
-            get { return Properties.Settings.Default.SkipWallSlabCheck; }
-            set
-            {
-                Properties.Settings.Default.SkipWallSlabCheck = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("SkipWallSlabCheck")); }
-            }
-        }
-
         public bool WriteIfc
         {
             get { return Properties.Settings.Default.CreateOutputIfc; }

@@ -50,12 +50,9 @@ namespace GUI.Operations
                     if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
                     if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
 
-                    p.Flags = Sbt.EntryPoint.SbtFlags.None;
-                    if (vm.SkipWallColumnCheck) { p.Flags |= Sbt.EntryPoint.SbtFlags.SkipWallColumnCheck; }
-                    if (vm.SkipSlabColumnCheck) { p.Flags |= Sbt.EntryPoint.SbtFlags.SkipSlabColumnCheck; }
-                    if (vm.SkipWallSlabCheck) { p.Flags |= Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck; }
+                    p.Flags = Sbt.EntryPoint.SbtFlags.SkipWallSlabCheck;
 
-                    p.NotifyMessage = p.WarnMessage = p.ErrorMessage = (msg) => worker.ReportProgress(0, msg);
+                    p.NotifyMessage = p.WarnMessage = p.ErrorMessage = msg => worker.ReportProgress(0, msg);
 
                     worker.RunWorkerAsync(p);
                 }
