@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C30F68F1-3D01-419D-A925-05D517906CC0}</ProjectGuid>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>IfcInformationExtractor</RootNamespace>
   </PropertyGroup>

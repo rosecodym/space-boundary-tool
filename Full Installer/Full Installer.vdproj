@@ -22,7 +22,7 @@
         "Entry"
         {
         "MsmKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -64,7 +64,7 @@
         "Entry"
         {
         "MsmKey" = "8:_2D7424D17E31FAC9FAC8AEA1865F1FAB"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -76,7 +76,7 @@
         "Entry"
         {
         "MsmKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -93,26 +93,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "MsmKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_522E76703D934EB19733F00934B1A9DB"
-        "OwnerKey" = "8:_91515E5FC0804CA3BABC635C351ACC2D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_522E76703D934EB19733F00934B1A9DB"
-        "OwnerKey" = "8:_CD464F9B5B4F45978CF0CE88602BF402"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_522E76703D934EB19733F00934B1A9DB"
-        "OwnerKey" = "8:_EB9465E004C143E083F127D25FA5789A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -124,7 +106,7 @@
         "Entry"
         {
         "MsmKey" = "8:_603184890994A476E3CA19B344A8E788"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -135,13 +117,43 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_91515E5FC0804CA3BABC635C351ACC2D"
+        "MsmKey" = "8:_6D9BD3D14863428DA4C548339B38BBD8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
+        "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
+        "OwnerKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9E1EF3F81AAB4F9299B638B26BD75CE9"
+        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9FC2D387250749E68DBD6F50A1CEF1B8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -154,12 +166,12 @@
         "Entry"
         {
         "MsmKey" = "8:_A31723F6873972C1E65CE2B7CACD9203"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_CD464F9B5B4F45978CF0CE88602BF402"
+        "MsmKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -171,14 +183,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB9465E004C143E083F127D25FA5789A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F3219515F1458EE76DB4DBBED1DEBCF9"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -190,13 +196,19 @@
         "Entry"
         {
         "MsmKey" = "8:_F8C37552ED70350397259347881124A0"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3F8BBF20CEA24812843B8A625CE1BBAC"
+        "OwnerKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -241,12 +253,6 @@
         "OwnerKey" = "8:_2AF80722B3404079830896066C44F115"
         "MsmSig" = "8:_UNDEFINED"
         }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
     }
     "Configurations"
     {
@@ -271,7 +277,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\Full Installer.msi"
+        "OutputFilename" = "8:Release\\sbt-full.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -549,7 +555,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4625.30157, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4626.20801, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_603184890994A476E3CA19B344A8E788"
@@ -580,6 +586,26 @@
             {
             "SourcePath" = "8:..\\GUI\\bin\\Release\\IdfParser.dll"
             "TargetName" = "8:IdfParser.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6D9BD3D14863428DA4C548339B38BBD8"
+            {
+            "SourcePath" = "8:..\\SBT Default Materials Library.idf"
+            "TargetName" = "8:SBT Default Materials Library.idf"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
             "Condition" = "8:"
@@ -786,7 +812,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
         "ProductCode" = "8:{3762DED7-24D1-41F6-9246-B9A18EB22B2C}"
-        "PackageCode" = "8:{A400DFF9-0CDE-4115-A3E0-ACA48A071B12}"
+        "PackageCode" = "8:{29FD57A9-0D66-4F92-AB38-A355DF6FB14E}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -906,6 +932,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E927A63079D9471A930313F02A085670"
+            {
+            "Name" = "8:SBT"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
+            "Folder" = "8:_CDBB7A856E2643D5B27D269698F149D5"
+            "WorkingFolder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
@@ -1302,7 +1342,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_522E76703D934EB19733F00934B1A9DB"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9E1EF3F81AAB4F9299B638B26BD75CE9"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -1319,9 +1359,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3F8BBF20CEA24812843B8A625CE1BBAC"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_45C977EBEB72431CA26FBA6628F22EDE"
             {
-            "SourcePath" = "8:..\\GUI\\obj\\x86\\Release\\GUI.exe"
+            "SourcePath" = "8:..\\Release\\SBT-IFC.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1341,43 +1381,15 @@
             "ProjectOutputGroupRegister" = "3:1"
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{A3147515-FF43-4B3E-BA2C-F747745D3EB8}"
+            "OutputProjectGuid" = "8:{D703A763-8163-4B2E-A5E9-DECD31AE18C4}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_91515E5FC0804CA3BABC635C351ACC2D"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9B1CA4A537D84F909A3C601BF6270C67"
             {
-            "SourcePath" = "8:..\\Release\\SBT-Core.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{68821491-76E6-4090-B7A8-FA8C329FA2DB}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_CD464F9B5B4F45978CF0CE88602BF402"
-            {
-            "SourcePath" = "8:..\\Release\\SBT.exe"
+            "SourcePath" = "8:..\\Release\\SBT-CL.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1403,9 +1415,9 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EB9465E004C143E083F127D25FA5789A"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A0B7928A50CB4C8197B788BDCD8095DE"
             {
-            "SourcePath" = "8:..\\Release\\SBT-IFC.dll"
+            "SourcePath" = "8:..\\GUI\\obj\\x86\\Release\\SBT-GUI.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1425,7 +1437,35 @@
             "ProjectOutputGroupRegister" = "3:1"
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{D703A763-8163-4B2E-A5E9-DECD31AE18C4}"
+            "OutputProjectGuid" = "8:{A3147515-FF43-4B3E-BA2C-F747745D3EB8}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_AD0929D576C54C6BAD9A948E42F9EF46"
+            {
+            "SourcePath" = "8:..\\Release\\SBT-Core.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{68821491-76E6-4090-B7A8-FA8C329FA2DB}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
