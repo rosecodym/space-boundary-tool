@@ -99,9 +99,9 @@ namespace GUI.Operations
 
                     foreach (var pair in VertexOrderRotatedGeometry(surf.Geometry, vertexOrderComparer).Select((point, index) => new { Point = point, Index = index }))
                     {
-                        obj.Fields[String.Format("Vertex {0} X-coordinate", pair.Index + 1)].Value = pair.Point.X;
-                        obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = pair.Point.Y;
-                        obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = pair.Point.Z;
+                        obj.Fields[String.Format("Vertex {0} X-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.X, 3);
+                        obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Y, 3);
+                        obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Z, 3);
                     }
 
                     if (surf.OtherSideCondition != BuildingSurface.OtherSideConditionType.Outdoors || surf.Type == BuildingSurface.SurfaceType.Floor)
@@ -167,9 +167,9 @@ namespace GUI.Operations
                     obj.Fields["Outside Boundary Condition Object"].Value = fenestration.OtherSideName;
                     foreach (var pair in VertexOrderRotatedGeometry(fenestration.Geometry, ComparePointsForUpperLeftness).Select((point, index) => new { Point = point, Index = index }))
                     {
-                        obj.Fields[String.Format("Vertex {0} X-coordinate", pair.Index + 1)].Value = pair.Point.X;
-                        obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = pair.Point.Y;
-                        obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = pair.Point.Z;
+                        obj.Fields[String.Format("Vertex {0} X-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.X, 3);
+                        obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Y, 3);
+                        obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Z, 3);
                     }
                     obj.AddComment("  ! IFC element GUID: " + fenestration.ElementGuid);
                     obj.AddComment(String.Format("  ! Normal: <{0}, {1}, {2}>", fenestration.Normal.Item1, fenestration.Normal.Item2, fenestration.Normal.Item3));
