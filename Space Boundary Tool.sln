@@ -28,6 +28,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MaterialLibrary", "Material
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ConstructionManager", "ConstructionManager\ConstructionManager.fsproj", "{F4D996A3-4B9B-46BE-91CD-2AA604549840}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Full Installer", "Full Installer\Full Installer.vdproj", "{3B596BA1-EEB7-4607-8638-B00607CB062C}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -164,6 +166,14 @@ Global
 		{F4D996A3-4B9B-46BE-91CD-2AA604549840}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F4D996A3-4B9B-46BE-91CD-2AA604549840}.Release|Win32.ActiveCfg = Release|Any CPU
 		{F4D996A3-4B9B-46BE-91CD-2AA604549840}.Release|x86.ActiveCfg = Release|Any CPU
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|Any CPU.ActiveCfg = Debug
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|Win32.ActiveCfg = Debug
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|x86.ActiveCfg = Debug
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|Any CPU.ActiveCfg = Release
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|Mixed Platforms.ActiveCfg = Release
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|Win32.ActiveCfg = Release
+		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
