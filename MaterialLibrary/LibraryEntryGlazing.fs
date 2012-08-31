@@ -7,6 +7,7 @@ type LibraryEntryGlazing = {
     Name: FieldValue
     OpticalDataType: FieldValue
     WindowGlassSpectralDataSetName: FieldValue
+    Thickness: FieldValue
     SolarTransmittanceAtNormalIncidence: FieldValue
     FrontSideSolarReflectanceAtNormalIncidence: FieldValue
     BackSideSolarReflectanceAtNormalIncidence: FieldValue
@@ -24,6 +25,7 @@ type LibraryEntryGlazing = {
             Name = obj.Fields.["Name"].Value
             OpticalDataType = obj.Fields.["Optical Data Type"].Value
             WindowGlassSpectralDataSetName = obj.Fields.["Window Glass Spectral Data Set Name"].Value
+            Thickness = obj.Fields.["Thickness"].Value
             SolarTransmittanceAtNormalIncidence = obj.Fields.["Solar Transmittance at Normal Incidence"].Value
             FrontSideSolarReflectanceAtNormalIncidence = obj.Fields.["Front Side Solar Reflectance at Normal Incidence"].Value
             BackSideSolarReflectanceAtNormalIncidence = obj.Fields.["Back Side Solar Reflectance at Normal Incidence"].Value

@@ -17,15 +17,23 @@ type Manager (sbtMaterialIDToLibraryEntry:Func<int, MaterialLibrary.LibraryEntry
         allConstructions <- Set.add newC allConstructions
         newC
 
+    let retrieveLayer (layer:OutputLayer) =
+        allMaterials <- Set.add layer allMaterials
+        layer
+
     let retrieveOpaqueLayer (libraryEntry:LibraryEntryOpaque) thickness =
-        let newLayer = OutputLayerOpaque(sprintf "%s (%.3f)" (libraryEntry.Name.ToString()) thickness, libraryEntry, thickness) :> OutputLayer
-        allMaterials <- Set.add newLayer allMaterials
-        newLayer
+        retrieveLayer (OutputLayerOpaque(sprintf "%s (%.3f)" (libraryEntry.Name.ToString()) thickness, libraryEntry, thickness))
 
     let retrieveOpaqueSurface (libraryEntry:LibraryEntryOpaque) =
-        let newLayer = OutputLayerOpaque(sprintf "%s (surface only)" (libraryEntry.Name.ToString()), libraryEntry, 0.001) :> OutputLayer
-        allMaterials <- Set.add newLayer allMaterials
-        newLayer
+        retrieveLayer (OutputLayerOpaque(sprintf "%s (surface only)" (libraryEntry.Name.ToString()), libraryEntry, 0.001))
+
+    let retrieveExactCopy (libraryEntry:LibraryEntry) =
+        match libraryEntry with
+        | AirGap(props) -> retrieveLayer (OutputLayerAirGap(float props.ThermalResistance))
+        | Composite(_) -> raise (ArgumentException())
+        | Gas(props) -> retrieveLayer (OutputLayerGas(props.Name.ToString(), props, float props.Thickness))
+        | Glazing(props) -> retrieveLayer (OutputLayerGlazing(props.Name.ToString(), props, float props.Thickness))
+        | Opaque(props) -> retrieveOpaqueLayer props (float props.Thickness)
 
     member this.AllMaterials = allMaterials :> IEnumerable<OutputLayer>
     member this.AllConstructions = allConstructions :> IEnumerable<Construction>
@@ -39,6 +47,7 @@ type Manager (sbtMaterialIDToLibraryEntry:Func<int, MaterialLibrary.LibraryEntry
                 (Array.zip opaqueEntries thicknesses)
                 |> Array.map (fun (entry, thickness) -> retrieveOpaqueLayer entry thickness)
             (retrieveConstruction outputLayers).Name
+        | SingleComposite(_, innerLayers) -> (retrieveConstruction (innerLayers |> Array.map retrieveExactCopy)).Name
         | _ -> "UNMAPPED CONSTRUCTION"
 
     member this.ConstructionNameForSurface(id) =

@@ -6,6 +6,7 @@ open LibIdf.Idf
 type LibraryEntryOpaque = {
     Name: FieldValue
     Roughness: FieldValue
+    Thickness: FieldValue
     Conductivity: FieldValue
     Density: FieldValue
     SpecificHeat: FieldValue
@@ -17,6 +18,7 @@ type LibraryEntryOpaque = {
         static member internal Construct (obj:IdfObject) = {
             Name = obj.Fields.["Name"].Value
             Roughness = obj.Fields.["Roughness"].Value
+            Thickness = obj.Fields.["Thickness"].Value
             Conductivity = obj.Fields.["Conductivity"].Value
             Density = obj.Fields.["Density"].Value
             SpecificHeat = obj.Fields.["Specific Heat"].Value

@@ -43,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OutputLayer.fs" />
+    <Compile Include="OutputLayerAirGap.fs" />
+    <Compile Include="OutputLayerGas.fs" />
+    <Compile Include="OutputLayerGlazing.fs" />
     <Compile Include="OutputLayerOpaque.fs" />
     <Compile Include="Construction.fs" />
     <Compile Include="LayerPatterns.fs" />

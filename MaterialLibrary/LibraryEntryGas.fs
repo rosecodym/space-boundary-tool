@@ -6,6 +6,7 @@ open LibIdf.Idf
 type LibraryEntryGas = {
     Name: FieldValue
     GasType: FieldValue
+    Thickness: FieldValue
     ConductivityCoefficientA: FieldValue
     ConductivityCoefficientB: FieldValue
     ViscosityCoefficientA: FieldValue
@@ -18,6 +19,7 @@ type LibraryEntryGas = {
         static member internal Construct (obj:IdfObject) = {
             Name = obj.Fields.["Name"].Value
             GasType = obj.Fields.["Gas Type"].Value
+            Thickness = obj.Fields.["Thickness"].Value
             ConductivityCoefficientA = obj.Fields.["Conductivity Coefficient A"].Value
             ConductivityCoefficientB = obj.Fields.["Conductivity Coefficient B"].Value
             ViscosityCoefficientA = obj.Fields.["Viscosity Coefficient A"].Value
