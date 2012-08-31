@@ -4314,7 +4314,7 @@ Material,
 
 WindowMaterial:Glazing,
     LowEGlass_6mm,           !- Name
-    ,                        !- Optical Data Type
+    SpectralAverage,         !- Optical Data Type
     ,                        !- Window Glass Spectral Data Set Name
     0.0058,                  !- Thickness {m}
     0.323,                   !- Solar Transmittance at Normal Incidence
@@ -4332,7 +4332,7 @@ WindowMaterial:Glazing,
 
 WindowMaterial:Glazing,
     ClearGlass_6mm,          !- Name
-    ,                        !- Optical Data Type
+    SpectralAverage,         !- Optical Data Type
     ,                        !- Window Glass Spectral Data Set Name
     0.005842,                !- Thickness {m}
     0.89,                    !- Solar Transmittance at Normal Incidence
@@ -4350,7 +4350,7 @@ WindowMaterial:Glazing,
 
 WindowMaterial:Glazing,
     KGlass_6mm,              !- Name
-    ,                        !- Optical Data Type
+    SpectralAverage,         !- Optical Data Type
     ,                        !- Window Glass Spectral Data Set Name
     0.00581,                 !- Thickness {m}
     0.664,                   !- Solar Transmittance at Normal Incidence
@@ -4368,7 +4368,7 @@ WindowMaterial:Glazing,
 
 WindowMaterial:Glazing,
     SolarCoolGlass_4mm,      !- Name
-    ,                        !- Optical Data Type
+    SpectralAverage,         !- Optical Data Type
     ,                        !- Window Glass Spectral Data Set Name
     0.0033,                  !- Thickness {m}
     0.218,                   !- Solar Transmittance at Normal Incidence
