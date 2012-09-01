@@ -331,6 +331,18 @@ namespace GUI
             }
         }
 
+        public string ReasonForDisabledIfcModelLoad
+        {
+            get
+            {
+                List<string> reasons = new List<string>();
+                if (CurrentlyLoadingIfcModel) { reasons.Add("IFC constructions are already being loaded."); }
+                if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
+                if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are currently being calculated (these operations cannot be simultaneous)."); }
+                return reasons.Count == 0 ? null : "IFC constructions cannot be loaded:\n" + String.Join(Environment.NewLine, reasons);
+            }
+        }
+
         public string ReasonForDisabledIdfGeneration
         {
             get
@@ -370,6 +382,11 @@ namespace GUI
                     Dependent = "ReasonForDisabledMaterialLibraryLoad",
                     DependentOn = new[] { "CurrentlyLoadingMaterialLibrary", "MaterialsLibraryPath" }
                 },
+                new
+                {
+                    Dependent = "ReasonForDisabledIfcModelLoad",
+                    DependentOn = new[] { "CurrentlyLoadingIfcModel", "InputIfcFilePath", "CurrentlyCalculatingSBs" }
+                },
                 new 
                 { 
                     Dependent = "ReasonForDisabledIdfGeneration", 
@@ -405,7 +422,7 @@ namespace GUI
             ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => ReasonForDisabledSBCalculation == null);
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => ReasonForDisabledIdfGeneration == null);
             LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => ReasonForDisabledMaterialLibraryLoad == null);
-            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
+            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => ReasonForDisabledIfcModelLoad == null);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
                 {

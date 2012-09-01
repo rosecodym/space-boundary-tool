@@ -180,7 +180,18 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Button Command="{Binding LoadIfcBuildingCommand}" Content="Load" Height="23" HorizontalAlignment="Right" IsEnabled="{Binding IfcBuildingLoadable}" Margin="4" Name="button9" VerticalAlignment="Center" Width="75" Grid.Column="2" />
+                                    <Button 
+                                        Command="{Binding LoadIfcBuildingCommand}" 
+                                        Content="Load" 
+                                        Height="23" 
+                                        HorizontalAlignment="Right" 
+                                        Margin="4" 
+                                        Name="button9" 
+                                        VerticalAlignment="Center" 
+                                        Width="75" 
+                                        Grid.Column="2" 
+                                        ToolTipService.ShowOnDisabled="True"
+                                        ToolTip="{Binding ReasonForDisabledIfcModelLoad}" />
                                     <Button Content="Map" Grid.Column="1" Height="23" HorizontalAlignment="Center" Margin="0" Name="button10" VerticalAlignment="Center" Width="75" Command="{Binding LinkConstructionsCommand}" CommandParameter="{Binding ElementName=dataGrid2, Path=SelectedItems}"/>
                                 </Grid>
                             </Grid>
