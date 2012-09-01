@@ -293,6 +293,7 @@ namespace GUI
             set
             {
                 loadingIfcModel = value;
+                Updated("CurrentlyLoadingIfcModel");
             }
         }
         public bool CurrentlyGeneratingIdf
@@ -302,6 +303,18 @@ namespace GUI
             {
                 generatingIdf = value;
                 Updated("CurrentlyGeneratingIdf");
+            }
+        }
+
+        public string ReasonForDisabledSBCalculation
+        {
+            get
+            {
+                List<string> reasons = new List<string>();
+                if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are already being calculated."); }
+                if (CurrentlyLoadingIfcModel) { reasons.Add("The IFC model constructions are being loaded (these operations cannot be simultaneous)."); }
+                if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
+                return reasons.Count == 0 ? null : "Space boundaries cannot be calculated:\n" + String.Join(Environment.NewLine, reasons);
             }
         }
 
@@ -334,6 +347,11 @@ namespace GUI
         {
             var propertyDependencies = new[] 
             {
+                new
+                {
+                    Dependent = "ReasonForDisabledSBCalculation",
+                    DependentOn = new[] { "CurrentlyCalculatingSBs", "CurrentlyLoadingIfcModel", "InputIfcFilePath" }
+                },
                 new 
                 { 
                     Dependent = "ReasonForDisabledIdfGeneration", 
@@ -366,7 +384,7 @@ namespace GUI
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
+            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => ReasonForDisabledSBCalculation == null);
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => ReasonForDisabledIdfGeneration == null);
             LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary && !String.IsNullOrWhiteSpace(this.MaterialsLibraryPath));
             LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
