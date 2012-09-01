@@ -277,6 +277,7 @@ namespace GUI
             set
             {
                 calculatingSBs = value;
+                Updated("CurrentlyCalculatingSBs");
             }
         }
         public bool CurrentlyLoadingMaterialLibrary
@@ -285,6 +286,7 @@ namespace GUI
             set
             {
                 loadingMaterialLibrary = value;
+                Updated("CurrentlyLoadingMaterialLibrary");
             }
         }
         public bool CurrentlyLoadingIfcModel
@@ -315,6 +317,17 @@ namespace GUI
                 if (CurrentlyLoadingIfcModel) { reasons.Add("The IFC model constructions are being loaded (these operations cannot be simultaneous)."); }
                 if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
                 return reasons.Count == 0 ? null : "Space boundaries cannot be calculated:\n" + String.Join(Environment.NewLine, reasons);
+            }
+        }
+
+        public string ReasonForDisabledMaterialLibraryLoad
+        {
+            get
+            {
+                List<string> reasons = new List<string>();
+                if (CurrentlyLoadingMaterialLibrary) { reasons.Add("A material library is already being loaded."); }
+                if (String.IsNullOrWhiteSpace(MaterialsLibraryPath) || !System.IO.File.Exists(MaterialsLibraryPath)) { reasons.Add("The specified material library file does not exist."); }
+                return reasons.Count == 0 ? null : "The material library cannot be loaded:\n" + String.Join(Environment.NewLine, reasons);
             }
         }
 
@@ -352,6 +365,11 @@ namespace GUI
                     Dependent = "ReasonForDisabledSBCalculation",
                     DependentOn = new[] { "CurrentlyCalculatingSBs", "CurrentlyLoadingIfcModel", "InputIfcFilePath" }
                 },
+                new
+                {
+                    Dependent = "ReasonForDisabledMaterialLibraryLoad",
+                    DependentOn = new[] { "CurrentlyLoadingMaterialLibrary", "MaterialsLibraryPath" }
+                },
                 new 
                 { 
                     Dependent = "ReasonForDisabledIdfGeneration", 
@@ -386,7 +404,7 @@ namespace GUI
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
             ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => ReasonForDisabledSBCalculation == null);
             GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => ReasonForDisabledIdfGeneration == null);
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary && !String.IsNullOrWhiteSpace(this.MaterialsLibraryPath));
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => ReasonForDisabledMaterialLibraryLoad == null);
             LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
