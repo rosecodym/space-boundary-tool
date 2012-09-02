@@ -39,9 +39,10 @@ type Manager (sbtMaterialIDToLibraryEntry:Func<int, MaterialLibrary.LibraryEntry
     member this.AllConstructions = allConstructions :> IEnumerable<Construction>
 
     member this.ConstructionNameForLayers(materials:IList<Sbt.CoreTypes.MaterialLayer>) =
-        let ids, thicknesses = Array.unzip(materials |> Seq.map (fun sbtLayer -> (sbtLayer.Id, sbtLayer.Thickness)) |> Seq.toArray)
+        let ids, thicknesses = Array.unzip (materials |> Seq.map (fun sbtLayer -> (sbtLayer.Id, sbtLayer.Thickness)) |> Seq.toArray)
         let asLibraryEntries = ids |> Array.map lookupLibraryEntry
         match asLibraryEntries with
+        | Empty -> (retrieveConstruction (Array.create 1 (retrieveLayer (OutputLayerInfraredTransparent())))).Name
         | OpaqueOnly(opaqueEntries) ->
             let outputLayers =
                 (Array.zip opaqueEntries thicknesses)
@@ -52,6 +53,6 @@ type Manager (sbtMaterialIDToLibraryEntry:Func<int, MaterialLibrary.LibraryEntry
 
     member this.ConstructionNameForSurface(id) =
         match lookupLibraryEntry id with
-        | Opaque(entry) -> retrieveConstruction(Array.create 1 (retrieveOpaqueSurface entry)).Name
+        | Opaque(entry) -> (retrieveConstruction (Array.create 1 (retrieveOpaqueSurface entry))).Name
         | _ -> "BAD SURFACE CONSTRUCTION"
 

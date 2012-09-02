@@ -147,10 +147,13 @@ namespace GUI.Operations
             {
                 LibIdf.Idf.IdfObject obj = idf.CreateObject("Construction");
                 obj.Fields["Name"].Value = c.Name;
-                obj.Fields["Outside Layer"].Value = c.LayerNames[0];
-                for (int i = 1; i < c.LayerNames.Count; ++i)
+                if (c.LayerNames.Count > 0) // constructions should always have layers, but if one doesn't then I don't want IDF generation to fail entirely
                 {
-                    obj.Fields[String.Format("Layer {0}", i + 1)].Value = c.LayerNames[i];
+                    obj.Fields["Outside Layer"].Value = c.LayerNames[0];
+                    for (int i = 1; i < c.LayerNames.Count; ++i)
+                    {
+                        obj.Fields[String.Format("Layer {0}", i + 1)].Value = c.LayerNames[i];
+                    }
                 }
             }
 
