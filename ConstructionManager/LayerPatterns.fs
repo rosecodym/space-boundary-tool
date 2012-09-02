@@ -2,6 +2,9 @@
 
 open MaterialLibrary
 
+let (|Empty|_|) layers =
+    if Seq.isEmpty layers then Some(()) else None
+
 let (|OpaqueOnly|_|) layers =
     let asOpaque = Array.map (fun layer ->
         match layer with 
