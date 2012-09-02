@@ -101,11 +101,29 @@ Construction ^ createConstructionFor(const cppw::Instance & buildingElement, Str
 	}
 }
 
+bool detectShading(const cppw::Instance & inst) {
+	cppw::Set defined_by = inst.get("IsDefinedBy");
+	for (defined_by.move_first(); defined_by.move_next(); ) {
+		cppw::Instance d = defined_by.get_();
+		if (d.is_instance_of("IfcRelDefinesByProperties")) {
+			cppw::Instance pset = d.get("RelatingPropertyDefinition");
+			if (pset.get("Name").is_set()) {
+				cppw::String name = pset.get("Name");
+				if (name.size() >= 19 && !strncmp(name.data(), "PSet_ElementShading", 19)) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 } // namespace
 
 Element::Element(const cppw::Instance & inst, ConstructionFactory ^ constructionFactory) 
 	: guid(gcnew String(((cppw::String)inst.get("GlobalId")).data())),
-	construction(createConstructionFor(inst, guid, constructionFactory))
+	construction(createConstructionFor(inst, guid, constructionFactory)),
+	isShading(detectShading(inst))
 { }
 
 } // namespace IfcInformationExtractor

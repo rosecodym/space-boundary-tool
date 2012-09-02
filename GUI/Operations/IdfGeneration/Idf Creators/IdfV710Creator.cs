@@ -201,6 +201,17 @@ namespace GUI.Operations
                 obj.Fields["End Day of Month"].Value = endDay;
             }
 
+            public override void AddShading(Shading shading)
+            {
+                int i = 1;
+                foreach (Sbt.CoreTypes.Polyloop face in shading.Faces)
+                {
+                    IdfObject obj = idf.CreateObject("Building:Shading:Detailed");
+                    obj.Fields["Name"].Value = String.Format("{0} (face {1})", shading.SourceName, i);
+                    ++i;
+                }
+            }
+
             public override void AddTimestep(int timestep)
             {
                 idf.CreateObject("Timestep").Fields["Number of Timesteps per Hour"].Value = timestep;
