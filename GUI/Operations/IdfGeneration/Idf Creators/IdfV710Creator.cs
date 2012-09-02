@@ -209,7 +209,7 @@ namespace GUI.Operations
                 int i = 1;
                 foreach (Sbt.CoreTypes.Polyloop face in shading.Faces)
                 {
-                    IdfObject obj = idf.CreateObject("Building:Shading:Detailed");
+                    IdfObject obj = idf.CreateObject("Shading:Building:Detailed");
                     obj.Fields["Name"].Value = String.Format("{0} (face {1})", shading.SourceName, i);
                     ++i;
                 }

@@ -1,3 +1,4 @@
+#include <cstring>
 #include <cpp_edmi.h>
 
 #include "ConstructionFactory.h"
@@ -109,7 +110,7 @@ bool detectShading(const cppw::Instance & inst) {
 			cppw::Instance pset = d.get("RelatingPropertyDefinition");
 			if (pset.get("Name").is_set()) {
 				cppw::String name = pset.get("Name");
-				if (name.size() >= 19 && !strncmp(name.data(), "PSet_ElementShading", 19)) {
+				if (strstr(name.data(), "ElementShading")) {
 					return true;
 				}
 			}
