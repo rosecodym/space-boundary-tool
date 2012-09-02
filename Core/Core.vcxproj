@@ -57,6 +57,7 @@
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
       <AdditionalOptions>%(AdditionalOptions) -Zm159 /F 0x200000</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
