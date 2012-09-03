@@ -211,6 +211,12 @@ namespace GUI.Operations
                 {
                     IdfObject obj = idf.CreateObject("Shading:Building:Detailed");
                     obj.Fields["Name"].Value = String.Format("{0} (face {1})", shading.SourceName, i);
+                    for (int j = 0; j < face.Vertices.Count; ++j)
+                    {
+                        obj.Fields[String.Format("Vertex {0} X-coordinate", j + 1)].Value = face.Vertices[j].X;
+                        obj.Fields[String.Format("Vertex {0} Y-coordinate", j + 1)].Value = face.Vertices[j].Y;
+                        obj.Fields[String.Format("Vertex {0} Z-coordinate", j + 1)].Value = face.Vertices[j].Z;
+                    }
                     ++i;
                 }
             }
