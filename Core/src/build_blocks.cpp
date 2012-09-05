@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "block.h"
+#include "exceptions.h"
 #include "halfblocks_for_base.h"
 #include "is_hexahedral_prismatoid.h"
 #include "is_right_cuboid.h"
@@ -74,10 +75,21 @@ std::vector<block> build_blocks(const std::vector<element> & elements, equality_
 	std::vector<block> res;
 	NOTIFY_MSG("Building blocks for %u elements.\n", elements.size());
 	boost::for_each(elements, [&res, c](const element & e) {
-		int block_count = 0;
-		NOTIFY_MSG("Building blocks for element %s ", e.source_id().c_str());
-		boost::transform(impl::build_blocks_for(e, c), std::back_inserter(res), [&block_count](const block & b) -> block { ++block_count; return b; });
-		NOTIFY_MSG("%i blocks created.\n", block_count);
+		bool stack_overflow = false;
+		try {
+			int block_count = 0;
+			NOTIFY_MSG("Building blocks for element %s ", e.source_id().c_str());
+			boost::transform(impl::build_blocks_for(e, c), std::back_inserter(res), [&block_count](const block & b) -> block { ++block_count; return b; });
+			NOTIFY_MSG("%i blocks created.\n", block_count);
+		}
+		catch (stack_overflow_exception &) {
+			// use as little stack space as possible in this catch block because the stack is still busted
+			stack_overflow = true;
+		}
+		if (stack_overflow) {
+			_resetstkoflw();
+			WARN_MSG("\nWarning: building element geometry is too complicated. Space boundaries for this element will not be generated.\n");
+		}
 	});
 	return res;
 }
