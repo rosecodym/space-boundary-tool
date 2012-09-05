@@ -72,6 +72,8 @@ namespace GUI.Operations
             }
             public Sbt.CoreTypes.Polyloop Geometry { get { return sbtInfo.Geometry.Cleaned(0.01); } }
             public Tuple<double, double, double> Normal { get { return sbtInfo.Normal; } }
+
+            public bool HasElementType(Sbt.CoreTypes.ElementType type) { return sbtInfo.Element != null && sbtInfo.Element.Type == type; }
         }
     }
 }

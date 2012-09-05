@@ -159,10 +159,12 @@ namespace GUI.Operations
                     {
                         elementGeometriesByGuid[element.Guid] = element.Geometry;
                     }
+
+                    List<BuildingSurface> wallBoundaries = new List<BuildingSurface>(surfacesByGuid.Values.Where(surf => surf.HasElementType(Sbt.CoreTypes.ElementType.Wall)));
                     var shadings =
                         p.IfcBuilding.ElementsByGuid.Values
                         .Where(element => element.IsShading)
-                        .Select(element => new Shading(element.Guid, elementGeometriesByGuid[element.Guid], null));
+                        .Select(element => new Shading(element.Guid, elementGeometriesByGuid[element.Guid], wallBoundaries));
 
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
