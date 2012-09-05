@@ -413,6 +413,7 @@ namespace GUI
                 {
                     if (d.DependentOn.Contains(args.PropertyName)) { PropertyChanged(this, new PropertyChangedEventArgs(d.Dependent)); }
                 }
+                CommandManager.InvalidateRequerySuggested();
             };
 
             BrowseToInputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToInputIfcFile(this));
