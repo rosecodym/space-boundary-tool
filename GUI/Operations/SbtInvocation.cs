@@ -20,6 +20,18 @@ namespace GUI.Operations
             public Sbt.EntryPoint.MessageDelegate ErrorMessage { get; set; }
         }
 
+        static private string GenerateTimeString(TimeSpan t)
+        {
+            string secondsComponent = t.Seconds == 1 ? "1 second" : String.Format("{0} seconds", t.Seconds);
+            string minutesComponent =
+                t.Minutes == 0 ? String.Empty :
+                t.Minutes == 1 ? "1 minute, " : String.Format("{0} minutes, ", t.Minutes);
+            string hoursComponent =
+                t.Hours == 0 ? String.Empty :
+                t.Hours == 1 ? "1 hour" : String.Format("{0} hours, ", t.Hours);
+            return hoursComponent + minutesComponent + secondsComponent;
+        }
+
         static public void Execute(ViewModel vm)
         {
             if (!vm.CurrentlyCalculatingSBs)
@@ -73,6 +85,7 @@ namespace GUI.Operations
                     IList<Sbt.CoreTypes.ElementInfo> elements;
                     ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
                     ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
+                    var startTime = System.DateTime.Now;
                     Sbt.EntryPoint.CalculateSpaceBoundariesFromIfc(
                         p.InputFilename,
                         p.OutputFilename,
@@ -88,6 +101,7 @@ namespace GUI.Operations
                         p.NotifyMessage,
                         p.WarnMessage,
                         p.ErrorMessage);
+                    p.NotifyMessage("Space boundary calculation completed in " + GenerateTimeString(DateTime.Now - startTime) + ".\n");
                     SbtBuildingInformation resultingBuilding = new SbtBuildingInformation();
                     resultingBuilding.IfcFilename = p.InputFilename;
                     resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
