@@ -124,23 +124,6 @@
         "Entry"
         {
         "MsmKey" = "8:_6D08BC21EF664B65936D8C646A7E1C69"
-        "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6D9BD3D14863428DA4C548339B38BBD8"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_9FC2D387250749E68DBD6F50A1CEF1B8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -161,6 +144,24 @@
         {
         "MsmKey" = "8:_A31723F6873972C1E65CE2B7CACD9203"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A3A51F0B16184B95A2B76C4C7C0981ED"
+        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A3A51F0B16184B95A2B76C4C7C0981ED"
+        "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A3A51F0B16184B95A2B76C4C7C0981ED"
+        "OwnerKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -272,6 +273,19 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+                    {
+                    "Name" = "8:Windows Installer 3.1"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+                    }
+                }
             }
         }
         "Release"
@@ -557,7 +571,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4626.20801, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4631.22634, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_603184890994A476E3CA19B344A8E788"
@@ -813,15 +827,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
-        "ProductCode" = "8:{3762DED7-24D1-41F6-9246-B9A18EB22B2C}"
-        "PackageCode" = "8:{29FD57A9-0D66-4F92-AB38-A355DF6FB14E}"
+        "ProductCode" = "8:{D3356EB5-4557-46BC-9588-981B53E4319C}"
+        "PackageCode" = "8:{B3DC3D2D-8584-4BCD-812F-590D5891F0D1}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.3.0"
+        "ProductVersion" = "8:1.4.0"
         "Manufacturer" = "8:LBNL"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -940,12 +954,12 @@
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
+            "IconIndex" = "3:32512"
             "Transitive" = "11:FALSE"
             "Target" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
             "Folder" = "8:_CDBB7A856E2643D5B27D269698F149D5"
             "WorkingFolder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
-            "Icon" = "8:"
+            "Icon" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
             "Feature" = "8:"
             }
         }
@@ -1344,7 +1358,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_6D08BC21EF664B65936D8C646A7E1C69"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_A3A51F0B16184B95A2B76C4C7C0981ED"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"

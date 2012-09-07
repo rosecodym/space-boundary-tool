@@ -56,7 +56,19 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <Button Content="Calculate Space Boundaries" Height="23" HorizontalAlignment="Center" Margin="4" Name="button3" VerticalAlignment="Center" Width="Auto" Grid.ColumnSpan="3" Padding="3,1" Command="{Binding ExecuteSbtCommand}" IsEnabled="{Binding SbtInvokable}"/>
+                                    <Button 
+                                        Content="Calculate Space Boundaries" 
+                                        Height="23" 
+                                        HorizontalAlignment="Center" 
+                                        Margin="4" 
+                                        Name="button3" 
+                                        VerticalAlignment="Center" 
+                                        Width="Auto" 
+                                        Grid.ColumnSpan="3" 
+                                        Padding="3,1" 
+                                        Command="{Binding ExecuteSbtCommand}" 
+                                        ToolTipService.ShowOnDisabled="True"
+                                        ToolTip="{Binding ReasonForDisabledSBCalculation}" />
                                     <CheckBox Content="Write IFC file with new space boundaries to:" Grid.Row="1" Height="16" HorizontalAlignment="Left" Margin="4" Name="checkBox4" VerticalAlignment="Center" IsChecked="{Binding WriteIfc}"/>
                                     <Button Content="Browse..." Grid.Column="2" Grid.Row="1" Height="23" HorizontalAlignment="Center" Margin="4" Name="button4" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIfcFileCommand}"/>
                                     <TextBox Grid.Column="1" Grid.Row="1" Height="23" HorizontalAlignment="Stretch" Margin="4" Name="textBox3" VerticalAlignment="Center" Width="Auto" MinWidth="100" IsEnabled="{Binding WriteIfc}" Text="{Binding OutputIfcFilePath}"/>
@@ -114,7 +126,18 @@
                                     <Label Content="IDF Materials Library:" Height="28" HorizontalAlignment="Center" Margin="0" Name="label15" VerticalAlignment="Center" />
                                     <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button7" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToMaterialsLibraryCommand}"/>
                                     <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox4" VerticalAlignment="Stretch" Width="Auto" Text="{Binding MaterialsLibraryPath}"/>
-                                    <Button Content="Load" Grid.Column="3" Height="23" HorizontalAlignment="Left" Margin="4" Name="button8" VerticalAlignment="Top" Width="75" IsEnabled="{Binding MaterialsLibraryLoadable}" Command="{Binding LoadMaterialsLibraryCommand}"/>
+                                    <Button 
+                                        Content="Load" 
+                                        Grid.Column="3" 
+                                        Height="23" 
+                                        HorizontalAlignment="Left" 
+                                        Margin="4" 
+                                        Name="button8" 
+                                        VerticalAlignment="Top" 
+                                        Width="75" 
+                                        Command="{Binding LoadMaterialsLibraryCommand}"
+                                        ToolTipService.ShowOnDisabled="True"
+                                        ToolTip="{Binding ReasonForDisabledMaterialLibraryLoad}" />
                                 </Grid>
                                 <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding LibraryMaterials}" SelectionMode="Single" SelectedItem="{Binding SelectedIdfConstruction}" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
@@ -157,7 +180,18 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Button Command="{Binding LoadIfcBuildingCommand}" Content="Load" Height="23" HorizontalAlignment="Right" IsEnabled="{Binding IfcBuildingLoadable}" Margin="4" Name="button9" VerticalAlignment="Center" Width="75" Grid.Column="2" />
+                                    <Button 
+                                        Command="{Binding LoadIfcBuildingCommand}" 
+                                        Content="Load" 
+                                        Height="23" 
+                                        HorizontalAlignment="Right" 
+                                        Margin="4" 
+                                        Name="button9" 
+                                        VerticalAlignment="Center" 
+                                        Width="75" 
+                                        Grid.Column="2" 
+                                        ToolTipService.ShowOnDisabled="True"
+                                        ToolTip="{Binding ReasonForDisabledIfcModelLoad}" />
                                     <Button Content="Map" Grid.Column="1" Height="23" HorizontalAlignment="Center" Margin="0" Name="button10" VerticalAlignment="Center" Width="75" Command="{Binding LinkConstructionsCommand}" CommandParameter="{Binding ElementName=dataGrid2, Path=SelectedItems}"/>
                                 </Grid>
                             </Grid>
@@ -178,12 +212,18 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Label Content="Output IDF:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label13" VerticalAlignment="Center" />
                         <TextBox Grid.Column="1" Grid.ColumnSpan="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox2" VerticalAlignment="Center" Width="Auto" Text="{Binding OutputIdfFilePath}"/>
                         <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button5" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIdfFileCommand}"/>
-                        <Button Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" Command="{Binding GenerateIdfCommand}"/>
+                        <Button 
+                            Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" 
+                            Command="{Binding GenerateIdfCommand}"
+                            ToolTipService.ShowOnDisabled="True" 
+                            ToolTip="{Binding ReasonForDisabledIdfGeneration}" Padding="1" />
                         <ComboBox Grid.Column="3" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionIndexToWrite}"/>
+                        <Button Content="View IDF" Grid.Column="5" Height="23" HorizontalAlignment="Left" Margin="4" Name="button2" VerticalAlignment="Center" Width="75" Command="{Binding ViewIdfCommand}" />
                     </Grid>
                     <GroupBox Header="Simulation control parameters" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox7" VerticalAlignment="Stretch" Width="Auto">
                         <Grid>
@@ -259,12 +299,7 @@
                 <Grid Height="Auto" Name="grid2" Width="Auto">
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="stackPanel1" VerticalAlignment="Stretch" Width="Auto" Orientation="Horizontal" FlowDirection="RightToLeft">
-                        <Button Content="Save As..." Height="23" Name="button2" Width="75" IsEnabled="False" FlowDirection="LeftToRight" Margin="4" />
-                        <Button Content="View IDF" Height="23" Name="button11" Width="75" FlowDirection="LeftToRight" Command="{Binding ViewIdfCommand}"/>
-                    </StackPanel>
                     <TextBox Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tbOutput" VerticalAlignment="Stretch" Width="Auto" IsReadOnly="True" TextChanged="OutputTextChanged" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
                 </Grid>
             </TabItem>

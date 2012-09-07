@@ -20,7 +20,7 @@ namespace GUI.Operations
             if (result.HasValue && result.Value == true)
             {
                 vm.InputIfcFilePath = ofd.FileName;
-                vm.OutputIfcFilePath = Path.Combine(Path.GetDirectoryName(ofd.FileName), Path.GetFileNameWithoutExtension(ofd.FileName) + "-sb.ifc");
+                vm.OutputIfcFilePath = Path.Combine(Path.GetDirectoryName(ofd.FileName), Path.GetFileNameWithoutExtension(ofd.FileName) + "-SB.ifc");
                 vm.OutputIdfFilePath = Path.ChangeExtension(ofd.FileName, "idf");
             }
         }

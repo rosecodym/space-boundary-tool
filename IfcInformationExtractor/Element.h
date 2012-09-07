@@ -14,6 +14,8 @@ public ref class Element {
 private:
 	initonly String ^ guid;
 	initonly Construction ^ construction;
+	initonly bool isShading;
+
 public:
 	Element(const cppw::Instance & inst, ConstructionFactory ^ constructionFactory);
 
@@ -25,6 +27,11 @@ public:
 	property Construction ^ AssociatedConstruction
 	{
 		Construction ^ get() { return construction; }
+	}
+
+	property bool IsShading
+	{
+		bool get() { return isShading; }
 	}
 };
 

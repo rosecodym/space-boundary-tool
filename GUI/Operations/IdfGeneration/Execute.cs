@@ -154,6 +154,18 @@ namespace GUI.Operations
                         .Where(sb => !sb.IsVirtual && sb.Element.IsFenestration && sb.ContainingBoundary != null) // all fenestration sbs *should* have a containing boundary, but...
                         .Select(sb => new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], constructionManager.ConstructionNameForLayers(sb.MaterialLayers))));
 
+                    IDictionary<string, Sbt.CoreTypes.Solid> elementGeometriesByGuid = new Dictionary<string, Sbt.CoreTypes.Solid>();
+                    foreach (Sbt.CoreTypes.ElementInfo element in p.SbtBuilding.Elements)
+                    {
+                        elementGeometriesByGuid[element.Guid] = element.Geometry;
+                    }
+
+                    List<BuildingSurface> wallBoundaries = new List<BuildingSurface>(surfacesByGuid.Values.Where(surf => surf.HasElementType(Sbt.CoreTypes.ElementType.Wall)));
+                    var shadings =
+                        p.IfcBuilding.ElementsByGuid.Values
+                        .Where(element => element.IsShading)
+                        .Select(element => new Shading(element.Guid, elementGeometriesByGuid[element.Guid], wallBoundaries));
+
                     IdfCreator creator = IdfCreator.Build(p.EPVersion, idd, p.Notify);
 
                     creator.AddConstantContents();
@@ -164,6 +176,7 @@ namespace GUI.Operations
                     foreach (KeyValuePair<string, string> zone in zoneNamesByGuid) { creator.AddZone(zone.Value, zone.Key); }
                     foreach (BuildingSurface surf in surfacesByGuid.Values) { creator.AddBuildingSurface(surf); }
                     foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }
+                    foreach (Shading s in shadings) { creator.AddShading(s); }
                     foreach (ConstructionManager.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
                     foreach (ConstructionManager.OutputLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
 

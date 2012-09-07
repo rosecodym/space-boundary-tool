@@ -98,5 +98,36 @@ namespace GUI
         {
             return !sb.Geometry.Vertices.Any(p => p.Z > 0.0);
         }
+
+        internal static Point Center(this Polyloop loop)
+        {
+            double x = 0, y = 0, z = 0;
+            foreach (Point p in loop.Vertices)
+            {
+                x += p.X;
+                y += p.Y;
+                z += p.Z;
+            }
+            return new Point(x / loop.Vertices.Count, y / loop.Vertices.Count, z / loop.Vertices.Count);
+        }
+
+        internal static Point AverageOfFaceCenters(this Solid s)
+        {
+            double x = 0, y = 0, z = 0;
+            IList<Face> faces = s.ToFaces();
+            foreach (Sbt.CoreTypes.Face f in faces)
+            {
+                Sbt.CoreTypes.Point c = f.OuterBoundary.Center();
+                x += c.X;
+                y += c.Y;
+                z += c.Z;
+            }
+            return new Point(x / faces.Count, y / faces.Count, z / faces.Count);
+        }
+
+        internal static Polyloop Translate(this Polyloop loop, double dx, double dy, double dz)
+        {
+            return new Polyloop(loop.Vertices.Select(p => new Point(p.X + dx, p.Y + dy, p.Z + dz)));
+        }
     }
 }

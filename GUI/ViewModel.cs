@@ -48,11 +48,7 @@ namespace GUI
             {
                 sbtBuilding = value;
                 CheckIfcConstructionsForSbParticipation();
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentSbtBuilding"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("IdfGeneratable"));
-                }
+                Updated("CurrentSbtBuilding");
             }
         }
 
@@ -63,10 +59,7 @@ namespace GUI
             {
                 ifcBuilding = value;
                 IfcConstructions = new ObservableCollection<IfcConstruction>(ifcBuilding.Constructions.Select(c => new IfcConstruction(c)));
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentIfcBuilding"));
-                }
+                Updated("CurrentIfcBuilding");
             }
         }
 
@@ -76,7 +69,7 @@ namespace GUI
             set
             {
                 libraryMaterials = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("LibraryMaterials")); }
+                Updated("LibraryMaterials");
             }
         }
 
@@ -87,7 +80,7 @@ namespace GUI
             {
                 ifcConstructions = value;
                 CheckIfcConstructionsForSbParticipation();
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("IfcConstructions")); }
+                Updated("IfcConstructions");
             }
         }
 
@@ -97,7 +90,7 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.InputIfcFilename = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("InputIfcFilePath")); }
+                Updated("InputIfcFilePath");
             }
         }
 
@@ -107,7 +100,7 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.OutputIfcFilename = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("OutputIfcFilePath")); }
+                Updated("OutputIfcFilePath");
             }
         }
 
@@ -117,7 +110,7 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.OutputIdfFilename = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("OutputIdfFilePath")); }
+                Updated("OutputIdfFilePath");
             }
         }
 
@@ -127,10 +120,7 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.MaterialsLibraryFilename = value;
-                if (PropertyChanged != null) { 
-                    PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryPath"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("MaterialsLibraryLoadable"));
-                }
+                Updated("MaterialsLibraryPath");
             }
         }
 
@@ -140,7 +130,7 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.CreateOutputIfc = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("WriteIfc")); }
+                Updated("WriteIfc");
             }
         }
 
@@ -189,11 +179,7 @@ namespace GUI
         public int EnergyPlusVersionIndexToWrite
         {
             get { return Properties.Settings.Default.EnergyPlusVersionIndexToWrite; }
-            set
-            {
-                Properties.Settings.Default.EnergyPlusVersionIndexToWrite = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("EnergyPlusVersionIndexToWrite")); }
-            }
+            set { Properties.Settings.Default.EnergyPlusVersionIndexToWrite = value; }
         }
 
         public MaterialLibraryEntry SelectedIdfConstruction { get; set; }
@@ -207,20 +193,13 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.BuildingLocation = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("BuildingLocation")); }
+                Updated("BuildingLocation");
             }
         }
         public double TimeZone
         {
-            get
-            {
-                return Properties.Settings.Default.TimeZone;
-            }
-            set
-            {
-                Properties.Settings.Default.TimeZone = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("TimeZone")); }
-            }
+            get { return Properties.Settings.Default.TimeZone; }
+            set { Properties.Settings.Default.TimeZone = value; }
         }
         public Operations.IdfGeneration.SolarDistribution SolarDistribution
         {
@@ -256,17 +235,17 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.StartMonth = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("StartMonth"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("AvailableStartDays"));
-                }
+                Updated("StartMonth");
             }
         }
         public int StartDay
         {
             get { return Properties.Settings.Default.StartDay; }
-            set { Properties.Settings.Default.StartDay = value; }
+            set
+            { 
+                Properties.Settings.Default.StartDay = value;
+                Updated("StartDay");
+            }
         }
         public int EndMonth
         {
@@ -274,17 +253,17 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.EndMonth = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("EndMonth"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("AvailableEndDays"));
-                }
+                Updated("EndMonth");
             }
         }
         public int EndDay
         {
             get { return Properties.Settings.Default.EndDay; }
-            set { Properties.Settings.Default.EndDay = value; }
+            set
+            {
+                Properties.Settings.Default.EndDay = value;
+                Updated("EndDay");
+            }
         }
         public int Timestep
         {
@@ -298,7 +277,7 @@ namespace GUI
             set
             {
                 calculatingSBs = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")); }
+                Updated("CurrentlyCalculatingSBs");
             }
         }
         public bool CurrentlyLoadingMaterialLibrary
@@ -307,7 +286,7 @@ namespace GUI
             set
             {
                 loadingMaterialLibrary = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")); }
+                Updated("CurrentlyLoadingMaterialLibrary");
             }
         }
         public bool CurrentlyLoadingIfcModel
@@ -316,7 +295,7 @@ namespace GUI
             set
             {
                 loadingIfcModel = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")); }
+                Updated("CurrentlyLoadingIfcModel");
             }
         }
         public bool CurrentlyGeneratingIdf
@@ -325,7 +304,61 @@ namespace GUI
             set
             {
                 generatingIdf = value;
-                if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIdf")); }
+                Updated("CurrentlyGeneratingIdf");
+            }
+        }
+
+        public string ReasonForDisabledSBCalculation
+        {
+            get
+            {
+                List<string> reasons = new List<string>();
+                if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are already being calculated."); }
+                if (CurrentlyLoadingIfcModel) { reasons.Add("The IFC model constructions are being loaded (these operations cannot be simultaneous)."); }
+                if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
+                return reasons.Count == 0 ? null : "Space boundaries cannot be calculated:\n" + String.Join(Environment.NewLine, reasons);
+            }
+        }
+
+        public string ReasonForDisabledMaterialLibraryLoad
+        {
+            get
+            {
+                List<string> reasons = new List<string>();
+                if (CurrentlyLoadingMaterialLibrary) { reasons.Add("A material library is already being loaded."); }
+                if (String.IsNullOrWhiteSpace(MaterialsLibraryPath) || !System.IO.File.Exists(MaterialsLibraryPath)) { reasons.Add("The specified material library file does not exist."); }
+                return reasons.Count == 0 ? null : "The material library cannot be loaded:\n" + String.Join(Environment.NewLine, reasons);
+            }
+        }
+
+        public string ReasonForDisabledIfcModelLoad
+        {
+            get
+            {
+                List<string> reasons = new List<string>();
+                if (CurrentlyLoadingIfcModel) { reasons.Add("IFC constructions are already being loaded."); }
+                if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
+                if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are currently being calculated (these operations cannot be simultaneous)."); }
+                return reasons.Count == 0 ? null : "IFC constructions cannot be loaded:\n" + String.Join(Environment.NewLine, reasons);
+            }
+        }
+
+        public string ReasonForDisabledIdfGeneration
+        {
+            get
+            {
+                List<string> reasons = new List<string>();
+                if (CurrentlyGeneratingIdf) { reasons.Add("An IDF is currently being generated."); }
+                if (CurrentSbtBuilding == null) { reasons.Add("No space boundaries have been loaded for this model."); }
+                if (CurrentIfcBuilding == null) { reasons.Add("No constructions have been loaded for this model."); }
+                if (String.IsNullOrWhiteSpace(OutputIdfFilePath)) { reasons.Add("No output filename has been specified."); }
+                if (String.IsNullOrWhiteSpace(BuildingLocation)) { reasons.Add("No building location has been specified."); }
+                if (StartDay < 1 || StartDay > 31) { reasons.Add("The run period start day has not been set."); }
+                if (StartMonth < 1 || StartMonth > 12) { reasons.Add("The run period start month has not been set."); }
+                if (EndDay < 1 || EndDay > 31) { reasons.Add("The run period end day has not been set."); }
+                if (EndMonth < 1 || EndMonth > 12) { reasons.Add("The run period end month has not been set."); }
+                try { if (new DateTime(2012, EndMonth, EndDay) < new DateTime(2012, StartMonth, StartDay)) { reasons.Add("The run period end date is prior to the run period start date."); } } catch (Exception) { }
+                return reasons.Count == 0 ? null : "An IDF cannot be generated:\n" + String.Join(Environment.NewLine, reasons);
             }
         }
 
@@ -337,14 +370,60 @@ namespace GUI
 
         public ViewModel(Action<string> updateOutputDirectly)
         {
+            var propertyDependencies = new[] 
+            {
+                new
+                {
+                    Dependent = "ReasonForDisabledSBCalculation",
+                    DependentOn = new[] { "CurrentlyCalculatingSBs", "CurrentlyLoadingIfcModel", "InputIfcFilePath" }
+                },
+                new
+                {
+                    Dependent = "ReasonForDisabledMaterialLibraryLoad",
+                    DependentOn = new[] { "CurrentlyLoadingMaterialLibrary", "MaterialsLibraryPath" }
+                },
+                new
+                {
+                    Dependent = "ReasonForDisabledIfcModelLoad",
+                    DependentOn = new[] { "CurrentlyLoadingIfcModel", "InputIfcFilePath", "CurrentlyCalculatingSBs" }
+                },
+                new 
+                { 
+                    Dependent = "ReasonForDisabledIdfGeneration", 
+                    DependentOn = new[] 
+                    { 
+                        "CurrentlyGeneratingIdf",
+                        "CurrentSbtBuilding",
+                        "CurrentIfcBuilding",
+                        "OutputIdfFilePath",
+                        "BuildingLocation",
+                        "StartDay",
+                        "StartMonth",
+                        "EndDay",
+                        "EndMonth"
+                    }
+                },
+                new { Dependent = "AvailableStartDays", DependentOn = new[] { "StartMonth" } },
+                new { Dependent = "AvailableEndDays", DependentOn = new[] { "EndMonth" } }
+            };
+
+            this.PropertyChanged += (_, args) =>
+            {
+                foreach (var d in propertyDependencies)
+                {
+                    if (d.DependentOn.Contains(args.PropertyName)) { PropertyChanged(this, new PropertyChangedEventArgs(d.Dependent)); }
+                }
+                CommandManager.InvalidateRequerySuggested();
+            };
+
             BrowseToInputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToInputIfcFile(this));
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
-            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => !CurrentlyGeneratingIdf);
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => !CurrentlyLoadingMaterialLibrary);
-            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => !CurrentlyCalculatingSBs && !CurrentlyLoadingIfcModel);
+            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => ReasonForDisabledSBCalculation == null);
+            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => ReasonForDisabledIdfGeneration == null);
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => ReasonForDisabledMaterialLibraryLoad == null);
+            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => ReasonForDisabledIfcModelLoad == null);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
                 {
@@ -402,10 +481,16 @@ namespace GUI
             catch (Exception) { /* no time for this right now */ }
         }
 
+        private void Updated(string propertyName)
+        {
+            if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName)); }
+        }
+
+        // there's a DateTime method I could use here but I don't want to be too much smarter than E+
         static private IEnumerable<int> AvailableDaysForMonth(int month)
         {
             return Enumerable.Range(1,
-                month == 2 ? 28 :
+                month == 2 ? 29 :
                 month == 4 ? 30 :
                 month == 6 ? 30 :
                 month == 9 ? 30 :

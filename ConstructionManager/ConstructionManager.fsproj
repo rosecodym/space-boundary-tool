@@ -47,6 +47,7 @@
     <Compile Include="OutputLayerAirGap.fs" />
     <Compile Include="OutputLayerGas.fs" />
     <Compile Include="OutputLayerGlazing.fs" />
+    <Compile Include="OutputLayerInfraredTransparent.fs" />
     <Compile Include="OutputLayerOpaque.fs" />
     <Compile Include="Construction.fs" />
     <Compile Include="LayerPatterns.fs" />
