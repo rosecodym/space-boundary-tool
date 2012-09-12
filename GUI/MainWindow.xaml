@@ -285,6 +285,7 @@
                         <RowDefinition Height="29" />
                         <RowDefinition Height="29" />
                         <RowDefinition Height="29" />
+                        <RowDefinition Height="29" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Label Content="Attach debugger prior to IDF generation:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label26" VerticalAlignment="Center" />
@@ -293,6 +294,8 @@
                     <CheckBox Grid.Column="1" Height="16" HorizontalAlignment="Left" Margin="2" Name="checkBox5" VerticalAlignment="Center" IsChecked="{Binding AttachDebuggerPriorToIdfGeneration}" />
                     <TextBox Grid.Column="1" Grid.Row="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox9" VerticalAlignment="Stretch" Width="Auto" Text="{Binding SbSpaceFilter}" />
                     <TextBox Grid.Column="1" Grid.Row="2" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox10" VerticalAlignment="Center" Width="Auto" Text="{Binding SbElementFilter}" />
+                    <Label Content="Flags:" Grid.Row="3" Height="28" HorizontalAlignment="Left" Margin="0" Name="label29" VerticalAlignment="Center" />
+                    <TextBox Grid.Column="1" Grid.Row="3" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox11" VerticalAlignment="Center" Width="Auto" Text="{Binding Flags}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Output">

@@ -62,7 +62,7 @@ namespace GUI.Operations
                     if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
                     if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
 
-                    p.Flags = Sbt.EntryPoint.SbtFlags.None;
+                    p.Flags = (Sbt.EntryPoint.SbtFlags)Convert.ToInt32(vm.Flags, 16);
 
                     p.NotifyMessage = p.WarnMessage = p.ErrorMessage = msg => worker.ReportProgress(0, msg);
 
