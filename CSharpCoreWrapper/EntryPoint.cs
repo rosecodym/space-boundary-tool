@@ -60,19 +60,7 @@ namespace Sbt
         [Flags]
         public enum SbtFlags : int
         {
-            None = 0x0,
-            VerboseBlocks = 0x2,
-            VerboseStacks = 0x4,
-            VerboseGeometry = 0x8,
-            SkipWallColumnCheck = 0x10,
-            SkipSlabColumnCheck = 0x20,
-            SkipWallSlabCheck = 0x40,
-            VerboseFenestrations = 0x80,
-            Skip3rdLevelCheck = 0x100,
-            VerboseSpaces = 0x200,
-            ExpensiveChecks = 0x400,
-            VerboseLevels = 0x800,
-            VerboseCombinatorics = 0x1000
+            None = 0x0
         }
 
         public enum SbtResult : int
