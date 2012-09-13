@@ -28,6 +28,18 @@
         "Entry"
         {
         "MsmKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
+        "OwnerKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
+        "OwnerKey" = "8:_2D7424D17E31FAC9FAC8AEA1865F1FAB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
         "OwnerKey" = "8:_A31723F6873972C1E65CE2B7CACD9203"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -47,18 +59,6 @@
         {
         "MsmKey" = "8:_29B722FA30974CB181D0C3D50D9CB417"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2AF80722B3404079830896066C44F115"
-        "OwnerKey" = "8:_2D7424D17E31FAC9FAC8AEA1865F1FAB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2AF80722B3404079830896066C44F115"
-        "OwnerKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -101,6 +101,24 @@
         {
         "MsmKey" = "8:_531C661FED394C5DB2BE0935C055FCD9"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_56F0C648EE22458BBDBB5A366FA48920"
+        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_56F0C648EE22458BBDBB5A366FA48920"
+        "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_56F0C648EE22458BBDBB5A366FA48920"
+        "OwnerKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -149,24 +167,6 @@
         {
         "MsmKey" = "8:_A31723F6873972C1E65CE2B7CACD9203"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A3A51F0B16184B95A2B76C4C7C0981ED"
-        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A3A51F0B16184B95A2B76C4C7C0981ED"
-        "OwnerKey" = "8:_AD0929D576C54C6BAD9A948E42F9EF46"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A3A51F0B16184B95A2B76C4C7C0981ED"
-        "OwnerKey" = "8:_9B1CA4A537D84F909A3C601BF6270C67"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -239,12 +239,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_2D7424D17E31FAC9FAC8AEA1865F1FAB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2AF80722B3404079830896066C44F115"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -415,7 +409,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -457,37 +451,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2AF80722B3404079830896066C44F115"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:TRUE"
-            "AssemblyAsmDisplayName" = "8:FSharp.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_2AF80722B3404079830896066C44F115"
-                    {
-                    "Name" = "8:FSharp.Core.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:FSharp.Core.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2D7424D17E31FAC9FAC8AEA1865F1FAB"
@@ -576,7 +539,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4631.22634, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.0.4633.22717, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_603184890994A476E3CA19B344A8E788"
@@ -832,15 +795,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
-        "ProductCode" = "8:{D3356EB5-4557-46BC-9588-981B53E4319C}"
-        "PackageCode" = "8:{B3DC3D2D-8584-4BCD-812F-590D5891F0D1}"
+        "ProductCode" = "8:{75CAA2EE-3925-4E73-9F66-A07F6DD1CE1C}"
+        "PackageCode" = "8:{80F4754F-6988-402A-8E95-21E390DD29B5}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.4.0"
+        "ProductVersion" = "8:1.4.1"
         "Manufacturer" = "8:LBNL"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1363,7 +1326,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_A3A51F0B16184B95A2B76C4C7C0981ED"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_56F0C648EE22458BBDBB5A366FA48920"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
