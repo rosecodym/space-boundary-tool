@@ -365,6 +365,7 @@ namespace GUI
         public bool AttachDebuggerPriorToIdfGeneration { get; set; }
         public string SbSpaceFilter { get; set; }
         public string SbElementFilter { get; set; }
+        public string Flags { get; set; }
 
         public IddManager Idds { get { return idds; } }
 

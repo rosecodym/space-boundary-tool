@@ -38,11 +38,10 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 
 	NOTIFY_MSG("Got bounding boxes (%u walls, %u slabs, %u columns).\n", walls.size(), slabs.size(), columns.size());
 
-	bool need_wall_column_check = !FLAGGED(SBT_SKIP_WALL_COLUMN_CHECK) && !walls.empty() && !columns.empty();
-	bool need_wall_slab_check = !FLAGGED(SBT_SKIP_WALL_SLAB_CHECK) && !walls.empty() && !slabs.empty();
-	bool need_slab_column_check = !FLAGGED(SBT_SKIP_SLAB_COLUMN_CHECK) && !slabs.empty() && !columns.empty();
+	bool need_wall_column_check = !walls.empty() && !columns.empty();
+	bool need_slab_column_check = !slabs.empty() && !columns.empty();
 
-	if (need_wall_column_check || need_wall_slab_check) {
+	if (need_wall_column_check) {
 		for (auto w = walls.begin(); w != walls.end(); ++w) {
 
 			NOTIFY_MSG("Resolving wall %s", w->handle()->source_id().c_str());
@@ -58,24 +57,16 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 				});
 			}
 
-			if (need_wall_slab_check) {
-				boost::for_each(slabs, [w, &performed_any_subtractions, c](const element_box & s) {
-					if (CGAL::do_overlap(w->bbox(), s.bbox())) {
-						w->handle()->subtract_geometry_of(*s.handle(), c);
-						NOTIFY_MSG(".");
-						performed_any_subtractions = true;
-					}
-				});
-			}
-
 			NOTIFY_MSG(performed_any_subtractions ? "done.\n" : " - no resolution necessary.\n");
 		}
 	}
 
 	if (need_slab_column_check) {
 		for (auto col = columns.begin(); col != columns.end(); ++col) {
+
 			NOTIFY_MSG("Resolving column %s", col->handle()->source_id().c_str());
 			bool performed_any_subtractions = false;
+
 			boost::for_each(slabs, [col, &performed_any_subtractions, c](const element_box & s) {
 				if (CGAL::do_overlap(col->bbox(), s.handle()->bounding_box())) {
 					col->handle()->subtract_geometry_of(*s.handle(), c);
@@ -83,6 +74,7 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 					performed_any_subtractions = true;
 				}
 			});
+
 			NOTIFY_MSG(performed_any_subtractions ? "done.\n" : " - no resolution necessary.\n");
 		}
 	}
