@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GUI")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Space Boundary Tool GUI")]
+[assembly: AssemblyDescription("A GUI for SBT")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GUI")]
+[assembly: AssemblyCompany("Lawrence Berkeley National Laboratory")]
+[assembly: AssemblyProduct("Space Boundary Tool")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
