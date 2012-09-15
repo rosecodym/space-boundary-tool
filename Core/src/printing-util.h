@@ -31,8 +31,6 @@ inline void print_polygon(void (*notify_func)(char *), const polygon_2 & poly) {
 	}
 }
 
-void print_nef_polygon(void (*msg_func)(char *), const nef_polygon_2 & nef);
-
 } // namespace io
 
 } // namespace util

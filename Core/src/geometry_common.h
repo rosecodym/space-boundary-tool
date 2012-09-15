@@ -29,4 +29,22 @@ inline VecT normalize(const VecT & v) {
 	}
 }
 
+template <class PointIter>
+NT smallest_squared_distance(PointIter begin, PointIter end) {
+	NT distance;
+	bool got_first = false;
+	for (auto p = begin; p != end; ++p) {
+		for (auto q = p; q != end; ++q) {
+			if (p != q) {
+				NT this_dist = CGAL::square(p->x() - q->x()) + CGAL::square(p->y() - q->y());
+				if (!got_first || this_dist < distance) {
+					distance = this_dist;
+					got_first = true;
+				}
+			}
+		}
+	}
+	return distance;
+}
+
 } // namespace geometry_common

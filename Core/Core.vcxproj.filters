@@ -40,6 +40,9 @@
     <Filter Include="operations\conversion to interface">
       <UniqueIdentifier>{ebc714fb-ddd0-4c65-99bb-7915e67dc8bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="geometry\geometry_2d\nef_polygons">
+      <UniqueIdentifier>{029e96c7-6144-4eb7-bfaa-cfc84913dd06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -104,9 +107,6 @@
     </ClInclude>
     <ClInclude Include="src\halfblocks_for_base.h">
       <Filter>operations\blocking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\wrapped_nef_polygon.h">
-      <Filter>geometry\geometry_2d</Filter>
     </ClInclude>
     <ClInclude Include="src\area.h">
       <Filter>geometry\geometry_2d</Filter>
@@ -186,6 +186,21 @@
     <ClInclude Include="src\convert_to_space_boundaries.h">
       <Filter>operations\conversion to interface</Filter>
     </ClInclude>
+    <ClInclude Include="src\wrapped_nef_polygon_.h">
+      <Filter>geometry\geometry_2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrapped_nef_polygon.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nef_polygon_util.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nef_polygon_face.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nef_polygon_vertex.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -220,9 +235,6 @@
     </ClCompile>
     <ClCompile Include="src\guid_filter.cpp">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wrapped_nef_polygon.cpp">
-      <Filter>geometry\geometry_2d</Filter>
     </ClCompile>
     <ClCompile Include="src\area.cpp">
       <Filter>geometry\geometry_2d</Filter>
@@ -265,6 +277,15 @@
     </ClCompile>
     <ClCompile Include="src\convert_to_space_boundaries.cpp">
       <Filter>operations\conversion to interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrapped_nef_polygon_.cpp">
+      <Filter>geometry\geometry_2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrapped_nef_polygon.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nef_polygon_face.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
