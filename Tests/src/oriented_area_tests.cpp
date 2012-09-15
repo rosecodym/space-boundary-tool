@@ -202,4 +202,27 @@ TEST(OrientedArea, ExplicitCreation) {
 	EXPECT_EQ(oa.sense(), copy.sense());
 }
 
+TEST(OrientedArea, MultipleConvexNonAxisFacesToPieces) {
+	equality_context c(0.01);
+
+	oriented_area face_1(simple_face(create_face(4,
+		simple_point(0, 0, 0),
+		simple_point(1, 1, 0),
+		simple_point(1, 1, 10),
+		simple_point(0, 0, 10)), &c), &c);
+
+	oriented_area face_2(simple_face(create_face(4,
+		simple_point(2, 2, 0),
+		simple_point(3, 3, 0),
+		simple_point(3, 3, 10), 
+		simple_point(2, 2, 10)), &c), &c);
+
+	oriented_area both(face_1, face_1.area_2d() + face_2.area_2d());
+
+	std::vector<oriented_area> pieces;
+	both.to_pieces(std::back_inserter(pieces));
+	
+	EXPECT_EQ(2, pieces.size());
+}
+
 } // namespace

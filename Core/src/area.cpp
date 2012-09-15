@@ -144,6 +144,13 @@ bool operator >= (const area & a, const area & b) {
 	return a.nef_rep >= b.nef_rep;
 }
 
+area operator + (const area & a, const area & b) {
+	if (a.is_empty()) { return b; }
+	if (b.is_empty()) { return a; }
+	area::promote_both(a, b);
+	return area(a.nef_rep + b.nef_rep);
+}
+
 area operator - (const area & a, const area & b) {
 	if (a.is_empty()) { return area(); }
 	if (b.is_empty()) { return a; }

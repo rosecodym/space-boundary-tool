@@ -60,6 +60,7 @@ public:
 	friend bool operator == (const area & a, const area & b);
 	friend bool operator >= (const area & a, const area & b);
 
+	friend area operator + (const area & a, const area & b);
 	friend area operator - (const area & a, const area & b);
 	friend area operator * (const area & a, const area & b);
 };

@@ -89,6 +89,7 @@ public:
 	friend bool operator > (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend bool operator <= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend bool operator >= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
+	friend wrapped_nef_polygon operator + (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 };

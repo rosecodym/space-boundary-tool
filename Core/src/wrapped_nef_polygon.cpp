@@ -604,6 +604,17 @@ bool wrapped_nef_polygon::do_intersect(const wrapped_nef_polygon & lhs, const wr
 	}
 }
 
+wrapped_nef_polygon operator + (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
+	if (!lhs.m_is_axis_aligned || !rhs.m_is_axis_aligned) {
+		wrapped_nef_polygon r_snapped(rhs);
+		r_snapped.snap_to(lhs);
+		return wrapped_nef_polygon((*lhs.wrapped + *r_snapped.wrapped).interior(), false);
+	}
+	else {
+		return wrapped_nef_polygon((*lhs.wrapped + *rhs.wrapped).interior(), true);
+	}
+}
+
 wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
 	if (!lhs.m_is_axis_aligned || !rhs.m_is_axis_aligned) {
 		wrapped_nef_polygon r_snapped(rhs);
@@ -616,9 +627,7 @@ wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_n
 }
 
 wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
-	PRINT_GEOM("Entered wrapped_nef_polygon::operator *.\n");
 	if (!lhs.m_is_axis_aligned || !rhs.m_is_axis_aligned) {
-		PRINT_GEOM("Polygons are not axis-aligned.\n");
 		wrapped_nef_polygon r_snapped(rhs);
 		r_snapped.snap_to(lhs);
 		return wrapped_nef_polygon((*lhs.wrapped * *r_snapped.wrapped).interior(), false);
