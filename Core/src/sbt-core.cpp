@@ -70,25 +70,13 @@ sbt_return_t calculate_space_boundaries(
 
 	try {
 		NOTIFY_MSG("Beginning processing for %u building elements.\n", element_count);
-		if (g_opts.flags & SBT_SKIP_WALL_SLAB_CHECK) {
-			NOTIFY_MSG("Assuming no wall/slab intersections.\n");
-		}
-		if (g_opts.flags & SBT_SKIP_WALL_COLUMN_CHECK) {
-			NOTIFY_MSG("Assuming no wall/column intersections.\n");
-		}
-		if (g_opts.flags & SBT_SKIP_SLAB_COLUMN_CHECK) {
-			NOTIFY_MSG("Assuming no slab/column intersections.\n");
-		}
 
-		std::shared_ptr<equality_context> whole_building_context(new equality_context(g_opts.equality_tolerance));
+		equality_context whole_building_context(g_opts.equality_tolerance);
 
-		std::vector<element> elements = load_elements(element_infos, element_count, whole_building_context.get(), element_filter);
-
-		std::vector<space> spaces = load_spaces(space_infos, space_count, whole_building_context.get(), space_filter);
-
-		auto blocks = blocking::build_blocks(elements, whole_building_context.get());
-
-		auto stacks = stacking::build_stacks(blocks, spaces, g_opts.max_pair_distance, whole_building_context.get());
+		std::vector<element> elements = load_elements(element_infos, element_count, &whole_building_context, element_filter);
+		std::vector<space> spaces = load_spaces(space_infos, space_count, &whole_building_context, space_filter);
+		std::vector<block> blocks = blocking::build_blocks(elements, &whole_building_context);
+		std::vector<blockstack> stacks = stacking::build_stacks(blocks, spaces, g_opts.max_pair_distance, &whole_building_context);
 
 		std::vector<std::unique_ptr<surface>> surfaces;
 		boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
