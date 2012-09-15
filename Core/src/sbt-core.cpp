@@ -3,6 +3,7 @@
 #include "assign_openings.h"
 #include "build_blocks.h"
 #include "build_stacks.h"
+#include "convert_to_space_boundaries.h"
 #include "equality_context.h"
 #include "exceptions.h"
 #include "geometry_common.h"
@@ -30,99 +31,6 @@ sbt_return_t calculate_space_boundaries_(
 	sb_calculation_options opts);
 
 namespace {
-
-template <typename PointRange>
-void set_geometry(space_boundary * sb, const PointRange & geometry) {
-	set_vertex_count(&sb->geometry, geometry.size());
-	size_t i = 0;
-	boost::for_each(geometry, [sb, &i](const point_3 & p) {
-		set_vertex(&sb->geometry, i++, CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z()));
-	});
-}
-	
-sbt_return_t convert_to_space_boundaries(const std::vector<std::unique_ptr<surface>> & surfaces, space_boundary *** sbs) {
-	*sbs = (space_boundary **)malloc(sizeof(space_boundary *) * surfaces.size());
-	for (size_t i = 0; i < surfaces.size(); ++i) {
-		const std::unique_ptr<surface> & surf = surfaces[i];
-		space_boundary * newsb = (*sbs)[i] = (space_boundary *)malloc(sizeof(space_boundary));
-		newsb->geometry.vertex_count = 0;
-
-		strncpy(newsb->global_id, surf->guid().c_str(), SB_ID_MAX_LEN);
-		strncpy(newsb->element_id, surf->is_virtual() ? "" : surf->bounded_element()->source_id().c_str(), ELEMENT_ID_MAX_LEN);
-
-		auto cleaned_geometry = surf->geometry().to_3d().front().outer();
-		bool could_clean = geometry_common::cleanup_loop(&cleaned_geometry, g_opts.equality_tolerance);
-		if (FLAGGED(SBT_EXPENSIVE_CHECKS) && !could_clean) {
-			ERROR_MSG("Couldn't clean up a space boundary loop:\n");
-			PRINT_LOOP_3(cleaned_geometry);
-			abort();
-		}
-
-		if (surf->geometry().sense()) {
-			set_geometry(newsb, cleaned_geometry);
-		}
-		else {
-			set_geometry(newsb, cleaned_geometry | boost::adaptors::reversed);
-		}
-	
-		direction_3 norm = surf->geometry().sense() ? surf->geometry().orientation().direction() : -surf->geometry().orientation().direction();
-		newsb->normal_x = CGAL::to_double(norm.dx());
-		newsb->normal_y = CGAL::to_double(norm.dy());
-		newsb->normal_z = CGAL::to_double(norm.dz());
-
-		newsb->opposite = nullptr;
-		newsb->parent = nullptr;
-
-		equality_context layers_context(g_opts.equality_tolerance);
-	
-		newsb->material_layer_count = surf->material_layers().size();
-		if (newsb->material_layer_count > 0) {
-			newsb->layers = (material_id_t *)malloc(sizeof(material_id_t) * newsb->material_layer_count);
-			newsb->thicknesses = (double *)malloc(sizeof(double) * newsb->material_layer_count);
-			for (size_t j = 0; j < newsb->material_layer_count; ++j) {
-				newsb->layers[j] = surf->material_layers()[j].layer_element().material();
-				newsb->thicknesses[j] = CGAL::to_double(layers_context.snap_height(*surf->material_layers()[j].thickness()));
-			}
-		}
-		else {
-			newsb->layers = nullptr;
-			newsb->thicknesses = nullptr;
-		}
-
-		newsb->bounded_space = surf->bounded_space().original_info();
-		newsb->lies_on_outside = false;
-		newsb->level =
-			surf->is_virtual() ?					2 :
-			surf->is_fenestration() ?				2 :
-			surf->is_external() ?					2 :
-			surf->shares_space_with_other_side() ?	4 :
-			surf->has_other_side() ?				2 : 5;
-		newsb->is_virtual = surf->is_virtual();
-
-		NOTIFY_MSG(".");
-	}
-
-	for (size_t i = 0; i < surfaces.size(); ++i) {
-		if (surfaces[i]->has_other_side() && (*sbs)[i]->opposite == nullptr) {
-			for (size_t j = i + 1; j < surfaces.size(); ++j) {
-				if (surfaces[j].get() == surfaces[i]->other_side()) {
-					(*sbs)[i]->opposite = (*sbs)[j];
-					(*sbs)[j]->opposite = (*sbs)[i];
-					break;
-				}
-			}
-		}
-		if (surfaces[i]->parent() != nullptr && (*sbs)[i]->parent == nullptr) {
-			for (size_t j = 0; j < surfaces.size(); ++j) {
-				if (surfaces[i]->parent() == surfaces[j].get()) {
-					(*sbs)[i]->parent = (*sbs)[j];
-				}
-			}
-		}
-	}
-
-	return SBT_OK;
-}
 
 void do_nothing(char * /*msg*/) { }
 
@@ -188,8 +96,7 @@ sbt_return_t calculate_space_boundaries(
 		opening_assignment::assign_openings(&surfaces, g_opts.equality_tolerance);
 
 		NOTIFY_MSG("Converting internal structures to interface structures");
-		retval = convert_to_space_boundaries(surfaces, space_boundaries);
-		*space_boundary_count = surfaces.size();
+		retval = interface_conversion::convert_to_space_boundaries(surfaces, space_boundaries, space_boundary_count);
 		NOTIFY_MSG("done.\n");
 	}
 	catch (sbt_exception & ex) {

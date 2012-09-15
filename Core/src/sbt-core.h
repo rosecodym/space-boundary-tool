@@ -57,6 +57,7 @@ END(element_type)
 BEGINENUM(sbt_return_t)
 	SBT_OK = 0,
 	SBT_TOO_COMPLICATED = 1,
+	SBT_FAILED_ALLOCATION = 2,
 	SBT_UNKNOWN = -1
 END(sbt_return_t)
 

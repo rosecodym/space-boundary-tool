@@ -12,6 +12,11 @@ public:
 
 class stack_overflow_exception : public sbt_exception {
 public:
-	sbt_return_t code() const { return SBT_TOO_COMPLICATED; }
-	const char * what() const throw() { return "Stack overflow."; }
+	virtual sbt_return_t code() const { return SBT_TOO_COMPLICATED; }
+	virtual const char * what() const throw() { return "Stack overflow."; }
+};
+
+class failed_malloc_exception : public sbt_exception {
+	virtual sbt_return_t code() const { return SBT_FAILED_ALLOCATION; }
+	virtual const char * what() const throw() { return "Failed malloc."; }
 };

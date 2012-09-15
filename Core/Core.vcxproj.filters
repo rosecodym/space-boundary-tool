@@ -37,6 +37,9 @@
     <Filter Include="operations\opening assignment">
       <UniqueIdentifier>{70403e83-00e7-4636-8256-97ab8842638a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="operations\conversion to interface">
+      <UniqueIdentifier>{ebc714fb-ddd0-4c65-99bb-7915e67dc8bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -180,6 +183,9 @@
     <ClInclude Include="src\exceptions.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="src\convert_to_space_boundaries.h">
+      <Filter>operations\conversion to interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -256,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="src\geometry_common.cpp">
       <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\convert_to_space_boundaries.cpp">
+      <Filter>operations\conversion to interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
