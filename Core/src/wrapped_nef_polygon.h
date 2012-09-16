@@ -5,7 +5,6 @@
 #include "geometry_common.h"
 #include "nef_polygon_face.h"
 #include "nef_polygon_util.h"
-#include "nef_polygon_vertex.h"
 #include "polygon_with_holes_2.h"
 
 namespace geometry_2d {
@@ -18,8 +17,12 @@ private:
 	bool m_is_axis_aligned;
 	mutable boost::optional<nef_polygon_2::Explorer> current_explorer;
 
+	wrapped_nef_polygon(const nef_polygon_2 & nef, bool aligned)
+		: wrapped(new nef_polygon_2(util::clean(nef))),
+		m_is_axis_aligned(aligned)
+	{ }
+
 	std::vector<face>	get_faces() const;
-	std::vector<vertex>	get_vertices() const;
 
 public:
 	wrapped_nef_polygon() : wrapped(new nef_polygon_2(nef_polygon_2::EMPTY)), m_is_axis_aligned(true) { }
@@ -77,11 +80,39 @@ public:
 	static bool do_intersect(const wrapped_nef_polygon & a, const wrapped_nef_polygon & b);
 
 	friend bool operator == (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
+	friend bool operator != (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
+	friend bool operator < (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
+	friend bool operator > (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
+	friend bool operator <= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend bool operator >= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator + (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 };
+
+inline bool operator == (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
+	return *lhs.wrapped == *rhs.wrapped;
+}
+
+inline bool operator != (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
+	return *lhs.wrapped != *rhs.wrapped;
+}
+
+inline bool operator < (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
+	return *lhs.wrapped < *rhs.wrapped;
+}
+
+inline bool operator > (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
+	return *lhs.wrapped > *rhs.wrapped;
+}
+
+inline bool operator <= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
+	return *lhs.wrapped <= *rhs.wrapped;
+}
+
+inline bool operator >= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
+	return *lhs.wrapped >= *rhs.wrapped;
+}
 
 } // namespace nef_polygons
 

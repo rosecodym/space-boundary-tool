@@ -198,9 +198,6 @@
     <ClInclude Include="src\nef_polygon_face.h">
       <Filter>geometry\geometry_2d\nef_polygons</Filter>
     </ClInclude>
-    <ClInclude Include="src\nef_polygon_vertex.h">
-      <Filter>geometry\geometry_2d\nef_polygons</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -285,6 +282,9 @@
       <Filter>geometry\geometry_2d\nef_polygons</Filter>
     </ClCompile>
     <ClCompile Include="src\nef_polygon_face.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nef_polygon_util.cpp">
       <Filter>geometry\geometry_2d\nef_polygons</Filter>
     </ClCompile>
   </ItemGroup>

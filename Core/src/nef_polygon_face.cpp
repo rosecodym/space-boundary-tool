@@ -50,7 +50,7 @@ boost::optional<polygon_with_holes_2> face::to_pwh() const {
 	auto end = p;
 	CGAL_For_all(p, end) {
 		if (e->is_standard(p->vertex())) {
-			outer.push_back(util::to_point(p->vertex()->point()));
+			outer.push_back(e->point(p->vertex()));
 		}
 	}
 	if (!geometry_common::cleanup_loop(&outer, g_opts.equality_tolerance)) {
@@ -62,7 +62,7 @@ boost::optional<polygon_with_holes_2> face::to_pwh() const {
 		holes.push_back(polygon_2());
 		CGAL_For_all(curr, end) {
 			if (e->is_standard(curr->vertex())) {
-				holes.back().push_back(util::to_point(curr->vertex()->point()));
+				holes.back().push_back(e->point(curr->vertex()));
 			}
 		}
 		if (!geometry_common::cleanup_loop(&holes.back(), g_opts.equality_tolerance)) {

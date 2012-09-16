@@ -126,7 +126,6 @@
     <ClInclude Include="src\load_elements.h" />
     <ClInclude Include="src\nef_polygon_face.h" />
     <ClInclude Include="src\nef_polygon_util.h" />
-    <ClInclude Include="src\nef_polygon_vertex.h" />
     <ClInclude Include="src\orientation.h" />
     <ClInclude Include="src\oriented_area.h" />
     <ClInclude Include="src\multiview_solid.h" />
@@ -175,6 +174,7 @@
     <ClCompile Include="src\load_elements.cpp" />
     <ClCompile Include="src\multiview_solid.cpp" />
     <ClCompile Include="src\nef_polygon_face.cpp" />
+    <ClCompile Include="src\nef_polygon_util.cpp" />
     <ClCompile Include="src\orientation.cpp" />
     <ClCompile Include="src\oriented_area.cpp" />
     <ClCompile Include="src\polygon_with_holes_2.cpp" />
