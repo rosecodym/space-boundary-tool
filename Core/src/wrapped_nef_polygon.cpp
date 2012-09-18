@@ -36,7 +36,8 @@ std::vector<face> wrapped_nef_polygon::get_faces() const {
 bool wrapped_nef_polygon::any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const {
 	auto e = wrapped->explorer();
 	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
-		if (v->mark() && e.is_standard(v) && pred(e.point(v))) {
+		// don't check marks - points are never marked
+		if (e.is_standard(v) && pred(e.point(v))) {
 			return true;
 		}
 	}
@@ -47,7 +48,8 @@ bbox_2 wrapped_nef_polygon::bbox() const {
 	boost::optional<bbox_2> res;
 	auto e = wrapped->explorer();
 	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
-		if (v->mark() && e.is_standard(v)) {
+		// don't check marks - points are never marked
+		if (e.is_standard(v)) {
 			if (!res) { res = e.point(v).bbox(); }
 			else { res = *res + e.point(v).bbox(); }
 		}
@@ -61,7 +63,8 @@ bool wrapped_nef_polygon::is_valid(double eps) const {
 	auto e = wrapped->explorer();
 	std::vector<point_2> points;
 	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
-		if (v->mark() && e.is_standard(v)) {
+		// don't check marks - points are never marked
+		if (e.is_standard(v)) {
 			points.push_back(e.point(v));
 		}
 	}
