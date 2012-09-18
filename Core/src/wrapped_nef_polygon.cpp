@@ -92,6 +92,8 @@ std::vector<polygon_2> wrapped_nef_polygon::to_simple_convex_pieces() const {
 			}
 		}
 
+		if (xcoords.size() < 2) { return std::vector<polygon_2>(); } // shouldn't ever happen
+
 		std::vector<line_2> cut_lines;
 		boost::transform(xcoords, std::back_inserter(cut_lines), [](const NT & x) { return line_2(point_2(x, 0), vector_2(0, 1)); });
 

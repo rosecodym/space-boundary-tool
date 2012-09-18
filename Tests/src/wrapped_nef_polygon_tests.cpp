@@ -108,6 +108,18 @@ TEST(WrappedNefPolygon, SingleConvexToPieces) {
 	EXPECT_EQ(polygon_2(pts, pts + 4).container(), pieces.front().container());
 }
 
+TEST(WrappedNefPolygon, FaceCount) {
+	point_2 pts[] = {
+		point_2(0, 0),
+		point_2(393, 0),
+		point_2(393, 387),
+		point_2(0, 387)
+	};
+	
+	wrapped_nef_polygon w(polygon_2(pts, pts + 4));
+	EXPECT_EQ(1, w.face_count());
+}
+
 } // namespace
 
 } // namespace geometry_2d
