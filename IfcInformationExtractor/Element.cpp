@@ -103,6 +103,10 @@ Construction ^ createConstructionFor(const cppw::Instance & buildingElement, Str
 }
 
 bool detectShading(const cppw::Instance & inst) {
+	cppw::Select name = inst.get("Name");
+	if (name.is_set() && strstr(((cppw::String)name).data(), "Shading")) {
+		return true;
+	}
 	cppw::Set defined_by = inst.get("IsDefinedBy");
 	for (defined_by.move_first(); defined_by.move_next(); ) {
 		cppw::Instance d = defined_by.get_();

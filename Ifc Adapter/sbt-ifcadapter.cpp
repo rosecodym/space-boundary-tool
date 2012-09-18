@@ -188,7 +188,8 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count),
-			&ctxt);
+			&ctxt,
+			nullptr);
 		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
@@ -249,6 +250,7 @@ ifcadapter_return_t load_and_run_from(
 		cppw::Open_model model = edm.load_ifc_file(input_filename);
 		options.notify_func("File loaded.\n");
 		unit_scaler scaler(model);
+		std::vector<element_info *> shadings;
 		ifcadapter_return_t res = extract_from_model(
 			model, 
 			element_count, 
@@ -258,7 +260,8 @@ ifcadapter_return_t load_and_run_from(
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count),
-			&ctxt);
+			&ctxt,
+			&shadings);
 		double length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
 			sb_calculation_options opts;
@@ -287,6 +290,11 @@ ifcadapter_return_t load_and_run_from(
 				res = generate_res == SBT_OK ? IFCADAPT_OK : IFCADAPT_UNKNOWN;
 			}
 		}
+		*elements = (element_info **)realloc(*elements, sizeof(element_info *) * (*element_count + shadings.size()));
+		for (size_t i = 0; i < shadings.size(); ++i) {
+			(*elements)[*element_count + i] = shadings[i];
+		}
+		*element_count = *element_count + shadings.size();
 		return res;
 	}
 	catch (cppw::Error & e) {
