@@ -68,6 +68,7 @@ public:
 	
 	bool								any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
 	bbox_2								bbox() const;
+	bool								is_axis_aligned() const { return m_is_axis_aligned; }
 	bool								is_empty() const { return wrapped && !wrapped->is_empty() && !get_faces().empty(); }
 	bool								is_valid(double eps) const;
 	void								print_with(const std::function<void(char *)> & func) const;

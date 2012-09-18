@@ -43,6 +43,18 @@ void face::print_with(const std::function<void(char *)> & func) const {
 	}
 }
 
+boost::optional<polygon_2> face::to_simple_polygon() const {
+	if (e->holes_begin(f) != e->holes_end(f)) { return boost::optional<polygon_2>(); }
+	polygon_2 res;
+	auto p = e->face_cycle(f);
+	auto end = p;
+	CGAL_For_all(p, end) {
+		if (!e->is_standard(p->vertex())) { return boost::optional<polygon_2>(); }
+		res.push_back(e->point(p->vertex()));
+	}
+	return res;
+}
+
 boost::optional<polygon_with_holes_2> face::to_pwh() const {
 	polygon_2 outer;
 	std::vector<polygon_2> holes;

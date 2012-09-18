@@ -11,6 +11,17 @@ namespace geometry_2d {
 
 namespace nef_polygons {
 
+wrapped_nef_polygon::wrapped_nef_polygon(const face & f) {
+	auto pwh = f.to_pwh();
+	if (pwh) {
+		*this = wrapped_nef_polygon(pwh->all_polygons());
+	}
+	else {
+		wrapped = std::unique_ptr<nef_polygon_2>(new nef_polygon_2(nef_polygon_2::EMPTY));
+		m_is_axis_aligned = true;
+	}
+}
+
 std::vector<face> wrapped_nef_polygon::get_faces() const {
 	current_explorer = wrapped->explorer();
 	std::vector<face> res;

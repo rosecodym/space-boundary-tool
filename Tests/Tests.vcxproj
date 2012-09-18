@@ -95,6 +95,8 @@
     <ClCompile Include="..\Core\src\equality_context.cpp" />
     <ClCompile Include="..\Core\src\geometry_common.cpp" />
     <ClCompile Include="..\Core\src\multiview_solid.cpp" />
+    <ClCompile Include="..\Core\src\nef_polygon_face.cpp" />
+    <ClCompile Include="..\Core\src\nef_polygon_util.cpp" />
     <ClCompile Include="..\Core\src\one_dimensional_equality_context.cpp" />
     <ClCompile Include="..\Core\src\orientation.cpp" />
     <ClCompile Include="..\Core\src\oriented_area.cpp" />
