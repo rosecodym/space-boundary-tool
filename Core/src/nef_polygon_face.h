@@ -18,10 +18,8 @@ public:
 	{ }
 
 	void print_with(const std::function<void(char *)> & func) const;
+	boost::optional<polygon_2> to_simple_polygon() const;
 	boost::optional<polygon_with_holes_2> to_pwh() const;
-
-	template <typename OutputIterator>
-	void to_simple_convex_pieces(OutputIterator oi) const;
 };
 
 } // namespace nef_polygons

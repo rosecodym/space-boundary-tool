@@ -63,9 +63,44 @@ void wrapped_nef_polygon::print_with(const std::function<void(char *)> & func) c
 
 std::vector<polygon_2> wrapped_nef_polygon::to_simple_convex_pieces() const {
 	std::vector<polygon_2> res;
-	boost::for_each(get_faces(), [&res](const face & f) { 
-		f.to_simple_convex_pieces(std::back_inserter(res)); 
-	});
+	auto faces = get_faces();
+	if (faces.size() > 1) {
+		boost::for_each(faces, [&res](const face & f) {
+			boost::copy(wrapped_nef_polygon(f).to_simple_convex_pieces(), std::back_inserter(res));
+		});
+	}
+	else if (faces.size() == 1) {
+		boost::optional<polygon_2> outer = faces.front().to_simple_polygon();
+		if (outer && outer->is_convex()) { return std::vector<polygon_2>(1, *outer); }
+
+		auto e = wrapped->explorer();
+		std::set<NT> xcoords;
+		for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
+			if (e.is_standard(v)) {
+				xcoords.insert(e.point(v).x());
+			}
+		}
+
+		std::vector<line_2> cut_lines;
+		boost::transform(xcoords, std::back_inserter(cut_lines), [](const NT & x) { return line_2(point_2(x, 0), vector_2(0, 1)); });
+
+		std::vector<nef_polygon_2> sections;
+		for (size_t i = 0; i < cut_lines.size() - 1; ++i) {
+			sections.push_back(nef_polygon_2(cut_lines[i].opposite(), nef_polygon_2::EXCLUDED) * nef_polygon_2(cut_lines[i + 1], nef_polygon_2::EXCLUDED));
+		}
+
+		boost::for_each(sections, [&res, this](const nef_polygon_2 & section) {
+			nef_polygon_2 intr = section * *wrapped;
+			nef_polygon_2::Explorer new_e = intr.explorer();
+			for (auto f = new_e.faces_begin(); f != new_e.faces_end(); ++f) {
+				if (f->mark()) {
+					face new_face(new_e, f);
+					boost::optional<polygon_2> poly = new_face.to_simple_polygon();
+					if (poly) { res.push_back(*poly); }
+				}
+			}
+		});
+	}
 	return res;
 }
 

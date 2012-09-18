@@ -22,7 +22,9 @@ private:
 		m_is_axis_aligned(aligned)
 	{ }
 
-	std::vector<face>	get_faces() const;
+	wrapped_nef_polygon(const face & f);
+
+	std::vector<face> get_faces() const;
 
 public:
 	wrapped_nef_polygon() : wrapped(new nef_polygon_2(nef_polygon_2::EMPTY)), m_is_axis_aligned(true) { }
