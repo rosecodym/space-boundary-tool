@@ -119,6 +119,59 @@ void process_loop(
 
 } // namespace
 
+nef_polygon_2 clean(const nef_polygon_2 & nef) {
+	typedef std::vector<espoint_2> loop_t;
+
+	if (nef.is_empty()) { return nef; }
+
+	nef_polygon_2::Explorer e = nef.explorer();
+	std::vector<loop_t> loops;
+
+	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
+		if (f->mark()) {
+			loops.push_back(loop_t());
+			auto p = e.face_cycle(f);
+			auto end = p;
+			if (p != end) {
+				CGAL_For_all(p, end) {
+					if (e.is_standard(p->vertex())) {
+						loops.back().push_back(eK().standard_point(p->vertex()->point()));
+					}
+				}
+				for (auto h = e.holes_begin(f); h != e.holes_end(f); ++h) {
+					loops.push_back(loop_t());
+					nef_polygon_2::Explorer::Halfedge_around_face_const_circulator p = h;
+					auto end = p;
+					if (p != end) {
+						CGAL_For_all(p, end) {
+							if (e.is_standard(p->vertex())) {
+								loops.back().push_back(eK().standard_point(p->vertex()->point()));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	bool changed = false;
+	boost::for_each(loops, [&changed](loop_t & loop) { 
+		size_t in_size = loop.size();
+		if (!geometry_common::cleanup_loop(&loop, g_opts.equality_tolerance)) { loop.clear(); }
+		if (loop.size() != in_size) { changed = true; }
+	});
+
+	if (!changed) { return nef; }
+	else {
+		nef_polygon_2 res(nef_polygon_2::EMPTY);
+		boost::for_each(loops, [&res](const loop_t & loop) {
+			res ^= nef_polygon_2(loop.begin(), loop.end(), nef_polygon_2::EXCLUDED);
+		});
+		res = res.interior();
+		return res;
+	}
+}
+
 nef_polygon_2 create_nef_polygon(polygon_2 poly) {
 	if (!geometry_common::cleanup_loop(&poly, g_opts.equality_tolerance)) {
 		return nef_polygon_2::EMPTY;
@@ -181,57 +234,13 @@ void snap(nef_polygon_2 * from, const nef_polygon_2 & to) {
 	*from = from->interior();
 }
 
-nef_polygon_2 clean(const nef_polygon_2 & nef) {
-	typedef std::vector<espoint_2> loop_t;
+espoint_2 to_espoint(const point_2 & p) { 
+	return espoint_2(p.x(), p.y()); 
+}
 
-	if (nef.is_empty()) { return nef; }
-
-	nef_polygon_2::Explorer e = nef.explorer();
-	std::vector<loop_t> loops;
-
-	for (auto f = e.faces_begin(); f != e.faces_end(); ++f) {
-		if (f->mark()) {
-			loops.push_back(loop_t());
-			auto p = e.face_cycle(f);
-			auto end = p;
-			if (p != end) {
-				CGAL_For_all(p, end) {
-					if (e.is_standard(p->vertex())) {
-						loops.back().push_back(eK().standard_point(p->vertex()->point()));
-					}
-				}
-				for (auto h = e.holes_begin(f); h != e.holes_end(f); ++h) {
-					loops.push_back(loop_t());
-					nef_polygon_2::Explorer::Halfedge_around_face_const_circulator p = h;
-					auto end = p;
-					if (p != end) {
-						CGAL_For_all(p, end) {
-							if (e.is_standard(p->vertex())) {
-								loops.back().push_back(eK().standard_point(p->vertex()->point()));
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	bool changed = false;
-	boost::for_each(loops, [&changed](loop_t & loop) { 
-		size_t in_size = loop.size();
-		if (!geometry_common::cleanup_loop(&loop, g_opts.equality_tolerance)) { loop.clear(); }
-		if (loop.size() != in_size) { changed = true; }
-	});
-
-	if (!changed) { return nef; }
-	else {
-		nef_polygon_2 res(nef_polygon_2::EMPTY);
-		boost::for_each(loops, [&res](const loop_t & loop) {
-			res ^= nef_polygon_2(loop.begin(), loop.end(), nef_polygon_2::EXCLUDED);
-		});
-		res = res.interior();
-		return res;
-	}
+size_t vertex_count(const nef_polygon_2 & nef) {
+	// subtract the corners of the infimaximal box
+	return nef.explorer().number_of_vertices() - 4; 
 }
 
 } // namespace util
