@@ -154,7 +154,6 @@
     <ClInclude Include="src\surface_pair.h" />
     <ClInclude Include="src\traverse.h" />
     <ClInclude Include="src\wrapped_nef_polygon.h" />
-    <ClInclude Include="src\wrapped_nef_polygon_.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\area.cpp" />
@@ -180,10 +179,6 @@
     <ClCompile Include="src\polygon_with_holes_2.cpp" />
     <ClCompile Include="src\simple_face.cpp" />
     <ClCompile Include="src\one_dimensional_equality_context.cpp" />
-    <ClCompile Include="src\printing-util.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="src\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -202,10 +197,6 @@
     <ClCompile Include="src\surface_pair.cpp" />
     <ClCompile Include="src\traverse.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />
-    <ClCompile Include="src\wrapped_nef_polygon_.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

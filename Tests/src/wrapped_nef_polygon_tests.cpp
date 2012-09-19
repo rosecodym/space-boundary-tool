@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "wrapped_nef_polygon_.h"
+#include "wrapped_nef_polygon.h"
 
 namespace geometry_2d {
 

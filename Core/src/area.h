@@ -5,7 +5,7 @@
 #include "geometry_common.h"
 #include "polygon_with_holes_2.h"
 #include "printing-macros.h"
-#include "wrapped_nef_polygon_.h"
+#include "wrapped_nef_polygon.h"
 
 class equality_context;
 

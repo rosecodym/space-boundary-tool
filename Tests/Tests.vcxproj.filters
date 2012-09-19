@@ -48,9 +48,6 @@
     <ClCompile Include="..\Core\src\polygon_with_holes_2.cpp">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\src\printing-util.cpp">
-      <Filter>Recompiled Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\Core\src\CreateGuid_64.c">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
