@@ -22,9 +22,10 @@ TEST(Area, StrictSubsetRectangles) {
 		point_2(4050, 0),
 		point_2(0, 0)
 	};
-	EXPECT_TRUE(area::do_intersect(
-		area(polygon_2(larger, larger + 4)),
-		area(polygon_2(smaller, smaller + 4))));
+	area larger_a(polygon_2(larger, larger + 4));
+	area smaller_a(polygon_2(smaller, smaller + 4));
+
+	EXPECT_TRUE(area::do_intersect(larger_a, smaller_a));
 }
 
 TEST(Area, IntersectionInvariability) {
