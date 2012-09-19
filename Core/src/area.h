@@ -38,12 +38,13 @@ public:
 	area & operator = (const area & src);
 	area & operator = (area && src);
 	
-	bool								is_empty() const { return use_nef ? nef_rep.is_empty() : simple_rep.is_empty(); }
+	bool								any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
 	bbox_2								bbox() const { return use_nef ? nef_rep.bbox() : simple_rep.bbox(); }
+	bool								is_empty() const { return use_nef ? nef_rep.is_empty() : simple_rep.is_empty(); }
 	boost::optional<polygon_2>			outer_bound() const;
 	std::vector<polygon_2>				to_simple_convex_pieces() const;
 	std::vector<polygon_with_holes_2>	to_pwhs() const;
-	bool								any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
+	size_t								vertex_count() const { return use_nef ? nef_rep.vertex_count() : simple_rep.size(); }
 
 	const area & print() const { if (use_nef) { nef_rep.print_with(g_opts.notify_func); } else { PRINT_POLYGON(simple_rep); } return *this; }
 
@@ -60,6 +61,7 @@ public:
 	friend bool operator == (const area & a, const area & b);
 	friend bool operator >= (const area & a, const area & b);
 
+	friend area operator + (const area & a, const area & b);
 	friend area operator - (const area & a, const area & b);
 	friend area operator * (const area & a, const area & b);
 };

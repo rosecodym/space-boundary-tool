@@ -74,6 +74,7 @@ space_boundary * create_unlinked_space_boundary(const surface & surf) {
 		newsb->is_virtual = surf.is_virtual();
 	}
 	catch (stack_overflow_exception &) {
+		// do as little possible here because the stack is still damaged
 		stack_overflowed = true;
 	}
 

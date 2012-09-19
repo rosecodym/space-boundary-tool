@@ -22,9 +22,10 @@ TEST(Area, StrictSubsetRectangles) {
 		point_2(4050, 0),
 		point_2(0, 0)
 	};
-	EXPECT_TRUE(area::do_intersect(
-		area(polygon_2(larger, larger + 4)),
-		area(polygon_2(smaller, smaller + 4))));
+	area larger_a(polygon_2(larger, larger + 4));
+	area smaller_a(polygon_2(smaller, smaller + 4));
+
+	EXPECT_TRUE(area::do_intersect(larger_a, smaller_a));
 }
 
 TEST(Area, IntersectionInvariability) {
@@ -70,15 +71,17 @@ TEST(Area, TwoFaces) {
 	SUCCEED();
 }
 
-TEST(Area, SubtractionIsValidVertexOnDiagonal) {
+TEST(Area, Subtraction) {
+	// two quadrilaterals
+	// one of the rect vertices is on a diagonal edge of the non-rect
 	equality_context c(0.01);
-	point_2 op1[] = {
+	point_2 rect_pts[] = {
 		point_2(27.443970, 8.339190),
 		point_2(28.769285, 8.339190),
 		point_2(28.769285, 8.844385),
 		point_2(27.443970, 8.844385)
 	};
-	point_2 op2[] = {
+	point_2 nonrect_pts[] = {
 		point_2(28.665582, 8.744685),
 		point_2(28.883634, 8.954685),
 		point_2(28.883634, 11.736685),
@@ -86,11 +89,13 @@ TEST(Area, SubtractionIsValidVertexOnDiagonal) {
 	};
 	for (size_t i = 0; i < 4; ++i) {
 		// this is in the test because the contextualization is relevant
-		c.snap(&op1[i]);
-		c.snap(&op2[i]);
+		c.snap(&rect_pts[i]);
+		c.snap(&nonrect_pts[i]);
 	}
-	area res = area(polygon_2(op1, op1 + 4)) - area(polygon_2(op2, op2 + 4));
-	EXPECT_TRUE(res.is_valid(0.01));
+	area rect(polygon_2(rect_pts, rect_pts + 4));
+	area nonrect(polygon_2(nonrect_pts, nonrect_pts + 4));
+	area res = rect - nonrect;
+	EXPECT_EQ(6, res.vertex_count());
 }
 
 TEST(Area, LargerIntersection) {

@@ -33,5 +33,4 @@ public:
 	bool is_axis_aligned() const;
 
 	std::vector<polygon_2> all_polygons() const;
-	std::vector<polygon_2> to_simple_polygons() const;
 };
