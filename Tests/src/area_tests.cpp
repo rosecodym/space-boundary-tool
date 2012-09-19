@@ -73,7 +73,7 @@ TEST(Area, TwoFaces) {
 
 TEST(Area, Subtraction) {
 	// two quadrilaterals
-	// one of the rect vertices is on the diagonal of the other
+	// one of the rect vertices is on a diagonal edge of the non-rect
 	equality_context c(0.01);
 	point_2 rect_pts[] = {
 		point_2(27.443970, 8.339190),
