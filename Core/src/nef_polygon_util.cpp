@@ -132,21 +132,23 @@ nef_polygon_2 clean(const nef_polygon_2 & nef) {
 			loops.push_back(loop_t());
 			auto p = e.face_cycle(f);
 			auto end = p;
-			if (p != end) {
-				CGAL_For_all(p, end) {
-					if (e.is_standard(p->vertex())) {
-						loops.back().push_back(eK().standard_point(p->vertex()->point()));
-					}
+			CGAL_For_all(p, end) {
+				if (e.is_standard(p->vertex())) {
+					loops.back().push_back(eK().standard_point(p->vertex()->point()));
 				}
-				for (auto h = e.holes_begin(f); h != e.holes_end(f); ++h) {
-					loops.push_back(loop_t());
-					nef_polygon_2::Explorer::Halfedge_around_face_const_circulator p = h;
-					auto end = p;
-					if (p != end) {
-						CGAL_For_all(p, end) {
-							if (e.is_standard(p->vertex())) {
-								loops.back().push_back(eK().standard_point(p->vertex()->point()));
-							}
+			}
+			if (loops.back().empty()) {
+				loops.pop_back();
+				continue;
+			}
+			for (auto h = e.holes_begin(f); h != e.holes_end(f); ++h) {
+				loops.push_back(loop_t());
+				nef_polygon_2::Explorer::Halfedge_around_face_const_circulator p = h;
+				auto end = p;
+				if (p != end) {
+					CGAL_For_all(p, end) {
+						if (e.is_standard(p->vertex())) {
+							loops.back().push_back(eK().standard_point(p->vertex()->point()));
 						}
 					}
 				}
