@@ -75,6 +75,7 @@ public:
 	void								print_with(const std::function<void(char *)> & func) const;
 	std::vector<polygon_2>				to_simple_convex_pieces() const;
 	std::vector<polygon_with_holes_2>	to_pwhs() const;
+	size_t								vertex_count() const { return wrapped ? wrapped->explorer().number_of_vertices() : 0; }
 
 	void								clear();
 
