@@ -142,6 +142,7 @@ TEST(WrappedNefPolygon, Intersection) {
 	wrapped_nef_polygon intr = larger * smaller;
 	EXPECT_FALSE(intr.is_empty());
 	EXPECT_EQ(1, intr.face_count());
+	EXPECT_EQ(4, intr.vertex_count());
 }
 
 } // namespace

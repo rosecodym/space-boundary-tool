@@ -131,6 +131,14 @@ std::vector<polygon_with_holes_2> wrapped_nef_polygon::to_pwhs() const {
 	return res;
 }
 
+size_t wrapped_nef_polygon::vertex_count() const {
+	if (!wrapped) { return 0; }
+	// we subtract four for the corners of the infimaximal box
+	// an alternative would be just to count vertices of marked faces, but i want face bugs to be picked up in testing
+	// (i.e. if there's some bogus unmarked face floating around it should be noticed somewhere)
+	else { return wrapped->explorer().number_of_vertices() - 4; }
+}
+
 void wrapped_nef_polygon::clear() {
 	wrapped->clear();
 	m_is_axis_aligned = true;
