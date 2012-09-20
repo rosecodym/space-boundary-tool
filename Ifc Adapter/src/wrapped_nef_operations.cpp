@@ -20,17 +20,17 @@ typedef transformation_3 exact_transformation_3;
 typedef plane_3 exact_plane_3;
 typedef CGAL::Nef_polyhedron_3<K> nef_polyhedron_3;
 
-exact_point_3 to_exact_point(const cppw::Instance & inst, number_collection * c) {
+exact_point_3 to_exact_point(const cppw::Instance & inst, number_collection<K> * c) {
 	cppw::List coords = inst.get("Coordinates");
 	return c->request_point((cppw::Real)coords.get_(0), (cppw::Real)coords.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Real)coords.get_(2) : 0);
 }
 
-exact_direction_3 to_exact_direction(const cppw::Instance & inst, number_collection * c) {
+exact_direction_3 to_exact_direction(const cppw::Instance & inst, number_collection<K> * c) {
 	cppw::List ratios = inst.get("DirectionRatios");
 	return c->request_direction((cppw::Integer)ratios.get_(0), (cppw::Integer)ratios.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Integer)ratios.get_(2) : 0);
 }
 
-nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
+nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c) {
 	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
 		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
 		std::vector<exact_point_3> base_points;
@@ -125,7 +125,7 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 	}
 }
 
-void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_collection * c) {
+void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_collection<K> * c) {
 	s->set_rep_type(REP_BREP);
 	nef_polyhedron_3::Halffacet_const_iterator facet;
 	int face_index = 0;
@@ -158,7 +158,7 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_coll
 
 namespace wrapped_nef_operations {
 
-void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection * c) {
+void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection<K> * c) {
 	g_opts.notify_func("(element requires nef processing)...");
 	convert_to_solid(s, create_nef(inst, scaler, c), c);
 }

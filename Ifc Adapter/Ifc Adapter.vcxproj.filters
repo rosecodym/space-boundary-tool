@@ -128,9 +128,6 @@
     <ClCompile Include="src\unit_scaler.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="src\number_collection.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
     <ClCompile Include="src\get_length_units_per_meter.cpp">
       <Filter>operations</Filter>
     </ClCompile>

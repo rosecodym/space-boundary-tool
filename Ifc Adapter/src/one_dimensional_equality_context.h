@@ -42,7 +42,7 @@ public:
 
 	one_dimensional_equality_context(double epsilon) : eps(epsilon) { request(0.0); request(1.0); }
 
-	NT one_dimensional_equality_context::request(double d) {
+	NT request(double d) {
 		typedef one_dimensional_equality_context::interval_wrapper::inner_interval interval;
 		typedef CGAL::Interval_skip_list<interval> interval_skip_list;
 

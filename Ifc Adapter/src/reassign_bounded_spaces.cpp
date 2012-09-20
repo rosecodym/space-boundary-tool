@@ -9,7 +9,7 @@
 
 namespace {
 
-	typedef number_collection q_collection;
+	typedef number_collection<K> q_collection;
 
 	template<class HDS, class PointT>
 	class shell_builder : public CGAL::Modifier_base<HDS> {
