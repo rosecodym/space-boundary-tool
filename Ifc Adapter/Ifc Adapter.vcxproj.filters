@@ -131,9 +131,6 @@
     <ClCompile Include="src\number_collection.cpp">
       <Filter>geometry</Filter>
     </ClCompile>
-    <ClCompile Include="src\one_dimensional_equality_context.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
     <ClCompile Include="src\get_length_units_per_meter.cpp">
       <Filter>operations</Filter>
     </ClCompile>

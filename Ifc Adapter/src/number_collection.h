@@ -10,12 +10,12 @@ class number_collection {
 
 private:
 	double tolerance;
-	one_dimensional_equality_context xs_2d;
-	one_dimensional_equality_context ys_2d;
-	one_dimensional_equality_context xs_3d;
-	one_dimensional_equality_context ys_3d;
-	one_dimensional_equality_context zs_3d;
-	one_dimensional_equality_context heights;
+	one_dimensional_equality_context<NT> xs_2d;
+	one_dimensional_equality_context<NT> ys_2d;
+	one_dimensional_equality_context<NT> xs_3d;
+	one_dimensional_equality_context<NT> ys_3d;
+	one_dimensional_equality_context<NT> zs_3d;
+	one_dimensional_equality_context<NT> heights;
 
 	std::vector<direction_3> directions;
 
@@ -55,7 +55,7 @@ public:
 		v_a = v_a / CGAL::sqrt(v_a.squared_length());
 		vector_3 v_b = b.to_vector();
 		v_b = v_b / CGAL::sqrt(v_b.squared_length());
-		return one_dimensional_equality_context::is_zero_squared(CGAL::cross_product(v_a, v_b).squared_length(), eps);
+		return one_dimensional_equality_context<NT>::is_zero_squared(CGAL::cross_product(v_a, v_b).squared_length(), eps);
 	}
 
 };

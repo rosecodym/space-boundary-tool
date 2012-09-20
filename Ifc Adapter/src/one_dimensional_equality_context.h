@@ -4,6 +4,7 @@
 
 #include "cgal-typedefs.h"
 
+template <typename NT>
 class one_dimensional_equality_context {
 private:
 
@@ -41,7 +42,39 @@ public:
 
 	one_dimensional_equality_context(double epsilon) : eps(epsilon) { request(0.0); request(1.0); }
 
-	NT request(double d);
+	NT one_dimensional_equality_context::request(double d) {
+		typedef one_dimensional_equality_context::interval_wrapper::inner_interval interval;
+		typedef CGAL::Interval_skip_list<interval> interval_skip_list;
+
+		auto res = cached.find(d);
+		if (res != cached.end()) {
+			return res->second;
+		}
+
+		std::vector<interval_wrapper> ints;
+		intervals.find_intervals(d, std::back_inserter(ints));
+
+		if (ints.size() == 0) {
+			auto i = interval_wrapper(d, eps);
+			intervals.insert(i);
+			cached[d] = i.actual;
+			return i.actual;
+		}
+
+		else if (ints.size() == 1) {
+			interval_wrapper & i = ints.front();
+			cached[d] = i.actual;
+			return i.actual;
+		}
+
+		else {
+			auto nearest = boost::min_element(ints, [d](const interval_wrapper & a, const interval_wrapper & b) { 
+				return abs(CGAL::to_double(a.actual) - d) < abs(CGAL::to_double(b.actual) - d);
+			});
+			cached[d] = nearest->actual;
+			return nearest->actual;
+		}
+	}
 
 	bool is_zero(double d) const { return is_zero(d, eps); }
 	bool is_zero(const NT & n) const { return is_zero(n, eps); }
@@ -51,8 +84,6 @@ public:
 
 	NT snap(const NT & x) { return request(CGAL::to_double(x)); }
 	void snap(NT * n) { *n = snap(*n); }
-
-	void flatten();
 	
 	static bool is_zero(double d, double eps) { return d < eps && d > -eps; }
 	static bool is_zero(const NT & n, double eps) { return is_zero(CGAL::to_double(n), eps); }
