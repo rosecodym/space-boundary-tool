@@ -2,6 +2,7 @@
 
 #include "area.h"
 #include "equality_context.h"
+#include "flatten.h"
 #include "orientation.h"
 #include "printing-macros.h"
 #include "simple_face.h"
@@ -141,9 +142,12 @@ bool oriented_area::any_point_in_halfspace(const plane_3 & defining, equality_co
 	return res;
 }
 
-std::vector<polygon_with_holes_3> oriented_area::to_3d() const {
+std::vector<polygon_with_holes_3> oriented_area::to_3d(bool flatten_numbers) const {
 	std::vector<polygon_with_holes_3> res;
 	std::vector<polygon_with_holes_2> pwhs = a.to_pwhs();
+	if (flatten_numbers) {
+		boost::transform(pwhs, pwhs.begin(), [](const polygon_with_holes_2 & pwh) { return geometry_common::flatten(pwh); });
+	}
 	for (auto pwh = pwhs.begin(); pwh != pwhs.end(); ++pwh) {
 		res.push_back(polygon_with_holes_3(to_3d(pwh->outer()), pwh->holes() | transformed([this](const polygon_2 & hole) { return to_3d(hole); })));
 	}

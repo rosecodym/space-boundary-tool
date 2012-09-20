@@ -36,7 +36,7 @@ space_boundary * create_unlinked_space_boundary(const surface & surf) {
 		strncpy(newsb->global_id, surf.guid().c_str(), SB_ID_MAX_LEN);
 		strncpy(newsb->element_id, surf.is_virtual() ? "" : surf.bounded_element()->source_id().c_str(), ELEMENT_ID_MAX_LEN);
 
-		auto cleaned_geometry = surf.geometry().to_3d().front().outer();
+		auto cleaned_geometry = surf.geometry().to_3d(true).front().outer();
 		geometry_common::cleanup_loop(&cleaned_geometry, g_opts.equality_tolerance);
 
 		if (surf.geometry().sense()) {

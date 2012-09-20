@@ -69,7 +69,7 @@ public:
 
 	// THIS METHOD DOESN'T ACCOUNT FOR SENSE INFORMATION
 	// the caller should flip the result themselves if they care
-	std::vector<polygon_with_holes_3> to_3d() const;
+	std::vector<polygon_with_holes_3> to_3d(bool flatten_numbers = false) const;
 
 	oriented_area project_onto_self(const oriented_area & other) const;
 

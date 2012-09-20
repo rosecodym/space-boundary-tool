@@ -112,6 +112,7 @@
     <ClInclude Include="src\build_stacks.h" />
     <ClInclude Include="src\cleanup_loop.h" />
     <ClInclude Include="src\convert_to_space_boundaries.h" />
+    <ClInclude Include="src\flatten.h" />
     <ClInclude Include="src\geometry_common.h" />
     <ClInclude Include="src\guid_filter.h" />
     <ClInclude Include="src\element.h" />
@@ -163,6 +164,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\convert_to_space_boundaries.cpp" />
+    <ClCompile Include="src\flatten.cpp" />
     <ClCompile Include="src\geometry_common.cpp" />
     <ClCompile Include="src\guid_filter.cpp" />
     <ClCompile Include="src\CreateGuid_64.c">

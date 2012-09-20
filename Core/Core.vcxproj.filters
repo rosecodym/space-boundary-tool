@@ -43,6 +43,9 @@
     <Filter Include="geometry\geometry_2d\nef_polygons">
       <UniqueIdentifier>{029e96c7-6144-4eb7-bfaa-cfc84913dd06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="geometry\common">
+      <UniqueIdentifier>{ba376630-5ea6-4d3d-91a0-3fc47d4c04cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -147,9 +150,6 @@
     <ClInclude Include="src\printing-macros.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="src\geometry_common.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\stackable.h">
       <Filter>operations\stacking</Filter>
     </ClInclude>
@@ -177,9 +177,6 @@
     <ClInclude Include="src\assign_openings.h">
       <Filter>operations\opening assignment</Filter>
     </ClInclude>
-    <ClInclude Include="src\cleanup_loop.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\exceptions.h">
       <Filter>main</Filter>
     </ClInclude>
@@ -194,6 +191,15 @@
     </ClInclude>
     <ClInclude Include="src\nef_polygon_face.h">
       <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_common.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cleanup_loop.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flatten.h">
+      <Filter>geometry\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -263,9 +269,6 @@
     <ClCompile Include="src\stacking_graph.cpp">
       <Filter>operations\stacking</Filter>
     </ClCompile>
-    <ClCompile Include="src\geometry_common.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
     <ClCompile Include="src\convert_to_space_boundaries.cpp">
       <Filter>operations\conversion to interface</Filter>
     </ClCompile>
@@ -277,6 +280,12 @@
     </ClCompile>
     <ClCompile Include="src\nef_polygon_util.cpp">
       <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_common.cpp">
+      <Filter>geometry\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flatten.cpp">
+      <Filter>geometry\common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
