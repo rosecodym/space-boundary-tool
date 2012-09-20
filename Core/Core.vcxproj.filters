@@ -60,9 +60,6 @@
     <ClInclude Include="src\sbt-core-helpers.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="src\misc-util.h">
-      <Filter>main</Filter>
-    </ClInclude>
     <ClInclude Include="src\equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>

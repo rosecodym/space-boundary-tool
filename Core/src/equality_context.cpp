@@ -1,7 +1,6 @@
 #include "precompiled.h"
 
 #include "geometry_common.h"
-#include "misc-util.h"
 #include "sbt-core.h"
 
 #include "equality_context.h"

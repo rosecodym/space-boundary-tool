@@ -150,7 +150,6 @@
     <ClInclude Include="src\stacking_sequence.h" />
     <ClInclude Include="src\exceptions.h" />
     <ClInclude Include="src\surface.h" />
-    <ClInclude Include="src\misc-util.h" />
     <ClInclude Include="src\surface_pair.h" />
     <ClInclude Include="src\traverse.h" />
     <ClInclude Include="src\wrapped_nef_polygon.h" />
