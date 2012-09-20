@@ -12,20 +12,14 @@ extern sb_calculation_options g_opts;
 
 namespace {
 
-typedef point_3 exact_point_3;
-typedef direction_3 exact_direction_3;
-typedef ray_3 exact_ray_3;
-typedef vector_3 exact_vector_3;
-typedef transformation_3 exact_transformation_3;
-typedef plane_3 exact_plane_3;
 typedef CGAL::Nef_polyhedron_3<K> nef_polyhedron_3;
 
-exact_point_3 to_exact_point(const cppw::Instance & inst, number_collection<K> * c) {
+point_3 to_exact_point(const cppw::Instance & inst, number_collection<K> * c) {
 	cppw::List coords = inst.get("Coordinates");
 	return c->request_point((cppw::Real)coords.get_(0), (cppw::Real)coords.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Real)coords.get_(2) : 0);
 }
 
-exact_direction_3 to_exact_direction(const cppw::Instance & inst, number_collection<K> * c) {
+direction_3 to_exact_direction(const cppw::Instance & inst, number_collection<K> * c) {
 	cppw::List ratios = inst.get("DirectionRatios");
 	return c->request_direction((cppw::Integer)ratios.get_(0), (cppw::Integer)ratios.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Integer)ratios.get_(2) : 0);
 }
@@ -33,27 +27,27 @@ exact_direction_3 to_exact_direction(const cppw::Instance & inst, number_collect
 nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c) {
 	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
 		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
-		std::vector<exact_point_3> base_points;
-		std::vector<exact_point_3> extruded_points;
+		std::vector<point_3> base_points;
+		std::vector<point_3> extruded_points;
 		std::transform(base.outer_boundary.vertices.begin(), base.outer_boundary.vertices.end(), std::back_inserter(base_points), [c](const exact_point & p) {
 			return c->request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
 		});
-		exact_vector_3 extrusion_vec = to_exact_direction((cppw::Instance)inst.get("ExtrudedDirection"), c).vector();
+		vector_3 extrusion_vec = to_exact_direction((cppw::Instance)inst.get("ExtrudedDirection"), c).vector();
 		extrusion_vec = extrusion_vec / CGAL::sqrt(extrusion_vec.squared_length());
 		extrusion_vec = extrusion_vec * c->request_height((cppw::Real)inst.get("Depth"));
-		exact_transformation_3 extrusion(CGAL::TRANSLATION, extrusion_vec);
-		std::transform(base_points.begin(), base_points.end(), std::back_inserter(extruded_points), [&extrusion](const exact_point_3 & p) {
+		transformation_3 extrusion(CGAL::TRANSLATION, extrusion_vec);
+		std::transform(base_points.begin(), base_points.end(), std::back_inserter(extruded_points), [&extrusion](const point_3 & p) {
 			return p.transform(extrusion);
 		});
-		std::vector<exact_plane_3> planes;
-		planes.push_back(exact_plane_3(base_points[0], base_points[1], base_points[2]));
-		planes.push_back(exact_plane_3(extruded_points[2], extruded_points[1], extruded_points[0]));
+		std::vector<plane_3> planes;
+		planes.push_back(plane_3(base_points[0], base_points[1], base_points[2]));
+		planes.push_back(plane_3(extruded_points[2], extruded_points[1], extruded_points[0]));
 		size_t pc = base_points.size();
 		for (size_t i = pc; i < pc * 2; ++i) {
-			planes.push_back(exact_plane_3(base_points[i % pc], base_points[(i - 1) % pc], extruded_points[(i - 1) % pc]));
+			planes.push_back(plane_3(base_points[i % pc], base_points[(i - 1) % pc], extruded_points[(i - 1) % pc]));
 		}
 		nef_polyhedron_3 result(planes.front().opposite());
-		std::for_each(planes.begin(), planes.end(), [&result](const exact_plane_3 & pl) {
+		std::for_each(planes.begin(), planes.end(), [&result](const plane_3 & pl) {
 			result *= nef_polyhedron_3(pl.opposite());
 		});
 		return result;
@@ -67,20 +61,20 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		cppw::Instance surface_placement = base_surface.get("Position");
 		cppw::Instance point = surface_placement.get("Location");
 		cppw::Select normal = surface_placement.get("Axis");
-		exact_direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : exact_direction_3(0, 0, 1);
-		exact_plane_3 p(to_exact_point(point, c), inst.get("AgreementFlag") ? n : -n);
+		direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : direction_3(0, 0, 1);
+		plane_3 p(to_exact_point(point, c), inst.get("AgreementFlag") ? n : -n);
 		return nef_polyhedron_3(p);
 	}
 	else if (inst.is_kind_of("IfcPolygonalBoundedHalfSpace")) {
 		exact_face base = ifc_to_face((cppw::Instance)inst.get("PolygonalBoundary"), s, c);
-		std::vector<exact_point_3> base_points;
+		std::vector<point_3> base_points;
 		std::transform(base.outer_boundary.vertices.begin(), base.outer_boundary.vertices.end(), std::back_inserter(base_points), [c](const exact_point & p) {
 			return c->request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
 		});
-		std::vector<exact_plane_3> planes;
+		std::vector<plane_3> planes;
 		size_t pc = base_points.size();
 		for (size_t i = 0; i < pc; ++i) {
-			planes.push_back(exact_plane_3(exact_ray_3(base_points[(i + 1) % pc], exact_direction_3(0, 0, 1)), base_points[i]));
+			planes.push_back(plane_3(ray_3(base_points[(i + 1) % pc], direction_3(0, 0, 1)), base_points[i]));
 		}
 		cppw::Instance base_surface = inst.get("BaseSurface");
 		if (!base_surface.is_instance_of("IfcPlane")) {
@@ -90,13 +84,13 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		cppw::Instance surface_placement = base_surface.get("Position");
 		cppw::Instance point = surface_placement.get("Location");
 		cppw::Select normal = surface_placement.get("Axis");
-		exact_direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : exact_direction_3(0, 0, 1);
-		planes.push_back(exact_plane_3(to_exact_point(point, c), n));
+		direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : direction_3(0, 0, 1);
+		planes.push_back(plane_3(to_exact_point(point, c), n));
 		if (!inst.get("AgreementFlag")) {
 			planes.back() = planes.back().opposite();
 		}
 		nef_polyhedron_3 result(planes.front());
-		std::for_each(planes.begin(), planes.end(), [&result](const exact_plane_3 & pl) {
+		std::for_each(planes.begin(), planes.end(), [&result](const plane_3 & pl) {
 			result *= nef_polyhedron_3(pl);
 		});
 		return result;
@@ -142,7 +136,7 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_coll
 			nef_polyhedron_3::SHalfedge_around_facet_const_circulator start(cycle);
 			nef_polyhedron_3::SHalfedge_around_facet_const_circulator end(cycle);
 			CGAL_For_all(start, end) {
-				exact_point_3 p = start->source()->center_vertex()->point();
+				point_3 p = start->source()->center_vertex()->point();
 				point_3 req = c->request_point(
 					CGAL::to_double(p.x()),
 					CGAL::to_double(p.y()),
