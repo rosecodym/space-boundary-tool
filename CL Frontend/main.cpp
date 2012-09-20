@@ -88,19 +88,6 @@ int main(int argc, char * argv[]) {
 	opts.warn_func = &warn_print;
 	opts.error_func = & error_print;
 
-	opts.flags |= SBT_EXPENSIVE_CHECKS;
-
-	if (!vm.count("check-wall-slab-intersections"))	{ opts.flags |= SBT_SKIP_WALL_SLAB_CHECK; }
-	if (vm.count("verbose-blocking"))				{ opts.flags |= SBT_VERBOSE_BLOCKS; }
-	if (vm.count("verbose-stacking"))				{ opts.flags |= SBT_VERBOSE_STACKS; }
-	if (vm.count("verbose-spaces"))					{ opts.flags |= SBT_VERBOSE_SPACES; }
-	if (vm.count("verbose-geometry"))				{ opts.flags |= SBT_VERBOSE_GEOMETRY; }
-	if (vm.count("verbose-levels"))					{ opts.flags |= SBT_VERBOSE_LEVELS; }
-	if (vm.count("verbose-combinatorics"))			{ opts.flags |= SBT_VERBOSE_COMBINATORICS; }
-	if (vm.count("verbose-elements"))				{ opts.flags |= SBT_VERBOSE_ELEMENTS; }
-	if (vm.count("verbose-fenestrations"))			{ opts.flags |= SBT_VERBOSE_FENESTRATIONS; }
-	if (vm.count("force-brute-force-element-resolution")) { opts.flags |= SBT_FORCE_BRUTE_FORCE_ELEMENT_CHECK; }
-
 	opts.space_filter_count = space_filter.size();
 	opts.space_filter = (char **)malloc(sizeof(char *) * opts.space_filter_count);
 	for (size_t i = 0; i < opts.space_filter_count; ++i) {

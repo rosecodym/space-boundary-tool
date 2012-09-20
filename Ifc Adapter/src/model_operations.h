@@ -15,6 +15,7 @@ ifcadapter_return_t extract_from_model(
 	void (*msg_func)(char *),
 	const unit_scaler & scaler,
 	const std::function<bool(const char *)> & element_filter,
+	const std::function<bool(const char *)> & space_filter,
 	number_collection * c,
 	std::vector<element_info *> * shadings);
 

@@ -77,7 +77,7 @@ size_t get_elements(
 	return infos.size();
 }
 
-size_t get_spaces(cppw::Open_model & model, space_info *** spaces, const unit_scaler & s, number_collection * c) {
+size_t get_spaces(cppw::Open_model & model, space_info *** spaces, const unit_scaler & s, const std::function<bool(const char *)> & space_filter, number_collection * c) {
 		
 	auto ss = model.get_set_of("IfcSpace");
 	size_t count = (size_t)ss.count();
@@ -86,9 +86,11 @@ size_t get_spaces(cppw::Open_model & model, space_info *** spaces, const unit_sc
 		
 	for (size_t i = 0; i < count; ++i) {
 		strncpy((*spaces)[i]->id, ((cppw::String)ss.get(i).get("GlobalId")).data(), SPACE_ID_MAX_LEN);
-		exact_solid sld;
-		ifc_to_solid(&sld, (cppw::Instance)ss.get(i), s, c);
-		sld.populate_inexact_version(&(*spaces)[i]->geometry);
+		if (space_filter((*spaces)[i]->id)) {
+			exact_solid sld;
+			ifc_to_solid(&sld, (cppw::Instance)ss.get(i), s, c);
+			sld.populate_inexact_version(&(*spaces)[i]->geometry);
+		}
 	}
 	return count;
 }
@@ -104,6 +106,7 @@ ifcadapter_return_t extract_from_model(
 	void (*msg_func)(char *),
 	const unit_scaler & scaler,
 	const std::function<bool(const char *)> & element_filter,
+	const std::function<bool(const char *)> & space_filter,
 	number_collection * c,
 	std::vector<element_info *> * shadings)
 {
@@ -111,7 +114,7 @@ ifcadapter_return_t extract_from_model(
 	*element_count = get_elements(model, elements, msg_func, scaler, element_filter, c, shadings);
 	sprintf(buf, "Got %u building elements.\n", *element_count);
 	msg_func(buf);
-	*space_count = get_spaces(model, spaces, scaler, c);
+	*space_count = get_spaces(model, spaces, scaler, space_filter, c);
 	sprintf(buf, "Got %u building spaces.\n", *space_count);
 	msg_func(buf);
 	return IFCADAPT_OK;

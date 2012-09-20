@@ -74,6 +74,7 @@ bool wrapped_nef_polygon::is_valid(double eps) const {
 std::string wrapped_nef_polygon::to_string() const {
 	std::stringstream ss;
 	boost::for_each(get_faces(), [&ss](const face & f) { ss << f.to_string(); });
+	return ss.str();
 }
 
 std::vector<polygon_2> wrapped_nef_polygon::to_simple_convex_pieces() const {

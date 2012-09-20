@@ -188,6 +188,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count),
+			create_guid_filter(options.space_filter, options.space_filter_count),
 			&ctxt,
 			nullptr);
 		double length_units_per_meter = get_length_units_per_meter(model);
@@ -260,6 +261,7 @@ ifcadapter_return_t load_and_run_from(
 			options.notify_func, 
 			unit_scaler::identity_scaler, 
 			create_guid_filter(options.element_filter, options.element_filter_count),
+			create_guid_filter(options.space_filter, options.space_filter_count),
 			&ctxt,
 			&shadings);
 		double length_units_per_meter = get_length_units_per_meter(model);
