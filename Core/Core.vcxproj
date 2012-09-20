@@ -110,6 +110,8 @@
     <ClInclude Include="src\blockstack.h" />
     <ClInclude Include="src\build_blocks.h" />
     <ClInclude Include="src\build_stacks.h" />
+    <ClInclude Include="src\report.h" />
+    <ClInclude Include="src\stringification.h" />
     <ClInclude Include="src\cleanup_loop.h" />
     <ClInclude Include="src\convert_to_space_boundaries.h" />
     <ClInclude Include="src\flatten.h" />
@@ -195,6 +197,7 @@
     <ClCompile Include="src\stackable.cpp" />
     <ClCompile Include="src\stacking_graph.cpp" />
     <ClCompile Include="src\stacking_sequence.cpp" />
+    <ClCompile Include="src\stringification.cpp" />
     <ClCompile Include="src\surface_pair.cpp" />
     <ClCompile Include="src\traverse.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />

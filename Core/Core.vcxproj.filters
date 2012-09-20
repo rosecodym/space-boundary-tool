@@ -46,6 +46,9 @@
     <Filter Include="geometry\common">
       <UniqueIdentifier>{ba376630-5ea6-4d3d-91a0-3fc47d4c04cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="reporting">
+      <UniqueIdentifier>{a0d94793-58df-4382-9721-d16cef32f412}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -198,6 +201,12 @@
     <ClInclude Include="src\flatten.h">
       <Filter>geometry\common</Filter>
     </ClInclude>
+    <ClInclude Include="src\stringification.h">
+      <Filter>reporting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\report.h">
+      <Filter>reporting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -283,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="src\flatten.cpp">
       <Filter>geometry\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stringification.cpp">
+      <Filter>reporting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
