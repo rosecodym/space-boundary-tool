@@ -2,23 +2,23 @@
 
 #include "element.h"
 #include "guid_filter.h"
-#include "printing-macros.h"
+#include "report.h"
 
 #include "load_elements.h"
 
+using namespace reporting;
+
 std::vector<element> load_elements(element_info ** infos, size_t count, equality_context * c, const guid_filter & filter) {
-	NOTIFY_MSG("Beginning loading for %u elements.\n", count);
+	report_progress(boost::format("Beginning loading for %u elements.\n") % count);
 
 	std::vector<element> complex_elements;
 	for (size_t i = 0; i < count; ++i) {
 		if (filter(infos[i]->id)) {
 			if (infos[i]->geometry.rep_type != REP_BREP && infos[i]->geometry.rep_type != REP_EXT) {
-				WARN_MSG("Warning: element %s has an unknown geometry representation type. It will be skipped.\n", infos[i]->id);
+				report_warning(boost::format("Warning: element %s has an unknown geometry representation type. It will be skipped.\n") % infos[i]->id);
 				continue;
 			}
-			PRINT_ELEMENTS("Creating initial element for %s.\n", infos[i]->id);
 			complex_elements.push_back(element(infos[i], c));
-			PRINT_ELEMENTS("Initial element for %s created.\n", complex_elements.back().source_id().c_str());
 		}
 	}
 
@@ -36,7 +36,7 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 		else if (e->type() == COLUMN) { columns.push_back(box); }
 	}
 
-	NOTIFY_MSG("Got bounding boxes (%u walls, %u slabs, %u columns).\n", walls.size(), slabs.size(), columns.size());
+	report_progress(boost::format("Got bounding boxes (%u walls, %u slabs, %u columns).\n") % walls.size() % slabs.size() % columns.size());
 
 	bool need_wall_column_check = !walls.empty() && !columns.empty();
 	bool need_slab_column_check = !slabs.empty() && !columns.empty();
@@ -44,38 +44,38 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 	if (need_wall_column_check) {
 		for (auto w = walls.begin(); w != walls.end(); ++w) {
 
-			NOTIFY_MSG("Resolving wall %s", w->handle()->source_id().c_str());
+			report_progress(boost::format("Resolving wall %s") % w->handle()->source_id().c_str());
 			bool performed_any_subtractions = false;
 
 			if (need_wall_column_check) {
 				boost::for_each(columns, [w, &performed_any_subtractions, c](const element_box & col) {
 					if (CGAL::do_overlap(w->bbox(), col.bbox())) {
 						w->handle()->subtract_geometry_of(*col.handle(), c);
-						NOTIFY_MSG(".");
+						report_progress(".");
 						performed_any_subtractions = true;
 					}
 				});
 			}
 
-			NOTIFY_MSG(performed_any_subtractions ? "done.\n" : " - no resolution necessary.\n");
+			report_progress(performed_any_subtractions ? "done.\n" : " - no resolution necessary.\n");
 		}
 	}
 
 	if (need_slab_column_check) {
 		for (auto col = columns.begin(); col != columns.end(); ++col) {
 
-			NOTIFY_MSG("Resolving column %s", col->handle()->source_id().c_str());
+			report_progress(boost::format("Resolving column %s") % col->handle()->source_id().c_str());
 			bool performed_any_subtractions = false;
 
 			boost::for_each(slabs, [col, &performed_any_subtractions, c](const element_box & s) {
 				if (CGAL::do_overlap(col->bbox(), s.handle()->bounding_box())) {
 					col->handle()->subtract_geometry_of(*s.handle(), c);
-					NOTIFY_MSG(".");
+					report_progress(".");
 					performed_any_subtractions = true;
 				}
 			});
 
-			NOTIFY_MSG(performed_any_subtractions ? "done.\n" : " - no resolution necessary.\n");
+			report_progress(performed_any_subtractions ? "done.\n" : " - no resolution necessary.\n");
 		}
 	}
 

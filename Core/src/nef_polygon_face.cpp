@@ -12,35 +12,33 @@ namespace geometry_2d {
 
 namespace nef_polygons {
 
-void face::print_with(const std::function<void(char *)> & func) const {
-	func("Face:\n");
+std::string face::to_string() const {
+	std::stringstream ss;
+	ss << "Face:\n";
 	auto p = e->face_cycle(f);
 	auto end = p;
 	CGAL_For_all(p, end) {
 		if (e->is_standard(p->vertex())) {
-			char buf[256];
-			sprintf(buf, "(%f, %f)\n", CGAL::to_double(p->vertex()->point().x()), CGAL::to_double(p->vertex()->point().y()));
-			func(buf);
+			ss << (boost::format("(%f, %f)\n") % CGAL::to_double(p->vertex()->point().x()) % CGAL::to_double(p->vertex()->point().y())).str();
 		}
 		else {
-			func("(non-standard point)\n");
+			ss << "(non-standard point)\n";
 		}
 	}
 	for (auto h = e->holes_begin(f); h != e->holes_end(f); ++h) {
-		func("Hole:\n");
+		ss << "Hole:\n";
 		nef_polygon_2::Explorer::Halfedge_around_face_const_circulator curr = h;
 		auto end = curr;
 		CGAL_For_all(curr, end) {
 			if (e->is_standard(curr->vertex())) {
-				char buf[256];
-				sprintf(buf, "(%f, %f)\n", CGAL::to_double(curr->vertex()->point().x()), CGAL::to_double(curr->vertex()->point().y()));
-				func(buf);
+				ss << (boost::format("(%f, %f)\n") % CGAL::to_double(curr->vertex()->point().x()) % CGAL::to_double(curr->vertex()->point().y())).str();
 			}
 			else {
-				func("(non-standard point)\n");
+				ss << "(non-standard point)\n";
 			}
 		}
 	}
+	return ss.str();
 }
 
 boost::optional<polygon_2> face::to_simple_polygon() const {

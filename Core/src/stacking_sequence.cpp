@@ -1,7 +1,6 @@
 #include "precompiled.h"
 
 #include "blockstack.h"
-#include "printing-macros.h"
 #include "sbt-core.h"
 
 #include "stacking_sequence.h"
@@ -11,10 +10,6 @@ namespace stacking {
 namespace impl {
 
 blockstack stacking_sequence::finish(bool too_thick) {
-	if (FLAGGED(SBT_EXPENSIVE_CHECKS) && a.is_empty()) {
-		ERROR_MSG("Tried to finish a stack with no area.\n");
-		abort();
-	}
 	space_face * initial_space_face = *g[layers.front()].as_space_face();
 	if (g[layers.back()].as_space_face()) {
 		return blockstack(

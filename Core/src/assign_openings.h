@@ -2,15 +2,15 @@
 
 #include "precompiled.h"
 
+#include "report.h"
 #include "surface.h"
-#include "printing-macros.h"
 
 namespace opening_assignment {
 
 template <typename SurfaceRange>
 void assign_openings(SurfaceRange * surfaces, double height_eps) {
 	if (std::distance(surfaces->begin(), surfaces->end()) > 0) {
-		NOTIFY_MSG("Assigning openings");
+		reporting::report_progress("Assigning openings");
 		for (auto chld = surfaces->begin(); chld != surfaces->end(); ++chld) {
 			if ((*chld)->is_fenestration()) {
 				for (auto prnt = surfaces->begin(); prnt != surfaces->end(); ++prnt) {
@@ -20,13 +20,13 @@ void assign_openings(SurfaceRange * surfaces, double height_eps) {
 						break;
 					}
 				}
-				NOTIFY_MSG(".");
+				reporting::report_progress(".");
 			}
 		}
-		NOTIFY_MSG("done.\n");
+		reporting::report_progress("done.\n");
 	}
 	else {
-		NOTIFY_MSG("No openings to assign.\n");
+		reporting::report_progress("No openings to assign.\n");
 	}
 }
 

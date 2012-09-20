@@ -2,8 +2,10 @@
 
 #include "precompiled.h"
 
-#include "element.h"
+#include "report.h"
 #include "surface_pair.h"
+
+class element;
 
 namespace blocking {
 
@@ -33,7 +35,7 @@ bool is_hexahedral_prismatoid(const relations_grid & surface_relationships, size
 			return false;
 		}
 
-		NOTIFY_MSG("element is a hexahedral prismatoid. ");
+		reporting::report_progress("element is a hexahedral prismatoid. ");
 
 		*oi++ = surface_relationships[base_pair.first][base_pair.second].to_block(e);
 		handled[base_pair.first] = handled[base_pair.second] = true;

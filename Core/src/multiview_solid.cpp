@@ -28,23 +28,9 @@ bbox_3 nef_bounding_box(const nef_polyhedron_3 & nef) {
 	return *res;
 }
 
-void print_halffacet(nef_halffacet_handle h) {
-	for (auto cycle = h->facet_cycles_begin(); cycle != h->facet_cycles_end(); ++cycle) {
-		NOTIFY_MSG("[cycle]\n");
-		nef_polyhedron_3::SHalfedge_around_facet_const_circulator start(cycle);
-		nef_polyhedron_3::SHalfedge_around_facet_const_circulator end(cycle);
-		CGAL_For_all(start, end) {
-			PRINT_POINT_3(start->source()->center_vertex()->point());
-			NOTIFY_MSG("\n");
-		}
-	}
-}
-
 std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
-	PRINT_SOLIDS("Creating face list from brep with %u faces.\n", b.face_count);
 	std::vector<simple_face> res;
 	std::transform(b.faces, b.faces + b.face_count, std::back_inserter(res), [c](const face & f) { return simple_face(f, c); });
-	PRINT_SOLIDS("Face list created (%u faces).\n", res.size());
 	return res;
 }
 
@@ -137,8 +123,6 @@ std::vector<std::vector<simple_face>> to_simple_faces(std::vector<simple_face> &
 			return a.source() == b.source() ? a.target() < b.target() : a.source() < b.source();
 		}
 	};
-	
-	PRINT_SOLIDS("Entered to_simple_faces.\n");
 
 	std::vector<std::vector<face_relationship>> relationships(all_faces.size(), std::vector<face_relationship>(all_faces.size(), NOT_CONNECTED));
 
@@ -172,8 +156,6 @@ std::vector<std::vector<simple_face>> to_simple_faces(std::vector<simple_face> &
 	for (int i = 0; i < group_count; ++i) {
 		res.push_back(fix_orientations_for_group(all_faces, group_memberships, i, relationships));
 	}
-	
-	PRINT_SOLIDS("Exiting to_simple_faces.\n");
 
 	return res;
 }
@@ -206,31 +188,21 @@ std::vector<oriented_area> to_oriented_face_group(const nef_polyhedron_3 & nef, 
 		const std::vector<oriented_area> & get_faces() { return faces; }
 	};
 
-	PRINT_SOLIDS("Converting a nef volume to an oriented face group.");
-
 	nef_polyhedron_3::Shell_entry_const_iterator sit;
 	face_generator fgen(c);
 	nef.visit_shell_objects(nef_sface_handle(v->shells_begin()), fgen);
-
-	PRINT_SOLIDS("Got %u oriented faces from this volume.\n", fgen.get_faces().size());
 	
 	return fgen.get_faces();
 }
 
 oriented_area_groups nef_to_oriented_area_groups(const nef_polyhedron_3 & nef, equality_context * c) {
-	PRINT_SOLIDS("Converting a nef polyhedron to oriented area groups.\n");
 	oriented_area_groups g;
 	nef_volume_handle v;
 	CGAL_forall_volumes(v, nef) {
 		if (v->mark()) {
-			PRINT_SOLIDS("A nef volume is marked.\n");
 			g.push_back(to_oriented_face_group(nef, v, c));
 		}
-		else {
-			PRINT_SOLIDS("A nef volume is not marked.\n");
-		}
 	}
-	PRINT_SOLIDS("Processed all nef volumes.\n");
 	return g;
 }
 
@@ -243,11 +215,6 @@ multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 	else if (s.rep_type == REP_EXT) {
 		geometry = get_extrusion_information(s.rep.as_ext, c);
 	}
-	else if (FLAGGED(SBT_EXPENSIVE_CHECKS)) {
-		ERROR_MSG("An incoming interface solid had no representation type.\n");
-		abort();
-	}
-	validate();
 }
 
 multiview_solid::multiview_solid(const nef_polyhedron_3 & nef, nef_volume_handle v, equality_context * c) {
@@ -377,23 +344,15 @@ std::vector<oriented_area> multiview_solid::oriented_faces(equality_context * c)
 	};
 	geometry = boost::apply_visitor(convert_to_oriented_areas(c), geometry);
 	oriented_area_groups groups = boost::get<oriented_area_groups>(geometry);
-	if (FLAGGED(SBT_EXPENSIVE_CHECKS) && groups.size() != 1) {
-		ERROR_MSG("\nA solid had %u oriented face groups.\n", groups.size());
-		abort();
-	}
 	return groups.front();
 }
 
 void multiview_solid::subtract(const multiview_solid & other, equality_context * c) {
-	PRINT_ELEMENTS("Subtracting solid %x from solid %x.\n", this, &other);
 	if (is_nef_representable() && other.is_nef_representable()) {
-		PRINT_SOLIDS("Subtraction is possible.\n");
 		convert_to_nef([c]() { return c; });
 		other.convert_to_nef([c]() { return c; });
-		PRINT_SOLIDS("Solids converted to nef.\n");
 		boost::get<nef_polyhedron_3>(geometry) -= boost::get<nef_polyhedron_3>(other.geometry);
 	}
-	PRINT_ELEMENTS("Solid subtraction completed.\n");
 }
 
 bool multiview_solid::is_nef_representable() const {
@@ -404,7 +363,7 @@ bool multiview_solid::is_nef_representable() const {
 					return !f.inners().empty();
 				}) != group.end(); }) == simple_faces.end();
 		}
-		bool operator () (const oriented_area_groups & /*oriented_areas*/) const { return false; /*yeah, maybe, but it shouldn't happen and it's hard*/}
+		bool operator () (const oriented_area_groups & /*oriented_areas*/) const { return false; } // yeah, maybe, but it shouldn't happen and it's hard
 		bool operator () (const extrusion_information & /*extrusion_information*/) const { return true; }
 		bool operator () (const nef_polyhedron_3 & /*nef*/) const { return true; }
 	};
@@ -436,56 +395,6 @@ void multiview_solid::convert_to_nef(std::function<equality_context *(void)> laz
 		}
 	};
 	geometry = boost::apply_visitor(visitor(lazy_c), geometry);
-}
-
-void multiview_solid::print() const {
-	struct visitor : public boost::static_visitor<> {
-		void operator () (const simple_face_groups &) const { }
-		void operator () (const oriented_area_groups & groups) const {
-			boost::for_each(groups, [](const std::vector<oriented_area> & group) {
-				NOTIFY_MSG("Multiview solid oriented area group:\n");
-				boost::for_each(group, [](const oriented_area & oa) {
-					oa.print();
-					NOTIFY_MSG("converts to:\n");
-					NOTIFY_MSG(oa.to_3d().front().to_string().c_str());
-				});
-				NOTIFY_MSG("End multiview solid oriented area group.\n");
-			});
-		}
-		void operator () (const extrusion_information &) const { }
-		void operator () (const nef_polyhedron_3 & nef) const {
-			nef_halffacet_handle h;
-			CGAL_forall_facets(h, nef) {
-				if (h->mark()) {
-					NOTIFY_MSG("[face]\n");
-					print_halffacet(h);
-				}
-			}
-		}
-	};
-	boost::apply_visitor(visitor(), geometry);
-}
-
-void multiview_solid::validate() const {
-	struct validator : public boost::static_visitor<> {
-		void operator () (const simple_face_groups & groups) const {
-			if (groups.size() == 0) {
-				ERROR_MSG("A multiview_solid represented as simple face groups had no faces.\n");
-				abort();
-			}
-		}
-		void operator () (const oriented_area_groups & groups) const { 
-			if (groups.size() == 0) {
-				ERROR_MSG("A multiview_solid represented as oriented area groups had no faces.\n");
-				abort();
-			}
-		}
-		void operator () (const extrusion_information &) const { }
-		void operator () (const nef_polyhedron_3 &) const { }
-	};
-	if (FLAGGED(SBT_EXPENSIVE_CHECKS)) {
-		boost::apply_visitor(validator(), geometry);
-	}
 }
 
 } // namespace solid_geometry

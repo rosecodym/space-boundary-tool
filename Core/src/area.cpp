@@ -2,7 +2,6 @@
 
 #include "equality_context.h"
 #include "geometry_common.h"
-#include "printing-macros.h"
 
 #include "area.h"
 
@@ -15,7 +14,6 @@ area::area(const std::vector<std::vector<point_2>> & loops) : use_nef(loops.size
 	else {
 		simple_rep = polygon_2(loops.front().begin(), loops.front().end());
 		ensure_counterclockwise();
-		validate();
 	}
 }
 
@@ -26,7 +24,6 @@ area::area(const std::vector<polygon_2> & loops) : use_nef(loops.size() > 1) {
 	else {
 		simple_rep = loops.front();
 		ensure_counterclockwise();
-		validate();
 	}
 }
 
@@ -58,16 +55,6 @@ void area::promote() const {
 void area::ensure_counterclockwise() {
 	if (!use_nef && simple_rep.is_clockwise_oriented()) {
 		simple_rep.reverse_orientation();
-	}
-}
-
-void area::validate() const {
-	if (FLAGGED(SBT_EXPENSIVE_CHECKS) && !use_nef && !simple_rep.is_simple()) {
-		ERROR_MSG("Error: non-simple area representation.\n");
-		std::for_each(simple_rep.vertices_begin(), simple_rep.vertices_end(), [](const point_2 & p) {
-			ERROR_MSG("(%f, %f)\n", CGAL::to_double(p.x()), CGAL::to_double(p.y()));
-		});
-		exit(1);
 	}
 }
 
@@ -160,16 +147,9 @@ area operator - (const area & a, const area & b) {
 }
 
 area operator * (const area & a, const area & b) {
-	if (FLAGGED(SBT_VERBOSE_BLOCKS) || FLAGGED(SBT_VERBOSE_STACKS)) {
-		NOTIFY_MSG("Entered area intersection. Intersecting\n");
-		a.print();
-		NOTIFY_MSG("with\n");
-		b.print();
-	}
 	if (a.is_empty() || b.is_empty() || !CGAL::do_overlap(a.bbox(), b.bbox())) { return area(); }
 	if (!a.use_nef && !b.use_nef && a.simple_rep == b.simple_rep) { return a; }
 	area::promote_both(a, b);
-	PRINT_2D_OPERATIONS("Polygons promoted.\n");
 	return area(a.nef_rep * b.nef_rep);
 }
 

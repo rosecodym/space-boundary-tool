@@ -2,7 +2,7 @@
 
 #include "cleanup_loop.h"
 #include "geometry_common.h"
-#include "printing-macros.h"
+#include "report.h"
 #include "sbt-core.h"
 
 #include "polygon_with_holes_2.h"
@@ -10,19 +10,9 @@
 extern sb_calculation_options g_opts;
 
 void polygon_with_holes_2::cleanup() {
-	bool cleanup_ok = geometry_common::cleanup_loop(&m_outer, g_opts.equality_tolerance);
-	if (!cleanup_ok && FLAGGED(SBT_EXPENSIVE_CHECKS)) {
-		ERROR_MSG("Couldn't clean up a pwh_2's outer boundary:\n");
-		PRINT_POLYGON(m_outer);
-		abort();
-	}
+	geometry_common::cleanup_loop(&m_outer, g_opts.equality_tolerance);
 	boost::for_each(m_holes, [](polygon_2 & hole) {
-		bool cleanup_ok = geometry_common::cleanup_loop(&hole, g_opts.equality_tolerance);
-		if (!cleanup_ok && FLAGGED(SBT_EXPENSIVE_CHECKS)) {
-			ERROR_MSG("Couldn't clean up a pwh_2 hole:\n");
-			PRINT_POLYGON(hole);
-			abort();
-		}
+		geometry_common::cleanup_loop(&hole, g_opts.equality_tolerance);
 	});
 }
 

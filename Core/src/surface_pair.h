@@ -6,7 +6,6 @@
 #include "element.h"
 #include "equality_context.h"
 #include "oriented_area.h"
-#include "printing-macros.h"
 
 namespace blocking {
 
@@ -47,28 +46,22 @@ private:
 	}
 
 	const oriented_area & get_projection_onto_base() const {
-		PRINT_BLOCKS("Entered get_projection_onto_base.\n");
 		if (!projection_onto_base) {
 			projection_onto_base = m_base->project_onto_self(*m_other);
 		}
-		PRINT_BLOCKS("Exiting get_projection_onto_base.\n");
 		return *projection_onto_base;
 	}
 
 	const oriented_area & get_base_minus_other_projected() const {
 		if (!m_base_minus_other) {
-			PRINT_BLOCKS("Performing subtraction for surface pair projection.\n");
 			m_base_minus_other = *m_base - get_projection_onto_base();
-			PRINT_BLOCKS("Subtraction for surface pair projection complete.\n");
 		}
 		return *m_base_minus_other;
 	}
 
 	const oriented_area & get_base_intr_other_projected() const {
 		if (!m_base_intr_other) {
-			PRINT_BLOCKS("Performing intersection for surface pair projection.\n");
 			m_base_intr_other = *m_base * get_projection_onto_base();
-			PRINT_BLOCKS("Intersection for surface pair projection complete.\n");
 		}
 		return *m_base_intr_other;
 	}
@@ -139,13 +132,8 @@ public:
 	public:
 		template <typename OutputIterator>
 		OutputIterator operator () (const Surface_3 & pair, bool /*is_lower*/, OutputIterator oi) const {
-			PRINT_BLOCKS("Creating xy-monotone surface.\n");
 			if (pair.contributes_to_envelope()) {
-				PRINT_BLOCKS("Surface contributes to envelope.\n");
 				*oi++ = pair;
-			}
-			else {
-				PRINT_BLOCKS("Surface does not contribute to envelope.\n");
 			}
 			return oi;
 		}
@@ -157,16 +145,6 @@ public:
 		OutputIterator operator () (const Xy_monotone_surface_3 & pair, OutputIterator oi) const {
 			if (!pair.are_perpendicular()) {
 				polygon_2 projection = pair.projected_other_area();
-				PRINT_BLOCKS("Got projected other area.\n");
-				if (FLAGGED(SBT_EXPENSIVE_CHECKS) && (!projection.is_simple() || projection.size() < 3)) {
-					NOTIFY_MSG("Projection is bad!\n");
-					PRINT_POLYGON(projection);
-					NOTIFY_MSG("from\n");
-					NOTIFY_MSG(pair.other().to_3d().front().to_string().c_str());
-					NOTIFY_MSG("to\n");
-					NOTIFY_MSG(pair.base().to_3d().front().to_string().c_str());
-					abort();
-				}
 				
 				std::vector<x_monotone_curve_2> boundaries;
 
@@ -183,7 +161,6 @@ public:
 					return CGAL::make_object(std::make_pair(curve, position ? CGAL::ON_POSITIVE_SIDE : CGAL::ON_NEGATIVE_SIDE));
 				});
 			}
-			PRINT_BLOCKS("Exiting Construct_projected_boundary_2::operator ().\n");
 			return oi;
 		}
 	};

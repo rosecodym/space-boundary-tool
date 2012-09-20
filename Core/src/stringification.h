@@ -19,8 +19,3 @@ std::string to_string(const StringifiableRange & points) {
 std::string to_string(const polygon_2 & poly);
 
 } // namespace reporting
-
-template <typename Stringifiable>
-std::ostream & operator << (std::ostream & os, const Stringifiable & in) {
-	return os << to_string(in);
-}

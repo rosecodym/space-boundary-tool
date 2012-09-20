@@ -2,19 +2,9 @@
 
 #include "geometry_common.h"
 #include "misc-util.h"
-#include "printing-util.h"
 #include "sbt-core.h"
 
 #include "equality_context.h"
-
-#define PRINT_GEOM(...) \
-	do { \
-		if (FLAGGED(SBT_VERBOSE_GEOMETRY)) { \
-			sprintf(g_msgbuf, __VA_ARGS__); \
-			g_opts.notify_func(g_msgbuf); \
-		} \
-	} \
-	while (false);
 
 extern sb_calculation_options g_opts;
 extern char g_msgbuf[256];

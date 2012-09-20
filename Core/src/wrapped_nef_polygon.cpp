@@ -71,8 +71,9 @@ bool wrapped_nef_polygon::is_valid(double eps) const {
 	return !equality_context::is_zero_squared(geometry_common::smallest_squared_distance(points.begin(), points.end()), eps);
 }
 
-void wrapped_nef_polygon::print_with(const std::function<void(char *)> & func) const {
-	boost::for_each(get_faces(), [&func](const face & f) { f.print_with(func); });
+std::string wrapped_nef_polygon::to_string() const {
+	std::stringstream ss;
+	boost::for_each(get_faces(), [&ss](const face & f) { ss << f.to_string(); });
 }
 
 std::vector<polygon_2> wrapped_nef_polygon::to_simple_convex_pieces() const {

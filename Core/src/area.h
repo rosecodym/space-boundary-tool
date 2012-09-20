@@ -4,7 +4,6 @@
 
 #include "geometry_common.h"
 #include "polygon_with_holes_2.h"
-#include "printing-macros.h"
 #include "wrapped_nef_polygon.h"
 
 class equality_context;
@@ -20,14 +19,12 @@ private:
 	void promote() const;
 	void ensure_counterclockwise();
 
-	void validate() const;
-
 	static void promote_both(const area & a, const area & b) { a.promote(); b.promote(); }
 
 public:
 	area() : use_nef(false) { }
-	explicit area(const polygon_2 & poly) : simple_rep(poly), use_nef(false) { validate(); }
-	explicit area(polygon_2 && poly) : simple_rep(std::move(poly)), use_nef(false) { validate(); }
+	explicit area(const polygon_2 & poly) : simple_rep(poly), use_nef(false) { }
+	explicit area(polygon_2 && poly) : simple_rep(std::move(poly)), use_nef(false) { }
 	explicit area(const std::vector<std::vector<point_2>> & loops);
 	explicit area(const std::vector<polygon_2> & loops);
 	explicit area(wrapped_nef_polygon && nef) : nef_rep(std::move(nef)), use_nef(true) { }
@@ -45,8 +42,6 @@ public:
 	std::vector<polygon_2>				to_simple_convex_pieces() const;
 	std::vector<polygon_with_holes_2>	to_pwhs() const;
 	size_t								vertex_count() const { return use_nef ? nef_rep.vertex_count() : simple_rep.size(); }
-
-	const area & print() const { if (use_nef) { nef_rep.print_with(g_opts.notify_func); } else { PRINT_POLYGON(simple_rep); } return *this; }
 
 	void clear();
 

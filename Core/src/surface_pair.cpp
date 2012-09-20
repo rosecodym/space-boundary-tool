@@ -1,7 +1,5 @@
 #include "precompiled.h"
 
-#include "printing-macros.h"
-
 #include "surface_pair.h"
 
 namespace blocking {

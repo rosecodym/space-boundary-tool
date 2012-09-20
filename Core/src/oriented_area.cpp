@@ -4,7 +4,6 @@
 #include "equality_context.h"
 #include "flatten.h"
 #include "orientation.h"
-#include "printing-macros.h"
 #include "simple_face.h"
 
 #include "oriented_area.h"
@@ -136,10 +135,7 @@ std::vector<ray_3> oriented_area::drape() const {
 }
 
 bool oriented_area::any_point_in_halfspace(const plane_3 & defining, equality_context * c3d) const {
-	PRINT_BLOCKS("Entered exists_entirely_in_halfspace.\n");
-	bool res = a.any_points_satisfy_predicate([&defining, c3d, this](const point_2 & p2) { return defining.has_on_positive_side(c3d->snap(to_3d(p2))); });
-	PRINT_BLOCKS("Exiting exists_entirely_in_halfspace.\n");
-	return res;
+	return a.any_points_satisfy_predicate([&defining, c3d, this](const point_2 & p2) { return defining.has_on_positive_side(c3d->snap(to_3d(p2))); });
 }
 
 std::vector<polygon_with_holes_3> oriented_area::to_3d(bool flatten_numbers) const {
@@ -168,11 +164,6 @@ oriented_area oriented_area::project_onto_self(const oriented_area & other) cons
 	}
 
 	return oriented_area(o, area(all_loops), p, all_loops.front().is_clockwise_oriented());
-}
-
-void oriented_area::print() const {
-	NOTIFY_MSG("%s%c @ %f\n", o->to_string().c_str(), sense() ? '+' : '-', CGAL::to_double(p));
-	a.print();
 }
 
 boost::optional<NT> oriented_area::could_form_block(const oriented_area & a, const oriented_area & b) {

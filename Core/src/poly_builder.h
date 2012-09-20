@@ -3,7 +3,6 @@
 #include "precompiled.h"
 
 #include "equality_context.h"
-#include "printing-macros.h"
 
 namespace solid_geometry {
 
@@ -37,10 +36,6 @@ public:
 		boost::transform(base_loop, std::back_inserter(points), [c](const point_3 & p) { return c->snap(p); });
 		size_t base_count = points.size();
 		boost::transform(base_loop, std::back_inserter(points), [&extrude, c](const point_3 & p) { return c->snap(extrude(p)); });
-		if (FLAGGED(SBT_VERBOSE_ELEMENTS)) {
-			NOTIFY_MSG("Creating an extrusion polygon from the following points:\n");
-			PRINT_LOOP_3(points);
-		}
 		for (size_t i = 0; i < base_count; ++i) {
 			base_indices.push_back(i);
 			target_indices.push_back(i + base_count);

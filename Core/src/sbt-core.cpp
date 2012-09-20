@@ -11,7 +11,7 @@
 #include "load_elements.h"
 #include "load_spaces.h"
 #include "misc-util.h"
-#include "printing-util.h"
+#include "report.h"
 #include "sbt-core-helpers.h"
 #include "space.h"
 #include "surface.h"
@@ -29,6 +29,8 @@ sbt_return_t calculate_space_boundaries_(
 	size_t * space_boundary_count,
 	space_boundary *** space_boundaries,
 	sb_calculation_options opts);
+
+using namespace reporting;
 
 namespace {
 
@@ -69,7 +71,7 @@ sbt_return_t calculate_space_boundaries(
 	_set_se_translator(&exception_translator);
 
 	try {
-		NOTIFY_MSG("Beginning processing for %u building elements.\n", element_count);
+		report_progress(boost::format("Beginning processing for %u building elements.\n") % element_count);
 
 		equality_context whole_building_context(g_opts.equality_tolerance);
 
@@ -83,9 +85,9 @@ sbt_return_t calculate_space_boundaries(
 
 		opening_assignment::assign_openings(&surfaces, g_opts.equality_tolerance);
 
-		NOTIFY_MSG("Converting internal structures to interface structures");
+		report_progress("Converting internal structures to interface structures");
 		retval = interface_conversion::convert_to_space_boundaries(surfaces, space_boundaries, space_boundary_count);
-		NOTIFY_MSG("done.\n");
+		report_progress("done.\n");
 	}
 	catch (sbt_exception & ex) {
 		retval = ex.code();

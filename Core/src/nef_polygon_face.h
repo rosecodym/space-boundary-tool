@@ -17,9 +17,9 @@ public:
 		: e(&explorer), f(iter)
 	{ }
 
-	void print_with(const std::function<void(char *)> & func) const;
-	boost::optional<polygon_2> to_simple_polygon() const;
 	boost::optional<polygon_with_holes_2> to_pwh() const;
+	std::string to_string() const;
+	boost::optional<polygon_2> to_simple_polygon() const;
 };
 
 } // namespace nef_polygons

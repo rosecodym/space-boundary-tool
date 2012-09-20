@@ -4,7 +4,7 @@
 
 #include "cleanup_loop.h"
 #include "exceptions.h"
-#include "printing-macros.h"
+#include "report.h"
 #include "sbt-core.h"
 #include "sbt-core-helpers.h"
 #include "surface.h"
@@ -27,7 +27,7 @@ sbt_return_t convert_to_space_boundaries(const SurfaceRange & surfaces, space_bo
 		// create unlinked structures
 		boost::copy(surfaces
 			| boost::adaptors::transformed([](const std::unique_ptr<surface> & surf) -> std::pair<std::string, space_boundary *> { 
-				NOTIFY_MSG(".");
+				reporting::report_progress(".");
 				return std::make_pair(surf->guid(), impl::create_unlinked_space_boundary(*surf.get())); 
 			})
 			| boost::adaptors::filtered([](const std::pair<std::string, space_boundary *> & entry) { return entry.second != nullptr; }),
@@ -82,7 +82,7 @@ sbt_return_t convert_to_space_boundaries(const SurfaceRange & surfaces, space_bo
 		return SBT_OK;
 	}
 	catch (failed_malloc_exception &) {
-		WARN_MSG("An allocation failed while generating interface structures! Try simplifying the building to reduce the final space boundary count. SBT should be restarted.\n");
+		reporting::report_warning("An allocation failed while generating interface structures! Try simplifying the building to reduce the final space boundary count. SBT should be restarted.\n");
 		free(*sbs);
 		boost::for_each(boost::adaptors::values(boundaries), [](space_boundary * sb) { free(sb); });
 		return SBT_FAILED_ALLOCATION;

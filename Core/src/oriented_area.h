@@ -5,7 +5,6 @@
 #include "area.h"
 #include "orientation.h"
 #include "polygon_with_holes_3.h"
-#include "printing-macros.h"
 
 class equality_context;
 class orientation;
@@ -79,8 +78,6 @@ public:
 			return oriented_area(*this, area(piece));
 		});
 	}
-
-	void print() const;
 
 	friend oriented_area operator - (const oriented_area & lhs, const oriented_area & rhs);
 	friend oriented_area operator * (const oriented_area & lhs, const oriented_area & rhs);

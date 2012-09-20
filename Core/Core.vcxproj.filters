@@ -10,9 +10,6 @@
     <Filter Include="operations">
       <UniqueIdentifier>{2d2a4be8-2a73-4950-a05f-df09eb8f5e75}</UniqueIdentifier>
     </Filter>
-    <Filter Include="cgal">
-      <UniqueIdentifier>{3481daf7-695e-4979-a9ee-a8a0a255882c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="geometry">
       <UniqueIdentifier>{1a191f61-9d72-445f-b4f1-58785fe2e374}</UniqueIdentifier>
     </Filter>
@@ -62,9 +59,6 @@
     </ClInclude>
     <ClInclude Include="src\sbt-core-helpers.h">
       <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="src\printing-util.h">
-      <Filter>cgal</Filter>
     </ClInclude>
     <ClInclude Include="src\misc-util.h">
       <Filter>main</Filter>
@@ -146,9 +140,6 @@
     </ClInclude>
     <ClInclude Include="src\load_spaces.h">
       <Filter>operations\space loading</Filter>
-    </ClInclude>
-    <ClInclude Include="src\printing-macros.h">
-      <Filter>main</Filter>
     </ClInclude>
     <ClInclude Include="src\stackable.h">
       <Filter>operations\stacking</Filter>

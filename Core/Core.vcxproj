@@ -135,12 +135,10 @@
     <ClInclude Include="src\polygon_with_holes_2.h" />
     <ClInclude Include="src\polygon_with_holes_3.h" />
     <ClInclude Include="src\poly_builder.h" />
-    <ClInclude Include="src\printing-macros.h" />
     <ClInclude Include="src\scan_for_degenerate_halfblocks.h" />
     <ClInclude Include="src\simple_face.h" />
     <ClInclude Include="src\one_dimensional_equality_context.h" />
     <ClInclude Include="src\precompiled.h" />
-    <ClInclude Include="src\printing-util.h" />
     <ClInclude Include="src\sbt-core-helpers.h" />
     <ClInclude Include="src\sbt-core.h" />
     <ClInclude Include="src\solid_conversion_operations.h" />
