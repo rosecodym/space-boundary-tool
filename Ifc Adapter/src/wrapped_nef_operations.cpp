@@ -12,7 +12,10 @@ extern sb_calculation_options g_opts;
 
 namespace {
 
-typedef CGAL::Nef_polyhedron_3<K> nef_polyhedron_3;
+typedef CGAL::Extended_cartesian<CORE::BigRat>	eK;
+typedef eK::Point_3								extended_point_3;
+typedef eK::Plane_3								extended_plane_3;
+typedef CGAL::Nef_polyhedron_3<eK>				nef_polyhedron_3;
 
 point_3 to_exact_point(const cppw::Instance & inst, number_collection<K> * c) {
 	cppw::List coords = inst.get("Coordinates");
@@ -24,7 +27,24 @@ direction_3 to_exact_direction(const cppw::Instance & inst, number_collection<K>
 	return c->request_direction((cppw::Integer)ratios.get_(0), (cppw::Integer)ratios.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Integer)ratios.get_(2) : 0);
 }
 
-nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c) {
+extended_plane_3 create_extended_plane(const point_3 & p1, const point_3 & p2, const point_3 & p3, number_collection<eK> * c) {
+	return extended_plane_3(
+		c->request_point(CGAL::to_double(p1.x()), CGAL::to_double(p1.y()), CGAL::to_double(p1.z())),
+		c->request_point(CGAL::to_double(p2.x()), CGAL::to_double(p2.y()), CGAL::to_double(p2.z())),
+		c->request_point(CGAL::to_double(p3.x()), CGAL::to_double(p3.y()), CGAL::to_double(p3.z())));
+}
+
+extended_plane_3 create_extended_plane(const point_3 & p, const direction_3 & d, number_collection<eK> * c) {
+	return extended_plane_3(
+		c->request_point(CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z())),
+		c->request_direction(CGAL::to_double(d.dx()), CGAL::to_double(d.dy()), CGAL::to_double(d.dz())));
+}
+
+extended_plane_3 create_extended_plane(const ray_3 & r, const point_3 & p, number_collection<eK> * c) {
+	return create_extended_plane(p, r.direction(), c);
+}
+
+nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c, number_collection<eK> * ec) {
 	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
 		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
 		std::vector<point_3> base_points;
@@ -39,15 +59,15 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		std::transform(base_points.begin(), base_points.end(), std::back_inserter(extruded_points), [&extrusion](const point_3 & p) {
 			return p.transform(extrusion);
 		});
-		std::vector<plane_3> planes;
-		planes.push_back(plane_3(base_points[0], base_points[1], base_points[2]));
-		planes.push_back(plane_3(extruded_points[2], extruded_points[1], extruded_points[0]));
+		std::vector<extended_plane_3> planes;
+		planes.push_back(create_extended_plane(base_points[0], base_points[1], base_points[2], ec));
+		planes.push_back(create_extended_plane(extruded_points[2], extruded_points[1], extruded_points[0], ec));
 		size_t pc = base_points.size();
 		for (size_t i = pc; i < pc * 2; ++i) {
-			planes.push_back(plane_3(base_points[i % pc], base_points[(i - 1) % pc], extruded_points[(i - 1) % pc]));
+			planes.push_back(create_extended_plane(base_points[i % pc], base_points[(i - 1) % pc], extruded_points[(i - 1) % pc], ec));
 		}
 		nef_polyhedron_3 result(planes.front().opposite());
-		std::for_each(planes.begin(), planes.end(), [&result](const plane_3 & pl) {
+		std::for_each(planes.begin(), planes.end(), [&result](const extended_plane_3 & pl) {
 			result *= nef_polyhedron_3(pl.opposite());
 		});
 		return result;
@@ -62,7 +82,7 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		cppw::Instance point = surface_placement.get("Location");
 		cppw::Select normal = surface_placement.get("Axis");
 		direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : direction_3(0, 0, 1);
-		plane_3 p(to_exact_point(point, c), inst.get("AgreementFlag") ? n : -n);
+		extended_plane_3 p = create_extended_plane(to_exact_point(point, c), inst.get("AgreementFlag") ? n : -n, ec);
 		return nef_polyhedron_3(p);
 	}
 	else if (inst.is_kind_of("IfcPolygonalBoundedHalfSpace")) {
@@ -71,10 +91,10 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		std::transform(base.outer_boundary.vertices.begin(), base.outer_boundary.vertices.end(), std::back_inserter(base_points), [c](const exact_point & p) {
 			return c->request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
 		});
-		std::vector<plane_3> planes;
+		std::vector<extended_plane_3> planes;
 		size_t pc = base_points.size();
 		for (size_t i = 0; i < pc; ++i) {
-			planes.push_back(plane_3(ray_3(base_points[(i + 1) % pc], direction_3(0, 0, 1)), base_points[i]));
+			planes.push_back(create_extended_plane(ray_3(base_points[(i + 1) % pc], direction_3(0, 0, 1)), base_points[i], ec));
 		}
 		cppw::Instance base_surface = inst.get("BaseSurface");
 		if (!base_surface.is_instance_of("IfcPlane")) {
@@ -85,19 +105,19 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		cppw::Instance point = surface_placement.get("Location");
 		cppw::Select normal = surface_placement.get("Axis");
 		direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : direction_3(0, 0, 1);
-		planes.push_back(plane_3(to_exact_point(point, c), n));
+		planes.push_back(create_extended_plane(to_exact_point(point, c), n, ec));
 		if (!inst.get("AgreementFlag")) {
 			planes.back() = planes.back().opposite();
 		}
 		nef_polyhedron_3 result(planes.front());
-		std::for_each(planes.begin(), planes.end(), [&result](const plane_3 & pl) {
+		std::for_each(planes.begin(), planes.end(), [&result](const extended_plane_3 & pl) {
 			result *= nef_polyhedron_3(pl);
 		});
 		return result;
 	}
 	else if (inst.is_instance_of("IfcBooleanClippingResult")) {
-		nef_polyhedron_3 first = create_nef((cppw::Instance)inst.get("FirstOperand"), s, c);
-		nef_polyhedron_3 second = create_nef((cppw::Instance)inst.get("SecondOperand"), s, c);
+		nef_polyhedron_3 first = create_nef((cppw::Instance)inst.get("FirstOperand"), s, c, ec);
+		nef_polyhedron_3 second = create_nef((cppw::Instance)inst.get("SecondOperand"), s, c, ec);
 		cppw::String op = inst.get("Operator");
 		if (op == "DIFFERENCE") {
 			return (first - second).regularization();
@@ -136,7 +156,7 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_coll
 			nef_polyhedron_3::SHalfedge_around_facet_const_circulator start(cycle);
 			nef_polyhedron_3::SHalfedge_around_facet_const_circulator end(cycle);
 			CGAL_For_all(start, end) {
-				point_3 p = start->source()->center_vertex()->point();
+				auto p = start->source()->center_vertex()->point();
 				point_3 req = c->request_point(
 					CGAL::to_double(p.x()),
 					CGAL::to_double(p.y()),
@@ -154,7 +174,8 @@ namespace wrapped_nef_operations {
 
 void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection<K> * c) {
 	g_opts.notify_func("(element requires nef processing)...");
-	convert_to_solid(s, create_nef(inst, scaler, c), c);
+	number_collection<eK> extended_context(g_opts.equality_tolerance / 20);
+	convert_to_solid(s, create_nef(inst, scaler, c, &extended_context), c);
 }
 
 } // namespace wrapped_nef_operations

@@ -8,9 +8,11 @@
 
 template <typename K>
 class number_collection {
-	typedef typename K::FT NT;
-	typedef typename K::Direction_3 direction_3;
-	typedef typename K::Vector_3 vector_3;
+	typedef typename K::FT			NT;
+	typedef typename K::Point_2		point_2;
+	typedef typename K::Point_3		point_3;
+	typedef typename K::Direction_3	direction_3;
+	typedef typename K::Vector_3	vector_3;
 
 private:
 	double tolerance;
@@ -64,10 +66,10 @@ public:
 
 	static bool are_effectively_parallel(const direction_3 & a, const direction_3 & b, double eps) {
 		vector_3 v_a = a.to_vector();
-		v_a = v_a / CGAL::sqrt(v_a.squared_length());
 		vector_3 v_b = b.to_vector();
-		v_b = v_b / CGAL::sqrt(v_b.squared_length());
-		return one_dimensional_equality_context<NT>::is_zero_squared(CGAL::cross_product(v_a, v_b).squared_length(), eps);
+		return one_dimensional_equality_context<NT>::is_zero_squared(
+			CGAL::cross_product(v_a, v_b).squared_length() /
+			(v_a.squared_length() * v_b.squared_length()), eps);
 	}
 
 };
