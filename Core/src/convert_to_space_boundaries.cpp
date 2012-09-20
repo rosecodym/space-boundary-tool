@@ -52,7 +52,9 @@ space_boundary * create_unlinked_space_boundary(const surface & surf) {
 		newsb->normal_z = CGAL::to_double(norm.dz());
 
 		newsb->opposite = nullptr;
-		newsb->parent = nullptr;equality_context layers_context(g_opts.equality_tolerance);
+		newsb->parent = nullptr;
+		
+		equality_context layers_context(g_opts.equality_tolerance);
 	
 		newsb->material_layer_count = surf.material_layers().size();
 		if (newsb->material_layer_count > 0) {

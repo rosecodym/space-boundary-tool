@@ -69,9 +69,6 @@
     <ClInclude Include="src\equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>
-    <ClInclude Include="src\point_collection.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\one_dimensional_equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>

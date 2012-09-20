@@ -137,7 +137,6 @@
     <ClInclude Include="src\scan_for_degenerate_halfblocks.h" />
     <ClInclude Include="src\simple_face.h" />
     <ClInclude Include="src\one_dimensional_equality_context.h" />
-    <ClInclude Include="src\point_collection.h" />
     <ClInclude Include="src\precompiled.h" />
     <ClInclude Include="src\printing-util.h" />
     <ClInclude Include="src\sbt-core-helpers.h" />
