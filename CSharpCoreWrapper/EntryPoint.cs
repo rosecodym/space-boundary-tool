@@ -94,7 +94,7 @@ namespace Sbt
         {
             SBCalculationOptions opts;
             opts.flags = flags;
-            opts.spaceVerificationTimeout = -1; // no longer does anything
+            opts.spaceVerificationTimeout = 0; // no longer does anything
             opts.equalityTolerance = internalEpsilon;
             opts.maxPairDistance = maxPairDistance;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
@@ -161,7 +161,7 @@ namespace Sbt
         {
             SBCalculationOptions opts;
             opts.flags = flags;
-            opts.spaceVerificationTimeout = -1; // no longer does anything
+            opts.spaceVerificationTimeout = 0; // no longer does anything
             opts.equalityTolerance = internalEpsilon;
             opts.maxPairDistance = maxPairDistance;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;

@@ -129,6 +129,9 @@
     <ClCompile Include="src\nef_polygon_util_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Core\src\flatten.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">

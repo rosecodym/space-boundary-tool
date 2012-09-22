@@ -97,7 +97,6 @@ namespace GUI.Operations
                         0.5,
                         p.SpaceGuidFilter,
                         p.ElementGuidFilter,
-                        0,
                         p.NotifyMessage,
                         p.WarnMessage,
                         p.ErrorMessage);

@@ -93,6 +93,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Core\src\equality_context.cpp" />
+    <ClCompile Include="..\Core\src\flatten.cpp" />
     <ClCompile Include="..\Core\src\geometry_common.cpp" />
     <ClCompile Include="..\Core\src\multiview_solid.cpp" />
     <ClCompile Include="..\Core\src\nef_polygon_face.cpp" />

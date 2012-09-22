@@ -173,7 +173,7 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_coll
 namespace wrapped_nef_operations {
 
 void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection<K> * c) {
-	g_opts.notify_func("(element requires nef processing)...");
+	g_opts.notify_func("(geometry requires boolean operations)...");
 	number_collection<eK> extended_context(g_opts.equality_tolerance / 20);
 	convert_to_solid(s, create_nef(inst, scaler, c, &extended_context), c);
 }
