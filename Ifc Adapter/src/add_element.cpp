@@ -18,7 +18,7 @@ boost::optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_i
 
 } // namespace
 
-void add_element(std::vector<element_info *> * infos, element_type type, const cppw::Instance & inst, void (*msg_func)(char *), const unit_scaler & scaler, int material_id, number_collection * c) {
+void add_element(std::vector<element_info *> * infos, element_type type, const cppw::Instance & inst, void (*msg_func)(char *), const unit_scaler & scaler, int material_id, number_collection<K> * c) {
 	char buf[256];
 
 	sprintf(buf, "Extracting element %s...", ((cppw::String)inst.get("GlobalId")).data());

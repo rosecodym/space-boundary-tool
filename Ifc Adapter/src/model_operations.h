@@ -1,9 +1,9 @@
 #pragma once
 
 #include "precompiled.h"
+#include "number_collection.h"
 #include "sbt-ifcadapter.h"
 
-class number_collection;
 class unit_scaler;
 
 ifcadapter_return_t extract_from_model(
@@ -16,7 +16,7 @@ ifcadapter_return_t extract_from_model(
 	const unit_scaler & scaler,
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
-	number_collection * c,
+	number_collection<K> * c,
 	std::vector<element_info *> * shadings);
 
 ifcadapter_return_t add_to_model(
@@ -25,4 +25,4 @@ ifcadapter_return_t add_to_model(
 	space_boundary ** space_boundaries,
 	void (*msg_func)(char *),
 	const unit_scaler & scaler,
-	number_collection * c);
+	number_collection<K> * c);

@@ -14,7 +14,7 @@ extern sb_calculation_options g_opts;
 
 namespace {
 
-exact_polyloop ifc_to_polyloop(const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
+exact_polyloop ifc_to_polyloop(const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c) {
 	if (inst.is_instance_of("IfcPolyline")) {
 		exact_polyloop loop;
 		cppw::List raw_points = inst.get("Points");
@@ -52,7 +52,7 @@ direction_3 find_normal(const std::vector<point_3> & points) {
 
 } // namespace
 
-void transform_according_to(exact_face * f, const cppw::Select & trans, const unit_scaler & s, number_collection * c) {
+void transform_according_to(exact_face * f, const cppw::Select & trans, const unit_scaler & s, number_collection<K> * c) {
 	transformation_3 t = build_transformation(trans, s, c);
 	transform_according_to(&f->outer_boundary, t);
 	std::for_each(f->voids.begin(), f->voids.end(), [&t](exact_polyloop & p) {
@@ -60,7 +60,7 @@ void transform_according_to(exact_face * f, const cppw::Select & trans, const un
 	});
 }
 
-exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
+exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c) {
 	if (inst.is_instance_of("IfcPolyline")) {
 		exact_face f;
 
@@ -143,29 +143,6 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 	}
 }
 
-/*
-std::tuple<plane_3, point_3> calculate_plane_and_average_point(const loop & l) {
-	// http://cs.haifa.ac.il/~gordon/plane.pdf
-	NT a(0.0);
-	NT b(0.0);
-	NT c(0.0);
-	NT x(0.0);
-	NT y(0.0);
-	NT z(0.0);
-	for (size_t i = 0; i < l.size(); ++i) {
-		const point_3 & curr = l[i];
-		const point_3 & next = l[(i+1) % l.size()];
-		a += (curr.y() - next.y()) * (curr.z() + next.z());
-		b += (curr.z() - next.z()) * (curr.x() + next.x());
-		c += (curr.x() - next.x()) * (curr.y() + next.y());
-		x += curr.x();
-		y += curr.y();
-		z += curr.z();
-	}
-	vector_3 avg_vec(x / l.size(), y / l.size(), z / l.size());
-	return std::make_tuple(plane_3(a, b, c, -avg_vec * vector_3(a, b, c)), CGAL::ORIGIN + avg_vec);
-}*/
-
 bool normal_matches_extrusion(const exact_face & face, const direction_3 & ext_dir) {
 	// http://cs.haifa.ac.il/~gordon/plane.pdf
 	NT a(0.0), b(0.0), c(0.0);
@@ -177,5 +154,5 @@ bool normal_matches_extrusion(const exact_face & face, const direction_3 & ext_d
 		b += (curr.z - next.z) * (curr.x + next.x);
 		c += (curr.x - next.x) * (curr.y + next.y);
 	}
-	return number_collection::are_effectively_parallel(direction_3(a, b, c), ext_dir, g_opts.equality_tolerance);
+	return number_collection<K>::are_effectively_parallel(direction_3(a, b, c), ext_dir, g_opts.equality_tolerance);
 }

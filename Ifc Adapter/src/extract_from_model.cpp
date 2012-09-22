@@ -34,7 +34,7 @@ size_t get_elements(
 	void (*msg_func)(char *), 
 	const unit_scaler & s, 
 	const std::function<bool(const char *)> & passes_filter, 
-	number_collection * c,
+	number_collection<K> * c,
 	std::vector<element_info *> * shadings)
 {
 	std::vector<element_info *> infos;
@@ -77,7 +77,7 @@ size_t get_elements(
 	return infos.size();
 }
 
-size_t get_spaces(cppw::Open_model & model, space_info *** spaces, const unit_scaler & s, const std::function<bool(const char *)> & space_filter, number_collection * c) {
+size_t get_spaces(cppw::Open_model & model, space_info *** spaces, const unit_scaler & s, const std::function<bool(const char *)> & space_filter, number_collection<K> * c) {
 		
 	auto ss = model.get_set_of("IfcSpace");
 	size_t count = (size_t)ss.count();
@@ -107,7 +107,7 @@ ifcadapter_return_t extract_from_model(
 	const unit_scaler & scaler,
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
-	number_collection * c,
+	number_collection<K> * c,
 	std::vector<element_info *> * shadings)
 {
 	char buf[256];

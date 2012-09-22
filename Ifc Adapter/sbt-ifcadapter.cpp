@@ -167,7 +167,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 	char buf[256];
 	try {
 		g_opts = options;
-		number_collection ctxt(g_opts.equality_tolerance / 20);
+		number_collection<K> ctxt(g_opts.equality_tolerance / 20);
 		sprintf(buf, "Processing file %s", input_filename);
 		options.notify_func(buf);
 		edm_wrapper edm;
@@ -244,7 +244,7 @@ ifcadapter_return_t load_and_run_from(
 	char buf[256];
 	try {
 		g_opts = options;
-		number_collection ctxt(g_opts.equality_tolerance / 20);
+		number_collection<K> ctxt(g_opts.equality_tolerance / 20);
 		sprintf(buf, "Processing file %s", input_filename);
 		options.notify_func(buf);
 		edm_wrapper edm;
