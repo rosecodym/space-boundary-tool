@@ -88,14 +88,13 @@ namespace Sbt
             SbtFlags flags = SbtFlags.None,
             double internalEpsilon = 0.01,
             double maxPairDistance = 0.5,
-            int spaceVerificationTimeout = -1,
             MessageDelegate notifyMsg = null,
             MessageDelegate warningMsg = null,
             MessageDelegate errorMsg = null)
         {
             SBCalculationOptions opts;
             opts.flags = flags;
-            opts.spaceVerificationTimeout = spaceVerificationTimeout;
+            opts.spaceVerificationTimeout = -1; // no longer does anything
             opts.equalityTolerance = internalEpsilon;
             opts.maxPairDistance = maxPairDistance;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
@@ -156,14 +155,13 @@ namespace Sbt
             double maxPairDistance = 0.5,
             IEnumerable<string> spaceFilter = null,
             IEnumerable<string> elementFilter = null,
-            int spaceVerificationTimeout = -1,
             MessageDelegate notifyMsg = null,
             MessageDelegate warningMsg = null,
             MessageDelegate errorMsg = null)
         {
             SBCalculationOptions opts;
             opts.flags = flags;
-            opts.spaceVerificationTimeout = spaceVerificationTimeout;
+            opts.spaceVerificationTimeout = -1; // no longer does anything
             opts.equalityTolerance = internalEpsilon;
             opts.maxPairDistance = maxPairDistance;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
