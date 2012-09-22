@@ -82,7 +82,7 @@ sbt_return_t convert_to_space_boundaries(const SurfaceRange & surfaces, space_bo
 		return SBT_OK;
 	}
 	catch (failed_malloc_exception &) {
-		reporting::report_warning("An allocation failed while generating interface structures! Try simplifying the building to reduce the final space boundary count. SBT should be restarted.\n");
+		reporting::report_error("An allocation failed while generating interface structures! Try simplifying the building to reduce the final space boundary count. SBT should be restarted.\n");
 		free(*sbs);
 		boost::for_each(boost::adaptors::values(boundaries), [](space_boundary * sb) { free(sb); });
 		return SBT_FAILED_ALLOCATION;
