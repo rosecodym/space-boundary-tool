@@ -24,7 +24,7 @@
             </Grid.ColumnDefinitions>
             <Button Content="Browse..." Height="23" HorizontalAlignment="Center" Margin="5" Name="button1" VerticalAlignment="Center" Width="75" Grid.Column="2" Command="{Binding BrowseToInputIfcFileCommand}" />
             <Label Content="IFC File:" Height="28" HorizontalAlignment="Center" Margin="5" Name="label1" VerticalAlignment="Center" />
-            <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="5" Name="textBox1" VerticalAlignment="Center" Width="Auto" Padding="1"  Text="{Binding InputIfcFilePath}" DataContext="{Binding}"  />
+            <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="5" Name="textBox1" VerticalAlignment="Center" Width="Auto" Padding="1"  Text="{Binding InputIfcFilePath}" DataContext="{Binding}" PreviewDragEnter="TextBox_PreviewDrag" PreviewDragOver="TextBox_PreviewDrag" PreviewDrop="TextBox_PreviewDrop" />
         </Grid>
         <TabControl Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tabControl1" VerticalAlignment="Stretch" Width="Auto" SelectedIndex="{Binding SelectedTabIndex}">
             <TabItem Header="Space Boundaries" Name="tabItem1">

@@ -38,5 +38,33 @@ namespace GUI
             // whoops guess i was wrong about "one thing"
             tbOutput.ScrollToEnd();
         }
+
+        private static IList<string> GetFileNames(IDataObject dataObject)
+        {
+            if (dataObject != null && dataObject.GetDataPresent("FileNameW"))
+            {
+                var filenames = dataObject.GetData("FileNameW") as string[];
+                return filenames ?? new string[0];
+            }
+            return new string[0];
+        }
+
+        private void TextBox_PreviewDrag(object sender, DragEventArgs e)
+        {
+            if (GetFileNames(e.Data).Any())
+            {
+                e.Effects = DragDropEffects.All;
+                e.Handled = true;
+            }
+        }
+
+        private void TextBox_PreviewDrop(object sender, DragEventArgs e)
+        {
+            var filenames = GetFileNames(e.Data);
+            if (filenames.Any())
+            {
+                ((TextBox)sender).Text = filenames[0];
+            }
+        }
     }
 }
