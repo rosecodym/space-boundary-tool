@@ -139,7 +139,6 @@
     <ClInclude Include="src\simple_face.h" />
     <ClInclude Include="src\one_dimensional_equality_context.h" />
     <ClInclude Include="src\precompiled.h" />
-    <ClInclude Include="src\sbt-core-helpers.h" />
     <ClInclude Include="src\sbt-core.h" />
     <ClInclude Include="src\solid_conversion_operations.h" />
     <ClInclude Include="src\solid_geometry_common.h" />
@@ -182,10 +181,6 @@
     <ClCompile Include="src\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\sbt-core-helpers.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\sbt-core.cpp">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>

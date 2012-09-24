@@ -6,7 +6,6 @@
 #include "element.h"
 #include "equality_context.h"
 #include "multiview_solid.h"
-#include "sbt-core-helpers.h"
 
 namespace {
 

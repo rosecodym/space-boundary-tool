@@ -27,6 +27,7 @@
     <ClInclude Include="src\one_dimensional_equality_context.h" />
     <ClInclude Include="src\precompiled.h" />
     <ClInclude Include="src\reassign_bounded_spaces.h" />
+    <ClInclude Include="src\release.h" />
     <ClInclude Include="src\sbt-ifcadapter.h" />
     <ClInclude Include="src\unit_scaler.h" />
     <ClInclude Include="src\util.h" />
@@ -57,6 +58,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\reassign_bounded_spaces.cpp" />
+    <ClCompile Include="src\release.cpp" />
     <ClCompile Include="src\unit_scaler.cpp" />
     <ClCompile Include="src\wrapped_nef_operations.cpp" />
   </ItemGroup>

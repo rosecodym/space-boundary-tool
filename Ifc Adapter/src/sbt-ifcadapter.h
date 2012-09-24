@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../Core/src/sbt-core.h"
-#include "../../Core/src/sbt-core-helpers.h"
 
 #ifdef __cplusplus
 #define BOOLTYPE bool

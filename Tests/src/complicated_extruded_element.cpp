@@ -8,7 +8,6 @@
 #include "halfblocks_for_base.h"
 #include "is_hexahedral_prismatoid.h"
 #include "is_right_cuboid.h"
-#include "sbt-core-helpers.h"
 #include "scan_for_degenerate_halfblocks.h"
 #include "surface.h"
 #include "surface_pair.h"

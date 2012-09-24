@@ -5,7 +5,6 @@
 #include "area.h"
 #include "equality_context.h"
 #include "oriented_area.h"
-#include "sbt-core-helpers.h"
 #include "surface_pair.h"
 
 namespace blocking {

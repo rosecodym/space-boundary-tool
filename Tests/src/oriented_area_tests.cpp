@@ -5,7 +5,6 @@
 #include "common.h"
 #include "equality_context.h"
 #include "oriented_area.h"
-#include "sbt-core-helpers.h"
 #include "simple_face.h"
 
 namespace {

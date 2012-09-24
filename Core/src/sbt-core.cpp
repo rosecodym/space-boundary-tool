@@ -98,3 +98,27 @@ sbt_return_t calculate_space_boundaries(
 
 	return retval;
 }
+
+void release_space_boundaries(space_boundary ** sbs, size_t count) {
+	for (size_t i = 0; i < count; ++i) {
+		free(sbs[i]->geometry.vertices);
+		free(sbs[i]);
+	}
+	free(sbs);
+}
+
+sb_calculation_options create_default_options() {
+	sb_calculation_options opts;
+	opts.flags = SBT_NONE;
+	opts.equality_tolerance = 0.01;
+	opts.max_pair_distance = 3.0;
+	opts.space_verification_timeout = 0;
+	opts.space_filter = nullptr;
+	opts.space_filter_count = 0;
+	opts.element_filter = nullptr;
+	opts.element_filter_count = 0;
+	opts.notify_func = nullptr;
+	opts.warn_func = nullptr;
+	opts.error_func = nullptr;
+	return opts;
+}
