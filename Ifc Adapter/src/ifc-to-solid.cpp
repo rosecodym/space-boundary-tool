@@ -15,7 +15,7 @@ extern sb_calculation_options g_opts;
 
 namespace {
 
-void ifc_to_brep(exact_brep * b, const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
+void ifc_to_brep(exact_brep * b, const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c) {
 	assert(inst.is_kind_of("IfcConnectedFaceSet"));
 	cppw::Set faces = inst.get("CfsFaces");
 	for (faces.move_first(); faces.move_next(); ) {
@@ -23,7 +23,7 @@ void ifc_to_brep(exact_brep * b, const cppw::Instance & inst, const unit_scaler 
 	}
 }
 
-void ifc_to_ext(exact_extruded_area_solid * e,const cppw::Instance & inst, const unit_scaler & s, number_collection * c) {
+void ifc_to_ext(exact_extruded_area_solid * e,const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c) {
 	assert(inst.is_instance_of("IfcExtrudedAreaSolid"));
 	e->area = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
 	e->extrusion_depth = c->request_height(s.length_in(inst.get("Depth")));
@@ -36,7 +36,7 @@ void ifc_to_ext(exact_extruded_area_solid * e,const cppw::Instance & inst, const
 	}
 }
 
-void transform_according_to(exact_solid * s, const cppw::Select & trans, const unit_scaler & scaler, number_collection * c) {
+void transform_according_to(exact_solid * s, const cppw::Select & trans, const unit_scaler & scaler, number_collection<K> * c) {
 	if (!trans.is_set()) {
 		return;
 	}
@@ -57,7 +57,7 @@ void transform_according_to(exact_solid * s, const cppw::Select & trans, const u
 
 } // namespace
 
-int ifc_to_solid(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection * c) {
+int ifc_to_solid(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection<K> * c) {
 	
 	if (inst.is_kind_of("IfcProduct")) {
 		int res = ifc_to_solid(s, (cppw::Instance)inst.get("Representation"), scaler, c);

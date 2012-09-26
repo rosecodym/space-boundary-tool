@@ -35,24 +35,13 @@ int main(int argc, char * argv[]) {
 	bpo::options_description visible("options");
 	visible.add_options()
 		("output-file,o", bpo::value<std::string>(&output_file_name))
-		("check-wall-slab-intersections", "check for wall/slab intersections")
-		("space-verify-timeout", bpo::value<int>(&opts.space_verification_timeout)->default_value(15), "spend at most this many seconds correcting space geometry (-1 for infinite)")
 		("space-filter,s", bpo::value<std::vector<std::string>>(&space_filter), "filter to space guid")
 		("element-filter,e", bpo::value<std::vector<std::string>>(&element_filter), "filter to element guid")
-		("force-brute-force-element-resolution", "force the use of the brute force element intersection checking algorithm")
 		("help", "describe usage");
 	
 	bpo::options_description all("all options");
 	all.add_options()
 		("input-ifc-file", bpo::value<std::string>())
-		("verbose-blocking", "verbose blocking")
-		("verbose-stacking", "verbose stacking")
-		("verbose-spaces", "verbose space generation")
-		("verbose-geometry", "verbose miscellaneous geometry operations")
-		("verbose-levels", "verbose level resolution")
-		("verbose-combinatorics", "verbose combinatoric relations setup")
-		("verbose-elements", "verbose element loading")
-		("verbose-fenestrations", "verbose fenestration assignment")
 		("equality-tolerance", bpo::value<double>(&opts.equality_tolerance), "equality tolerance");
 
 	all.add(visible);
@@ -87,19 +76,6 @@ int main(int argc, char * argv[]) {
 	opts.notify_func = &notify_print;
 	opts.warn_func = &warn_print;
 	opts.error_func = & error_print;
-
-	opts.flags |= SBT_EXPENSIVE_CHECKS;
-
-	if (!vm.count("check-wall-slab-intersections"))	{ opts.flags |= SBT_SKIP_WALL_SLAB_CHECK; }
-	if (vm.count("verbose-blocking"))				{ opts.flags |= SBT_VERBOSE_BLOCKS; }
-	if (vm.count("verbose-stacking"))				{ opts.flags |= SBT_VERBOSE_STACKS; }
-	if (vm.count("verbose-spaces"))					{ opts.flags |= SBT_VERBOSE_SPACES; }
-	if (vm.count("verbose-geometry"))				{ opts.flags |= SBT_VERBOSE_GEOMETRY; }
-	if (vm.count("verbose-levels"))					{ opts.flags |= SBT_VERBOSE_LEVELS; }
-	if (vm.count("verbose-combinatorics"))			{ opts.flags |= SBT_VERBOSE_COMBINATORICS; }
-	if (vm.count("verbose-elements"))				{ opts.flags |= SBT_VERBOSE_ELEMENTS; }
-	if (vm.count("verbose-fenestrations"))			{ opts.flags |= SBT_VERBOSE_FENESTRATIONS; }
-	if (vm.count("force-brute-force-element-resolution")) { opts.flags |= SBT_FORCE_BRUTE_FORCE_ELEMENT_CHECK; }
 
 	opts.space_filter_count = space_filter.size();
 	opts.space_filter = (char **)malloc(sizeof(char *) * opts.space_filter_count);

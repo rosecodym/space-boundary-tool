@@ -1,7 +1,6 @@
 #include "precompiled.h"
 
 #include "equality_context.h"
-#include "printing-macros.h"
 #include "sbt-core.h"
 
 #include "simple_face.h"

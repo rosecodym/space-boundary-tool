@@ -1,8 +1,7 @@
 #pragma once
 
+#include "report.h"
 #include "stackable.h"
-
-#include "printing-macros.h"
 
 class equality_context;
 
@@ -20,7 +19,7 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 	std::vector<stackable> as_stackables;
 	std::multimap<double, size_t> indices_by_height;
 
-	NOTIFY_MSG("Creating stacking graph");
+	reporting::report_progress("Creating stacking graph");
 
 	for (auto face = space_faces->begin(); face != space_faces->end(); ++face) {
 		stackable s(&*face);
@@ -66,10 +65,10 @@ stacking_graph create_stacking_graph(SpaceFaceRange * space_faces, const BlockRa
 		}
 
 		first_at_curr_height = first_greater_than;
-		NOTIFY_MSG(".");
+		reporting::report_progress(".");
 	}
 
-	NOTIFY_MSG("done.\n");
+	reporting::report_progress("done.\n");
 
 	return g;
 }

@@ -5,7 +5,7 @@
 #include "equality_context.h"
 #include "multiview_solid.h"
 #include "oriented_area.h"
-#include "printing-macros.h"
+#include "report.h"
 #include "sbt-core.h"
 
 class element {
@@ -56,26 +56,24 @@ public:
 	bbox_3						bounding_box() const { return m_geometry.bounding_box(); }
 
 	void subtract_geometry_of(const element & other, equality_context * c) {
-		PRINT_ELEMENTS("Subtracting element %s from element %s.\n", other.source_id().c_str(), this->source_id().c_str());
 		m_geometry.subtract(other.m_geometry, c); 
-		PRINT_ELEMENTS("Element subtraction completed.\n");
 	}
 
 	template <typename OutputIterator>
 	static void explode_to_single_volumes(element && src, equality_context * c, OutputIterator oi) {
-		NOTIFY_MSG("Checking element %s for multiple volumes: ", src.source_id().c_str());
+		reporting::report_progress(boost::format("Checking element %s for multiple volumes: ") % src.source_id().c_str());
 		if (src.m_geometry.is_single_volume()) {
-			NOTIFY_MSG("element is a single volume.\n");
+			reporting::report_progress("element is a single volume.\n");
 			*oi++ = std::move(src);
 		}
 		else {
-			NOTIFY_MSG("element is multiple volumes. Converting to single volumes");
+			reporting::report_progress("element is multiple volumes. Converting to single volumes");
 			auto single_volumes = src.m_geometry.as_single_volumes(c);
 			for (auto v = single_volumes.begin(); v != single_volumes.end(); ++v) {
 				*oi++ = element(src, std::move(*v));
-				NOTIFY_MSG(".");
+				reporting::report_progress(".");
 			}
-			NOTIFY_MSG("done.\n");
+			reporting::report_progress("done.\n");
 		}
 	}
 };

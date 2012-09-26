@@ -93,13 +93,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Core\src\equality_context.cpp" />
+    <ClCompile Include="..\Core\src\flatten.cpp" />
     <ClCompile Include="..\Core\src\geometry_common.cpp" />
     <ClCompile Include="..\Core\src\multiview_solid.cpp" />
+    <ClCompile Include="..\Core\src\nef_polygon_face.cpp" />
+    <ClCompile Include="..\Core\src\nef_polygon_util.cpp" />
     <ClCompile Include="..\Core\src\one_dimensional_equality_context.cpp" />
     <ClCompile Include="..\Core\src\orientation.cpp" />
     <ClCompile Include="..\Core\src\oriented_area.cpp" />
     <ClCompile Include="..\Core\src\polygon_with_holes_2.cpp" />
-    <ClCompile Include="..\Core\src\printing-util.cpp" />
     <ClCompile Include="..\Core\src\simple_face.cpp" />
     <ClCompile Include="..\Core\src\solid_conversion_operations.cpp" />
     <ClCompile Include="..\Core\src\stackable.cpp" />
@@ -117,6 +119,7 @@
     <ClCompile Include="src\library_assumptions.cpp" />
     <ClCompile Include="src\complicated_extruded_element.cpp" />
     <ClCompile Include="src\multiview_solid_tests.cpp" />
+    <ClCompile Include="src\nef_polygon_util_tests.cpp" />
     <ClCompile Include="src\stacking_tests.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon_tests.cpp" />
     <ClCompile Include="src\oriented_area_tests.cpp" />

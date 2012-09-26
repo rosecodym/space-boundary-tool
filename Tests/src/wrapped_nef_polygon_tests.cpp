@@ -27,7 +27,7 @@ TEST(WrappedNefPolygon, AxisAlignment) {
 	EXPECT_TRUE(wrapped_2.is_axis_aligned());
 }
 
-TEST(WrappedNefPolygon, IntersectionInvariability) {
+TEST(WrappedNefPolygon, DoIntersect) {
 	point_2 larger_pts[] = {
 		point_2(0, -300),
 		point_2(8250, -300),
@@ -42,9 +42,11 @@ TEST(WrappedNefPolygon, IntersectionInvariability) {
 	};
 	wrapped_nef_polygon larger(polygon_2(larger_pts, larger_pts + 4));
 	wrapped_nef_polygon smaller(polygon_2(smaller_pts, smaller_pts + 4));
-	EXPECT_EQ(
-		wrapped_nef_polygon::do_intersect(larger, smaller),
-		wrapped_nef_polygon::do_intersect(larger, smaller));
+	
+	// simple axis-aligned check
+	EXPECT_TRUE(wrapped_nef_polygon::do_intersect(larger, smaller));
+	// make sure result doesn't change
+	EXPECT_TRUE(wrapped_nef_polygon::do_intersect(larger, smaller)); 
 }
 
 TEST(WrappedNefPolygon, BoundingBoxOnAxes) {
@@ -77,7 +79,7 @@ TEST(WrappedNefPolygon, BoundingBoxOffAxes) {
 	EXPECT_DOUBLE_EQ(10, bbox.ymax());
 }
 
-TEST(WrappedNefPolygon, BoundingBoxesFilterIntersectionCorrectly) {
+TEST(WrappedNefPolygon, DoOverlap) {
 	point_2 larger_pts[] = {
 		point_2(0, -300),
 		point_2(8250, -300),
@@ -95,19 +97,6 @@ TEST(WrappedNefPolygon, BoundingBoxesFilterIntersectionCorrectly) {
 	EXPECT_TRUE(CGAL::do_overlap(larger.bbox(), smaller.bbox()));
 }
 
-TEST(WrappedNefPolygon, OuterBoundary) {
-	point_2 pts[] = {
-		point_2(0, 0),
-		point_2(393, 0),
-		point_2(393, 387),
-		point_2(0, 387)
-	};
-
-	boost::optional<polygon_2> outer = wrapped_nef_polygon(polygon_2(pts, pts + 4)).outer();
-	ASSERT_TRUE(outer);
-	EXPECT_EQ(polygon_2(pts, pts + 4).container(), outer->container());
-}
-
 TEST(WrappedNefPolygon, SingleConvexToPieces) {
 	point_2 pts[] = {
 		point_2(0, 0),
@@ -119,6 +108,41 @@ TEST(WrappedNefPolygon, SingleConvexToPieces) {
 	std::vector<polygon_2> pieces = wrapped_nef_polygon(polygon_2(pts, pts + 4)).to_simple_convex_pieces();
 	ASSERT_EQ(1, pieces.size());
 	EXPECT_EQ(polygon_2(pts, pts + 4).container(), pieces.front().container());
+}
+
+TEST(WrappedNefPolygon, FaceCount) {
+	point_2 pts[] = {
+		point_2(0, 0),
+		point_2(393, 0),
+		point_2(393, 387),
+		point_2(0, 387)
+	};
+	
+	wrapped_nef_polygon w(polygon_2(pts, pts + 4));
+	EXPECT_EQ(1, w.face_count());
+}
+
+TEST(WrappedNefPolygon, Intersection) {
+	point_2 larger_pts[] = {
+		point_2(0, -300),
+		point_2(8250, -300),
+		point_2(8250, 0),
+		point_2(0, 0)
+	};
+	point_2 smaller_pts[] = {
+		point_2(0, -300),
+		point_2(4050, -300), 
+		point_2(4050, 0),
+		point_2(0, 0)
+	};
+	
+	wrapped_nef_polygon larger(polygon_2(larger_pts, larger_pts + 4));
+	wrapped_nef_polygon smaller(polygon_2(smaller_pts, smaller_pts + 4));
+
+	wrapped_nef_polygon intr = larger * smaller;
+	EXPECT_FALSE(intr.is_empty());
+	EXPECT_EQ(1, intr.face_count());
+	EXPECT_EQ(4, intr.vertex_count());
 }
 
 } // namespace

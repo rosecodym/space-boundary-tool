@@ -10,9 +10,6 @@
     <Filter Include="operations">
       <UniqueIdentifier>{2d2a4be8-2a73-4950-a05f-df09eb8f5e75}</UniqueIdentifier>
     </Filter>
-    <Filter Include="cgal">
-      <UniqueIdentifier>{3481daf7-695e-4979-a9ee-a8a0a255882c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="geometry">
       <UniqueIdentifier>{1a191f61-9d72-445f-b4f1-58785fe2e374}</UniqueIdentifier>
     </Filter>
@@ -37,6 +34,18 @@
     <Filter Include="operations\opening assignment">
       <UniqueIdentifier>{70403e83-00e7-4636-8256-97ab8842638a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="operations\conversion to interface">
+      <UniqueIdentifier>{ebc714fb-ddd0-4c65-99bb-7915e67dc8bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry\geometry_2d\nef_polygons">
+      <UniqueIdentifier>{029e96c7-6144-4eb7-bfaa-cfc84913dd06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry\common">
+      <UniqueIdentifier>{ba376630-5ea6-4d3d-91a0-3fc47d4c04cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reporting">
+      <UniqueIdentifier>{a0d94793-58df-4382-9721-d16cef32f412}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -51,16 +60,7 @@
     <ClInclude Include="src\sbt-core-helpers.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="src\printing-util.h">
-      <Filter>cgal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\misc-util.h">
-      <Filter>main</Filter>
-    </ClInclude>
     <ClInclude Include="src\equality_context.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="src\point_collection.h">
       <Filter>geometry</Filter>
     </ClInclude>
     <ClInclude Include="src\one_dimensional_equality_context.h">
@@ -102,9 +102,6 @@
     <ClInclude Include="src\halfblocks_for_base.h">
       <Filter>operations\blocking</Filter>
     </ClInclude>
-    <ClInclude Include="src\wrapped_nef_polygon.h">
-      <Filter>geometry\geometry_2d</Filter>
-    </ClInclude>
     <ClInclude Include="src\area.h">
       <Filter>geometry\geometry_2d</Filter>
     </ClInclude>
@@ -141,12 +138,6 @@
     <ClInclude Include="src\load_spaces.h">
       <Filter>operations\space loading</Filter>
     </ClInclude>
-    <ClInclude Include="src\printing-macros.h">
-      <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="src\geometry_common.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\stackable.h">
       <Filter>operations\stacking</Filter>
     </ClInclude>
@@ -174,11 +165,35 @@
     <ClInclude Include="src\assign_openings.h">
       <Filter>operations\opening assignment</Filter>
     </ClInclude>
-    <ClInclude Include="src\cleanup_loop.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\exceptions.h">
       <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\convert_to_space_boundaries.h">
+      <Filter>operations\conversion to interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrapped_nef_polygon.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nef_polygon_util.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nef_polygon_face.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_common.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cleanup_loop.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flatten.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stringification.h">
+      <Filter>reporting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\report.h">
+      <Filter>reporting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +212,6 @@
     <ClCompile Include="src\sbt-core-helpers.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="src\printing-util.cpp">
-      <Filter>cgal</Filter>
-    </ClCompile>
     <ClCompile Include="src\equality_context.cpp">
       <Filter>geometry</Filter>
     </ClCompile>
@@ -214,9 +226,6 @@
     </ClCompile>
     <ClCompile Include="src\guid_filter.cpp">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wrapped_nef_polygon.cpp">
-      <Filter>geometry\geometry_2d</Filter>
     </ClCompile>
     <ClCompile Include="src\area.cpp">
       <Filter>geometry\geometry_2d</Filter>
@@ -254,8 +263,26 @@
     <ClCompile Include="src\stacking_graph.cpp">
       <Filter>operations\stacking</Filter>
     </ClCompile>
+    <ClCompile Include="src\convert_to_space_boundaries.cpp">
+      <Filter>operations\conversion to interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrapped_nef_polygon.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nef_polygon_face.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nef_polygon_util.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
     <ClCompile Include="src\geometry_common.cpp">
-      <Filter>geometry</Filter>
+      <Filter>geometry\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flatten.cpp">
+      <Filter>geometry\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stringification.cpp">
+      <Filter>reporting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,7 +4,6 @@
 
 #include "equality_context.h"
 #include "oriented_area.h"
-#include "printing-macros.h"
 #include "sbt-core.h"
 #include "simple_face.h"
 #include "solid_geometry_common.h"
@@ -43,9 +42,6 @@ public:
 	std::vector<oriented_area> oriented_faces(equality_context * c) const;
 
 	void subtract(const multiview_solid & other, equality_context * c);
-
-	void print() const;
-	void validate() const;
 };
 
 } // namespace solid_geometry

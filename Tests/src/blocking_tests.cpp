@@ -129,8 +129,7 @@ TEST(Blocking, TwoStairs) {
 	EXPECT_TRUE(nb.are_parallel());
 	EXPECT_TRUE(nb.base().sense() == !nb.other().sense());
 	EXPECT_TRUE(nb.base().height() > nb.other().height() == nb.base().sense());
-	EXPECT_TRUE(area::do_intersect(nb.base().area_2d(), nb.other().area_2d())) <<
-		(nb.base().area_2d().print(), "") << (nb.other().area_2d().print(), "");
+	EXPECT_TRUE(area::do_intersect(nb.base().area_2d(), nb.other().area_2d()));
 	EXPECT_TRUE(nb.contributes_to_envelope());
 
 	const surface_pair & nn = rels[1][1];

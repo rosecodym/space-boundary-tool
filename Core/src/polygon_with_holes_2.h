@@ -2,6 +2,8 @@
 
 #include "precompiled.h"
 
+namespace geometry_2d {
+
 class polygon_with_holes_2 {
 private:
 	polygon_2 m_outer;
@@ -33,5 +35,8 @@ public:
 	bool is_axis_aligned() const;
 
 	std::vector<polygon_2> all_polygons() const;
-	std::vector<polygon_2> to_simple_polygons() const;
 };
+
+} // namespace geometry_2d
+
+typedef geometry_2d::polygon_with_holes_2 polygon_with_holes_2;

@@ -2,7 +2,6 @@
 
 #include "precompiled.h"
 
-#include "misc-util.h"
 #include "multiview_solid.h"
 
 class equality_context;

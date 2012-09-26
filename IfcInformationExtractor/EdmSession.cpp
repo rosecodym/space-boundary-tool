@@ -105,10 +105,7 @@ void EdmSession::clear_db() {
 			manager->remove_db(*db_path, cppw::String(DB_NAME), cppw::String(DB_PASS)); 
 		} 
 	}
-	catch (cppw::Error & e) {
-		fprintf(stderr, "Error cleaning up the EDM DB: %s\n", e.message.data());
-		exit(1);
-	}
+	catch (cppw::Error &) { /* who cares? */ }
 }
 
 char * EdmSession::convert_to_chars(char dst[], String ^ src, size_t size) {

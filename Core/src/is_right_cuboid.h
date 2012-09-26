@@ -2,8 +2,10 @@
 
 #include "precompiled.h"
 
-#include "printing-macros.h"
+#include "report.h"
 #include "surface_pair.h"
+
+class element;
 
 namespace blocking {
 
@@ -49,7 +51,7 @@ bool is_right_cuboid(const relations_grid & surface_relationships, size_t face_c
 		*oi++ = surface_relationships[*blocks[1].first][*blocks[1].second].to_block(e);
 		*oi++ = surface_relationships[*blocks[2].first][*blocks[2].second].to_block(e);
 		
-		NOTIFY_MSG("element is a right cuboid. ");
+		reporting::report_progress("element is a right cuboid. ");
 		return true;
 	}
 	return false;

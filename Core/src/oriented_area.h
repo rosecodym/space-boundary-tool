@@ -5,7 +5,6 @@
 #include "area.h"
 #include "orientation.h"
 #include "polygon_with_holes_3.h"
-#include "printing-macros.h"
 
 class equality_context;
 class orientation;
@@ -69,7 +68,7 @@ public:
 
 	// THIS METHOD DOESN'T ACCOUNT FOR SENSE INFORMATION
 	// the caller should flip the result themselves if they care
-	std::vector<polygon_with_holes_3> to_3d() const;
+	std::vector<polygon_with_holes_3> to_3d(bool flatten_numbers = false) const;
 
 	oriented_area project_onto_self(const oriented_area & other) const;
 
@@ -79,8 +78,6 @@ public:
 			return oriented_area(*this, area(piece));
 		});
 	}
-
-	void print() const;
 
 	friend oriented_area operator - (const oriented_area & lhs, const oriented_area & rhs);
 	friend oriented_area operator * (const oriented_area & lhs, const oriented_area & rhs);

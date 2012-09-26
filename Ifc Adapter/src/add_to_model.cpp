@@ -133,7 +133,7 @@ cppw::Application_instance create_sb(
 	const cppw::Instance & element,
 	space_boundary * sb,
 	const unit_scaler & scaler,
-	number_collection * c)
+	number_collection<K> * c)
 {
 
 	transformation_3 space_placement = build_transformation(space.get("ObjectPlacement"), scaler, c);
@@ -176,7 +176,7 @@ cppw::Application_instance create_owner_history(cppw::Open_model * model) {
 	cppw::Application_instance org = model->create("IfcOrganization");
 	org.put("Name", "Lawrence Berkeley National Laboratory");
 	app.put("ApplicationDeveloper", org);
-	app.put("Version", "1.4.0b");
+	app.put("Version", "1.4.2b");
 	app.put("ApplicationFullName", "Space Boundary Tool");
 	app.put("ApplicationIdentifier", "SBT");
 	inst.put("LastModifyingApplication", app);
@@ -213,7 +213,7 @@ ifcadapter_return_t add_to_model(
 	space_boundary ** sbs,
 	void (*msg_func)(char *),
 	const unit_scaler & scaler,
-	number_collection * c) 
+	number_collection<K> * c) 
 {
 	msg_func("Adding space boundaries to model");
 	cppw::Instance ownerhistory = create_owner_history(&model);

@@ -110,7 +110,11 @@
     <ClInclude Include="src\blockstack.h" />
     <ClInclude Include="src\build_blocks.h" />
     <ClInclude Include="src\build_stacks.h" />
+    <ClInclude Include="src\report.h" />
+    <ClInclude Include="src\stringification.h" />
     <ClInclude Include="src\cleanup_loop.h" />
+    <ClInclude Include="src\convert_to_space_boundaries.h" />
+    <ClInclude Include="src\flatten.h" />
     <ClInclude Include="src\geometry_common.h" />
     <ClInclude Include="src\guid_filter.h" />
     <ClInclude Include="src\element.h" />
@@ -123,19 +127,18 @@
     <ClInclude Include="src\CreateGuid_64.h" />
     <ClInclude Include="src\equality_context.h" />
     <ClInclude Include="src\load_elements.h" />
+    <ClInclude Include="src\nef_polygon_face.h" />
+    <ClInclude Include="src\nef_polygon_util.h" />
     <ClInclude Include="src\orientation.h" />
     <ClInclude Include="src\oriented_area.h" />
     <ClInclude Include="src\multiview_solid.h" />
     <ClInclude Include="src\polygon_with_holes_2.h" />
     <ClInclude Include="src\polygon_with_holes_3.h" />
     <ClInclude Include="src\poly_builder.h" />
-    <ClInclude Include="src\printing-macros.h" />
     <ClInclude Include="src\scan_for_degenerate_halfblocks.h" />
     <ClInclude Include="src\simple_face.h" />
     <ClInclude Include="src\one_dimensional_equality_context.h" />
-    <ClInclude Include="src\point_collection.h" />
     <ClInclude Include="src\precompiled.h" />
-    <ClInclude Include="src\printing-util.h" />
     <ClInclude Include="src\sbt-core-helpers.h" />
     <ClInclude Include="src\sbt-core.h" />
     <ClInclude Include="src\solid_conversion_operations.h" />
@@ -147,7 +150,6 @@
     <ClInclude Include="src\stacking_sequence.h" />
     <ClInclude Include="src\exceptions.h" />
     <ClInclude Include="src\surface.h" />
-    <ClInclude Include="src\misc-util.h" />
     <ClInclude Include="src\surface_pair.h" />
     <ClInclude Include="src\traverse.h" />
     <ClInclude Include="src\wrapped_nef_polygon.h" />
@@ -159,6 +161,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\convert_to_space_boundaries.cpp" />
+    <ClCompile Include="src\flatten.cpp" />
     <ClCompile Include="src\geometry_common.cpp" />
     <ClCompile Include="src\guid_filter.cpp" />
     <ClCompile Include="src\CreateGuid_64.c">
@@ -168,12 +172,13 @@
     <ClCompile Include="src\equality_context.cpp" />
     <ClCompile Include="src\load_elements.cpp" />
     <ClCompile Include="src\multiview_solid.cpp" />
+    <ClCompile Include="src\nef_polygon_face.cpp" />
+    <ClCompile Include="src\nef_polygon_util.cpp" />
     <ClCompile Include="src\orientation.cpp" />
     <ClCompile Include="src\oriented_area.cpp" />
     <ClCompile Include="src\polygon_with_holes_2.cpp" />
     <ClCompile Include="src\simple_face.cpp" />
     <ClCompile Include="src\one_dimensional_equality_context.cpp" />
-    <ClCompile Include="src\printing-util.cpp" />
     <ClCompile Include="src\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -189,6 +194,7 @@
     <ClCompile Include="src\stackable.cpp" />
     <ClCompile Include="src\stacking_graph.cpp" />
     <ClCompile Include="src\stacking_sequence.cpp" />
+    <ClCompile Include="src\stringification.cpp" />
     <ClCompile Include="src\surface_pair.cpp" />
     <ClCompile Include="src\traverse.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />
