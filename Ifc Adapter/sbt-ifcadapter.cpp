@@ -318,11 +318,11 @@ void free_sb_counts(sb_counts counts) {
 	free(counts.virt);
 }
 
-void free_elements(element_info ** elements, size_t count) {
+void release_elements(element_info ** elements, size_t count) {
 	release_list(elements, count);
 }
 
-void free_spaces(space_info ** spaces, size_t count) {
+void release_spaces(space_info ** spaces, size_t count) {
 	release_list(spaces, count);
 }
 

@@ -11,7 +11,6 @@
 #include "load_elements.h"
 #include "load_spaces.h"
 #include "report.h"
-#include "sbt-core-helpers.h"
 #include "space.h"
 #include "surface.h"
 

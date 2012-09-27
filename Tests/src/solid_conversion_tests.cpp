@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include "equality_context.h"
-#include "sbt-core-helpers.h"
 #include "simple_face.h"
 #include "solid_conversion_operations.h"
 
