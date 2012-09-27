@@ -90,6 +90,16 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.InputIfcFilename = value;
+                try
+                {
+                    OutputIfcFilePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(value), System.IO.Path.GetFileNameWithoutExtension(value) + "-SB.ifc");
+                }
+                catch (Exception) { }
+                try
+                {
+                    OutputIdfFilePath = System.IO.Path.ChangeExtension(value, "idf");
+                }
+                catch (Exception) { }
                 Updated("InputIfcFilePath");
             }
         }
