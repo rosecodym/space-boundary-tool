@@ -57,9 +57,6 @@
     <ClInclude Include="src\sbt-core.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="src\sbt-core-helpers.h">
-      <Filter>main</Filter>
-    </ClInclude>
     <ClInclude Include="src\equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>
@@ -207,9 +204,6 @@
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="src\c-test.c">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\sbt-core-helpers.cpp">
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="src\equality_context.cpp">

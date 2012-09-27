@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include "sbt-core.h"
-#include "sbt-core-helpers.h"
 
 sb_calculation_options g_opts;
 char g_msgbuf[256];

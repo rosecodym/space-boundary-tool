@@ -10,6 +10,10 @@
 
 namespace {
 
+bool is_external(space_boundary * sb) {
+	return sb->opposite == nullptr && sb->level == 2;
+}
+
 cppw::Application_instance create_point(cppw::Open_model & model, const point_2 & p, const unit_scaler & scaler) {
 	cppw::Application_instance point = model.create("IfcCartesianPoint");
 	cppw::List coords(point.create_aggregate("Coordinates"));
@@ -152,7 +156,7 @@ cppw::Application_instance create_sb(
 	inst.put("RelatingSpace", space);
 	inst.put("RelatedBuildingElement", element);
 	inst.put("PhysicalOrVirtualBoundary", sb->is_virtual ? "VIRTUAL" : "PHYSICAL");
-	inst.put("InternalOrExternalBoundary", is_external_sb(sb) ? "EXTERNAL" : "INTERNAL");
+	inst.put("InternalOrExternalBoundary", is_external(sb) ? "EXTERNAL" : "INTERNAL");
 	inst.put("ConnectionGeometry", create_geometry(model, space_placement, sb, scaler));
 	return inst;
 }

@@ -178,6 +178,12 @@ sbt_return_t calculate_space_boundaries(
 	space_boundary *** space_boundaries,	// (out) dynamically allocated array of pointers to space boundaries
 	sb_calculation_options opts);
 
+__declspec(DLLINEX)
+void release_space_boundaries(space_boundary ** sbs, size_t count);
+
+__declspec(DLLINEX)
+sb_calculation_options create_default_options(void);
+
 #undef DLLINEX
 
 #undef BEGINSTRUCT

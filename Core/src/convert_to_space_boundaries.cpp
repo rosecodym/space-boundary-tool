@@ -16,9 +16,16 @@ namespace impl {
 
 namespace {
 
+void set_vertex(polyloop * loop, size_t ix, double x, double y, double z) {
+	loop->vertices[ix].x = x;
+	loop->vertices[ix].y = y;
+	loop->vertices[ix].z = z;
+}
+
 template <typename PointRange>
 void set_geometry(space_boundary * sb, const PointRange & geometry) {
-	set_vertex_count(&sb->geometry, geometry.size());
+	sb->geometry.vertex_count = geometry.size();
+	sb->geometry.vertices = (point *)malloc(sizeof(point) * geometry.size());
 	size_t i = 0;
 	boost::for_each(geometry, [sb, &i](const point_3 & p) {
 		set_vertex(&sb->geometry, i++, CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z()));
@@ -30,7 +37,6 @@ void set_geometry(space_boundary * sb, const PointRange & geometry) {
 space_boundary * create_unlinked_space_boundary(const surface & surf) {
 	space_boundary * newsb = (space_boundary *)malloc(sizeof(space_boundary));
 	if (!newsb) { throw failed_malloc_exception(); }
-	newsb->geometry.vertex_count = 0;
 
 	bool stack_overflowed = false;
 

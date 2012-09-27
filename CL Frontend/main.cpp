@@ -7,7 +7,6 @@
 #include <boost/program_options.hpp>
 
 #include "../Core/src/sbt-core.h"
-#include "../Core/src/sbt-core-helpers.h"
 #include "../Ifc Adapter/src/sbt-ifcadapter.h"
 
 namespace bpo = boost::program_options;
