@@ -61,10 +61,16 @@ namespace GUI
         private void TextBox_PreviewDrop(object sender, DragEventArgs e)
         {
             var filenames = GetFileNames(e.Data);
-            if (filenames.Any())
+            var tb = sender as TextBox;
+            if (tb != null && filenames.Any())
             {
-                ((TextBox)sender).Text = filenames[0];
+                tb.Text = filenames[0];
+                // this is a workaround for the fact that the update isn't happening automatically
+                // this is all code from some internet dude that's helping me anyway
+                var expr = tb.GetBindingExpression(TextBox.TextProperty);
+                if (expr != null) { expr.UpdateSource(); }
             }
+            e.Handled = true; // i don't know what this does but it makes a framework exception go away
         }
     }
 }
