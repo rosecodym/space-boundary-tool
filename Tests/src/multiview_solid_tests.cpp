@@ -23,16 +23,11 @@ struct face_information {
 
 TEST(MultiviewSolid, SimpleExtrusion) {
 	equality_context c(0.01);
-	solid s;
-	set_to_extruded_area_solid(&s, 0, 0, 1, 300);
-	face * a = get_area_handle(&s);
-	set_void_count(a, 0);
-	polyloop * outer = get_outer_boundary_handle(a);
-	set_vertex_count(outer, 4);
-	set_vertex(outer, 3, 1, 2, 0);
-	set_vertex(outer, 2, 10, 2, 0);
-	set_vertex(outer, 1, 10, 15, 0);
-	set_vertex(outer, 0, 1, 15, 0);
+	solid s = create_ext(0, 0, 1, 300, create_face(4,
+		simple_point(1, 15, 0),
+		simple_point(10, 15, 0),
+		simple_point(10, 2, 0),
+		simple_point(1, 2, 0)));
 	
 	multiview_solid ms(s, &c);
 	auto faces = ms.oriented_faces(&c);
@@ -69,16 +64,11 @@ TEST(MultiviewSolid, SimpleExtrusion) {
 
 TEST(MultiviewSolid, SimpleExtrusionBaseReversed) {
 	equality_context c(0.01);
-	solid s;
-	set_to_extruded_area_solid(&s, 0, 0, 1, 300);
-	face * a = get_area_handle(&s);
-	set_void_count(a, 0);
-	polyloop * outer = get_outer_boundary_handle(a);
-	set_vertex_count(outer, 4);
-	set_vertex(outer, 0, 1, 2, 0);
-	set_vertex(outer, 1, 10, 2, 0);
-	set_vertex(outer, 2, 10, 15, 0);
-	set_vertex(outer, 3, 1, 15, 0);
+	solid s = create_ext(0, 0, 1, 300, create_face(4,
+		simple_point(1, 2, 0),
+		simple_point(10, 2, 0),
+		simple_point(10, 15, 0),
+		simple_point(1, 15, 0)));
 	
 	multiview_solid ms(s, &c);
 	auto faces = ms.oriented_faces(&c);

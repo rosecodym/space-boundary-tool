@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "build_blocks.h"
+#include "common.h"
 #include "element.h"
 #include "equality_context.h"
 #include "halfblocks_for_base.h"
@@ -25,31 +26,23 @@ protected:
 	equality_context c;
 
 	ComplicatedExtrudedElement() : c(0.01) {
-		element_info info;
-		strcpy(info.id, "complicated extruded element");
-		info.type = SLAB;
-		info.material = 1;
-		set_to_extruded_area_solid(&info.geometry, 0.0, 0.0, 1.0, 300);
-		face * a = get_area_handle(&info.geometry);
-		set_void_count(a, 0);
-		polyloop * outer = get_outer_boundary_handle(a);
-		set_vertex_count(outer, 15);
-		set_vertex(outer, 0, 0.0,		0.0,	0.0);
-		set_vertex(outer, 1, 8250,		0.0,	0.0);
-		set_vertex(outer, 2, 8250,		-2105,	0.0);
-		set_vertex(outer, 3, 12120.109,	-2105,	0.0);
-		set_vertex(outer, 4, 12120.109,	-4050,	0.0);
-		set_vertex(outer, 5, 18195.109,	-4050,	0.0);
-		set_vertex(outer, 6, 18195.109,	-8200,	0.0);
-		set_vertex(outer, 7, 17181.249,	-8200,	0.0);
-		set_vertex(outer, 8, 11991.013,	-29200,	0.0);
-		set_vertex(outer, 9, 0.0,		-29200,	0.0);
-		set_vertex(outer, 10, 0.0,		-28000,	0.0);
-		set_vertex(outer, 11, 2050,		-28000,	0.0);
-		set_vertex(outer, 12, 2050,		-8250,	0.0);
-		set_vertex(outer, 13, 0.0,		-8250,	0.0);
-		set_vertex(outer, 14, 0.0,		0.0,	0.0);
-		e = element(&info, &c);
+		e = element(create_element("complicated extruded element", SLAB, 1, create_ext(0, 0, 1, 300, create_face(15,
+			simple_point(0.0,		0.0,	0.0),
+			simple_point(8250,		0.0,	0.0),
+			simple_point(8250,		-2105,	0.0),
+			simple_point(12120.109,	-2105,	0.0),
+			simple_point(12120.109,	-4050,	0.0),
+			simple_point(18195.109,	-4050,	0.0),
+			simple_point(18195.109,	-8200,	0.0),
+			simple_point(17181.249,	-8200,	0.0),
+			simple_point(11991.013,	-29200,	0.0),
+			simple_point(0.0,		-29200,	0.0),
+			simple_point(0.0,		-28000,	0.0),
+			simple_point(2050,		-28000,	0.0),
+			simple_point(2050,		-8250,	0.0),
+			simple_point(0.0,		-8250,	0.0),
+			simple_point(0.0,		0.0,	0.0)))), &c);
+
 	}
 
 };

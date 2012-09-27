@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include "common.h"
 #include "equality_context.h"
 #include "simple_face.h"
 #include "solid_conversion_operations.h"
@@ -17,7 +18,6 @@ std::string stringify(const point_3 & p) {
 	ss << "<" << CGAL::to_double(p.x()) << ", " << CGAL::to_double(p.y()) << ", " << CGAL::to_double(p.z()) << ">";
 	return ss.str();
 }
-
 
 std::string stringify(const plane_3 & pl) {
 	std::stringstream ss;
@@ -43,16 +43,12 @@ struct face_information {
 
 TEST(SolidConversion, SimpleExtrusion) {
 	equality_context c(0.01);
-	face f;
-	f.void_count = 0;
-	f.voids = nullptr;
-	f.outer_boundary.vertex_count = 4;
-	f.outer_boundary.vertices = (point *)malloc(sizeof(point) * f.outer_boundary.vertex_count);
-	polyloop * outer = get_outer_boundary_handle(&f);
-	set_vertex(outer, 3, 1, 2, 0);
-	set_vertex(outer, 2, 10, 2, 0);
-	set_vertex(outer, 1, 10, 15, 0);
-	set_vertex(outer, 0, 1, 15, 0);
+
+	face f = create_face(4,
+		simple_point(1, 15, 0),
+		simple_point(10, 15, 0),
+		simple_point(10, 2, 0),
+		simple_point(1, 2, 0));
 
 	nef_polyhedron_3 nef = extrusion_to_nef(std::make_tuple(simple_face(f, &c), vector_3(0, 0, 300)), &c);
 
@@ -121,16 +117,12 @@ TEST(SolidConversion, SimpleExtrusion) {
 
 TEST(SolidConversion, ReversedBaseExtrusion) {
 	equality_context c(0.01);
-	face f;
-	f.void_count = 0;
-	f.voids = nullptr;
-	f.outer_boundary.vertex_count = 4;
-	f.outer_boundary.vertices = (point *)malloc(sizeof(point) * f.outer_boundary.vertex_count);
-	polyloop * outer = get_outer_boundary_handle(&f);
-	set_vertex(outer, 0, 1, 2, 0);
-	set_vertex(outer, 1, 10, 2, 0);
-	set_vertex(outer, 2, 10, 15, 0);
-	set_vertex(outer, 3, 1, 15, 0);
+
+	face f = create_face(4,
+		simple_point(1, 2, 0),
+		simple_point(10, 2, 0),
+		simple_point(10, 15, 0),
+		simple_point(1, 15, 0));
 
 	nef_polyhedron_3 nef = extrusion_to_nef(std::make_tuple(simple_face(f, &c), vector_3(0, 0, 300)), &c);
 
