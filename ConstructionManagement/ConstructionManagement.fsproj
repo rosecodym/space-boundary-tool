@@ -5,13 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{f4d996a3-4b9b-46be-91cd-2aa604549840}</ProjectGuid>
+    <ProjectGuid>{b08d640c-794e-486e-9b61-3790d4fa0d97}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ConstructionManager</RootNamespace>
-    <AssemblyName>ConstructionManager</AssemblyName>
+    <RootNamespace>ConstructionManagement</RootNamespace>
+    <AssemblyName>ConstructionManagement</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>ConstructionManager</Name>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <Name>ConstructionManagement</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\ConstructionManager.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\ConstructionManagement.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +29,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\ConstructionManager.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\ConstructionManagement.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LibIdf">
@@ -43,25 +42,17 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LibraryEntry.fs" />
+    <Compile Include="ModelMappingSource.fs" />
+    <Compile Include="ModelConstruction.fs" />
     <Compile Include="OutputLayer.fs" />
-    <Compile Include="OutputLayerAirGap.fs" />
-    <Compile Include="OutputLayerGas.fs" />
-    <Compile Include="OutputLayerGlazing.fs" />
-    <Compile Include="OutputLayerInfraredTransparent.fs" />
-    <Compile Include="OutputLayerOpaque.fs" />
-    <Compile Include="Construction.fs" />
-    <Compile Include="LayerPatterns.fs" />
+    <Compile Include="OutputConstruction.fs" />
     <Compile Include="Manager.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
       <Name>ManagedWrapper</Name>
       <Project>{2b180c45-2da1-4c26-9850-f92b9369d626}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\MaterialLibrary\MaterialLibrary.fsproj">
-      <Name>MaterialLibrary</Name>
-      <Project>{39a5c20b-7748-4e42-a231-ff6e1f4bf7b9}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
