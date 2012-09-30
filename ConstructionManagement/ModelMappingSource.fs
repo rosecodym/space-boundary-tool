@@ -1,6 +1,10 @@
-﻿namespace ConstructionManagement
+﻿namespace ConstructionManagement.ModelConstructions
 
 open System
+
+open ConstructionManagement.MaterialLibrary
+
+type LibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry
 
 type ModelMappingSource (name:string, forWindows:bool) =
     let mutable mappedTo = None

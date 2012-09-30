@@ -6,6 +6,8 @@ using System.Text;
 using LibIdf.Idd;
 using LibIdf.Idf;
 
+using Construction = ConstructionManagement.OutputConstruction;
+using Material = ConstructionManagement.OutputLayer;
 using Point = Sbt.CoreTypes.Point;
 
 namespace GUI.Operations
@@ -143,7 +145,7 @@ namespace GUI.Operations
                 idf.CreateObject("Output:Diagnostics").Fields["Key 1"].Value = "DisplayExtraWarnings";
             }
 
-            public override void AddConstruction(ConstructionManager.Construction c)
+            public override void AddConstruction(Construction c)
             {
                 LibIdf.Idf.IdfObject obj = idf.CreateObject("Construction");
                 obj.Fields["Name"].Value = c.Name;
@@ -190,7 +192,7 @@ namespace GUI.Operations
                 obj.Fields["Elevation"].Value = elevation;
             }
 
-            public override void AddMaterial(ConstructionManager.OutputLayer layer)
+            public override void AddMaterial(Material layer)
             {
                 layer.AddToIdfV710(idf);
             }

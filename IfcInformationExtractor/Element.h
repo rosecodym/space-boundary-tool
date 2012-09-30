@@ -2,31 +2,30 @@
 
 #include <cpp_edmi.h>
 
-#include "Construction.h"
-#include "ConstructionFactory.h"
-
 using namespace System;
 using namespace System::Collections::Generic;
+
+using namespace ConstructionManagement::ModelConstructions;
 
 namespace IfcInformationExtractor {
 
 public ref class Element {
 private:
 	initonly String ^ guid;
-	initonly Construction ^ construction;
+	initonly ModelConstruction ^ construction;
 	initonly bool isShading;
 
 public:
-	Element(const cppw::Instance & inst, ConstructionFactory ^ constructionFactory);
+	Element(const cppw::Instance & inst, ModelConstructionCollection ^ constructions);
 
 	property String ^ Guid
 	{
 		String ^ get() { return guid; }
 	}
 
-	property Construction ^ AssociatedConstruction
+	property ModelConstruction ^ AssociatedConstruction
 	{
-		Construction ^ get() { return construction; }
+		ModelConstruction ^ get() { return construction; }
 	}
 
 	property bool IsShading

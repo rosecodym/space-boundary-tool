@@ -42,19 +42,13 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LibraryEntry.fs" />
+    <Compile Include="MaterialLibrary.fs" />
     <Compile Include="ModelMappingSource.fs" />
     <Compile Include="ModelConstruction.fs" />
+    <Compile Include="ModelConstructionCollection.fs" />
     <Compile Include="OutputLayer.fs" />
     <Compile Include="OutputConstruction.fs" />
-    <Compile Include="Manager.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
-      <Name>ManagedWrapper</Name>
-      <Project>{2b180c45-2da1-4c26-9850-f92b9369d626}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Compile Include="OutputManager.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />

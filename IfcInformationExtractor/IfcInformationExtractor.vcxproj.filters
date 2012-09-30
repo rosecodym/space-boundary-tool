@@ -33,13 +33,7 @@
     <ClInclude Include="CompositeConstruction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Construction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Space.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstructionFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BadMaterial.h">

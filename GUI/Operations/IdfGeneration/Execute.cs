@@ -4,7 +4,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+using ConstructionManager = ConstructionManagement.OutputManager;
+using IdfConstruction = ConstructionManagement.OutputConstruction;
+using IdfMaterial = ConstructionManagement.OutputLayer;
+
+using IfcConstruction = ConstructionManagement.ModelConstructions.ModelConstruction;
+using IfcElement = IfcInformationExtractor.Element;
 using IfcSpace = IfcInformationExtractor.Space;
+
+using LibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
 namespace GUI.Operations
 {
@@ -46,7 +54,7 @@ namespace GUI.Operations
                         return;
                     }
 
-                    if (vm.IfcConstructions.Any(c => c.ParticipatesInSpaceBoundary.HasValue && c.ParticipatesInSpaceBoundary.Value && c.IdfMappingTarget == null)) {
+                    if (vm.IfcConstructionMappingSources.Any(c => c.MappingTarget == null)) {
                         System.Windows.MessageBox.Show(
                             "There are some IFC constructions that have not been mapped to material library entries. Please ensure that all IFC constructions are mapped in the \"Constructions & Materials\" tab.",
                             "Cannot generate IDF",
@@ -87,11 +95,11 @@ namespace GUI.Operations
                     p.SbtBuilding = vm.CurrentSbtBuilding;
                     p.IfcBuilding = vm.CurrentIfcBuilding;
 
-                    p.IfcConstructionsByName = new Dictionary<string, IfcConstruction>();
-                    foreach (IfcConstruction c in vm.IfcConstructions)
-                    {
-                        p.IfcConstructionsByName[c.Name] = c;
-                    }
+                    //p.IfcConstructionsByName = new Dictionary<string, IfcConstruction>();
+                    //foreach (IfcConstruction c in vm.IfcConstructions)
+                    //{
+                    //    p.IfcConstructionsByName[c.Name] = c;
+                    //}
                     p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
@@ -119,40 +127,71 @@ namespace GUI.Operations
                     LibIdf.Idd.Idd idd = p.GetIdd();
                     p.Notify("Got IDD.\n");
 
-                    ConstructionManager.Manager constructionManager = new ConstructionManager.Manager(id =>
+                    ConstructionManager cmanager = new ConstructionManager();
+
+                    //ConstructionManager.Manager constructionManager = new ConstructionManager.Manager(id =>
+                    //{
+                    //    if (id > p.SbtBuilding.Elements.Count) { return null; }
+                    //    string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
+                    //    IfcInformationExtractor.Element ifcElement;
+                    //    if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
+                    //    IfcConstruction c;
+                    //    return p.IfcConstructionsByName.TryGetValue(ifcElement.AssociatedConstruction.Name, out c) ? c.IdfMappingTarget : null;
+                    //});
+
+                    IDictionary<string, string> zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid));
+
+                    Func<int, IfcConstruction> materialIdToModelConstruction = id =>
                     {
                         if (id > p.SbtBuilding.Elements.Count) { return null; }
                         string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
-                        IfcInformationExtractor.Element ifcElement;
+                        IfcElement ifcElement;
                         if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
-                        IfcConstruction c;
-                        return p.IfcConstructionsByName.TryGetValue(ifcElement.AssociatedConstruction.Name, out c) ? c.IdfMappingTarget : null;
-                    });
-
-                    IDictionary<string, string> zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid));
+                        return ifcElement.AssociatedConstruction;
+                    };
 
                     IDictionary<string, BuildingSurface> surfacesByGuid = new Dictionary<string, BuildingSurface>();
                     foreach (Sbt.CoreTypes.SpaceBoundary sb in p.SbtBuilding.SpaceBoundaries.Where(sb => sb.IsVirtual || !sb.Element.IsFenestration))
                     {
                         if (sb.Level == 2)
                         {
+                            List<LibraryEntry> constructions = new List<LibraryEntry>();
+                            List<double> thicknesses = new List<double>();
+                            foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
+                            {
+                                constructions.Add(p.MaterialIDToLibraryEntryMapping(layer.Id));
+                                thicknesses.Add(layer.Thickness);
+                            }
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
-                                constructionManager.ConstructionNameForLayers(sb.MaterialLayers),
+                                cmanager.ConstructionNameForLayers(constructions, thicknesses),
                                 zoneNamesByGuid[sb.BoundedSpace.Guid]);
                         }
                         else
                         {
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
-                                constructionManager.ConstructionNameForSurface(sb.Element.MaterialId),
+                                cmanager.ConstructionNameForSurface(p.MaterialIDToLibraryEntryMapping(sb.Element.MaterialId)),
                                 zoneNamesByGuid[sb.BoundedSpace.Guid]);
                         }
                     }
 
-                    IList<FenestrationSurface> fenestrations = new List<FenestrationSurface>(p.SbtBuilding.SpaceBoundaries
-                        .Where(sb => !sb.IsVirtual && sb.Element.IsFenestration && sb.ContainingBoundary != null) // all fenestration sbs *should* have a containing boundary, but...
-                        .Select(sb => new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], constructionManager.ConstructionNameForLayers(sb.MaterialLayers))));
+                    List<FenestrationSurface> fenestrations = new List<FenestrationSurface>();
+                    foreach (Sbt.CoreTypes.SpaceBoundary sb in p.SbtBuilding.SpaceBoundaries)
+                    {
+                        // all fenestration sbs *should* have a containing boundary, but this doesn't always happen
+                        if (!sb.IsVirtual && sb.Element.IsFenestration && sb.ContainingBoundary != null)
+                        {
+                            List<LibraryEntry> constructions = new List<LibraryEntry>();
+                            List<double> thicknesses = new List<double>();
+                            foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
+                            {
+                                constructions.Add(p.MaterialIDToLibraryEntryMapping(layer.Id));
+                                thicknesses.Add(layer.Thickness);
+                            }
+                            fenestrations.Add(new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], cmanager.ConstructionNameForLayers(constructions, thicknesses)));
+                        }
+                    }
 
                     IDictionary<string, Sbt.CoreTypes.Solid> elementGeometriesByGuid = new Dictionary<string, Sbt.CoreTypes.Solid>();
                     foreach (Sbt.CoreTypes.ElementInfo element in p.SbtBuilding.Elements)
@@ -177,8 +216,8 @@ namespace GUI.Operations
                     foreach (BuildingSurface surf in surfacesByGuid.Values) { creator.AddBuildingSurface(surf); }
                     foreach (FenestrationSurface fen in fenestrations) { creator.AddFenestration(fen); }
                     foreach (Shading s in shadings) { creator.AddShading(s); }
-                    foreach (ConstructionManager.Construction c in constructionManager.AllConstructions) { creator.AddConstruction(c); }
-                    foreach (ConstructionManager.OutputLayer m in constructionManager.AllMaterials) { creator.AddMaterial(m); }
+                    foreach (IdfConstruction c in cmanager.AllOutputConstructions) { creator.AddConstruction(c); }
+                    foreach (IdfMaterial m in cmanager.AllOutputLayers) { creator.AddMaterial(m); }
 
                     creator.WriteToFile(p.OutputFilename);
                     p.Notify("IDF written.\n");

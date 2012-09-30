@@ -6,6 +6,9 @@ using System.Text;
 using LibIdf.Idd;
 using LibIdf.Idf;
 
+using Construction = ConstructionManagement.OutputConstruction;
+using Material = ConstructionManagement.OutputLayer;
+
 namespace GUI.Operations
 {
     static partial class IdfGeneration
@@ -41,10 +44,10 @@ namespace GUI.Operations
             public abstract void AddBuilding(double northAxis, double loadsConvergence, double tempConvergence, SolarDistribution solarDistribution, BuildingTerrain terrain);
             public abstract void AddBuildingSurface(BuildingSurface surf);
             public abstract void AddConstantContents();
-            public abstract void AddConstruction(ConstructionManager.Construction c);
+            public abstract void AddConstruction(Construction c);
             public abstract void AddFenestration(FenestrationSurface fen);
             public abstract void AddLocation(string name, double timeZone, double latitude, double longitude, double elevation);
-            public abstract void AddMaterial(ConstructionManager.OutputLayer layer);
+            public abstract void AddMaterial(Material layer);
             public abstract void AddRunPeriod(int startMonth, int startDay, int endMonth, int endDay);
             public abstract void AddShading(Shading shading);
             public abstract void AddTimestep(int timestep);

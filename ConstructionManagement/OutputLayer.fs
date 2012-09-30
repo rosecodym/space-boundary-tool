@@ -5,6 +5,8 @@ open System
 open LibIdf.Base
 open LibIdf.Idf
 
+open MaterialLibrary
+
 [<AbstractClass>]
 type OutputLayer () =
     abstract Name : string with get

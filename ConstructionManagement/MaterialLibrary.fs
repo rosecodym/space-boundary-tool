@@ -1,4 +1,7 @@
-﻿namespace ConstructionManagement
+﻿module ConstructionManagement.MaterialLibrary
+
+open System
+open System.Collections.Generic
 
 open LibIdf.Base
 open LibIdf.Idf
@@ -161,3 +164,14 @@ type LibraryEntry =
             | "WindowMaterial:Gas" -> Gas(LibraryEntryGas.Construct(obj))
             | "WindowMaterial:Glazing" -> Glazing(LibraryEntryGlazing.Construct(obj))
             | _ -> failwith (sprintf "Tried to build a library entry out of an unknown type '%s'." obj.Type)
+
+let Load(idf:Idf, notify:Action<string>) : ISet<LibraryEntry> =
+    let entries =
+        Seq.append (idf.GetObjectsByType("Material", false)) (idf.GetObjectsByType("Construction", false))
+        |> Seq.choose (fun obj ->
+            try Some(LibraryEntry.Construct(obj))
+            with | _ ->
+                let objName = if String.IsNullOrWhiteSpace(obj.Name) then "<unnamed-object>" else obj.Name
+                notify.Invoke(sprintf "Warning: Failed to load material library object '%s'. Check the definition in the IDF.\n" objName)
+                None)
+    SortedSet(entries) :> ISet<LibraryEntry>

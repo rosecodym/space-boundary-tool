@@ -6,7 +6,8 @@ using System.Text;
 
 using Microsoft.Win32;
 
-using MaterialLibraryEntry = MaterialLibrary.LibraryEntry;
+using IfcConstructionMappingSource = ConstructionManagement.ModelConstructions.ModelMappingSource;
+using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
 namespace GUI.Operations
 {
@@ -56,13 +57,13 @@ namespace GUI.Operations
             }
         }
 
-        static public void LinkConstructions(MaterialLibraryEntry idfConstruction, IEnumerable<IfcConstruction> ifcConstructions)
+        static public void LinkConstructions(MaterialLibraryEntry idfConstruction, IEnumerable<IfcConstructionMappingSource> ifcConstructions)
         {
             if (idfConstruction != null && ifcConstructions != null)
             {
-                foreach (IfcConstruction c in ifcConstructions)
+                foreach (IfcConstructionMappingSource c in ifcConstructions)
                 {
-                    c.IdfMappingTarget = idfConstruction;
+                    c.MappingTarget = idfConstruction;
                 }
             }
         }

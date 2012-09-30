@@ -8,7 +8,7 @@ using System.Text;
 using LibIdf.Idd;
 using LibIdf.Idf;
 
-using MaterialLibraryEntry = MaterialLibrary.LibraryEntry;
+using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
 namespace GUI.Operations
 {
@@ -73,7 +73,7 @@ namespace GUI.Operations
                 Idf idf = new Idf(p.Path, idd);
                 p.Notify("IDF loaded.\n");
 
-                var res = MaterialLibrary.Loader.Load(idf, p.Notify);
+                var res = ConstructionManagement.MaterialLibrary.Load(idf, p.Notify);
 
                 p.Notify("Found " + res.Count.ToString() + " materials.\n");
                 e.Result = res;
