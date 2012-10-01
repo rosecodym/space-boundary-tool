@@ -166,8 +166,12 @@ type LibraryEntry =
             | _ -> failwith (sprintf "Tried to build a library entry out of an unknown type '%s'." obj.Type)
 
 let Load(idf:Idf, notify:Action<string>) : ISet<LibraryEntry> =
+    let opaqueMaterials = idf.GetObjectsByType("Material", false)
+    let windowComposites = 
+        idf.GetObjectsByType("Construction", false)
+        |> Seq.filter (fun c -> c.Fields |> Seq.exists (fun f -> f.RefersTo <> Unchecked.defaultof<IdfObject> && (f.RefersTo.Type = "WindowMaterial:Gas" || f.RefersTo.Type = "WindowMaterial:Glazing")))
     let entries =
-        Seq.append (idf.GetObjectsByType("Material", false)) (idf.GetObjectsByType("Construction", false))
+        Seq.append opaqueMaterials windowComposites
         |> Seq.choose (fun obj ->
             try Some(LibraryEntry.Construct(obj))
             with | _ ->
