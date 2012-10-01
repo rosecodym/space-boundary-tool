@@ -3,7 +3,7 @@
 open MaterialLibrary
 open ConstructionManagement.ModelConstructions
 
-let (|Empty|OpaqueSingleOnly|MappedWindow|UnmappedWindow|MixedSingleAndComposite|Unknown|) modelConstructions =
+let (|Empty|OpaqueSingleOnly|MappedWindow|SingleComposite|UnmappedWindow|MixedSingleAndComposite|Unknown|) modelConstructions =
     match modelConstructions with
     | [||] -> Empty
     | [|Window(src)|] when src.MappingTarget = Unchecked.defaultof<LibraryEntry> -> UnmappedWindow
@@ -11,6 +11,8 @@ let (|Empty|OpaqueSingleOnly|MappedWindow|UnmappedWindow|MixedSingleAndComposite
         match src.MappingTarget with
         | LibraryEntry.Composite(name, layers) -> MappedWindow(name, layers)
         | _ -> failwith "invalid window entry load"
+    | [|Composite(srcs)|] ->
+        SingleComposite(srcs |> Array.map (fun (src, thickness) -> (src.MappingTarget, thickness)))
     | _ ->
         let mapped = modelConstructions |> Array.collect (fun (modelLayer:ModelConstruction) -> modelLayer.MappableComponents |> Seq.map (fun src -> src.MappingTarget) |> Array.ofSeq)
         if mapped.Length <> modelConstructions.Length then MixedSingleAndComposite else
