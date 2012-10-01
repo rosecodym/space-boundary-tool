@@ -11,8 +11,8 @@ type OutputManager () =
     let mutable layers = Set.empty
     let mutable constructions = Set.empty
 
-    let retrieveConstruction materials =
-        let newC = OutputConstruction(materials)
+    let retrieveConstruction materials humanReadableName =
+        let newC = OutputConstruction(materials, humanReadableName)
         constructions <- constructions.Add(newC)
         newC
 
@@ -39,11 +39,11 @@ type OutputManager () =
 
     member this.ConstructionNameForLayers(constructions:IList<ModelConstruction>, thicknesses:IList<double>) =
         match Array.ofSeq constructions with
-        | Empty -> (retrieveConstruction (Array.create 1 (retrieveLayer (OutputLayerInfraredTransparent())))).Name
-        | MappedWindow(libraryLayers) -> (retrieveConstruction (libraryLayers |> Array.map retrieveExactCopy)).Name
+        | Empty -> (retrieveConstruction (Array.create 1 (retrieveLayer (OutputLayerInfraredTransparent()))) None).Name
+        | MappedWindow(name, libraryLayers) -> (retrieveConstruction (libraryLayers |> Array.map retrieveExactCopy) (Some(name))).Name
         | OpaqueSingleOnly(infos) -> 
             let outputLayers = Array.map2 retrieveOpaqueLayer infos (Array.ofSeq thicknesses)
-            (retrieveConstruction outputLayers).Name
+            (retrieveConstruction outputLayers None).Name
         | UnmappedWindow -> "WINDOW WITH UNMAPPED CONSTRUCTION"
         | MixedSingleAndComposite -> "UNSUPPORTED MAPPING (MIXED SINGLE MATERIALS AND COMPOSITES)"
         | Unknown -> "UNSUPPORTED MAPPING (UNKNOWN)"
@@ -53,7 +53,7 @@ type OutputManager () =
         | ModelConstruction.SingleOpaque(src) ->
             match src.MappingTarget with
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
-            | LibraryEntry.Opaque(entry) -> (retrieveConstruction (Array.create 1 (retrieveOpaqueSurface entry))).Name
+            | LibraryEntry.Opaque(entry) -> (retrieveConstruction (Array.create 1 (retrieveOpaqueSurface entry)) None).Name
             | LibraryEntry.Composite(_) -> "COULDN'T BUILD CONSTRUCTION (SURFACE FOR COMPOSITE LIBRARY ENTRY)"
             | _ -> "INVALID MAPPING (OPAQUE TO NON-OPAQUE)"
         | ModelConstruction.Window(_) -> "COULDN'T BUILD CONSTRUCTION (THIRD-LEVEL WINDOW SURFACE)"

@@ -3,7 +3,7 @@
 open System
 open System.Collections.Generic
 
-type OutputConstruction (layers:OutputLayer array) =
+type OutputConstruction (layers:OutputLayer array, humanReadableName:string option) =
     let layerNames = 
         layers 
         |> Seq.map (fun layer -> if layer <> Unchecked.defaultof<OutputLayer> then layer.Name else "UNMAPPED MATERIAL")
@@ -11,8 +11,10 @@ type OutputConstruction (layers:OutputLayer array) =
     let identifier = String.concat "!" layerNames // "!" is the separator because it can't appear in E+ names
 
     member this.Name =
-        if layerNames.Length = 1 then layerNames.[0]
-        else sprintf "Unnamed composite (id %i)" (this.GetHashCode())
+        match humanReadableName, layerNames with
+        | Some(name), _ -> name
+        | None, [|layerName|] -> layerName
+        | _ -> sprintf "Unnamed composite (id %i)" (this.GetHashCode())
 
     member this.LayerNames = List<string>(layerNames)
 

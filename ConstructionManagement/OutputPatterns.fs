@@ -9,7 +9,7 @@ let (|Empty|OpaqueSingleOnly|MappedWindow|UnmappedWindow|MixedSingleAndComposite
     | [|Window(src)|] when src.MappingTarget = Unchecked.defaultof<LibraryEntry> -> UnmappedWindow
     | [|Window(src)|] ->
         match src.MappingTarget with
-        | LibraryEntry.Composite(_, layers) -> MappedWindow(layers)
+        | LibraryEntry.Composite(name, layers) -> MappedWindow(name, layers)
         | _ -> failwith "invalid window entry load"
     | _ ->
         let mapped = modelConstructions |> Array.collect (fun (modelLayer:ModelConstruction) -> modelLayer.MappableComponents |> Seq.map (fun src -> src.MappingTarget) |> Array.ofSeq)
