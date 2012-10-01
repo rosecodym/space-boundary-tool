@@ -95,12 +95,6 @@ namespace GUI.Operations
                     p.SbtBuilding = vm.CurrentSbtBuilding;
                     p.IfcBuilding = vm.CurrentIfcBuilding;
 
-                    //p.IfcConstructionsByName = new Dictionary<string, IfcConstruction>();
-                    //foreach (IfcConstruction c in vm.IfcConstructions)
-                    //{
-                    //    p.IfcConstructionsByName[c.Name] = c;
-                    //}
-
                     p.MaterialIDToModelConstruction = id =>
                     {
                         if (id > p.SbtBuilding.Elements.Count) { return null; }
@@ -138,16 +132,6 @@ namespace GUI.Operations
                     p.Notify("Got IDD.\n");
 
                     ConstructionManager cmanager = new ConstructionManager();
-
-                    //ConstructionManager.Manager constructionManager = new ConstructionManager.Manager(id =>
-                    //{
-                    //    if (id > p.SbtBuilding.Elements.Count) { return null; }
-                    //    string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
-                    //    IfcInformationExtractor.Element ifcElement;
-                    //    if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
-                    //    IfcConstruction c;
-                    //    return p.IfcConstructionsByName.TryGetValue(ifcElement.AssociatedConstruction.Name, out c) ? c.IdfMappingTarget : null;
-                    //});
 
                     IDictionary<string, string> zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid));
 
