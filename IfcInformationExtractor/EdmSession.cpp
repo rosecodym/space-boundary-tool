@@ -5,6 +5,8 @@
 using namespace System;
 using namespace System::Runtime::InteropServices;
 
+typedef ConstructionManagement::ModelConstructions::ModelConstructionCollection ConstructionCollection;
+
 namespace IfcInformationExtractor {
 
 namespace {
@@ -37,11 +39,10 @@ ICollection<Space ^> ^ GetSpaces(cppw::Open_model * model) {
 	return spaces;
 }
 
-ICollection<Element ^> ^ GetElements(cppw::Open_model * model) {
+ICollection<Element ^> ^ GetElements(cppw::Open_model * model, ConstructionCollection ^ constructions) {
 	if (model == __nullptr) {
 		return nullptr;
 	}
-	ModelConstructionCollection ^ constructions = gcnew ModelConstructionCollection();
 	cppw::Instance_set instances = model->get_set_of("IfcBuildingElement", cppw::include_subtypes);
 	IList<Element ^> ^ elements = gcnew List<Element ^>();
 	for (instances.move_first(); instances.move_next(); ) {
@@ -147,10 +148,12 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 		res->SpacesByGuid[s->Guid] = s;
 	}
 
-	ICollection<Element ^> ^ elements = GetElements(model);
+	ConstructionCollection ^ constructions = gcnew ConstructionCollection();
+	ICollection<Element ^> ^ elements = GetElements(model, constructions);
 	for each(Element ^ e in elements) {
 		res->ElementsByGuid[e->Guid] = e;
 	}
+	res->ConstructionMappingSources = constructions->MappingSources;
 
 	return res;
 }

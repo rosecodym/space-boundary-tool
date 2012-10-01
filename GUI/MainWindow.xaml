@@ -155,7 +155,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="143*" />
                                 </Grid.RowDefinitions>
-                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructions}" AutoGenerateColumns="False">
+                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructionMappingSources}" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
                                         <DataGridTemplateColumn Header="Name" IsReadOnly="True">
                                             <DataGridTemplateColumn.CellTemplate>
@@ -168,9 +168,7 @@
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
-                                        <DataGridTextColumn Header="Composite" Binding="{Binding IsComposite}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Needs Mapping" Binding="{Binding ParticipatesInSpaceBoundary}"/>
                                         <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding IdfMappingTarget}" IsReadOnly="True" />
                                     </DataGrid.Columns>
                                 </DataGrid>

@@ -17,7 +17,7 @@ type ModelMappingSource (name:string, forWindows:bool) =
 
     override this.Equals(obj:Object) = 
         match obj with
-        | :? ModelMappingSource as other -> this.Equals(other)
+        | :? ModelMappingSource as other -> (this :> IEquatable<ModelMappingSource>).Equals(other)
         | _ -> false
 
     override this.GetHashCode() = this.Name.GetHashCode()

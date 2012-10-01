@@ -21,6 +21,7 @@ public:
 
 	property IDictionary<String ^, Space ^> ^ SpacesByGuid;
 	property IDictionary<String ^, Element ^> ^ ElementsByGuid;
+	property ICollection<ConstructionManagement::ModelConstructions::ModelMappingSource ^> ^ ConstructionMappingSources;
 };
 
 } // namespace IfcInformationExtractor

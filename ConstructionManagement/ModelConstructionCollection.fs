@@ -6,7 +6,7 @@ open System.Collections.Generic
 type ModelConstructionCollection () =
     let currentModelMappingSources = Dictionary<string, ModelMappingSource>()
 
-    member this.MappingSources = currentModelMappingSources.Values :> IEnumerable<ModelMappingSource>
+    member this.MappingSources = currentModelMappingSources.Values :> ICollection<ModelMappingSource>
     
     member this.GetModelConstructionSingleOpaque(name:string) = 
         let exists = ref Unchecked.defaultof<ModelMappingSource>

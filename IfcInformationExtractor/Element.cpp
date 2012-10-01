@@ -31,9 +31,14 @@ ModelConstruction ^ createConstructionForLayerSet(const cppw::Instance & inst, S
 	List<double> ^ thicknesses = gcnew List<double>();
 	for (mats.move_first(); mats.move_next(); ) {
 		cppw::Instance layer = mats.get_();
-		cppw::Select name = layer.get("Material");
-		if (name.is_set()) { names->Add(gcnew String(((cppw::String)name).data())); }
-		else { names->Add(gcnew String("(material unspecified material in layer)")); }
+		cppw::Select mat = layer.get("Material");
+		if (mat.is_set()) {
+			cppw::String name = ((cppw::Instance)mat).get("Name");
+			names->Add(gcnew String(name.data()));
+		}
+		else {
+			names->Add(gcnew String("(material for unspecified material in layer)"));
+		}
 		thicknesses->Add(layer.get("LayerThickness"));
 	}
 	return constructions->GetModelConstructionComposite(names, thicknesses);
