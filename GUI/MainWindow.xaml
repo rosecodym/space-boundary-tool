@@ -169,7 +169,7 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                         <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding IdfMappingTarget}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding MappingTarget}" IsReadOnly="True" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                                 <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid13" VerticalAlignment="Stretch" Width="Auto">
