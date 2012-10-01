@@ -24,7 +24,7 @@ type ModelConstructionCollection () =
                 currentModelMappingSources.[name] <- !exists
         Window(!exists)
 
-    member this.GetModelConstructionComposite(names:IList<string>, thicknesses:IList<double>) =
+    member this.GetModelConstructionComposite(compositeName:string, names:IList<string>, thicknesses:IList<double>) =
         if names.Count = 1 then this.GetModelConstructionSingleOpaque(names.[0]) else
         let mappables = 
             names 
@@ -36,4 +36,6 @@ type ModelConstructionCollection () =
                         currentModelMappingSources.[name] <- !exists
                 !exists)
             |> Array.ofSeq
-        ModelConstruction.Composite(Array.zip mappables (Array.ofSeq thicknesses))
+        if compositeName <> Unchecked.defaultof<string>
+            then  ModelConstruction.Composite(Some(compositeName), Array.zip mappables (Array.ofSeq thicknesses))
+            else ModelConstruction.Composite(None, Array.zip mappables (Array.ofSeq thicknesses))

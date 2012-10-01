@@ -11,8 +11,8 @@ let (|Empty|OpaqueSingleOnly|MappedWindow|SingleComposite|UnmappedWindow|MixedSi
         match src.MappingTarget with
         | LibraryEntry.Composite(name, layers) -> MappedWindow(name, layers)
         | _ -> failwith "invalid window entry load"
-    | [|Composite(srcs)|] ->
-        SingleComposite(srcs |> Array.map (fun (src, thickness) -> (src.MappingTarget, thickness)))
+    | [|Composite(name, srcs)|] ->
+        SingleComposite(name, srcs |> Array.map (fun (src, thickness) -> (src.MappingTarget, thickness)))
     | _ ->
         let mapped = modelConstructions |> Array.collect (fun (modelLayer:ModelConstruction) -> modelLayer.MappableComponents |> Seq.map (fun src -> src.MappingTarget) |> Array.ofSeq)
         if mapped.Length <> modelConstructions.Length then MixedSingleAndComposite else

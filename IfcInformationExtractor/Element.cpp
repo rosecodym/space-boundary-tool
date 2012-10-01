@@ -41,7 +41,13 @@ ModelConstruction ^ createConstructionForLayerSet(const cppw::Instance & inst, S
 		}
 		thicknesses->Add(layer.get("LayerThickness"));
 	}
-	return constructions->GetModelConstructionComposite(names, thicknesses);
+	cppw::Select name = inst.get("LayerSetName");
+	if (name.is_set()) {
+		return constructions->GetModelConstructionComposite(gcnew String(((cppw::String)name).data()), names, thicknesses);
+	}
+	else {
+		return constructions->GetModelConstructionComposite(nullptr, names, thicknesses);
+	}
 }
 
 ModelConstruction ^ createConstruction(const cppw::Instance & inst, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
