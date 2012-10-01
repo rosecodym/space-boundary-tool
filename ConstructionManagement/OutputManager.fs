@@ -5,7 +5,7 @@ open System.Collections.Generic
 
 open MaterialLibrary
 
-type LibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry
+type ModelConstruction = ConstructionManagement.ModelConstructions.ModelConstruction
 
 type OutputManager () =
     let mutable layers = Set.empty
@@ -37,5 +37,5 @@ type OutputManager () =
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
     member this.AllOutputConstructions = constructions :> IEnumerable<OutputConstruction>
 
-    member this.ConstructionNameForLayers(constructions:IList<LibraryEntry>, thicknesses:IList<double>) = "NOT IMPLEMENTED YET"
-    member this.ConstructionNameForSurface(c:LibraryEntry) = "NOT IMPLEMENTED YET"
+    member this.ConstructionNameForLayers(constructions:IList<ModelConstruction>, thicknesses:IList<double>) = "NOT IMPLEMENTED YET"
+    member this.ConstructionNameForSurface(c:ModelConstruction) = "NOT IMPLEMENTED YET"

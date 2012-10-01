@@ -48,13 +48,13 @@ namespace Sbt
             out IntPtr spaceBoundaries,
             out uint sbCount);
 
-        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "free_elements")]
+        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "release_elements")]
         private static extern void FreeElements(IntPtr elements, uint count);
 
-        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "free_spaces")]
+        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "release_spaces")]
         private static extern void FreeSpaces(IntPtr spaces, uint count);
 
-        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "free_space_boundaries")]
+        [DllImport("SBT-Core.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "release_space_boundaries")]
         private static extern void FreeSpaceBoundaries(IntPtr sbs, uint count);
 
         [Flags]

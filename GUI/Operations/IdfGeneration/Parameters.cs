@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
+using ModelConstruction = ConstructionManagement.ModelConstructions.ModelConstruction;
 
 namespace GUI.Operations
 {
@@ -44,7 +44,7 @@ namespace GUI.Operations
             public int Timestep { get; set; }
             public SbtBuildingInformation SbtBuilding { get; set; }
             public IfcInformationExtractor.BuildingInformation IfcBuilding { get; set; }
-            public Func<int, MaterialLibraryEntry> MaterialIDToLibraryEntryMapping { get; set; }
+            public Func<int, ModelConstruction> MaterialIDToModelConstruction { get; set; }
             public EnergyPlusVersion EPVersion { get; set; }
             public Func<LibIdf.Idd.Idd> GetIdd { get; set; }
             public Action<string> Notify { get; set; }

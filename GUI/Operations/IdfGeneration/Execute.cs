@@ -100,6 +100,16 @@ namespace GUI.Operations
                     //{
                     //    p.IfcConstructionsByName[c.Name] = c;
                     //}
+
+                    p.MaterialIDToModelConstruction = id =>
+                    {
+                        if (id > p.SbtBuilding.Elements.Count) { return null; }
+                        string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
+                        IfcElement ifcElement;
+                        if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
+                        return ifcElement.AssociatedConstruction;
+                    };
+
                     p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
                     p.Notify = msg => worker.ReportProgress(0, msg);
 
@@ -155,11 +165,11 @@ namespace GUI.Operations
                     {
                         if (sb.Level == 2)
                         {
-                            List<LibraryEntry> constructions = new List<LibraryEntry>();
+                            List<IfcConstruction> constructions = new List<IfcConstruction>();
                             List<double> thicknesses = new List<double>();
                             foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
                             {
-                                constructions.Add(p.MaterialIDToLibraryEntryMapping(layer.Id));
+                                constructions.Add(p.MaterialIDToModelConstruction(layer.Id));
                                 thicknesses.Add(layer.Thickness);
                             }
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
@@ -171,7 +181,7 @@ namespace GUI.Operations
                         {
                             surfacesByGuid[sb.Guid] = new BuildingSurface(
                                 sb,
-                                cmanager.ConstructionNameForSurface(p.MaterialIDToLibraryEntryMapping(sb.Element.MaterialId)),
+                                cmanager.ConstructionNameForSurface(p.MaterialIDToModelConstruction(sb.Element.MaterialId)),
                                 zoneNamesByGuid[sb.BoundedSpace.Guid]);
                         }
                     }
@@ -182,11 +192,11 @@ namespace GUI.Operations
                         // all fenestration sbs *should* have a containing boundary, but this doesn't always happen
                         if (!sb.IsVirtual && sb.Element.IsFenestration && sb.ContainingBoundary != null)
                         {
-                            List<LibraryEntry> constructions = new List<LibraryEntry>();
+                            List<IfcConstruction> constructions = new List<IfcConstruction>();
                             List<double> thicknesses = new List<double>();
                             foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
                             {
-                                constructions.Add(p.MaterialIDToLibraryEntryMapping(layer.Id));
+                                constructions.Add(p.MaterialIDToModelConstruction(layer.Id));
                                 thicknesses.Add(layer.Thickness);
                             }
                             fenestrations.Add(new FenestrationSurface(sb, surfacesByGuid[sb.ContainingBoundary.Guid], cmanager.ConstructionNameForLayers(constructions, thicknesses)));
