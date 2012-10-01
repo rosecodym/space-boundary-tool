@@ -48,6 +48,7 @@
     <Compile Include="ModelConstructionCollection.fs" />
     <Compile Include="OutputLayer.fs" />
     <Compile Include="OutputConstruction.fs" />
+    <Compile Include="OutputPatterns.fs" />
     <Compile Include="OutputManager.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />

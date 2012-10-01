@@ -5,8 +5,7 @@ open System.Collections.Generic
 
 open MaterialLibrary
 open ConstructionManagement.ModelConstructions
-
-//type ModelConstruction = ConstructionManagement.ModelConstructions.ModelConstruction
+open OutputPatterns
 
 type OutputManager () =
     let mutable layers = Set.empty
@@ -38,13 +37,24 @@ type OutputManager () =
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
     member this.AllOutputConstructions = constructions :> IEnumerable<OutputConstruction>
 
-    member this.ConstructionNameForLayers(constructions:IList<ModelConstruction>, thicknesses:IList<double>) = "NOT IMPLEMENTED YET"
+    member this.ConstructionNameForLayers(constructions:IList<ModelConstruction>, thicknesses:IList<double>) =
+        match Array.ofSeq constructions with
+        | Empty -> (retrieveConstruction (Array.create 1 (retrieveLayer (OutputLayerInfraredTransparent())))).Name
+        | MappedWindow(libraryLayers) -> (retrieveConstruction (libraryLayers |> Array.map retrieveExactCopy)).Name
+        | OpaqueSingleOnly(infos) -> 
+            let outputLayers = Array.map2 retrieveOpaqueLayer infos (Array.ofSeq thicknesses)
+            (retrieveConstruction outputLayers).Name
+        | UnmappedWindow -> "WINDOW WITH UNMAPPED CONSTRUCTION"
+        | MixedSingleAndComposite -> "UNSUPPORTED MAPPING (MIXED SINGLE MATERIALS AND COMPOSITES)"
+        | Unknown -> "UNSUPPORTED MAPPING (UNKNOWN)"
+
     member this.ConstructionNameForSurface(c:ModelConstruction) = 
         match c with
         | ModelConstruction.SingleOpaque(src) ->
             match src.MappingTarget with
+            | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
             | LibraryEntry.Opaque(entry) -> (retrieveConstruction (Array.create 1 (retrieveOpaqueSurface entry))).Name
-            | LibraryEntry.Composite(_) -> "COULDN'T BUILD CONSTRUCTION - SURFACE FOR COMPOSITE LIBRARY ENTRY"
-            | _ -> "INVALID MAPPING - OPAQUE TO NON-OPAQUE"
-        | ModelConstruction.Window(_) -> "COULDN'T BUILD CONSTRUCTION - THIRD-LEVEL WINDOW SURFACE"
-        | ModelConstruction.Composite(_) -> "COULDN'T BUILD CONSTRUCTION - SURFACE FOR COMPOSITE MODEL ELEMENT"
+            | LibraryEntry.Composite(_) -> "COULDN'T BUILD CONSTRUCTION (SURFACE FOR COMPOSITE LIBRARY ENTRY)"
+            | _ -> "INVALID MAPPING (OPAQUE TO NON-OPAQUE)"
+        | ModelConstruction.Window(_) -> "COULDN'T BUILD CONSTRUCTION (THIRD-LEVEL WINDOW SURFACE)"
+        | ModelConstruction.Composite(_) -> "COULDN'T BUILD CONSTRUCTION (SURFACE FOR COMPOSITE MODEL ELEMENT)"
