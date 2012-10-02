@@ -160,11 +160,7 @@
                                         <DataGridTemplateColumn Header="Name" IsReadOnly="True">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Name}">
-                                                        <TextBlock.ToolTip>
-                                                            <TextBlock Text="{Binding Summary}" />
-                                                        </TextBlock.ToolTip>
-                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Name}" />
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
