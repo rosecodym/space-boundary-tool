@@ -350,10 +350,10 @@ namespace GUI
 
         public ViewModel(Action<string> updateOutputDirectly)
         {
-            this.sbCalculation = new OperationInformation(Operations.SbtInvocation.Execute, this);
-            this.materialLibraryLoad = new OperationInformation(Operations.MaterialsLibraryLoad.Execute, this);
-            this.buildingLoad = new OperationInformation(Operations.BuildingLoad.Execute, this);
-            this.idfGeneration = new OperationInformation(Operations.IdfGeneration.Execute, this);
+            this.sbCalculation = new OperationInformation(Operations.SbtInvocation.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")));
+            this.materialLibraryLoad = new OperationInformation(Operations.MaterialsLibraryLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")));
+            this.buildingLoad = new OperationInformation(Operations.BuildingLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")));
+            this.idfGeneration = new OperationInformation(Operations.IdfGeneration.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIDF")));
 
             var propertyDependencies = new[] 
             {
