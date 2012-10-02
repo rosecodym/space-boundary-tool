@@ -130,7 +130,7 @@ type LibraryEntryType =
 
 type LibraryEntry =
     | AirGap of LibraryEntryAirGap
-    | Composite of string * (LibraryEntry array)
+    | Composite of string * (LibraryEntry list)
     | Gas of LibraryEntryGas
     | Glazing of LibraryEntryGlazing
     | NoMass of LibraryEntryNoMass
@@ -182,7 +182,7 @@ type LibraryEntry =
             | "Construction" ->
                 let name = obj.Name
                 let layers = 
-                    [|
+                    [
                         "Outside Layer"
                         "Layer 2"
                         "Layer 3"
@@ -193,8 +193,8 @@ type LibraryEntry =
                         "Layer 8"
                         "Layer 9"
                         "Layer 10"
-                    |]
-                    |> Array.choose (fun fieldName -> LibraryEntry.CreateLayerMaybe obj.Fields.[fieldName].RefersTo)
+                    ]
+                    |> List.choose (fun fieldName -> LibraryEntry.CreateLayerMaybe obj.Fields.[fieldName].RefersTo)
                 Composite(name, layers)
             | "Material" -> Opaque(LibraryEntryOpaque.Construct(obj))
             | "Material:NoMass" -> NoMass(LibraryEntryNoMass.Construct(obj))

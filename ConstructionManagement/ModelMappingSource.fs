@@ -8,6 +8,7 @@ open ConstructionManagement.MaterialLibrary
 type LibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry
 
 type ModelMappingSource (name:string, forWindows:bool) =
+    let mutable usage = None
     let mutable mappedTo = None
 
     // this is part of the magic spell to implement INotifyPropertyChanged
@@ -15,11 +16,19 @@ type ModelMappingSource (name:string, forWindows:bool) =
 
     member this.Name = name
     member this.IsForWindows = forWindows
+    member this.Usage = usage
     member this.MappingTarget
         with get () = if mappedTo.IsNone then Unchecked.defaultof<LibraryEntry> else mappedTo.Value
         and set (value) = 
             if value <> Unchecked.defaultof<LibraryEntry> then mappedTo <- Some(value) else mappedTo <- None
             propertyChanged.Trigger(this, PropertyChangedEventArgs("MappingTarget"))
+
+    member internal this.AddUsage newUsage =
+        match usage, newUsage with
+        | Some(oldUsage), newUsage when newUsage <= oldUsage -> ()
+        | _ ->
+            usage <- Some(newUsage)
+            propertyChanged.Trigger(this, PropertyChangedEventArgs("Usage"))
 
     override this.Equals(obj:Object) = 
         match obj with

@@ -10,18 +10,16 @@ type ModelConstructionCollection () =
     
     member this.GetModelConstructionSingleOpaque(name:string) = 
         let exists = ref Unchecked.defaultof<ModelMappingSource>
-        if not (currentModelMappingSources.TryGetValue(name, exists))
-            then 
-                exists := ModelMappingSource(name, false)
-                currentModelMappingSources.[name] <- !exists
+        if not (currentModelMappingSources.TryGetValue(name, exists)) then 
+            exists := ModelMappingSource(name, false)
+            currentModelMappingSources.[name] <- !exists
         SingleOpaque(!exists)
 
     member this.GetModelConstructionWindow(name:string) =
         let exists = ref Unchecked.defaultof<ModelMappingSource>
-        if not (currentModelMappingSources.TryGetValue(name, exists))
-            then 
-                exists := ModelMappingSource(name, true)
-                currentModelMappingSources.[name] <- !exists
+        if not (currentModelMappingSources.TryGetValue(name, exists)) then 
+            exists := ModelMappingSource(name, true)
+            currentModelMappingSources.[name] <- !exists
         Window(!exists)
 
     member this.GetModelConstructionComposite(compositeName:string, names:IList<string>, thicknesses:IList<double>) =
@@ -35,7 +33,7 @@ type ModelConstructionCollection () =
                         exists := ModelMappingSource(name, false)
                         currentModelMappingSources.[name] <- !exists
                 !exists)
-            |> Array.ofSeq
+            |> List.ofSeq
         if compositeName <> Unchecked.defaultof<string>
-            then  ModelConstruction.Composite(Some(compositeName), Array.zip mappables (Array.ofSeq thicknesses))
-            else ModelConstruction.Composite(None, Array.zip mappables (Array.ofSeq thicknesses))
+            then ModelConstruction.Composite(Some(compositeName), List.zip mappables (List.ofSeq thicknesses))
+            else ModelConstruction.Composite(None, List.zip mappables (List.ofSeq thicknesses))

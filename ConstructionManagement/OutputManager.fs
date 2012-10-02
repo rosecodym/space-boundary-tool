@@ -45,14 +45,14 @@ type OutputManager () =
     member this.AllOutputConstructions = constructions :> IEnumerable<OutputConstruction>
 
     member this.ConstructionNameForLayers(constructions:IList<ModelConstruction>, thicknesses:IList<double>) =
-        match Array.ofSeq constructions with
-        | Empty -> (retrieveConstruction (Array.create 1 (retrieveLayer (OutputLayerInfraredTransparent()))) None).Name
-        | MappedWindow(name, libraryLayers) -> (retrieveConstruction (libraryLayers |> Array.map retrieveExactCopy) (Some(name))).Name
+        match List.ofSeq constructions with
+        | Empty -> (retrieveConstruction ([retrieveLayer (OutputLayerInfraredTransparent())]) None).Name
+        | MappedWindow(name, libraryLayers) -> (retrieveConstruction (libraryLayers |> List.map retrieveExactCopy) (Some(name))).Name
         | SimpleOnly(infos) -> 
-            let outputLayers = Array.map2 retrieveOpaqueOrAirGapLayer infos (Array.ofSeq thicknesses)
+            let outputLayers = List.map2 retrieveOpaqueOrAirGapLayer infos (List.ofSeq thicknesses)
             (retrieveConstruction outputLayers None).Name
         | SingleComposite(name, layers) -> // if the thicknesses don't match, then too bad
-            let outputLayers = layers |> Array.map (fun (entry, thickness) -> retrieveOpaqueOrAirGapLayer entry thickness)
+            let outputLayers = layers |> List.map (fun (entry, thickness) -> retrieveOpaqueOrAirGapLayer entry thickness)
             (retrieveConstruction outputLayers name).Name
         | UnmappedWindow -> "WINDOW WITH UNMAPPED CONSTRUCTION"
         | MixedSingleAndComposite -> "UNSUPPORTED MAPPING (MIXED SINGLE MATERIALS AND COMPOSITES)"
@@ -63,7 +63,7 @@ type OutputManager () =
         | ModelConstruction.SingleOpaque(src) ->
             match src.MappingTarget with
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
-            | LibraryEntry.Opaque(entry) -> (retrieveConstruction (Array.create 1 (retrieveOpaqueSurface entry)) None).Name
+            | LibraryEntry.Opaque(entry) -> (retrieveConstruction [(retrieveOpaqueSurface entry)] None).Name
             | LibraryEntry.Composite(_) -> "COULDN'T BUILD CONSTRUCTION (SURFACE FOR COMPOSITE LIBRARY ENTRY)"
             | _ -> "INVALID MAPPING (OPAQUE TO NON-OPAQUE)"
         | ModelConstruction.Window(_) -> "COULDN'T BUILD CONSTRUCTION (THIRD-LEVEL WINDOW SURFACE)"
@@ -71,5 +71,5 @@ type OutputManager () =
             let firstLayer = fst layers.[0]
             match firstLayer.MappingTarget with // hope it's symmetrical!
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
-            | LibraryEntry.Opaque(entry) -> (retrieveConstruction (Array.create 1 (retrieveOpaqueSurface entry)) None).Name
+            | LibraryEntry.Opaque(entry) -> (retrieveConstruction [retrieveOpaqueSurface entry] None).Name
             | _ -> "BAD MAPPING FOR THIRD-LEVEL SURFACE"
