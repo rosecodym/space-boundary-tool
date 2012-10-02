@@ -51,7 +51,7 @@ type OutputManager () =
             let outputLayers = Array.map2 retrieveOpaqueOrAirGapLayer infos (Array.ofSeq thicknesses)
             (retrieveConstruction outputLayers None).Name
         | SingleComposite(name, layers) -> // if the thicknesses don't match, then too bad
-            let outputLayers = Array.map (fun (entry, thickness) -> match entry with | Opaque(opaque) -> retrieveOpaqueLayer opaque thickness | _ -> failwith "bad mapping") layers
+            let outputLayers = layers |> Array.map (fun (entry, thickness) -> retrieveOpaqueOrAirGapLayer entry thickness)
             (retrieveConstruction outputLayers name).Name
         | UnmappedWindow -> "WINDOW WITH UNMAPPED CONSTRUCTION"
         | MixedSingleAndComposite -> "UNSUPPORTED MAPPING (MIXED SINGLE MATERIALS AND COMPOSITES)"
