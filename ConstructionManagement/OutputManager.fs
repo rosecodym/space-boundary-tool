@@ -38,6 +38,7 @@ type OutputManager () =
         | LibraryEntry.Composite(_) -> raise (ArgumentException())
         | LibraryEntry.Gas(props) -> retrieveLayer (OutputLayerGas(props.Name.ToString(), props, float props.Thickness))
         | LibraryEntry.Glazing(props) -> retrieveLayer (OutputLayerGlazing(props.Name.ToString(), props, float props.Thickness))
+        | LibraryEntry.NoMass(props) -> raise (NotImplementedException("Material:NoMass entries cannot yet be mapping targets."))
         | LibraryEntry.Opaque(props) -> retrieveOpaqueLayer props (float props.Thickness)
 
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
