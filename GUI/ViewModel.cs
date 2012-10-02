@@ -48,6 +48,7 @@ namespace GUI
             set
             {
                 sbtBuilding = value;
+                EstablishConstructionUsage();
                 Updated("CurrentSbtBuilding");
             }
         }
@@ -60,6 +61,7 @@ namespace GUI
                 ifcBuilding = value;
                 IfcConstructionMappingSources = ifcBuilding != null ? new ObservableCollection<IfcConstructionMappingSource>(ifcBuilding.ConstructionMappingSources) : null;
                 PerformAutomaticMaterialMapping();
+                EstablishConstructionUsage();
                 Updated("CurrentIfcBuilding");
             }
         }
@@ -441,9 +443,46 @@ namespace GUI
             if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName)); }
         }
 
+        internal IfcConstruction SbtMaterialIDToModelConstruction(int id)
+        {
+            if (id > CurrentSbtBuilding.Elements.Count) { return null; }
+            string elementGuid = CurrentSbtBuilding.Elements[id - 1].Guid;
+            IfcElement ifcElement;
+            if (!CurrentIfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
+            return ifcElement.AssociatedConstruction;
+        }
+
+        private void EstablishConstructionUsage()
+        {
+            if (CurrentIfcBuilding != null && CurrentSbtBuilding != null && CurrentIfcBuilding.Filename == CurrentSbtBuilding.IfcFilename)
+            {
+                foreach (IfcConstructionMappingSource src in CurrentIfcBuilding.ConstructionMappingSources)
+                {
+                    src.SetUnused();
+                }
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in CurrentSbtBuilding.SpaceBoundaries)
+                {
+                    if (!sb.IsVirtual)
+                    {
+                        if (sb.Level == 2)
+                        {
+                            foreach (IfcConstruction c in sb.MaterialLayers.Select(layer => SbtMaterialIDToModelConstruction(layer.Id)))
+                            {
+                                c.SetComponentUsages(ConstructionManagement.ModelConstructions.ModelConstructionUsage.Layer);
+                            }
+                        }
+                        else
+                        {
+                            SbtMaterialIDToModelConstruction(sb.Element.MaterialId).SetComponentUsages(ConstructionManagement.ModelConstructions.ModelConstructionUsage.Surface);
+                        }
+                    }
+                }
+            }
+        }
+
         private void PerformAutomaticMaterialMapping()
         {
-            if (this.CurrentIfcBuilding != null && this.LibraryMaterials != null)
+            if (CurrentIfcBuilding != null && LibraryMaterials != null)
             {
                 Func<string, string> removeSpaces = str => str.Replace(" ", String.Empty);
                 Dictionary<string, MaterialLibraryEntry> library = new Dictionary<string, MaterialLibraryEntry>();

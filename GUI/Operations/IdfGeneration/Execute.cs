@@ -91,14 +91,7 @@ namespace GUI.Operations
             p.SbtBuilding = vm.CurrentSbtBuilding;
             p.IfcBuilding = vm.CurrentIfcBuilding;
 
-            p.MaterialIDToModelConstruction = id =>
-            {
-                if (id > p.SbtBuilding.Elements.Count) { return null; }
-                string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
-                IfcElement ifcElement;
-                if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
-                return ifcElement.AssociatedConstruction;
-            };
+            p.MaterialIDToModelConstruction = vm.SbtMaterialIDToModelConstruction;
 
             p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
             p.Notify = msg => worker.ReportProgress(0, msg);
