@@ -78,6 +78,18 @@ type LibraryEntryGlazing = {
             DirtCorrectionFactorForSolarandVisibleTransmittance = obj.Fields.["Dirt Correction Factor for Solar and Visible Transmittance"].Value
             }
 
+type LibraryEntryNoMass = {
+    Name: FieldValue
+    Roughness: FieldValue
+    ThermalResistance: FieldValue
+    }
+    with
+        static member internal Construct (obj:IdfObject) = {
+            Name = obj.Fields.["Name"].Value
+            Roughness = obj.Fields.["Roughness"].Value
+            ThermalResistance = obj.Fields.["Thermal Resistance"].Value
+            }
+
 type LibraryEntryOpaque = {
     Name: FieldValue
     Roughness: FieldValue
@@ -102,11 +114,20 @@ type LibraryEntryOpaque = {
             VisibleAbsorptance = obj.Fields.["Visible Absorptance"].Value
             }
 
+type LibraryEntryType =
+    | AirGap = 0
+    | Composite = 1
+    | Gas = 2
+    | Glazing = 3
+    | NoMass = 5
+    | Opaque = 4
+
 type LibraryEntry =
     | AirGap of LibraryEntryAirGap
     | Composite of string * (LibraryEntry array)
     | Gas of LibraryEntryGas
     | Glazing of LibraryEntryGlazing
+    | NoMass of LibraryEntryNoMass
     | Opaque of LibraryEntryOpaque
     with
         member this.Name =
@@ -115,30 +136,30 @@ type LibraryEntry =
             | Composite(name, _) -> name
             | Gas(properties) -> properties.Name.ToString()
             | Glazing(properties) -> properties.Name.ToString()
+            | NoMass(properties) -> properties.Name.ToString()
             | Opaque(properties) -> properties.Name.ToString()
+
+        member this.Type =
+            match this with
+            | AirGap(_) -> LibraryEntryType.AirGap
+            | Composite(_) -> LibraryEntryType.Composite
+            | Gas(_) -> LibraryEntryType.Gas
+            | Glazing(_) -> LibraryEntryType.Glazing
+            | NoMass(_) -> LibraryEntryType.NoMass
+            | Opaque(_) -> LibraryEntryType.Opaque
 
         member this.IsForWindows =
             match this with
-            | AirGap(_) -> false
+            | AirGap(_) | NoMass(_) | Opaque(_) -> false
+            | Gas(_) | Glazing(_) -> true
             | Composite(_, layers) -> layers |> Seq.exists (fun layer -> not layer.IsForWindows) |> not
-            | Gas(_) -> true
-            | Glazing(_) -> true
-            | Opaque(_) -> false
-
-        member this.DisplayToUser =
-            match this with
-            | AirGap(_) -> false
-            | Composite(_, layers) -> this.IsForWindows
-            | Gas(_) -> false
-            | Glazing(_) -> false
-            | Opaque(_) -> true
 
         override this.ToString() = this.Name
 
         static member private CreateLayerMaybe obj =
-            if obj = Unchecked.defaultof<IdfObject> then None
-            else
-                Some(LibraryEntry.Construct obj)
+            if obj = Unchecked.defaultof<IdfObject>
+            then None
+            else Some(LibraryEntry.Construct obj)
 
         static member Construct (obj:IdfObject) =
             match obj.Type with
@@ -160,6 +181,7 @@ type LibraryEntry =
                     |> Array.choose (fun fieldName -> LibraryEntry.CreateLayerMaybe obj.Fields.[fieldName].RefersTo)
                 Composite(name, layers)
             | "Material" -> Opaque(LibraryEntryOpaque.Construct(obj))
+            | "Material:NoMass" -> NoMass(LibraryEntryNoMass.Construct(obj))
             | "Material:AirGap" -> AirGap(LibraryEntryAirGap.Construct(obj))
             | "WindowMaterial:Gas" -> Gas(LibraryEntryGas.Construct(obj))
             | "WindowMaterial:Glazing" -> Glazing(LibraryEntryGlazing.Construct(obj))
@@ -169,6 +191,7 @@ let Load(idf:Idf, notify:Action<string>) : ISet<LibraryEntry> =
     let compositeIsWindow = (fun (c:IdfObject) -> c.Fields |> Seq.exists (fun f -> f.RefersTo <> Unchecked.defaultof<IdfObject> && (f.RefersTo.Type = "WindowMaterial:Gas" || f.RefersTo.Type = "WindowMaterial:Glazing")))
     let groups = [
         idf.GetObjectsByType("Material", false) :> seq<IdfObject>
+        idf.GetObjectsByType("Material:NoMass", false) :> seq<IdfObject>
         idf.GetObjectsByType("Material:AirGap", false) :> seq<IdfObject>
         idf.GetObjectsByType("Construction", false) |> Seq.filter compositeIsWindow
         ]
