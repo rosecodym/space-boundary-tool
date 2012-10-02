@@ -1,63 +1,74 @@
 #include <cstring>
 #include <cpp_edmi.h>
 
-#include "ConstructionFactory.h"
-
 #include "Element.h"
 
 namespace IfcInformationExtractor {
 
 namespace {
 
-Construction ^ createSingleMaterial(const cppw::Instance & inst, String ^ elementGuid, ConstructionFactory ^ constructionFactory) {
+ModelConstruction ^ createSingleMaterial(const cppw::Instance & inst, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
 	if (inst.is_kind_of("IfcMaterial")) {
 		String ^ name = gcnew String(((cppw::String)inst.get("Name")).data());
 		if (String::IsNullOrWhiteSpace(name)) {
-			return constructionFactory->GetUnnamedMaterial(elementGuid);
+			return constructions->GetModelConstructionSingleOpaque("(unnamed material)");
 		}
-		return constructionFactory->GetSingleMaterial(name, false);
+		return constructions->GetModelConstructionSingleOpaque(name);
 	}
 	else if (inst.is_kind_of("IfcMaterialLayer")) {
 		cppw::Select mat = inst.get("Material");
-		if (mat.is_set()) { return createSingleMaterial((cppw::Instance)mat, elementGuid, constructionFactory); }
-		else { return constructionFactory->GetUnnamedMaterial(elementGuid); }
+		if (mat.is_set()) { return createSingleMaterial((cppw::Instance)mat, elementGuid, constructions); }
+		else { return constructions->GetModelConstructionSingleOpaque("(material for unspecified material in layer"); }
 	}
 	else {
-		return constructionFactory->GetUnknownMaterial(elementGuid);
+		return constructions->GetModelConstructionSingleOpaque("(material for unknown material representation");
 	}
 }
 
-Construction ^ createConstructionForLayerSet(const cppw::Instance & inst, String ^ elementGuid, ConstructionFactory ^ constructionFactory) {
+ModelConstruction ^ createConstructionForLayerSet(const cppw::Instance & inst, String ^ /*elementGuid*/, ModelConstructionCollection ^ constructions) {
 	cppw::List mats = inst.get("MaterialLayers");
-	if (mats.count() > 1) {
-		cppw::Select name = inst.get("LayerSetName");
-		return name.is_set() ?
-			constructionFactory->GetComposite(gcnew String(((cppw::String)name).data()), false) : constructionFactory->GetUnnamedComposite(elementGuid);
+	List<String ^> ^ names = gcnew List<String ^>();
+	List<double> ^ thicknesses = gcnew List<double>();
+	for (mats.move_first(); mats.move_next(); ) {
+		cppw::Instance layer = mats.get_();
+		cppw::Select mat = layer.get("Material");
+		if (mat.is_set()) {
+			cppw::String name = ((cppw::Instance)mat).get("Name");
+			names->Add(gcnew String(name.data()));
+		}
+		else {
+			names->Add(gcnew String("(material for unspecified material in layer)"));
+		}
+		thicknesses->Add(layer.get("LayerThickness"));
+	}
+	cppw::Select name = inst.get("LayerSetName");
+	if (name.is_set()) {
+		return constructions->GetModelConstructionComposite(gcnew String(((cppw::String)name).data()), names, thicknesses);
 	}
 	else {
-		return createSingleMaterial((cppw::Instance)mats.get_(0), elementGuid, constructionFactory);
+		return constructions->GetModelConstructionComposite(nullptr, names, thicknesses);
 	}
 }
 
-Construction ^ createConstruction(const cppw::Instance & inst, String ^ elementGuid, ConstructionFactory ^ constructionFactory) {
+ModelConstruction ^ createConstruction(const cppw::Instance & inst, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
 	if (inst.is_kind_of("IfcMaterial") || inst.is_kind_of("IfcMaterialLayer")) {
-		return createSingleMaterial(inst, elementGuid, constructionFactory);
+		return createSingleMaterial(inst, elementGuid, constructions);
 	}
 	else if (inst.is_kind_of("IfcMaterialLayerSet")) {
-		return createConstructionForLayerSet(inst, elementGuid, constructionFactory);
+		return createConstructionForLayerSet(inst, elementGuid, constructions);
 	}
 	else if (inst.is_kind_of("IfcMaterialLayerSetUsage")) {
-		return createConstructionForLayerSet((cppw::Instance)inst.get("ForLayerSet"), elementGuid, constructionFactory);
+		return createConstructionForLayerSet((cppw::Instance)inst.get("ForLayerSet"), elementGuid, constructions);
 	}
 	else if (inst.is_kind_of("IfcMaterialList")) {
-		return constructionFactory->GetMaterialList(elementGuid);
+		return constructions->GetModelConstructionSingleOpaque("(construction for material list)");
 	}
 	else {
-		return constructionFactory->GetUnknownComposite(elementGuid);
+		return constructions->GetModelConstructionSingleOpaque("(construction for unknown material representation)");
 	}
 }
 
-Construction ^ createConstructionForWindow(const cppw::Instance & element, String ^ elementGuid, ConstructionFactory ^ constructionFactory) {
+ModelConstruction ^ createConstructionForWindow(const cppw::Instance & element, String ^ /*elementGuid*/, ModelConstructionCollection ^ constructions) {
 	cppw::Set defined_by = element.get("IsDefinedBy");
 	for (defined_by.move_first(); defined_by.move_next(); ) {
 		cppw::Instance d = defined_by.get_();
@@ -71,7 +82,7 @@ Construction ^ createConstructionForWindow(const cppw::Instance & element, Strin
 						cppw::Instance prop = props.get_();
 						if (prop.is_instance_of("IfcPropertySingleValue") && prop.get("NominalValue").is_set()) {
 							if (prop.get("Name") == "ConstructionName" || prop.get("Name") == "Reference") {
-								return constructionFactory->GetComposite(gcnew String(((cppw::String)prop.get("NominalValue")).data()), true);
+								return constructions->GetModelConstructionWindow(gcnew String(((cppw::String)prop.get("NominalValue")).data()));
 							}
 						}
 					}
@@ -79,26 +90,26 @@ Construction ^ createConstructionForWindow(const cppw::Instance & element, Strin
 			}
 		}
 	}
-	return constructionFactory->GetMissingWindowMaterial(elementGuid);
+	return constructions->GetModelConstructionWindow("(undefined window construction)");
 }
 
-Construction ^ createConstructionForCommon(const cppw::Instance & element, String ^ elementGuid, ConstructionFactory ^ constructionFactory) {
+ModelConstruction ^ createConstructionForCommon(const cppw::Instance & element, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
 	cppw::Set relAssociates = element.get("HasAssociations");
 	for (relAssociates.move_first(); relAssociates.move_next(); ) {
 		cppw::Instance rel = relAssociates.get_();
 		if (rel.is_kind_of("IfcRelAssociatesMaterial")) {
-			return createConstruction((cppw::Instance)rel.get("RelatingMaterial"), elementGuid, constructionFactory);
+			return createConstruction((cppw::Instance)rel.get("RelatingMaterial"), elementGuid, constructions);
 		}
 	}
-	return constructionFactory->GetMissingMaterial(elementGuid);
+	return constructions->GetModelConstructionSingleOpaque("(construction for missing material properties)");
 }
 
-Construction ^ createConstructionFor(const cppw::Instance & buildingElement, String ^ elementGuid, ConstructionFactory ^ constructionFactory) {
+ModelConstruction ^ createConstructionFor(const cppw::Instance & buildingElement, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
 	if (buildingElement.is_kind_of("IfcWindow")) {
-		return createConstructionForWindow(buildingElement, elementGuid, constructionFactory);
+		return createConstructionForWindow(buildingElement, elementGuid, constructions);
 	}
 	else {
-		return createConstructionForCommon(buildingElement, elementGuid, constructionFactory);
+		return createConstructionForCommon(buildingElement, elementGuid, constructions);
 	}
 }
 
@@ -125,9 +136,9 @@ bool detectShading(const cppw::Instance & inst) {
 
 } // namespace
 
-Element::Element(const cppw::Instance & inst, ConstructionFactory ^ constructionFactory) 
+Element::Element(const cppw::Instance & inst, ModelConstructionCollection ^ constructions) 
 	: guid(gcnew String(((cppw::String)inst.get("GlobalId")).data())),
-	construction(createConstructionFor(inst, guid, constructionFactory)),
+	construction(createConstructionFor(inst, guid, constructions)),
 	isShading(detectShading(inst))
 { }
 

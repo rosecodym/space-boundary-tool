@@ -5,6 +5,7 @@
 #include "model_operations.h"
 #include "number_collection.h"
 #include "reassign_bounded_spaces.h"
+#include "release.h"
 #include "unit_scaler.h"
 
 #include "sbt-ifcadapter.h"
@@ -210,7 +211,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 					options.notify_func("done.\n");
 					res = IFCADAPT_OK;
 				}
-				free_sb_list(sbs, sb_count);
+				release_space_boundaries(sbs, sb_count);
 			}
 			else if (generate_res == SBT_TOO_COMPLICATED) {
 				res = IFCADAPT_TOO_COMPLICATED;
@@ -218,8 +219,8 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			else {
 				res = IFCADAPT_UNKNOWN;
 			}
-			free_element_list(elements, element_count);
-			free_space_list(loaded_spaces, loaded_space_count);
+			release_list(elements, element_count);
+			release_list(loaded_spaces, loaded_space_count);
 		}
 		return res;
 	}
@@ -317,14 +318,14 @@ void free_sb_counts(sb_counts counts) {
 	free(counts.virt);
 }
 
-void free_elements(element_info ** elements, size_t count) {
-	free_element_list(elements, count);
+void release_elements(element_info ** elements, size_t count) {
+	release_list(elements, count);
 }
 
-void free_spaces(space_info ** spaces, size_t count) {
-	free_space_list(spaces, count);
+void release_spaces(space_info ** spaces, size_t count) {
+	release_list(spaces, count);
 }
 
 void free_space_boundaries(space_boundary ** sbs, size_t count) {
-	free_sb_list(sbs, count);
+	release_space_boundaries(sbs, count);
 }

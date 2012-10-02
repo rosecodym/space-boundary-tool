@@ -38,5 +38,39 @@ namespace GUI
             // whoops guess i was wrong about "one thing"
             tbOutput.ScrollToEnd();
         }
+
+        private static IList<string> GetFileNames(IDataObject dataObject)
+        {
+            if (dataObject != null && dataObject.GetDataPresent("FileNameW"))
+            {
+                var filenames = dataObject.GetData("FileNameW") as string[];
+                return filenames ?? new string[0];
+            }
+            return new string[0];
+        }
+
+        private void TextBox_PreviewDrag(object sender, DragEventArgs e)
+        {
+            if (GetFileNames(e.Data).Any())
+            {
+                e.Effects = DragDropEffects.All;
+                e.Handled = true;
+            }
+        }
+
+        private void TextBox_PreviewDrop(object sender, DragEventArgs e)
+        {
+            var filenames = GetFileNames(e.Data);
+            var tb = sender as TextBox;
+            if (tb != null && filenames.Any())
+            {
+                tb.Text = filenames[0];
+                // this is a workaround for the fact that the update isn't happening automatically
+                // this is all code from some internet dude that's helping me anyway
+                var expr = tb.GetBindingExpression(TextBox.TextProperty);
+                if (expr != null) { expr.UpdateSource(); }
+            }
+            e.Handled = true; // i don't know what this does but it makes a framework exception go away
+        }
     }
 }

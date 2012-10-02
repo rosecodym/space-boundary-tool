@@ -7,6 +7,15 @@ class unit_scaler;
 
 namespace {
 
+template <typename T>
+T ** create_list(size_t size) {
+	T ** res = (T **)malloc(sizeof(T *) * size);
+	for (size_t i = 0; i < size; ++i) {
+		res[i] = (T *)calloc(1, sizeof(T));
+	}
+	return res;
+}
+
 bool is_shading(const cppw::Instance & inst) {
 	cppw::Select name = inst.get("Name");
 	if (name.is_set() && strstr(((cppw::String)name).data(), "Shading")) {
@@ -66,7 +75,7 @@ size_t get_elements(
 	char buf[256];
 	sprintf(buf, "Creating list for %u elements.\n", infos.size());
 	msg_func(buf);
-	*elements = create_element_list(infos.size());
+	*elements = create_list<element_info>(infos.size());
 	msg_func("Element list created.\n");
 
 	for (size_t i = 0; i < infos.size(); ++i) {
@@ -82,7 +91,7 @@ size_t get_spaces(cppw::Open_model & model, space_info *** spaces, void (*msg_fu
 	auto ss = model.get_set_of("IfcSpace");
 	size_t count = (size_t)ss.count();
 
-	*spaces = create_space_list(count);
+	*spaces = create_list<space_info>(count);
 		
 	for (size_t i = 0; i < count; ++i) {
 		strncpy((*spaces)[i]->id, ((cppw::String)ss.get(i).get("GlobalId")).data(), SPACE_ID_MAX_LEN);

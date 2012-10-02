@@ -7,10 +7,11 @@ using System.Text;
 using System.Windows.Input;
 
 using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
-using IfcConstruction = IfcInformationExtractor.Construction;
+using IfcConstruction = ConstructionManagement.ModelConstructions.ModelConstruction;
+using IfcConstructionMappingSource = ConstructionManagement.ModelConstructions.ModelMappingSource;
 using IfcElement = IfcInformationExtractor.Element;
 
-using MaterialLibraryEntry = MaterialLibrary.LibraryEntry;
+using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
 namespace GUI
 {
@@ -20,7 +21,7 @@ namespace GUI
         private SbtBuildingInformation sbtBuilding;
         private IfcBuildingInformation ifcBuilding;
         private ICollection<MaterialLibraryEntry> libraryMaterials;
-        private ObservableCollection<IfcConstruction> ifcConstructions;
+        private ObservableCollection<IfcConstructionMappingSource> ifcConstructionMappingSources;
         private readonly IddManager idds = new IddManager();
 
         private bool calculatingSBs = false;
@@ -47,7 +48,6 @@ namespace GUI
             set
             {
                 sbtBuilding = value;
-                CheckIfcConstructionsForSbParticipation();
                 Updated("CurrentSbtBuilding");
             }
         }
@@ -58,7 +58,8 @@ namespace GUI
             set
             {
                 ifcBuilding = value;
-                IfcConstructions = new ObservableCollection<IfcConstruction>(ifcBuilding.Constructions.Select(c => new IfcConstruction(c)));
+                IfcConstructionMappingSources = ifcBuilding != null ? new ObservableCollection<IfcConstructionMappingSource>(ifcBuilding.ConstructionMappingSources) : null;
+                PerformAutomaticMaterialMapping();
                 Updated("CurrentIfcBuilding");
             }
         }
@@ -69,18 +70,18 @@ namespace GUI
             set
             {
                 libraryMaterials = value;
+                PerformAutomaticMaterialMapping();
                 Updated("LibraryMaterials");
             }
         }
 
-        public ObservableCollection<IfcConstruction> IfcConstructions
+        public ObservableCollection<IfcConstructionMappingSource> IfcConstructionMappingSources
         {
-            get { return ifcConstructions; }
+            get { return ifcConstructionMappingSources; }
             set
             {
-                ifcConstructions = value;
-                CheckIfcConstructionsForSbParticipation();
-                Updated("IfcConstructions");
+                ifcConstructionMappingSources = value;
+                Updated("IfcConstructionMappingSources");
             }
         }
 
@@ -90,6 +91,16 @@ namespace GUI
             set
             {
                 Properties.Settings.Default.InputIfcFilename = value;
+                try
+                {
+                    OutputIfcFilePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(value), System.IO.Path.GetFileNameWithoutExtension(value) + "-SB.ifc");
+                }
+                catch (Exception) { }
+                try
+                {
+                    OutputIdfFilePath = System.IO.Path.ChangeExtension(value, "idf");
+                }
+                catch (Exception) { }
                 Updated("InputIfcFilePath");
             }
         }
@@ -431,7 +442,7 @@ namespace GUI
                     IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
                     if (selectedIfcConstructions != null)
                     {
-                        Operations.Miscellaneous.LinkConstructions(this.SelectedIdfConstruction, selectedIfcConstructions.Select(c => c as IfcConstruction));
+                        Operations.Miscellaneous.LinkConstructions(this.SelectedIdfConstruction, selectedIfcConstructions.Select(c => c as IfcConstructionMappingSource));
                     }
                 },
                 obj =>
@@ -439,7 +450,7 @@ namespace GUI
                     IEnumerable<object> selectedIfcConstructions = obj as IEnumerable<object>;
                     if (this.SelectedIdfConstruction != null && selectedIfcConstructions != null)
                     {
-                        return selectedIfcConstructions.All(c => c is IfcConstruction && ((IfcConstruction)c).IsForWindows == this.SelectedIdfConstruction.IsForWindows);
+                        return selectedIfcConstructions.All(c => c is IfcConstructionMappingSource && ((IfcConstructionMappingSource)c).IsForWindows == this.SelectedIdfConstruction.IsForWindows);
                     }
                     return false;
                 });
@@ -452,39 +463,30 @@ namespace GUI
 
         public Action<string> UpdateOutputDirectly { get; private set; }
 
-        private void CheckIfcConstructionsForSbParticipation()
-        {
-            try
-            {
-                if (CurrentSbtBuilding != null && IfcConstructions != null)
-                {
-                    foreach (Sbt.CoreTypes.SpaceBoundary sb in this.CurrentSbtBuilding.SpaceBoundaries)
-                    {
-                        foreach (Sbt.CoreTypes.MaterialLayer layer in sb.MaterialLayers)
-                        {
-                            string elementGuid = this.CurrentSbtBuilding.Elements[layer.Id - 1].Guid;
-                            IfcElement ifcElement = this.CurrentIfcBuilding.ElementsByGuid[elementGuid];
-                            foreach (IfcConstruction c in this.IfcConstructions)
-                            {
-                                if (c.Name == ifcElement.AssociatedConstruction.Name)
-                                {
-                                    c.ParticipatesInSpaceBoundary = true;
-                                }
-                            }
-                        }
-                    }
-                    foreach (IfcConstruction c in this.IfcConstructions)
-                    {
-                        if (!c.ParticipatesInSpaceBoundary.HasValue) { c.ParticipatesInSpaceBoundary = false; }
-                    }
-                }
-            }
-            catch (Exception) { /* no time for this right now */ }
-        }
-
         private void Updated(string propertyName)
         {
             if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName)); }
+        }
+
+        private void PerformAutomaticMaterialMapping()
+        {
+            if (this.CurrentIfcBuilding != null && this.LibraryMaterials != null)
+            {
+                Func<string, string> removeSpaces = str => str.Replace(" ", String.Empty);
+                Dictionary<string, MaterialLibraryEntry> library = new Dictionary<string, MaterialLibraryEntry>();
+                foreach (MaterialLibraryEntry entry in this.LibraryMaterials)
+                {
+                    library[removeSpaces(entry.Name)] = entry;
+                }
+                foreach (IfcConstructionMappingSource src in this.CurrentIfcBuilding.ConstructionMappingSources)
+                {
+                    MaterialLibraryEntry match;
+                    if (library.TryGetValue(removeSpaces(src.Name), out match))
+                    {
+                        src.MappingTarget = match;
+                    }
+                }
+            }
         }
 
         // there's a DateTime method I could use here but I don't want to be too much smarter than E+

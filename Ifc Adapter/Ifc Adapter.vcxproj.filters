@@ -78,6 +78,9 @@
     <ClInclude Include="src\get_length_units_per_meter.h">
       <Filter>operations</Filter>
     </ClInclude>
+    <ClInclude Include="src\release.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\precompiled.cpp">
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="src\get_length_units_per_meter.cpp">
       <Filter>operations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\release.cpp">
+      <Filter>main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

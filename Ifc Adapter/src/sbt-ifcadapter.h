@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../Core/src/sbt-core.h"
-#include "../../Core/src/sbt-core-helpers.h"
 
 #ifdef __cplusplus
 #define BOOLTYPE bool
@@ -56,10 +55,11 @@ __declspec(DLLINEX) ifcadapter_return_t load_and_run_from(
 	size_t * space_count,
 	space_boundary *** space_boundaries,
 	size_t * total_sb_count);
+
+__declspec(DLLINEX) void release_elements(element_info ** elements, size_t count);
+__declspec(DLLINEX) void release_spaces(space_info ** spaces, size_t count);
+
 __declspec(DLLINEX) void free_sb_counts(sb_counts counts);
-__declspec(DLLINEX) void free_elements(element_info ** elements, size_t count);
-__declspec(DLLINEX) void free_spaces(space_info ** spaces, size_t count);
-__declspec(DLLINEX) void free_space_boundaries(space_boundary ** sbs, size_t count);
 #undef DLLINEX
 
 #undef BEGINSTRUCT

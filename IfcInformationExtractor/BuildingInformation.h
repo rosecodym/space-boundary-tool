@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Construction.h"
 #include "Element.h"
 #include "Space.h"
 
@@ -22,7 +21,7 @@ public:
 
 	property IDictionary<String ^, Space ^> ^ SpacesByGuid;
 	property IDictionary<String ^, Element ^> ^ ElementsByGuid;
-	property IEnumerable<Construction ^> ^ Constructions;
+	property ICollection<ConstructionManagement::ModelConstructions::ModelMappingSource ^> ^ ConstructionMappingSources;
 };
 
 } // namespace IfcInformationExtractor

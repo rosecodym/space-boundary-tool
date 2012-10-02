@@ -24,7 +24,7 @@
             </Grid.ColumnDefinitions>
             <Button Content="Browse..." Height="23" HorizontalAlignment="Center" Margin="5" Name="button1" VerticalAlignment="Center" Width="75" Grid.Column="2" Command="{Binding BrowseToInputIfcFileCommand}" />
             <Label Content="IFC File:" Height="28" HorizontalAlignment="Center" Margin="5" Name="label1" VerticalAlignment="Center" />
-            <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="5" Name="textBox1" VerticalAlignment="Center" Width="Auto" Padding="1"  Text="{Binding InputIfcFilePath}" DataContext="{Binding}"  />
+            <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="5" Name="textBox1" VerticalAlignment="Center" Width="Auto" Padding="1"  Text="{Binding InputIfcFilePath}" DataContext="{Binding}" PreviewDragEnter="TextBox_PreviewDrag" PreviewDragOver="TextBox_PreviewDrag" PreviewDrop="TextBox_PreviewDrop" />
         </Grid>
         <TabControl Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tabControl1" VerticalAlignment="Stretch" Width="Auto" SelectedIndex="{Binding SelectedTabIndex}">
             <TabItem Header="Space Boundaries" Name="tabItem1">
@@ -71,7 +71,7 @@
                                         ToolTip="{Binding ReasonForDisabledSBCalculation}" />
                                     <CheckBox Content="Write IFC file with new space boundaries to:" Grid.Row="1" Height="16" HorizontalAlignment="Left" Margin="4" Name="checkBox4" VerticalAlignment="Center" IsChecked="{Binding WriteIfc}"/>
                                     <Button Content="Browse..." Grid.Column="2" Grid.Row="1" Height="23" HorizontalAlignment="Center" Margin="4" Name="button4" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIfcFileCommand}"/>
-                                    <TextBox Grid.Column="1" Grid.Row="1" Height="23" HorizontalAlignment="Stretch" Margin="4" Name="textBox3" VerticalAlignment="Center" Width="Auto" MinWidth="100" IsEnabled="{Binding WriteIfc}" Text="{Binding OutputIfcFilePath}"/>
+                                    <TextBox Grid.Column="1" Grid.Row="1" Height="23" HorizontalAlignment="Stretch" Margin="4" Name="textBox3" VerticalAlignment="Center" Width="Auto" MinWidth="100" IsEnabled="{Binding WriteIfc}" Text="{Binding OutputIfcFilePath}" PreviewDragEnter="TextBox_PreviewDrag" PreviewDragOver="TextBox_PreviewDrag" PreviewDrop="TextBox_PreviewDrop" />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -125,7 +125,7 @@
                                     </Grid.ColumnDefinitions>
                                     <Label Content="IDF Materials Library:" Height="28" HorizontalAlignment="Center" Margin="0" Name="label15" VerticalAlignment="Center" />
                                     <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button7" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToMaterialsLibraryCommand}"/>
-                                    <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox4" VerticalAlignment="Stretch" Width="Auto" Text="{Binding MaterialsLibraryPath}"/>
+                                    <TextBox Grid.Column="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox4" VerticalAlignment="Stretch" Width="Auto" Text="{Binding MaterialsLibraryPath}" PreviewDrop="TextBox_PreviewDrop" PreviewDragEnter="TextBox_PreviewDrag" PreviewDragOver="TextBox_PreviewDrag" />
                                     <Button 
                                         Content="Load" 
                                         Grid.Column="3" 
@@ -155,23 +155,17 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="143*" />
                                 </Grid.RowDefinitions>
-                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructions}" AutoGenerateColumns="False">
+                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructionMappingSources}" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
                                         <DataGridTemplateColumn Header="Name" IsReadOnly="True">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Name}">
-                                                        <TextBlock.ToolTip>
-                                                            <TextBlock Text="{Binding Summary}" />
-                                                        </TextBlock.ToolTip>
-                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Name}" />
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
-                                        <DataGridTextColumn Header="Composite" Binding="{Binding IsComposite}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Needs Mapping" Binding="{Binding ParticipatesInSpaceBoundary}"/>
-                                        <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding IdfMappingTarget}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding MappingTarget}" IsReadOnly="True" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                                 <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid13" VerticalAlignment="Stretch" Width="Auto">
@@ -215,7 +209,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Label Content="Output IDF:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label13" VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1" Grid.ColumnSpan="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox2" VerticalAlignment="Center" Width="Auto" Text="{Binding OutputIdfFilePath}"/>
+                        <TextBox Grid.Column="1" Grid.ColumnSpan="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox2" VerticalAlignment="Center" Width="Auto" Text="{Binding OutputIdfFilePath}" PreviewDragEnter="TextBox_PreviewDrag" PreviewDragOver="TextBox_PreviewDrag" PreviewDrop="TextBox_PreviewDrop" />
                         <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button5" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIdfFileCommand}"/>
                         <Button 
                             Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" 

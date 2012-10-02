@@ -6,7 +6,6 @@
 #include "exceptions.h"
 #include "report.h"
 #include "sbt-core.h"
-#include "sbt-core-helpers.h"
 #include "surface.h"
 
 extern sb_calculation_options g_opts;

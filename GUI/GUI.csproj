@@ -62,7 +62,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="IfcConstruction.cs" />
     <Compile Include="Operations\BuildingLoad.cs" />
     <Compile Include="Operations\IdfGeneration\BuildingSurface.cs" />
     <Compile Include="Operations\IdfGeneration\FenestrationSurface.cs" />
@@ -123,9 +122,9 @@
     <None Include="Resources\V7-1-0-Energy+.idd" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConstructionManager\ConstructionManager.fsproj">
-      <Project>{F4D996A3-4B9B-46BE-91CD-2AA604549840}</Project>
-      <Name>ConstructionManager</Name>
+    <ProjectReference Include="..\ConstructionManagement\ConstructionManagement.fsproj">
+      <Project>{B08D640C-794E-486E-9B61-3790D4FA0D97}</Project>
+      <Name>ConstructionManagement</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
       <Project>{2B180C45-2DA1-4C26-9850-F92B9369D626}</Project>
@@ -134,10 +133,6 @@
     <ProjectReference Include="..\IfcInformationExtractor\IfcInformationExtractor.vcxproj">
       <Project>{C30F68F1-3D01-419D-A925-05D517906CC0}</Project>
       <Name>IfcInformationExtractor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MaterialLibrary\MaterialLibrary.fsproj">
-      <Project>{39A5C20B-7748-4E42-A231-FF6E1F4BF7B9}</Project>
-      <Name>MaterialLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

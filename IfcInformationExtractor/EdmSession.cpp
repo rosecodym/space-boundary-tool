@@ -1,11 +1,11 @@
 #include <cpp_edmi.h>
 
-#include "ConstructionFactory.h"
-
 #include "EdmSession.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
+
+typedef ConstructionManagement::ModelConstructions::ModelConstructionCollection ConstructionCollection;
 
 namespace IfcInformationExtractor {
 
@@ -39,14 +39,14 @@ ICollection<Space ^> ^ GetSpaces(cppw::Open_model * model) {
 	return spaces;
 }
 
-ICollection<Element ^> ^ GetElements(cppw::Open_model * model, ConstructionFactory ^ constructionFactory) {
+ICollection<Element ^> ^ GetElements(cppw::Open_model * model, ConstructionCollection ^ constructions) {
 	if (model == __nullptr) {
 		return nullptr;
 	}
 	cppw::Instance_set instances = model->get_set_of("IfcBuildingElement", cppw::include_subtypes);
 	IList<Element ^> ^ elements = gcnew List<Element ^>();
 	for (instances.move_first(); instances.move_next(); ) {
-		elements->Add(gcnew Element(instances.get(), constructionFactory));
+		elements->Add(gcnew Element(instances.get(), constructions));
 	}
 	return elements;
 }
@@ -141,8 +141,6 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 
 	res->Filename = currentIfcPath;
 
-	ConstructionFactory ^ cFactory = gcnew ConstructionFactory();
-
 	GetLocationInformation(model, res->NorthAxis, res->Latitude, res->Longitude, res->Elevation);
 
 	ICollection<Space ^> ^ spaces = GetSpaces(model);
@@ -150,16 +148,12 @@ BuildingInformation ^ EdmSession::GetBuildingInformation() {
 		res->SpacesByGuid[s->Guid] = s;
 	}
 
-	ICollection<Element ^> ^ elements = GetElements(model, cFactory);
+	ConstructionCollection ^ constructions = gcnew ConstructionCollection();
+	ICollection<Element ^> ^ elements = GetElements(model, constructions);
 	for each(Element ^ e in elements) {
 		res->ElementsByGuid[e->Guid] = e;
 	}
-
-	List<Construction ^> ^ constructions = gcnew List<Construction ^>(); // my kingdom for c++/cli lambdas~~~
-	for each(Element ^ e in res->ElementsByGuid->Values) {
-		constructions->Add(e->AssociatedConstruction);
-	}
-	res->Constructions = gcnew SortedSet<Construction ^>(constructions);
+	res->ConstructionMappingSources = constructions->MappingSources;
 
 	return res;
 }

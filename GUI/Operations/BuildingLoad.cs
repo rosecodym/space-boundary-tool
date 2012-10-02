@@ -23,6 +23,7 @@ namespace GUI.Operations
                 try
                 {
                     vm.CurrentlyLoadingIfcModel = true;
+                    vm.CurrentIfcBuilding = null;
                     BackgroundWorker worker = new BackgroundWorker();
                     worker.WorkerReportsProgress = true;
                     worker.DoWork += new DoWorkEventHandler(DoBuildingLoadWork);
