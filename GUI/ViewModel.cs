@@ -59,6 +59,7 @@ namespace GUI
             {
                 ifcBuilding = value;
                 IfcConstructionMappingSources = ifcBuilding != null ? new ObservableCollection<IfcConstructionMappingSource>(ifcBuilding.ConstructionMappingSources) : null;
+                PerformAutomaticMaterialMapping();
                 Updated("CurrentIfcBuilding");
             }
         }
@@ -69,6 +70,7 @@ namespace GUI
             set
             {
                 libraryMaterials = value;
+                PerformAutomaticMaterialMapping();
                 Updated("LibraryMaterials");
             }
         }
@@ -464,6 +466,27 @@ namespace GUI
         private void Updated(string propertyName)
         {
             if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName)); }
+        }
+
+        private void PerformAutomaticMaterialMapping()
+        {
+            if (this.CurrentIfcBuilding != null && this.LibraryMaterials != null)
+            {
+                Func<string, string> removeSpaces = str => str.Replace(" ", String.Empty);
+                Dictionary<string, MaterialLibraryEntry> library = new Dictionary<string, MaterialLibraryEntry>();
+                foreach (MaterialLibraryEntry entry in this.LibraryMaterials)
+                {
+                    library[removeSpaces(entry.Name)] = entry;
+                }
+                foreach (IfcConstructionMappingSource src in this.CurrentIfcBuilding.ConstructionMappingSources)
+                {
+                    MaterialLibraryEntry match;
+                    if (library.TryGetValue(removeSpaces(src.Name), out match))
+                    {
+                        src.MappingTarget = match;
+                    }
+                }
+            }
         }
 
         // there's a DateTime method I could use here but I don't want to be too much smarter than E+
