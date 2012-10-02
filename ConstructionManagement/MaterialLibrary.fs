@@ -148,6 +148,16 @@ type LibraryEntry =
             | NoMass(_) -> LibraryEntryType.NoMass
             | Opaque(_) -> LibraryEntryType.Opaque
 
+        member this.TypeString =
+            match this with
+            | AirGap(_) -> "Air gap"
+            | Composite(_) when this.IsForWindows -> "Window composite"
+            | Composite(_) -> "Non-window composite"
+            | Gas(_) -> "Gas"
+            | Glazing(_) -> "Glazing"
+            | NoMass(_) -> "No mass"
+            | Opaque(_) -> "Normal"
+
         member this.IsForWindows =
             match this with
             | AirGap(_) | NoMass(_) | Opaque(_) -> false
