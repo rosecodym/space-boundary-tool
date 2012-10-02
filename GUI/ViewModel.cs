@@ -58,7 +58,7 @@ namespace GUI
             set
             {
                 ifcBuilding = value;
-                IfcConstructionMappingSources = new ObservableCollection<IfcConstructionMappingSource>(value.ConstructionMappingSources);
+                IfcConstructionMappingSources = ifcBuilding != null ? new ObservableCollection<IfcConstructionMappingSource>(ifcBuilding.ConstructionMappingSources) : null;
                 Updated("CurrentIfcBuilding");
             }
         }
