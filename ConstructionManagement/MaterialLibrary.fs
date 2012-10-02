@@ -82,12 +82,18 @@ type LibraryEntryNoMass = {
     Name: FieldValue
     Roughness: FieldValue
     ThermalResistance: FieldValue
+    ThermalAbsorptance: FieldValue
+    SolarAbsorptance: FieldValue
+    VisibleAbsorptance: FieldValue
     }
     with
         static member internal Construct (obj:IdfObject) = {
             Name = obj.Fields.["Name"].Value
             Roughness = obj.Fields.["Roughness"].Value
             ThermalResistance = obj.Fields.["Thermal Resistance"].Value
+            ThermalAbsorptance = obj.Fields.["Thermal Absorptance"].Value
+            SolarAbsorptance = obj.Fields.["Solar Absorptance"].Value
+            VisibleAbsorptance = obj.Fields.["Visible Absorptance"].Value
             }
 
 type LibraryEntryOpaque = {
