@@ -26,20 +26,15 @@ type OutputManager () =
     let retrieveOpaqueSurface (libraryEntry:LibraryEntryOpaque) =
         retrieveLayer (OutputLayerOpaque(sprintf "%s (surface only)" (libraryEntry.Name.ToString()), libraryEntry, 0.001))
 
-    let retrieveOpaqueOrAirGapLayer (libraryEntry:LibraryEntry) thickness = // this is gross but i can't think of an easier, better way
-        match libraryEntry with
-        | LibraryEntry.Opaque(props) -> retrieveOpaqueLayer props thickness
-        | LibraryEntry.AirGap(props) -> retrieveLayer (OutputLayerAirGap(float props.ThermalResistance))
-        | _ -> raise (ArgumentException())
-
-    let retrieveExactCopy (libraryEntry:LibraryEntry) =
-        match libraryEntry with
-        | LibraryEntry.AirGap(props) -> retrieveLayer (OutputLayerAirGap(float props.ThermalResistance))
-        | LibraryEntry.Composite(_) -> raise (ArgumentException())
-        | LibraryEntry.Gas(props) -> retrieveLayer (OutputLayerGas(props.Name.ToString(), props, float props.Thickness))
-        | LibraryEntry.Glazing(props) -> retrieveLayer (OutputLayerGlazing(props.Name.ToString(), props, float props.Thickness))
-        | LibraryEntry.NoMass(props) -> raise (NotImplementedException("Material:NoMass entries cannot yet be mapping targets."))
-        | LibraryEntry.Opaque(props) -> retrieveOpaqueLayer props (float props.Thickness)
+    let retrieveCopy (newThickness: double option) (libraryEntry:LibraryEntry) =
+        match libraryEntry, newThickness with
+        | LibraryEntry.AirGap(props), _ -> retrieveLayer (OutputLayerAirGap(float props.ThermalResistance))
+        | LibraryEntry.Composite(_), _ -> raise (ArgumentException())
+        | LibraryEntry.Gas(props), _ -> retrieveLayer (OutputLayerGas(props.Name.ToString(), props, float props.Thickness))
+        | LibraryEntry.Glazing(props), _ -> retrieveLayer (OutputLayerGlazing(props.Name.ToString(), props, float props.Thickness))
+        | LibraryEntry.NoMass(props), _ -> retrieveLayer (OutputLayerNoMass(props.Name.ToString(), props))
+        | LibraryEntry.Opaque(props), Some(t) -> retrieveOpaqueLayer props t
+        | LibraryEntry.Opaque(props), None -> retrieveOpaqueLayer props (float props.Thickness)
 
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
     member this.AllOutputConstructions = constructions :> IEnumerable<OutputConstruction>
@@ -47,12 +42,12 @@ type OutputManager () =
     member this.ConstructionNameForLayers(constructions:IList<ModelConstruction>, thicknesses:IList<double>) =
         match List.ofSeq constructions with
         | Empty -> (retrieveConstruction ([retrieveLayer (OutputLayerInfraredTransparent())]) None).Name
-        | MappedWindow(name, libraryLayers) -> (retrieveConstruction (libraryLayers |> List.map retrieveExactCopy) (Some(name))).Name
+        | MappedWindow(name, libraryLayers) -> (retrieveConstruction (libraryLayers |> List.map (retrieveCopy None)) (Some(name))).Name
         | SimpleOnly(infos) -> 
-            let outputLayers = List.map2 retrieveOpaqueOrAirGapLayer infos (List.ofSeq thicknesses)
+            let outputLayers = List.map2 retrieveCopy (thicknesses |> Seq.map (fun t -> Some(t)) |> List.ofSeq) infos
             (retrieveConstruction outputLayers None).Name
         | SingleComposite(name, layers) -> // if the thicknesses don't match, then too bad
-            let outputLayers = layers |> List.map (fun (entry, thickness) -> retrieveOpaqueOrAirGapLayer entry thickness)
+            let outputLayers = layers |> List.map (fun (entry, thickness) -> retrieveCopy (Some(thickness)) entry)
             (retrieveConstruction outputLayers name).Name
         | UnmappedWindow -> "WINDOW WITH UNMAPPED CONSTRUCTION"
         | MixedSingleAndComposite -> "UNSUPPORTED MAPPING (MIXED SINGLE MATERIALS AND COMPOSITES)"
@@ -72,4 +67,5 @@ type OutputManager () =
             match firstLayer.MappingTarget with // hope it's symmetrical!
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
             | LibraryEntry.Opaque(entry) -> (retrieveConstruction [retrieveOpaqueSurface entry] None).Name
+            | entry -> (retrieveConstruction [retrieveCopy None entry] None).Name
             | _ -> "BAD MAPPING FOR THIRD-LEVEL SURFACE"
