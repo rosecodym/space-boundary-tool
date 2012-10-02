@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="OperationInformation.cs" />
     <Compile Include="Operations\BuildingLoad.cs" />
     <Compile Include="Operations\IdfGeneration\BuildingSurface.cs" />
     <Compile Include="Operations\IdfGeneration\FenestrationSurface.cs" />

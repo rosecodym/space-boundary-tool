@@ -24,10 +24,10 @@ namespace GUI
         private ObservableCollection<IfcConstructionMappingSource> ifcConstructionMappingSources;
         private readonly IddManager idds = new IddManager();
 
-        private bool calculatingSBs = false;
-        private bool loadingMaterialLibrary = false;
-        private bool loadingIfcModel = false;
-        private bool generatingIdf = false;
+        readonly private OperationInformation sbCalculation;
+        readonly private OperationInformation buildingLoad;
+        readonly private OperationInformation materialLibraryLoad;
+        readonly private OperationInformation idfGeneration;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -282,42 +282,10 @@ namespace GUI
             set { Properties.Settings.Default.Timestep = value; }
         }
 
-        public bool CurrentlyCalculatingSBs
-        {
-            get { return calculatingSBs; }
-            set
-            {
-                calculatingSBs = value;
-                Updated("CurrentlyCalculatingSBs");
-            }
-        }
-        public bool CurrentlyLoadingMaterialLibrary
-        {
-            get { return loadingMaterialLibrary; }
-            set
-            {
-                loadingMaterialLibrary = value;
-                Updated("CurrentlyLoadingMaterialLibrary");
-            }
-        }
-        public bool CurrentlyLoadingIfcModel
-        {
-            get { return loadingIfcModel; }
-            set
-            {
-                loadingIfcModel = value;
-                Updated("CurrentlyLoadingIfcModel");
-            }
-        }
-        public bool CurrentlyGeneratingIdf
-        {
-            get { return generatingIdf; }
-            set
-            {
-                generatingIdf = value;
-                Updated("CurrentlyGeneratingIdf");
-            }
-        }
+        public bool CurrentlyCalculatingSBs { get { return this.sbCalculation.InProgress; } }
+        public bool CurrentlyLoadingMaterialLibrary { get { return this.materialLibraryLoad.InProgress; } }
+        public bool CurrentlyLoadingIfcModel { get { return this.buildingLoad.InProgress; } }
+        public bool CurrentlyGeneratingIdf { get { return this.idfGeneration.InProgress; } }
 
         public string ReasonForDisabledSBCalculation
         {
@@ -382,6 +350,11 @@ namespace GUI
 
         public ViewModel(Action<string> updateOutputDirectly)
         {
+            this.sbCalculation = new OperationInformation(Operations.SbtInvocation.Execute, this);
+            this.materialLibraryLoad = new OperationInformation(Operations.MaterialsLibraryLoad.Execute, this);
+            this.buildingLoad = new OperationInformation(Operations.BuildingLoad.Execute, this);
+            this.idfGeneration = new OperationInformation(Operations.IdfGeneration.Execute, this);
+
             var propertyDependencies = new[] 
             {
                 new
@@ -432,10 +405,10 @@ namespace GUI
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => ReasonForDisabledSBCalculation == null);
-            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => ReasonForDisabledIdfGeneration == null);
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => ReasonForDisabledMaterialLibraryLoad == null);
-            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => ReasonForDisabledIfcModelLoad == null);
+            ExecuteSbtCommand = new RelayCommand(_ => sbCalculation.Operate(), _ => ReasonForDisabledSBCalculation == null);
+            GenerateIdfCommand = new RelayCommand(_ => idfGeneration.Operate(), _ => ReasonForDisabledIdfGeneration == null);
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => materialLibraryLoad.Operate(), _ => ReasonForDisabledMaterialLibraryLoad == null);
+            LoadIfcBuildingCommand = new RelayCommand(_ => buildingLoad.Operate(), _ => ReasonForDisabledIfcModelLoad == null);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
                 {

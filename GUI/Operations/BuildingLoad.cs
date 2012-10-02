@@ -16,40 +16,30 @@ namespace GUI.Operations
             public Action<string> Notify { get; set; }
         }
 
-        static public void Execute(ViewModel vm)
+        static public void Execute(ViewModel vm, Action begin, Action end)
         {
-            if (!vm.CurrentlyLoadingIfcModel)
+            vm.CurrentIfcBuilding = null;
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += new DoWorkEventHandler(DoBuildingLoadWork);
+            worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
             {
-                try
-                {
-                    vm.CurrentlyLoadingIfcModel = true;
-                    vm.CurrentIfcBuilding = null;
-                    BackgroundWorker worker = new BackgroundWorker();
-                    worker.WorkerReportsProgress = true;
-                    worker.DoWork += new DoWorkEventHandler(DoBuildingLoadWork);
-                    worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
-                    {
-                        string msg = e.UserState as string;
-                        if (msg != null) { vm.UpdateOutputDirectly(msg); }
-                    });
-                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
-                    {
-                        var res = e.Result as IfcBuildingInformation;
-                        if (res != null) { vm.CurrentIfcBuilding = res; }
-                        vm.CurrentlyLoadingIfcModel = false;
-                    });
+                string msg = e.UserState as string;
+                if (msg != null) { vm.UpdateOutputDirectly(msg); }
+            });
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
+            {
+                var res = e.Result as IfcBuildingInformation;
+                if (res != null) { vm.CurrentIfcBuilding = res; }
+                end();
+            });
 
-                    Parameters p = new Parameters();
-                    p.Path = vm.InputIfcFilePath;
-                    p.Notify = msg => worker.ReportProgress(0, msg);
+            Parameters p = new Parameters();
+            p.Path = vm.InputIfcFilePath;
+            p.Notify = msg => worker.ReportProgress(0, msg);
 
-                    worker.RunWorkerAsync(p);
-                }
-                catch (Exception)
-                {
-                    vm.CurrentlyLoadingIfcModel = false;
-                }
-            }
+            begin();
+            worker.RunWorkerAsync(p);
         }
 
         static void DoBuildingLoadWork(object sender, DoWorkEventArgs e)

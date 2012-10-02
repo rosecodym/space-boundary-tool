@@ -21,39 +21,32 @@ namespace GUI.Operations
             public Action<string> Notify { get; set; }
         }
 
-        static public void Execute(ViewModel vm)
+        static public void Execute(ViewModel vm, Action begin, Action end)
         {
-            if (!vm.CurrentlyLoadingMaterialLibrary && !String.IsNullOrWhiteSpace(vm.MaterialsLibraryPath))
+            if (!String.IsNullOrWhiteSpace(vm.MaterialsLibraryPath))
             {
-                try
+                BackgroundWorker worker = new BackgroundWorker();
+                worker.WorkerReportsProgress = true;
+                worker.DoWork += new DoWorkEventHandler(DoLoadMaterialsLibraryWork);
+                worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
                 {
-                    vm.CurrentlyLoadingMaterialLibrary = true;
-                    BackgroundWorker worker = new BackgroundWorker();
-                    worker.WorkerReportsProgress = true;
-                    worker.DoWork += new DoWorkEventHandler(DoLoadMaterialsLibraryWork);
-                    worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
-                    {
-                        string msg = e.UserState as string;
-                        if (msg != null) { vm.UpdateOutputDirectly(msg); }
-                    });
-                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
-                    {
-                        var res = e.Result as ICollection<MaterialLibraryEntry>;
-                        if (res != null) { vm.LibraryMaterials = res; }
-                        vm.CurrentlyLoadingMaterialLibrary = false;
-                    });
-
-                    Parameters p = new Parameters();
-                    p.Path = vm.MaterialsLibraryPath;
-                    p.Idds = vm.Idds;
-                    p.Notify = msg => worker.ReportProgress(0, msg);
-
-                    worker.RunWorkerAsync(p);
-                }
-                catch (Exception)
+                    string msg = e.UserState as string;
+                    if (msg != null) { vm.UpdateOutputDirectly(msg); }
+                });
+                worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
                 {
-                    vm.CurrentlyLoadingMaterialLibrary = false;
-                }
+                    var res = e.Result as ICollection<MaterialLibraryEntry>;
+                    if (res != null) { vm.LibraryMaterials = res; }
+                    end();
+                });
+
+                Parameters p = new Parameters();
+                p.Path = vm.MaterialsLibraryPath;
+                p.Idds = vm.Idds;
+                p.Notify = msg => worker.ReportProgress(0, msg);
+
+                begin();
+                worker.RunWorkerAsync(p);
             }
         }
 
