@@ -8,7 +8,10 @@ type OutputConstruction (layers:OutputLayer array, humanReadableName:string opti
         layers 
         |> Seq.map (fun layer -> if layer <> Unchecked.defaultof<OutputLayer> then layer.Name else "UNMAPPED MATERIAL")
         |> Seq.toArray
-    let identifier = String.concat "!" layerNames // "!" is the separator because it can't appear in E+ names
+    let identifier = 
+        match humanReadableName with
+        | Some(name) -> sprintf "%s!%s" name (String.concat "!" layerNames) // "!" is the separator because it can't appear in E+ names
+        | None -> sprintf "!%s" (String.concat "!" layerNames)
 
     member this.Name =
         match humanReadableName, layerNames with

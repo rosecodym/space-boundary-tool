@@ -60,4 +60,9 @@ type OutputManager () =
             | LibraryEntry.Composite(_) -> "COULDN'T BUILD CONSTRUCTION (SURFACE FOR COMPOSITE LIBRARY ENTRY)"
             | _ -> "INVALID MAPPING (OPAQUE TO NON-OPAQUE)"
         | ModelConstruction.Window(_) -> "COULDN'T BUILD CONSTRUCTION (THIRD-LEVEL WINDOW SURFACE)"
-        | ModelConstruction.Composite(_) -> "COULDN'T BUILD CONSTRUCTION (SURFACE FOR COMPOSITE MODEL ELEMENT)"
+        | ModelConstruction.Composite(_, layers) ->
+            let firstLayer = fst layers.[0]
+            match firstLayer.MappingTarget with // hope it's symmetrical!
+            | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
+            | LibraryEntry.Opaque(entry) -> (retrieveConstruction (Array.create 1 (retrieveOpaqueSurface entry)) None).Name
+            | _ -> "BAD MAPPING FOR THIRD-LEVEL SURFACE"

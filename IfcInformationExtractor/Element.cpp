@@ -101,7 +101,7 @@ ModelConstruction ^ createConstructionForCommon(const cppw::Instance & element, 
 			return createConstruction((cppw::Instance)rel.get("RelatingMaterial"), elementGuid, constructions);
 		}
 	}
-	return constructions->GetModelConstructionSingleOpaque("(construction for missing material properties");
+	return constructions->GetModelConstructionSingleOpaque("(construction for missing material properties)");
 }
 
 ModelConstruction ^ createConstructionFor(const cppw::Instance & buildingElement, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
