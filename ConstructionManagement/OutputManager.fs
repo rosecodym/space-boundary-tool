@@ -26,6 +26,12 @@ type OutputManager () =
     let retrieveOpaqueSurface (libraryEntry:LibraryEntryOpaque) =
         retrieveLayer (OutputLayerOpaque(sprintf "%s (surface only)" (libraryEntry.Name.ToString()), libraryEntry, 0.001))
 
+    let retrieveOpaqueOrAirGapLayer (libraryEntry:LibraryEntry) thickness = // this is gross but i can't think of an easier, better way
+        match libraryEntry with
+        | LibraryEntry.Opaque(props) -> retrieveOpaqueLayer props thickness
+        | LibraryEntry.AirGap(props) -> retrieveLayer (OutputLayerAirGap(float props.ThermalResistance))
+        | _ -> raise (ArgumentException())
+
     let retrieveExactCopy (libraryEntry:LibraryEntry) =
         match libraryEntry with
         | LibraryEntry.AirGap(props) -> retrieveLayer (OutputLayerAirGap(float props.ThermalResistance))
@@ -41,8 +47,8 @@ type OutputManager () =
         match Array.ofSeq constructions with
         | Empty -> (retrieveConstruction (Array.create 1 (retrieveLayer (OutputLayerInfraredTransparent()))) None).Name
         | MappedWindow(name, libraryLayers) -> (retrieveConstruction (libraryLayers |> Array.map retrieveExactCopy) (Some(name))).Name
-        | OpaqueSingleOnly(infos) -> 
-            let outputLayers = Array.map2 retrieveOpaqueLayer infos (Array.ofSeq thicknesses)
+        | SimpleOnly(infos) -> 
+            let outputLayers = Array.map2 retrieveOpaqueOrAirGapLayer infos (Array.ofSeq thicknesses)
             (retrieveConstruction outputLayers None).Name
         | SingleComposite(name, layers) -> // if the thicknesses don't match, then too bad
             let outputLayers = Array.map (fun (entry, thickness) -> match entry with | Opaque(opaque) -> retrieveOpaqueLayer opaque thickness | _ -> failwith "bad mapping") layers
