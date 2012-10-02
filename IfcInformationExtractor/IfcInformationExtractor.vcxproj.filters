@@ -27,16 +27,7 @@
     <ClInclude Include="BuildingInformation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SingleMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CompositeConstruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Space.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BadMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
