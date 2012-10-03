@@ -99,7 +99,7 @@
                             </Grid>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Row="2" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox3" VerticalAlignment="Stretch" Width="Auto" Header="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationToSbSummaryTitleConverter}}">
+                    <GroupBox Grid.Row="2" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox3" VerticalAlignment="Stretch" Width="Auto" Header="{Binding CurrentSbtBuilding, Converter={StaticResource BuildingInformationToSbSummaryTitleConverter}}">
                         <Grid VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
