@@ -188,7 +188,6 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                         <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Usage" Binding="{Binding Usage}" IsReadOnly="True" />
                                         <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding MappingTarget}" IsReadOnly="True" />
                                     </DataGrid.Columns>
                                 </DataGrid>
