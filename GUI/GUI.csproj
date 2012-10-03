@@ -45,6 +45,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -63,6 +64,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="OperationInformation.cs" />
+    <Compile Include="OperationStatus.cs" />
     <Compile Include="Operations\BuildingLoad.cs" />
     <Compile Include="Operations\IdfGeneration\BuildingSurface.cs" />
     <Compile Include="Operations\IdfGeneration\FenestrationSurface.cs" />
@@ -112,6 +114,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
@@ -138,6 +141,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ok-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\error-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\in-progress-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\warning-small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

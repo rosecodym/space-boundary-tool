@@ -19,24 +19,35 @@ namespace GUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        Dictionary<OperationStatus, ImageSource> overlayImages = new Dictionary<OperationStatus, ImageSource>();
+
         public MainWindow()
         {
             InitializeComponent();
-            // this argument is because binding the output text to a ViewModel property is unusably slow
+            overlayImages[OperationStatus.OK] = (ImageSource)FindResource("OKSmall");
+            overlayImages[OperationStatus.InProgress] = (ImageSource)FindResource("InProgressSmall");
+            overlayImages[OperationStatus.Warnings] = (ImageSource)FindResource("WarningSmall");
+            overlayImages[OperationStatus.Errors] = (ImageSource)FindResource("ErrorSmall");
+            // the first argument is because binding the output text to a ViewModel property is unusably slow
             // i haven't figured out a better workaround yet
-            DataContext = new ViewModel(msg => tbOutput.AppendText(msg));
+            DataContext = new ViewModel(msg => tbOutput.AppendText(msg), status => SetTaskbarOverlay(status));
         }
 
         private void MainWindowClosed(object sender, EventArgs e)
         {
-            // "no code in the code-behind" but it's just this one thing i swear
             Properties.Settings.Default.Save();
         }
 
         private void OutputTextChanged(object sender, TextChangedEventArgs e)
         {
-            // whoops guess i was wrong about "one thing"
             tbOutput.ScrollToEnd();
+        }
+
+        private void SetTaskbarOverlay(OperationStatus status)
+        {
+            ImageSource src;
+            overlayImages.TryGetValue(status, out src);
+            TaskbarItemInfo.Overlay = src;
         }
 
         private static IList<string> GetFileNames(IDataObject dataObject)

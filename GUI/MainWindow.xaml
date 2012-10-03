@@ -10,7 +10,30 @@
         <my:BuildingInformationTo3rdLevelCountString x:Key="BuildingInformationTo3rdLevelCountString" />
         <my:BuildingInformationTo4thLevelCountString x:Key="BuildingInformationTo4thLevelCountString" />
         <my:BuildingInformationToVirtualCountString x:Key="BuildingInformationToVirtualCountString" />
+        <DrawingImage x:Key="OKSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="Resources/ok-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="InProgressSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="Resources/in-progress-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="WarningSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="Resources/warning-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="ErrorSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="Resources/error-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
     </Window.Resources>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </Window.TaskbarItemInfo>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

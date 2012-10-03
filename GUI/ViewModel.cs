@@ -17,17 +17,17 @@ namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
     {
+        readonly IddManager idds = new IddManager();
+        readonly OperationInformation sbCalculation;
+        readonly OperationInformation buildingLoad;
+        readonly OperationInformation materialLibraryLoad;
+        readonly OperationInformation idfGeneration;
+        readonly Action<OperationStatus> updateStatusDisplay;
 
-        private SbtBuildingInformation sbtBuilding;
-        private IfcBuildingInformation ifcBuilding;
-        private ICollection<MaterialLibraryEntry> libraryMaterials;
-        private ObservableCollection<IfcConstructionMappingSource> ifcConstructionMappingSources;
-        private readonly IddManager idds = new IddManager();
-
-        readonly private OperationInformation sbCalculation;
-        readonly private OperationInformation buildingLoad;
-        readonly private OperationInformation materialLibraryLoad;
-        readonly private OperationInformation idfGeneration;
+        SbtBuildingInformation sbtBuilding;
+        IfcBuildingInformation ifcBuilding;
+        ICollection<MaterialLibraryEntry> libraryMaterials;
+        ObservableCollection<IfcConstructionMappingSource> ifcConstructionMappingSources;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -350,12 +350,13 @@ namespace GUI
 
         public IddManager Idds { get { return idds; } }
 
-        public ViewModel(Action<string> updateOutputDirectly)
+        public ViewModel(Action<string> updateOutputDirectly, Action<OperationStatus> updateStatusDisplay)
         {
             this.sbCalculation = new OperationInformation(Operations.SbtInvocation.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")));
             this.materialLibraryLoad = new OperationInformation(Operations.MaterialsLibraryLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")));
             this.buildingLoad = new OperationInformation(Operations.BuildingLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")));
             this.idfGeneration = new OperationInformation(Operations.IdfGeneration.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIDF")));
+            this.updateStatusDisplay = updateStatusDisplay;
 
             var propertyDependencies = new[] 
             {
@@ -450,6 +451,16 @@ namespace GUI
             IfcElement ifcElement;
             if (!CurrentIfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
             return ifcElement.AssociatedConstruction;
+        }
+
+        internal void UpdateGlobalStatus()
+        {
+            OperationStatus status = OperationStatus.BeforeStart;
+            if (sbCalculation.Status > status) { status = sbCalculation.Status; }
+            if (materialLibraryLoad.Status > status) { status = materialLibraryLoad.Status; }
+            if (buildingLoad.Status > status) { status = buildingLoad.Status; }
+            if (idfGeneration.Status > status) { status = idfGeneration.Status; }
+            updateStatusDisplay(status);
         }
 
         private void EstablishConstructionUsage()

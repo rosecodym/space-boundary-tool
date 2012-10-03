@@ -60,6 +60,13 @@ namespace GUI.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap error_small {
+            get {
+                object obj = ResourceManager.GetObject("error_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to (*
         ///
@@ -102,6 +109,20 @@ namespace GUI.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap in_progress_small {
+            get {
+                object obj = ResourceManager.GetObject("in_progress_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ok_small {
+            get {
+                object obj = ResourceManager.GetObject("ok_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to !IDD_Version 7.1.0.012
         ///! **************************************************************************
@@ -117,6 +138,13 @@ namespace GUI.Properties {
         internal static string V7_1_0_Energy_ {
             get {
                 return ResourceManager.GetString("V7_1_0_Energy_", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap warning_small {
+            get {
+                object obj = ResourceManager.GetObject("warning_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
