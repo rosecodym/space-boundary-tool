@@ -143,16 +143,16 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ok-small.png" />
+    <Resource Include="Images\done-small.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\error-small.png" />
+    <Resource Include="Images\in-progress-small.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\in-progress-small.png" />
+    <Resource Include="Images\warning-small.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\warning-small.png" />
+    <Resource Include="Images\error-small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
