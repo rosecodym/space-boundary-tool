@@ -3757,10 +3757,6 @@ Material,
     290,                     !- Density {kg/m3}
     590;                     !- Specific Heat {J/kg-K}
 
-Material:AirGap,
-    Air Barrier - Air Infiltration Barrier,  !- Name
-    0.15;                    !- Thermal Resistance {m2-K/W}
-
 Material,
     Default,  !- Name
     MediumRough,             !- Roughness

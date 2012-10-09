@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MaterialLibrary.fs" />
+    <Compile Include="ModelConstructionUsage.fs" />
     <Compile Include="ModelMappingSource.fs" />
     <Compile Include="ModelConstruction.fs" />
     <Compile Include="ModelConstructionCollection.fs" />

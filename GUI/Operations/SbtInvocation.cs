@@ -32,47 +32,37 @@ namespace GUI.Operations
             return hoursComponent + minutesComponent + secondsComponent;
         }
 
-        static public void Execute(ViewModel vm)
+        static public void Execute(ViewModel vm, Action begin, Action end)
         {
-            if (!vm.CurrentlyCalculatingSBs)
+            // TODO: check for pre-existing building
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += new DoWorkEventHandler(DoSbtWork);
+            worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
             {
-                try
-                {
-                    vm.CurrentlyCalculatingSBs = true;
-                    // TODO: check for pre-existing building
-                    BackgroundWorker worker = new BackgroundWorker();
-                    worker.WorkerReportsProgress = true;
-                    worker.DoWork += new DoWorkEventHandler(DoSbtWork);
-                    worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
-                    {
-                        string msg = e.UserState as string;
-                        if (msg != null) { vm.UpdateOutputDirectly(msg); }
-                    });
-                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
-                    {
-                        SbtBuildingInformation res = e.Result as SbtBuildingInformation;
-                        if (res != null) { vm.CurrentSbtBuilding = res; }
-                        vm.CurrentlyCalculatingSBs = false;
-                    });
+                string msg = e.UserState as string;
+                if (msg != null) { vm.UpdateOutputDirectly(msg); }
+            });
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
+            {
+                SbtBuildingInformation res = e.Result as SbtBuildingInformation;
+                if (res != null) { vm.CurrentSbtBuilding = res; }
+                end();
+            });
 
-                    Parameters p = new Parameters();
-                    p.InputFilename = vm.InputIfcFilePath;
-                    p.OutputFilename = (vm.WriteIfc && !String.IsNullOrWhiteSpace(vm.OutputIfcFilePath)) ? vm.OutputIfcFilePath : null;
+            Parameters p = new Parameters();
+            p.InputFilename = vm.InputIfcFilePath;
+            p.OutputFilename = (vm.WriteIfc && !String.IsNullOrWhiteSpace(vm.OutputIfcFilePath)) ? vm.OutputIfcFilePath : null;
 
-                    if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
-                    if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
+            if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
+            if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
 
-                    p.Flags = (Sbt.EntryPoint.SbtFlags)Convert.ToInt32(vm.Flags, 16);
+            p.Flags = (Sbt.EntryPoint.SbtFlags)Convert.ToInt32(vm.Flags, 16);
 
-                    p.NotifyMessage = p.WarnMessage = p.ErrorMessage = msg => worker.ReportProgress(0, msg);
+            p.NotifyMessage = p.WarnMessage = p.ErrorMessage = msg => worker.ReportProgress(0, msg);
 
-                    worker.RunWorkerAsync(p);
-                }
-                catch (Exception)
-                {
-                    vm.CurrentlyCalculatingSBs = false;
-                }
-            }
+            begin();
+            worker.RunWorkerAsync(p);
         }
 
         static void DoSbtWork(object sender, DoWorkEventArgs e)

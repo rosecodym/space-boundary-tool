@@ -10,7 +10,30 @@
         <my:BuildingInformationTo3rdLevelCountString x:Key="BuildingInformationTo3rdLevelCountString" />
         <my:BuildingInformationTo4thLevelCountString x:Key="BuildingInformationTo4thLevelCountString" />
         <my:BuildingInformationToVirtualCountString x:Key="BuildingInformationToVirtualCountString" />
+        <DrawingImage x:Key="OKSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="/SBT-GUI;component/Images/done-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="InProgressSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="/SBT-GUI;component/Images/in-progress-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="WarningSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="/SBT-GUI;component/Images/warning-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="ErrorSmall">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0,0,16,16" ImageSource="/SBT-GUI;component/Images/error-small.png" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
     </Window.Resources>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </Window.TaskbarItemInfo>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -76,7 +99,7 @@
                             </Grid>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Row="2" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox3" VerticalAlignment="Stretch" Width="Auto" Header="{Binding CurrentBuilding, Converter={StaticResource BuildingInformationToSbSummaryTitleConverter}}">
+                    <GroupBox Grid.Row="2" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox3" VerticalAlignment="Stretch" Width="Auto" Header="{Binding CurrentSbtBuilding, Converter={StaticResource BuildingInformationToSbSummaryTitleConverter}}">
                         <Grid VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -142,7 +165,7 @@
                                 <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding LibraryMaterials}" SelectionMode="Single" SelectedItem="{Binding SelectedIdfConstruction}" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="Type" Binding="{Binding TypeString}" IsReadOnly="True" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>

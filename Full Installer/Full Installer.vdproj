@@ -458,15 +458,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
-        "ProductCode" = "8:{B6412729-51D1-427A-8E24-481CABCCE455}"
-        "PackageCode" = "8:{321EA308-24FF-4077-BA37-864E6D246A74}"
+        "ProductCode" = "8:{5280B257-77BE-4441-B38A-3CAC941F09B9}"
+        "PackageCode" = "8:{3579AA54-EDFC-4869-88A0-C2D67BF6B805}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.4.3"
+        "ProductVersion" = "8:1.4.4"
         "Manufacturer" = "8:LBNL"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -994,7 +994,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_45C977EBEB72431CA26FBA6628F22EDE"
             {
-            "SourcePath" = "8:..\\Release\\SBT-IFC.dll"
+            "SourcePath" = "8:..\\Debug\\SBT-IFC.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1022,7 +1022,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7FDEBF7B4F894937AE29E4A840C73F2E"
             {
-            "SourcePath" = "8:..\\Release\\SBT-Core.dll"
+            "SourcePath" = "8:..\\Debug\\SBT-Core.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1050,7 +1050,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9B1CA4A537D84F909A3C601BF6270C67"
             {
-            "SourcePath" = "8:..\\Release\\SBT-CL.exe"
+            "SourcePath" = "8:..\\Debug\\SBT-CL.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1078,7 +1078,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A0B7928A50CB4C8197B788BDCD8095DE"
             {
-            "SourcePath" = "8:..\\GUI\\obj\\x86\\Release\\SBT-GUI.exe"
+            "SourcePath" = "8:..\\GUI\\obj\\x86\\Debug\\SBT-GUI.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"

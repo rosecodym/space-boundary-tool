@@ -3,7 +3,7 @@
 open System
 open System.Collections.Generic
 
-type OutputConstruction (layers:OutputLayer array, humanReadableName:string option) =
+type OutputConstruction (layers:OutputLayer list, humanReadableName:string option) =
     let layerNames = 
         layers 
         |> Seq.map (fun layer -> if layer <> Unchecked.defaultof<OutputLayer> then layer.Name else "UNMAPPED MATERIAL")

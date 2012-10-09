@@ -18,105 +18,88 @@ namespace GUI.Operations
 {
     static partial class IdfGeneration
     {
-        static public void Execute(ViewModel vm)
+        static public void Execute(ViewModel vm, Action begin, Action end)
         {
-            if (!vm.CurrentlyGeneratingIdf)
+            if (vm.CurrentIfcBuilding == null)
             {
-                try
-                {
-                    if (vm.CurrentIfcBuilding == null)
-                    {
-                        System.Windows.MessageBox.Show(
-                            "IFC constructions and materials have not been loaded. Please load and assign library mappings to the IFC model's constructions and materials in the \"Constructions & Materials\" tab before attempting to generate an IDF.",
-                            "Cannot generate IDF",
-                            System.Windows.MessageBoxButton.OK,
-                            System.Windows.MessageBoxImage.Error);
-                        return;
-                    }
-
-                    if (vm.CurrentSbtBuilding == null)
-                    {
-                        System.Windows.MessageBox.Show(
-                            "Space boundaries have not been loaded. Please load space boundaries in the \"Space Boundaries\" tab before attempting to generate an IDF.",
-                            "Cannot generate IDF",
-                            System.Windows.MessageBoxButton.OK,
-                            System.Windows.MessageBoxImage.Error);
-                        return;
-                    }
-
-                    if (vm.CurrentSbtBuilding.IfcFilename != vm.CurrentIfcBuilding.Filename)
-                    {
-                        System.Windows.MessageBox.Show(
-                            "The filename that space boundaries have been loaded for is not the same filename for the constructions and materials mapping. Either re-load space boundaries or re-load the model's constructions and materials.",
-                            "Cannot generate IDF",
-                            System.Windows.MessageBoxButton.OK,
-                            System.Windows.MessageBoxImage.Error);
-                        return;
-                    }
-
-                    if (vm.IfcConstructionMappingSources.Any(c => c.MappingTarget == null)) {
-                        System.Windows.MessageBox.Show(
-                            "There are some IFC constructions that have not been mapped to material library entries. Please ensure that all IFC constructions are mapped in the \"Constructions & Materials\" tab.",
-                            "Cannot generate IDF",
-                            System.Windows.MessageBoxButton.OK,
-                            System.Windows.MessageBoxImage.Error);
-                        return;
-                    }
-
-                    BackgroundWorker worker = new BackgroundWorker();
-                    worker.WorkerReportsProgress = true;
-                    worker.DoWork += new DoWorkEventHandler(DoIdfGenerationWork);
-                    worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
-                    {
-                        string msg = e.UserState as string;
-                        if (msg != null) { vm.UpdateOutputDirectly(msg); }
-                    });
-                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
-                    {
-                        vm.CurrentlyGeneratingIdf = false;
-                    });
-
-                    Parameters p = new Parameters();
-
-                    p.OutputFilename = vm.OutputIdfFilePath;
-                    p.LocationName = vm.BuildingLocation;
-                    p.TimeZone = vm.TimeZone;
-                    p.SolarDistribution = vm.SolarDistribution;
-                    p.LoadsConvergenceTolerance = vm.LoadsConvergenceTolerance;
-                    p.TemperatureConvergenceTolerance = vm.TemperatureConvergenceTolerance;
-
-                    p.StartMonth = vm.StartMonth;
-                    p.StartDay = vm.StartDay;
-                    p.EndMonth = vm.EndMonth;
-                    p.EndDay = vm.EndDay;
-
-                    p.Timestep = vm.Timestep;
-
-                    p.SbtBuilding = vm.CurrentSbtBuilding;
-                    p.IfcBuilding = vm.CurrentIfcBuilding;
-
-                    p.MaterialIDToModelConstruction = id =>
-                    {
-                        if (id > p.SbtBuilding.Elements.Count) { return null; }
-                        string elementGuid = p.SbtBuilding.Elements[id - 1].Guid;
-                        IfcElement ifcElement;
-                        if (!p.IfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
-                        return ifcElement.AssociatedConstruction;
-                    };
-
-                    p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
-                    p.Notify = msg => worker.ReportProgress(0, msg);
-
-                    p.AttachDebugger = vm.AttachDebuggerPriorToIdfGeneration;
-
-                    vm.CurrentlyGeneratingIdf = true;
-                    worker.RunWorkerAsync(p);
-                }
-                catch (Exception)
-                {
-                    vm.CurrentlyGeneratingIdf = false;
-                }
+                System.Windows.MessageBox.Show(
+                    "IFC constructions and materials have not been loaded. Please load and assign library mappings to the IFC model's constructions and materials in the \"Constructions & Materials\" tab before attempting to generate an IDF.",
+                    "Cannot generate IDF",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+                return;
             }
+
+            if (vm.CurrentSbtBuilding == null)
+            {
+                System.Windows.MessageBox.Show(
+                    "Space boundaries have not been loaded. Please load space boundaries in the \"Space Boundaries\" tab before attempting to generate an IDF.",
+                    "Cannot generate IDF",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            if (vm.CurrentSbtBuilding.IfcFilename != vm.CurrentIfcBuilding.Filename)
+            {
+                System.Windows.MessageBox.Show(
+                    "The filename that space boundaries have been loaded for is not the same filename for the constructions and materials mapping. Either re-load space boundaries or re-load the model's constructions and materials.",
+                    "Cannot generate IDF",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            if (vm.IfcConstructionMappingSources.Any(c => c.MappingTarget == null)) {
+                System.Windows.MessageBox.Show(
+                    "There are some IFC constructions that have not been mapped to material library entries. Please ensure that all IFC constructions are mapped in the \"Constructions & Materials\" tab.",
+                    "Cannot generate IDF",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += new DoWorkEventHandler(DoIdfGenerationWork);
+            worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
+            {
+                string msg = e.UserState as string;
+                if (msg != null) { vm.UpdateOutputDirectly(msg); }
+            });
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
+            {
+                end();
+            });
+
+            Parameters p = new Parameters();
+
+            p.OutputFilename = vm.OutputIdfFilePath;
+            p.LocationName = vm.BuildingLocation;
+            p.TimeZone = vm.TimeZone;
+            p.SolarDistribution = vm.SolarDistribution;
+            p.LoadsConvergenceTolerance = vm.LoadsConvergenceTolerance;
+            p.TemperatureConvergenceTolerance = vm.TemperatureConvergenceTolerance;
+
+            p.StartMonth = vm.StartMonth;
+            p.StartDay = vm.StartDay;
+            p.EndMonth = vm.EndMonth;
+            p.EndDay = vm.EndDay;
+
+            p.Timestep = vm.Timestep;
+
+            p.SbtBuilding = vm.CurrentSbtBuilding;
+            p.IfcBuilding = vm.CurrentIfcBuilding;
+
+            p.MaterialIDToModelConstruction = vm.SbtMaterialIDToModelConstruction;
+
+            p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => worker.ReportProgress(0, msg + Environment.NewLine));
+            p.Notify = msg => worker.ReportProgress(0, msg);
+
+            p.AttachDebugger = vm.AttachDebuggerPriorToIdfGeneration;
+
+            begin();
+            worker.RunWorkerAsync(p);
         }
 
         static private void DoIdfGenerationWork(object sender, DoWorkEventArgs e)

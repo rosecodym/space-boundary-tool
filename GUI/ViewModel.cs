@@ -17,17 +17,17 @@ namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
     {
+        readonly IddManager idds = new IddManager();
+        readonly OperationInformation sbCalculation;
+        readonly OperationInformation buildingLoad;
+        readonly OperationInformation materialLibraryLoad;
+        readonly OperationInformation idfGeneration;
+        readonly Action<OperationStatus> updateStatusDisplay;
 
-        private SbtBuildingInformation sbtBuilding;
-        private IfcBuildingInformation ifcBuilding;
-        private ICollection<MaterialLibraryEntry> libraryMaterials;
-        private ObservableCollection<IfcConstructionMappingSource> ifcConstructionMappingSources;
-        private readonly IddManager idds = new IddManager();
-
-        private bool calculatingSBs = false;
-        private bool loadingMaterialLibrary = false;
-        private bool loadingIfcModel = false;
-        private bool generatingIdf = false;
+        SbtBuildingInformation sbtBuilding;
+        IfcBuildingInformation ifcBuilding;
+        ICollection<MaterialLibraryEntry> libraryMaterials;
+        ObservableCollection<IfcConstructionMappingSource> ifcConstructionMappingSources;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -48,6 +48,7 @@ namespace GUI
             set
             {
                 sbtBuilding = value;
+                EstablishConstructionUsage();
                 Updated("CurrentSbtBuilding");
             }
         }
@@ -60,6 +61,7 @@ namespace GUI
                 ifcBuilding = value;
                 IfcConstructionMappingSources = ifcBuilding != null ? new ObservableCollection<IfcConstructionMappingSource>(ifcBuilding.ConstructionMappingSources) : null;
                 PerformAutomaticMaterialMapping();
+                EstablishConstructionUsage();
                 Updated("CurrentIfcBuilding");
             }
         }
@@ -282,42 +284,10 @@ namespace GUI
             set { Properties.Settings.Default.Timestep = value; }
         }
 
-        public bool CurrentlyCalculatingSBs
-        {
-            get { return calculatingSBs; }
-            set
-            {
-                calculatingSBs = value;
-                Updated("CurrentlyCalculatingSBs");
-            }
-        }
-        public bool CurrentlyLoadingMaterialLibrary
-        {
-            get { return loadingMaterialLibrary; }
-            set
-            {
-                loadingMaterialLibrary = value;
-                Updated("CurrentlyLoadingMaterialLibrary");
-            }
-        }
-        public bool CurrentlyLoadingIfcModel
-        {
-            get { return loadingIfcModel; }
-            set
-            {
-                loadingIfcModel = value;
-                Updated("CurrentlyLoadingIfcModel");
-            }
-        }
-        public bool CurrentlyGeneratingIdf
-        {
-            get { return generatingIdf; }
-            set
-            {
-                generatingIdf = value;
-                Updated("CurrentlyGeneratingIdf");
-            }
-        }
+        public bool CurrentlyCalculatingSBs { get { return this.sbCalculation.InProgress; } }
+        public bool CurrentlyLoadingMaterialLibrary { get { return this.materialLibraryLoad.InProgress; } }
+        public bool CurrentlyLoadingIfcModel { get { return this.buildingLoad.InProgress; } }
+        public bool CurrentlyGeneratingIdf { get { return this.idfGeneration.InProgress; } }
 
         public string ReasonForDisabledSBCalculation
         {
@@ -380,8 +350,14 @@ namespace GUI
 
         public IddManager Idds { get { return idds; } }
 
-        public ViewModel(Action<string> updateOutputDirectly)
+        public ViewModel(Action<string> updateOutputDirectly, Action<OperationStatus> updateStatusDisplay)
         {
+            this.sbCalculation = new OperationInformation(Operations.SbtInvocation.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")));
+            this.materialLibraryLoad = new OperationInformation(Operations.MaterialsLibraryLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")));
+            this.buildingLoad = new OperationInformation(Operations.BuildingLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")));
+            this.idfGeneration = new OperationInformation(Operations.IdfGeneration.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIDF")));
+            this.updateStatusDisplay = updateStatusDisplay;
+
             var propertyDependencies = new[] 
             {
                 new
@@ -432,10 +408,10 @@ namespace GUI
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            ExecuteSbtCommand = new RelayCommand(_ => Operations.SbtInvocation.Execute(this), _ => ReasonForDisabledSBCalculation == null);
-            GenerateIdfCommand = new RelayCommand(_ => Operations.IdfGeneration.Execute(this), _ => ReasonForDisabledIdfGeneration == null);
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => Operations.MaterialsLibraryLoad.Execute(this), _ => ReasonForDisabledMaterialLibraryLoad == null);
-            LoadIfcBuildingCommand = new RelayCommand(_ => Operations.BuildingLoad.Execute(this), _ => ReasonForDisabledIfcModelLoad == null);
+            ExecuteSbtCommand = new RelayCommand(_ => sbCalculation.Operate(), _ => ReasonForDisabledSBCalculation == null);
+            GenerateIdfCommand = new RelayCommand(_ => idfGeneration.Operate(), _ => ReasonForDisabledIdfGeneration == null);
+            LoadMaterialsLibraryCommand = new RelayCommand(_ => materialLibraryLoad.Operate(), _ => ReasonForDisabledMaterialLibraryLoad == null);
+            LoadIfcBuildingCommand = new RelayCommand(_ => buildingLoad.Operate(), _ => ReasonForDisabledIfcModelLoad == null);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
                 {
@@ -468,9 +444,56 @@ namespace GUI
             if (PropertyChanged != null) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName)); }
         }
 
+        internal IfcConstruction SbtMaterialIDToModelConstruction(int id)
+        {
+            if (id > CurrentSbtBuilding.Elements.Count) { return null; }
+            string elementGuid = CurrentSbtBuilding.Elements[id - 1].Guid;
+            IfcElement ifcElement;
+            if (!CurrentIfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
+            return ifcElement.AssociatedConstruction;
+        }
+
+        internal void UpdateGlobalStatus()
+        {
+            OperationStatus status = OperationStatus.BeforeStart;
+            if (sbCalculation.Status > status) { status = sbCalculation.Status; }
+            if (materialLibraryLoad.Status > status) { status = materialLibraryLoad.Status; }
+            if (buildingLoad.Status > status) { status = buildingLoad.Status; }
+            if (idfGeneration.Status > status) { status = idfGeneration.Status; }
+            updateStatusDisplay(status);
+        }
+
+        private void EstablishConstructionUsage()
+        {
+            if (CurrentIfcBuilding != null && CurrentSbtBuilding != null && CurrentIfcBuilding.Filename == CurrentSbtBuilding.IfcFilename)
+            {
+                foreach (IfcConstructionMappingSource src in CurrentIfcBuilding.ConstructionMappingSources)
+                {
+                    src.SetUnused();
+                }
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in CurrentSbtBuilding.SpaceBoundaries)
+                {
+                    if (!sb.IsVirtual)
+                    {
+                        if (sb.Level == 2)
+                        {
+                            foreach (IfcConstruction c in sb.MaterialLayers.Select(layer => SbtMaterialIDToModelConstruction(layer.Id)))
+                            {
+                                c.SetComponentUsages(ConstructionManagement.ModelConstructions.ModelConstructionUsage.Layer);
+                            }
+                        }
+                        else
+                        {
+                            SbtMaterialIDToModelConstruction(sb.Element.MaterialId).SetComponentUsages(ConstructionManagement.ModelConstructions.ModelConstructionUsage.Surface);
+                        }
+                    }
+                }
+            }
+        }
+
         private void PerformAutomaticMaterialMapping()
         {
-            if (this.CurrentIfcBuilding != null && this.LibraryMaterials != null)
+            if (CurrentIfcBuilding != null && LibraryMaterials != null)
             {
                 Func<string, string> removeSpaces = str => str.Replace(" ", String.Empty);
                 Dictionary<string, MaterialLibraryEntry> library = new Dictionary<string, MaterialLibraryEntry>();
