@@ -145,6 +145,7 @@
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503;4512</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
