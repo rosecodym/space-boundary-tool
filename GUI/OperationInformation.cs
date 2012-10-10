@@ -12,6 +12,7 @@ namespace GUI
         readonly Action inProgressChanged;
 
         bool runEver = false;
+        List<Problem> problems = new List<Problem>();
 
         public bool InProgress { get; private set; }
         public OperationStatus Status
@@ -19,11 +20,14 @@ namespace GUI
             get
             {
                 return
-                    !runEver ?      OperationStatus.BeforeStart :
-                    InProgress ?    OperationStatus.InProgress : 
-                                    OperationStatus.OK;
+                    !runEver ? OperationStatus.BeforeStart :
+                    InProgress ? OperationStatus.InProgress :
+                    problems.Count == 0 ? OperationStatus.OK :
+                    problems.Any(p => p.Type == Problem.ProblemType.Error) ? OperationStatus.Errors : OperationStatus.Warnings;
             }
         }
+
+        public ICollection<Problem> Problems { get { return problems; } }
 
         public OperationInformation(Action<ViewModel, Action, Action> operation, ViewModel vm, Action inProgressChanged)
         {

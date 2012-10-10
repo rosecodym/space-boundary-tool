@@ -323,6 +323,23 @@
                     <TextBox Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tbOutput" VerticalAlignment="Stretch" Width="Auto" IsReadOnly="True" TextChanged="OutputTextChanged" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
                 </Grid>
             </TabItem>
+            <TabItem Header="Errors &amp; Warnings" Name="tabItem2">
+                <Grid>
+                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid3" VerticalAlignment="Stretch" Width="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn CanUserReorder="False" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate />
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate />
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn CanUserReorder="False" Header="Message" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
