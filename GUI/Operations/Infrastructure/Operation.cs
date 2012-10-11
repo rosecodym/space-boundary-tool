@@ -48,7 +48,7 @@ namespace GUI.Operations
             this.statusChanged = statusChanged;
             InProgress = false;
             bw.WorkerReportsProgress = true;
-            bw.DoWork += new DoWorkEventHandler((_, e) => PerformLongOperation(e.Argument as TParameters));
+            bw.DoWork += new DoWorkEventHandler((_, e) => e.Result = PerformLongOperation(e.Argument as TParameters));
             bw.ProgressChanged += new ProgressChangedEventHandler((_sender, e) =>
             {
                 ProgressEvent evt = e.UserState as ProgressEvent;

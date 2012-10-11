@@ -355,10 +355,10 @@ namespace GUI
         {
             this.updateStatusDisplay = updateStatusDisplay;
 
-            this.sbCalculation = new Operations.SbtInvocation(this);
-            this.materialLibraryLoad = new Operations.MaterialsLibraryLoad(this);
-            this.buildingLoad = new Operations.BuildingLoad(this);
-            this.idfGeneration = new Operations.IdfGeneration(this);
+            this.sbCalculation = new Operations.SbtInvocation(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")));
+            this.materialLibraryLoad = new Operations.MaterialsLibraryLoad(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")));
+            this.buildingLoad = new Operations.BuildingLoad(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")));
+            this.idfGeneration = new Operations.IdfGeneration(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIdf")));
 
             var propertyDependencies = new[] 
             {

@@ -215,13 +215,13 @@ namespace GUI.Operations
             return res;
         }
 
-        public IdfGeneration(ViewModel vm)
+        public IdfGeneration(ViewModel vm, Action completionAction)
             : base(_ => vm.UpdateGlobalStatus())
         {
             PrepareParameters = () => GetParameters(vm);
             PerformLongOperation = GenerateIdf;
             ProgressHandler = evt => vm.UpdateOutputDirectly(evt.Message);
-            LongOperationComplete = _ => { };
+            LongOperationComplete = _ => completionAction();
         }
     }
 }

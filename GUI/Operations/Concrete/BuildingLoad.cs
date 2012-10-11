@@ -10,7 +10,7 @@ namespace GUI.Operations
 {
     class BuildingLoad : Operation<string, IfcBuildingInformation>
     {
-        public BuildingLoad(ViewModel vm)
+        public BuildingLoad(ViewModel vm, Action completionAction)
             : base(_ => vm.UpdateGlobalStatus())
         {
             PrepareParameters = () => vm.InputIfcFilePath;
@@ -43,7 +43,11 @@ namespace GUI.Operations
                 return res;
             };
             ProgressHandler = evt => vm.UpdateOutputDirectly(evt.Message);
-            LongOperationComplete = res => vm.CurrentIfcBuilding = res ?? vm.CurrentIfcBuilding;
+            LongOperationComplete = res =>
+            {
+                vm.CurrentIfcBuilding = res ?? vm.CurrentIfcBuilding;
+                completionAction();
+            };
         }
     }
 }

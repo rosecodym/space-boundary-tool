@@ -32,7 +32,7 @@ namespace GUI.Operations
             return hoursComponent + minutesComponent + secondsComponent;
         }
 
-        public SbtInvocation(ViewModel vm)
+        public SbtInvocation(ViewModel vm, Action completionAction)
             : base(_ => vm.UpdateGlobalStatus())
         {
             PrepareParameters = () =>
@@ -83,7 +83,11 @@ namespace GUI.Operations
                 }
             };
             ProgressHandler = evt => vm.UpdateOutputDirectly(evt.Message);
-            LongOperationComplete = res => vm.CurrentSbtBuilding = res ?? vm.CurrentSbtBuilding;
+            LongOperationComplete = res =>
+            {
+                vm.CurrentSbtBuilding = res ?? vm.CurrentSbtBuilding;
+                completionAction();
+            };
         }
     }
 }

@@ -20,7 +20,7 @@ namespace GUI.Operations
             public IddManager Idds { get; set; }
         }
 
-        public MaterialsLibraryLoad(ViewModel vm)
+        public MaterialsLibraryLoad(ViewModel vm, Action completionAction)
             : base(_ => vm.UpdateGlobalStatus())
         {
             PrepareParameters = () =>
@@ -49,7 +49,11 @@ namespace GUI.Operations
                 return res;
             };
             ProgressHandler = evt => vm.UpdateOutputDirectly(evt.Message);
-            LongOperationComplete = res => vm.LibraryMaterials = res;
+            LongOperationComplete = res =>
+            {
+                vm.LibraryMaterials = res;
+                completionAction();
+            };
         }
     }
 }
