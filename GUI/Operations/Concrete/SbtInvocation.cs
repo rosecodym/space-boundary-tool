@@ -33,7 +33,7 @@ namespace GUI.Operations
         }
 
         public SbtInvocation(ViewModel vm, Action completionAction)
-            : base(_ => vm.UpdateGlobalStatus())
+            : base(_ => vm.UpdateGlobalStatus(), () => vm.ReasonForDisabledSBCalculation == null)
         {
             PrepareParameters = () =>
             {

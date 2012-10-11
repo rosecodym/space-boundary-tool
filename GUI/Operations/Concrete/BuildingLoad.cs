@@ -11,7 +11,7 @@ namespace GUI.Operations
     class BuildingLoad : Operation<string, IfcBuildingInformation>
     {
         public BuildingLoad(ViewModel vm, Action completionAction)
-            : base(_ => vm.UpdateGlobalStatus())
+            : base(_ => vm.UpdateGlobalStatus(), () => vm.ReasonForDisabledIfcModelLoad == null)
         {
             PrepareParameters = () => vm.InputIfcFilePath;
             PerformLongOperation = path =>

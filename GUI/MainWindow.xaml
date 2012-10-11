@@ -30,6 +30,7 @@
                 <ImageDrawing Rect="0,0,16,16" ImageSource="/SBT-GUI;component/Images/error-small.png" />
             </DrawingImage.Drawing>
         </DrawingImage>
+        <CollectionViewSource x:Key="MaterialLibraryLoadProblems" Source="{Binding MaterialLibraryLoad.Problems}" />
     </Window.Resources>
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo />
@@ -158,7 +159,7 @@
                                         Name="button8" 
                                         VerticalAlignment="Top" 
                                         Width="75" 
-                                        Command="{Binding LoadMaterialsLibraryCommand}"
+                                        Command="{Binding MaterialLibraryLoad}"
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding ReasonForDisabledMaterialLibraryLoad}" />
                                 </Grid>
@@ -325,17 +326,14 @@
             </TabItem>
             <TabItem Header="Errors &amp; Warnings" Name="tabItem2">
                 <Grid>
-                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid3" VerticalAlignment="Stretch" Width="Auto">
+                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid3" VerticalAlignment="Stretch" Width="Auto" CanUserReorderColumns="False">
+                        <DataGrid.ItemsSource>
+                            <CompositeCollection>
+                                <CollectionContainer Collection="{Binding Source={StaticResource MaterialLibraryLoadProblems}}" />
+                            </CompositeCollection>
+                        </DataGrid.ItemsSource>
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn CanUserReorder="False" IsReadOnly="True">
-                                <DataGridTemplateColumn.CellEditingTemplate>
-                                    <DataTemplate />
-                                </DataGridTemplateColumn.CellEditingTemplate>
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate />
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn CanUserReorder="False" Header="Message" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

@@ -21,7 +21,7 @@ namespace GUI.Operations
         }
 
         public MaterialsLibraryLoad(ViewModel vm, Action completionAction)
-            : base(_ => vm.UpdateGlobalStatus())
+            : base(_ => vm.UpdateGlobalStatus(), () => vm.ReasonForDisabledMaterialLibraryLoad == null)
         {
             PrepareParameters = () =>
             {
@@ -32,23 +32,34 @@ namespace GUI.Operations
             };
             PerformLongOperation = p =>
             {
-                string versionGuess = Idf.GuessVersion(p.Path);
-                EnergyPlusVersion ver =
-                    versionGuess == "7.1" ? EnergyPlusVersion.V710 : EnergyPlusVersion.V710;
-                ReportProgress("Treating materials library as IDD version " + ver.ToString() + ".\n");
+                ISet<MaterialLibraryEntry> res = null;
+                try
+                {
+                    string versionGuess = Idf.GuessVersion(p.Path);
+                    EnergyPlusVersion ver =
+                        versionGuess == "7.1" ? EnergyPlusVersion.V710 : EnergyPlusVersion.V710;
+                    ReportProgress("Treating materials library as IDD version " + ver.ToString() + ".\n");
 
-                ReportProgress("Loading IDD...\n");
-                Idd idd = p.Idds.GetIddFor(ver, msg => ReportProgress(msg + Environment.NewLine));
-                ReportProgress("IDD loaded. Loading IDF...\n");
-                Idf idf = new Idf(p.Path, idd);
-                ReportProgress("IDF loaded.\n");
+                    ReportProgress("Loading IDD...\n");
+                    Idd idd = p.Idds.GetIddFor(ver, msg => ReportProgress(msg + Environment.NewLine));
+                    ReportProgress("IDD loaded. Loading IDF...\n");
+                    Idf idf = new Idf(p.Path, idd);
+                    ReportProgress("IDF loaded.\n");
 
-                var res = ConstructionManagement.MaterialLibrary.Load(idf, msg => ReportProgress(msg));
+                    res = ConstructionManagement.MaterialLibrary.Load(idf, msg => ReportProgress(msg));
 
-                ReportProgress("Found " + res.Count.ToString() + " materials.\n");
+                    ReportProgress("Found " + res.Count.ToString() + " materials.\n");
+                }
+                catch (Exception)
+                {
+                    ReportProgress("IDF loading failed!" + Environment.NewLine, ProgressEvent.ProgressEventType.Error);
+                }
                 return res;
             };
-            ProgressHandler = evt => vm.UpdateOutputDirectly(evt.Message);
+            ProgressHandler = evt =>
+            {
+                vm.UpdateOutputDirectly(evt.Message);
+            };
             LongOperationComplete = res =>
             {
                 vm.LibraryMaterials = res;

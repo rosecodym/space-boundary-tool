@@ -36,12 +36,13 @@ namespace GUI
         public ICommand BrowseToOutputIfcFileCommand { get; private set; }
         public ICommand BrowseToOutputIdfFileCommand { get; private set; }
         public ICommand BrowseToMaterialsLibraryCommand { get; private set; }
-        public ICommand ExecuteSbtCommand { get; private set; }
-        public ICommand LoadMaterialsLibraryCommand { get; private set; }
-        public ICommand LoadIfcBuildingCommand { get; private set; }
         public ICommand LinkConstructionsCommand { get; private set; }
-        public ICommand GenerateIdfCommand { get; private set; }
         public ICommand ViewIdfCommand { get; private set; }
+
+        public ICommand ExecuteSbtCommand { get { return sbCalculation; } }
+        public ICommand MaterialLibraryLoad { get { return materialLibraryLoad; } }
+        public ICommand LoadIfcBuildingCommand { get { return buildingLoad; } }
+        public ICommand GenerateIdfCommand { get { return idfGeneration; } }
 
         public SbtBuildingInformation CurrentSbtBuilding
         {
@@ -410,10 +411,10 @@ namespace GUI
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            ExecuteSbtCommand = new RelayCommand(_ => sbCalculation.Execute(), _ => ReasonForDisabledSBCalculation == null);
-            GenerateIdfCommand = new RelayCommand(_ => idfGeneration.Execute(), _ => ReasonForDisabledIdfGeneration == null);
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => materialLibraryLoad.Execute(), _ => ReasonForDisabledMaterialLibraryLoad == null);
-            LoadIfcBuildingCommand = new RelayCommand(_ => buildingLoad.Execute(), _ => ReasonForDisabledIfcModelLoad == null);
+            //ExecuteSbtCommand = new RelayCommand(_ => sbCalculation.Execute(), _ => ReasonForDisabledSBCalculation == null);
+            //GenerateIdfCommand = new RelayCommand(_ => idfGeneration.Execute(), _ => ReasonForDisabledIdfGeneration == null);
+            //LoadMaterialsLibraryCommand = new RelayCommand(_ => materialLibraryLoad.Execute(), _ => ReasonForDisabledMaterialLibraryLoad == null);
+            //LoadIfcBuildingCommand = new RelayCommand(_ => buildingLoad.Execute(), _ => ReasonForDisabledIfcModelLoad == null);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
                 {

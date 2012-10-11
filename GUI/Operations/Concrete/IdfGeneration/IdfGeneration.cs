@@ -216,7 +216,7 @@ namespace GUI.Operations
         }
 
         public IdfGeneration(ViewModel vm, Action completionAction)
-            : base(_ => vm.UpdateGlobalStatus())
+            : base(_ => vm.UpdateGlobalStatus(), () => vm.ReasonForDisabledIdfGeneration == null)
         {
             PrepareParameters = () => GetParameters(vm);
             PerformLongOperation = GenerateIdf;

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 
 namespace GUI.Operations
 {
@@ -15,14 +17,22 @@ namespace GUI.Operations
         Errors
     }
 
-    abstract class Operation<TParameters, TResult>
+    abstract class Operation<TParameters, TResult> : ICommand, INotifyPropertyChanged
         where TParameters : class
         where TResult : class
     {
         private BackgroundWorker bw = new BackgroundWorker();
         private bool hasRunEver = false;
-        private IList<Problem> problems = new List<Problem>();
+        private ObservableCollection<Problem> problems = new ObservableCollection<Problem>();
         private Action<OperationStatus> statusChanged = _ => { };
+        private Func<bool> canExecute = () => true;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
         protected Action<ProgressEvent> ProgressHandler { private get; set; }
         protected Func<TParameters> PrepareParameters { private get; set; }
@@ -41,11 +51,13 @@ namespace GUI.Operations
                     problems.Any(p => p.Type == Problem.ProblemType.Error) ? OperationStatus.Errors : OperationStatus.Warnings;
             }
         }
-        public ICollection<Problem> Problems { get { return problems; } }
+        public ObservableCollection<Problem> Problems { get { return problems; } }
 
-        protected Operation(Action<OperationStatus> statusChanged)
+        protected Operation(Action<OperationStatus> statusChanged, Func<bool> canExecute)
         {
             this.statusChanged = statusChanged;
+            this.canExecute = canExecute;
+            PropertyChanged += new PropertyChangedEventHandler((_s, _args) => { });
             InProgress = false;
             bw.WorkerReportsProgress = true;
             bw.DoWork += new DoWorkEventHandler((_, e) => e.Result = PerformLongOperation(e.Argument as TParameters));
@@ -56,7 +68,7 @@ namespace GUI.Operations
                 {
                     if (evt.Type != ProgressEvent.ProgressEventType.Notification)
                     {
-                        problems.Add(new Problem(evt.Type == ProgressEvent.ProgressEventType.Warning ? Problem.ProblemType.Warning : Problem.ProblemType.Error, evt.Message));
+                        problems.Add(new Problem(evt.Type == ProgressEvent.ProgressEventType.Warning ? Problem.ProblemType.Warning : Problem.ProblemType.Error, evt.Message.Trim()));
                     }
                     ProgressHandler(evt);
                     statusChanged(Status);
@@ -81,17 +93,22 @@ namespace GUI.Operations
             bw.ReportProgress(0, new ProgressEvent(message, status));
         }
 
-        public void Execute()
+        public void Execute(object _)
         {
             // there's technically a race condition here i think
             // the cost/benefit of fixing it is just not there at the moment
             TParameters p = PrepareParameters();
             if (!InProgress) {
                 InProgress = true;
-                problems = new List<Problem>();
+                problems.Clear();
                 statusChanged(Status);
                 bw.RunWorkerAsync(p);
             }
+        }
+
+        public bool CanExecute(object _)
+        {
+            return canExecute();
         }
     }
 }
