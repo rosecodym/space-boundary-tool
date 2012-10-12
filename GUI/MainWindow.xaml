@@ -31,6 +31,7 @@
             </DrawingImage.Drawing>
         </DrawingImage>
         <CollectionViewSource x:Key="MaterialLibraryLoadProblems" Source="{Binding MaterialLibraryLoad.Problems}" />
+        <CollectionViewSource x:Key="IdfGenerationProblems" Source="{Binding IdfGeneration.Problems}" />
     </Window.Resources>
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo />
@@ -90,7 +91,7 @@
                                         Width="Auto" 
                                         Grid.ColumnSpan="3" 
                                         Padding="3,1" 
-                                        Command="{Binding ExecuteSbtCommand}" 
+                                        Command="{Binding SbtInvocation}" 
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding ReasonForDisabledSBCalculation}" />
                                     <CheckBox Content="Write IFC file with new space boundaries to:" Grid.Row="1" Height="16" HorizontalAlignment="Left" Margin="4" Name="checkBox4" VerticalAlignment="Center" IsChecked="{Binding WriteIfc}"/>
@@ -199,7 +200,7 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <Button 
-                                        Command="{Binding LoadIfcBuildingCommand}" 
+                                        Command="{Binding IfcModelLoad}" 
                                         Content="Load" 
                                         Height="23" 
                                         HorizontalAlignment="Right" 
@@ -237,7 +238,7 @@
                         <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button5" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIdfFileCommand}"/>
                         <Button 
                             Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" 
-                            Command="{Binding GenerateIdfCommand}"
+                            Command="{Binding IdfGeneration}"
                             ToolTipService.ShowOnDisabled="True" 
                             ToolTip="{Binding ReasonForDisabledIdfGeneration}" Padding="1" />
                         <ComboBox Grid.Column="3" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionIndexToWrite}"/>
@@ -330,6 +331,7 @@
                         <DataGrid.ItemsSource>
                             <CompositeCollection>
                                 <CollectionContainer Collection="{Binding Source={StaticResource MaterialLibraryLoadProblems}}" />
+                                <CollectionContainer Collection="{Binding Source={StaticResource IdfGenerationProblems}}" />
                             </CompositeCollection>
                         </DataGrid.ItemsSource>
                         <DataGrid.Columns>

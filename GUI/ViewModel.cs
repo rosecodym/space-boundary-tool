@@ -39,10 +39,10 @@ namespace GUI
         public ICommand LinkConstructionsCommand { get; private set; }
         public ICommand ViewIdfCommand { get; private set; }
 
-        public ICommand ExecuteSbtCommand { get { return sbCalculation; } }
+        public ICommand SbtInvocation { get { return sbCalculation; } }
         public ICommand MaterialLibraryLoad { get { return materialLibraryLoad; } }
-        public ICommand LoadIfcBuildingCommand { get { return buildingLoad; } }
-        public ICommand GenerateIdfCommand { get { return idfGeneration; } }
+        public ICommand IfcModelLoad { get { return buildingLoad; } }
+        public ICommand IdfGeneration { get { return idfGeneration; } }
 
         public SbtBuildingInformation CurrentSbtBuilding
         {

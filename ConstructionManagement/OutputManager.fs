@@ -7,13 +7,19 @@ open MaterialLibrary
 open ConstructionManagement.ModelConstructions
 open OutputPatterns
 
-type OutputManager () =
+type OutputManager (warnDelegate : Action<string>) =
+    let warn = warnDelegate.Invoke
     let mutable layers = Set.empty
     let mutable constructions = Set.empty
 
     let retrieveConstruction materials humanReadableName =
         let newC = OutputConstruction(materials, humanReadableName)
-        constructions <- constructions.Add(newC)
+        if not (constructions.Contains(newC)) then // constructions have referential transparency, but this check is needed so duplicate "outside air layer" warnings aren't emitted
+            match newC.HasOutsideAirLayer, humanReadableName with
+            | false, _ -> ()
+            | true, Some(name) -> warn (sprintf "Construction '%s' has an outside air layer." name)
+            | true, None -> warn (sprintf "An unnamed construction has an outside air layer.")
+            constructions <- constructions.Add(newC) // ...and since we already checked for membership, we might as well use that result to not to a no-op add
         newC
 
     let retrieveLayer (layer:OutputLayer) =

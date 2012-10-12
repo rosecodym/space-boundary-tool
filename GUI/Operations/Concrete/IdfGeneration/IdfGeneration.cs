@@ -85,7 +85,7 @@ namespace GUI.Operations
                 ReportProgress("Getting IDD.\n");
                 LibIdf.Idd.Idd idd = p.GetIdd();
                 ReportProgress("Got IDD.\n");
-                ConstructionManager cmanager = new ConstructionManager();
+                ConstructionManager cmanager = new ConstructionManager(msg => ReportProgress(msg, ProgressEvent.ProgressEventType.Warning));
                 IDictionary<string, string> zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(p.SbtBuilding.SpaceBoundaries, p.IfcBuilding.SpacesByGuid));
                 Func<int, IfcConstruction> materialIdToModelConstruction = id =>
                 {
