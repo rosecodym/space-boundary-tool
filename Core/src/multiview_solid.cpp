@@ -4,7 +4,7 @@
 #include "poly_builder.h"
 #include "sbt-core.h"
 #include "simple_face.h"
-#include "solid_conversion_operations.h"
+#include "solid_geometry_util.h"
 
 #include "multiview_solid.h"
 
@@ -36,42 +36,6 @@ std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
 
 extrusion_information get_extrusion_information(const extruded_area_solid & e, equality_context * c) {
 	return std::make_tuple(simple_face(e.area, c), geometry_common::normalize(c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz)).to_vector()) * e.extrusion_depth);
-}
-
-enum face_status { FLIP = -1, NOT_DECIDED = 0, OK = 1};
-
-std::tuple<size_t, face_status> find_root(const std::vector<simple_face> & all_faces, const std::vector<int> & group_memberships, int group) {
-	size_t root_ix;
-	face_status root_status = NOT_DECIDED;
-	for (root_ix = 0; root_ix < all_faces.size(); ++root_ix) {
-		if (group_memberships[root_ix] == group) {
-			ray_3 shoot(all_faces[root_ix].average_outer_point(), all_faces[root_ix].plane().orthogonal_direction());
-			bool found_intersection = false;
-			bool found_intersection_reversed = false;
-			for (size_t i = 0; i < all_faces.size(); ++i) {
-				if (i != root_ix && group_memberships[i] == group) {
-					if (!found_intersection && CGAL::do_intersect(shoot, all_faces[i].plane())) {
-						found_intersection = true;
-					}
-					if (!found_intersection_reversed && CGAL::do_intersect(shoot.opposite(), all_faces[i].plane())) {
-						found_intersection_reversed = true;
-					}
-					if (found_intersection && found_intersection_reversed) {
-						break;
-					}
-				}
-			}
-			if (!found_intersection) {
-				root_status = OK;
-				break;
-			}
-			if (!found_intersection_reversed) {
-				root_status = FLIP;
-				break;
-			}
-		}
-	}
-	return std::make_tuple(root_ix, root_status);
 }
 
 enum face_relationship { MISMATCH = -1, NOT_CONNECTED = 0, MATCH = 1};

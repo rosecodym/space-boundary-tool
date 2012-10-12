@@ -114,9 +114,6 @@
     <ClInclude Include="src\poly_builder.h">
       <Filter>geometry\solid_geometry</Filter>
     </ClInclude>
-    <ClInclude Include="src\solid_conversion_operations.h">
-      <Filter>geometry\solid_geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\solid_geometry_common.h">
       <Filter>geometry\solid_geometry</Filter>
     </ClInclude>
@@ -192,6 +189,9 @@
     <ClInclude Include="src\report.h">
       <Filter>reporting</Filter>
     </ClInclude>
+    <ClInclude Include="src\solid_geometry_util.h">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sbt-core.cpp">
@@ -231,9 +231,6 @@
       <Filter>geometry</Filter>
     </ClCompile>
     <ClCompile Include="src\multiview_solid.cpp">
-      <Filter>geometry\solid_geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\solid_conversion_operations.cpp">
       <Filter>geometry\solid_geometry</Filter>
     </ClCompile>
     <ClCompile Include="src\surface_pair.cpp">
@@ -277,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="src\stringification.cpp">
       <Filter>reporting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solid_geometry_util.cpp">
+      <Filter>geometry\solid_geometry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
