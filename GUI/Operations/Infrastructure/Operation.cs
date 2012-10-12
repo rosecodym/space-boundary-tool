@@ -17,7 +17,7 @@ namespace GUI.Operations
         Errors
     }
 
-    abstract class Operation<TParameters, TResult> : ICommand, INotifyPropertyChanged
+    abstract class Operation<TParameters, TResult> : ICommand
         where TParameters : class
         where TResult : class
     {
@@ -27,7 +27,6 @@ namespace GUI.Operations
         private Action<OperationStatus> statusChanged = _ => { };
         private Func<bool> canExecute = () => true;
 
-        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
@@ -57,7 +56,6 @@ namespace GUI.Operations
         {
             this.statusChanged = statusChanged;
             this.canExecute = canExecute;
-            PropertyChanged += new PropertyChangedEventHandler((_s, _args) => { });
             InProgress = false;
             bw.WorkerReportsProgress = true;
             bw.DoWork += new DoWorkEventHandler((_, e) => e.Result = PerformLongOperation(e.Argument as TParameters));
