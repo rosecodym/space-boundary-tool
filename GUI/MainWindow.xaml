@@ -32,7 +32,9 @@
         <converters:BuildingInformationTo3rdLevelCountString x:Key="BuildingInformationTo3rdLevelCountString" />
         <converters:BuildingInformationTo4thLevelCountString x:Key="BuildingInformationTo4thLevelCountString" />
         <converters:BuildingInformationToVirtualCountString x:Key="BuildingInformationToVirtualCountString" />
+        <CollectionViewSource x:Key="SbCalculationProblems" Source="{Binding SbInvocation.Problems}" />
         <CollectionViewSource x:Key="MaterialLibraryLoadProblems" Source="{Binding MaterialLibraryLoad.Problems}" />
+        <CollectionViewSource x:Key="IfcModelLoadProblems" Source="{Binding BuildingLoad.Problems}" />
         <CollectionViewSource x:Key="IdfGenerationProblems" Source="{Binding IdfGeneration.Problems}" />
         <Style x:Key="NoCellSelection" TargetType="DataGridCell">
             <Setter Property="Focusable" Value="False" />
@@ -335,7 +337,9 @@
                     <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid3" VerticalAlignment="Stretch" Width="Auto" CanUserReorderColumns="False" CellStyle="{StaticResource NoCellSelection}">
                         <DataGrid.ItemsSource>
                             <CompositeCollection>
+                                <CollectionContainer Collection="{Binding Source={StaticResource SbCalculationProblems}}" />
                                 <CollectionContainer Collection="{Binding Source={StaticResource MaterialLibraryLoadProblems}}" />
+                                <CollectionContainer Collection="{Binding Source={StaticResource IfcModelLoadProblems}}" />
                                 <CollectionContainer Collection="{Binding Source={StaticResource IdfGenerationProblems}}" />
                             </CompositeCollection>
                         </DataGrid.ItemsSource>
