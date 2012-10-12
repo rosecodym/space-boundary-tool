@@ -41,7 +41,7 @@ struct face_information {
 	{ }
 };
 
-TEST(SolidGeometryUtil, SimpleExtrusion) {
+TEST(SolidGeometryUtil, ExtrusionToNefSimple) {
 	equality_context c(0.01);
 
 	face f = create_face(4,
@@ -115,7 +115,7 @@ TEST(SolidGeometryUtil, SimpleExtrusion) {
 	nef.visit_shell_objects(nef_sface_handle(marked_v->shells_begin()), checker);
 }
 
-TEST(SolidGeometryUtil, ReversedBaseExtrusion) {
+TEST(SolidGeometryUtil, ExtrusionToNefReversedBase) {
 	equality_context c(0.01);
 
 	face f = create_face(4,
@@ -187,6 +187,43 @@ TEST(SolidGeometryUtil, ReversedBaseExtrusion) {
 	nef_polyhedron_3::Shell_entry_const_iterator sit;
 	face_checker checker;
 	nef.visit_shell_objects(nef_sface_handle(marked_v->shells_begin()), checker);
+}
+
+TEST(SolidGeometryUtil, FindRootAllObtuse) {
+	equality_context c(0.01);
+
+	simple_point points[] = {
+		simple_point(0, 0, 0),
+		simple_point(2, 0, 1),
+		simple_point(1, 1, 1),
+		simple_point(-1, 1, 1),
+		simple_point(-2, 0, 1),
+		simple_point(-1, -1, 1),
+		simple_point(1, -1, 1),
+		simple_point(0, 0, 2)
+	};
+
+	std::vector<simple_face> faces;
+	faces.push_back(simple_face(create_face(3, points[0], points[1], points[2]), &c));
+	faces.push_back(simple_face(create_face(3, points[0], points[2], points[3]), &c));
+	faces.push_back(simple_face(create_face(3, points[0], points[3], points[4]), &c));
+	faces.push_back(simple_face(create_face(3, points[0], points[4], points[5]), &c));
+	faces.push_back(simple_face(create_face(3, points[0], points[5], points[6]), &c));
+	faces.push_back(simple_face(create_face(3, points[0], points[6], points[1]), &c));
+	faces.push_back(simple_face(create_face(3, points[7], points[1], points[2]), &c));
+	faces.push_back(simple_face(create_face(3, points[7], points[2], points[3]), &c));
+	faces.push_back(simple_face(create_face(3, points[7], points[3], points[4]), &c));
+	faces.push_back(simple_face(create_face(3, points[7], points[4], points[5]), &c));
+	faces.push_back(simple_face(create_face(3, points[7], points[5], points[6]), &c));
+	faces.push_back(simple_face(create_face(3, points[7], points[6], points[1]), &c));
+
+	size_t root_ix;
+	face_status root_status;
+	std::tie(root_ix, root_status) = find_root(faces, std::vector<int>(12, 0), 0);
+
+	ASSERT_LT(root_ix, faces.size());
+	EXPECT_EQ(0, root_ix);
+	EXPECT_EQ(FLIP, root_status);
 }
 
 } // namespace
