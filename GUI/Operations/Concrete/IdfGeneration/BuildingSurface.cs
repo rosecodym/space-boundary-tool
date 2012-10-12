@@ -7,7 +7,7 @@ using Sbt.CoreTypes;
 
 namespace GUI.Operations
 {
-    static partial class IdfGeneration
+    partial class IdfGeneration
     {
         class BuildingSurface
         {

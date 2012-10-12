@@ -10,6 +10,7 @@ open MaterialLibrary
 [<AbstractClass>]
 type OutputLayer () =
     abstract Name : string with get
+    abstract IsAirLayer : bool with get
 
     abstract member AddToIdfV710 : Idf -> unit
 
@@ -40,6 +41,7 @@ type OutputLayer () =
 type internal OutputLayerAirGap (resistance:float) =
     inherit OutputLayer()
     override this.Name = sprintf "Air gap with resistance %f" resistance
+    override this.IsAirLayer = true
 
     override this.AddToIdfV710(idf) =
         let obj = idf.CreateObject("Material:AirGap")
@@ -49,6 +51,7 @@ type internal OutputLayerAirGap (resistance:float) =
 type internal OutputLayerGas (name, entry:LibraryEntryGas, thickness) =
     inherit OutputLayer()
     override this.Name = name
+    override this.IsAirLayer = false
 
     override this.AddToIdfV710(idf) =
         let obj = idf.CreateObject("WindowMaterial:Gas")
@@ -66,6 +69,7 @@ type internal OutputLayerGas (name, entry:LibraryEntryGas, thickness) =
 type internal OutputLayerGlazing (name, entry:LibraryEntryGlazing, thickness) =
     inherit OutputLayer()
     override this.Name = name
+    override this.IsAirLayer = false
 
     override this.AddToIdfV710(idf) =
         let obj = idf.CreateObject("WindowMaterial:Glazing")
@@ -88,6 +92,7 @@ type internal OutputLayerGlazing (name, entry:LibraryEntryGlazing, thickness) =
 type internal OutputLayerInfraredTransparent () =
     inherit OutputLayer()
     override this.Name = "Infrared transparent material"
+    override this.IsAirLayer = false
 
     override this.AddToIdfV710(idf) =
         let obj = idf.CreateObject("Material:InfraredTransparent")
@@ -96,6 +101,7 @@ type internal OutputLayerInfraredTransparent () =
 type internal OutputLayerNoMass (name, libraryEntry:LibraryEntryNoMass) =
     inherit OutputLayer()
     override this.Name = name
+    override this.IsAirLayer = false
 
     override this.AddToIdfV710(idf) =
         let obj = idf.CreateObject("Material:NoMass")
@@ -109,6 +115,7 @@ type internal OutputLayerNoMass (name, libraryEntry:LibraryEntryNoMass) =
 type internal OutputLayerOpaque (name, libraryEntry:LibraryEntryOpaque, thickness) =
     inherit OutputLayer()
     override this.Name = name
+    override this.IsAirLayer = false
 
     override this.AddToIdfV710(idf) =
         let obj = idf.CreateObject("Material")

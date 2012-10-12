@@ -6,9 +6,9 @@ using System.Text;
 
 namespace GUI.Operations
 {
-    static class SbtInvocation
+    class SbtInvocation : Operation<SbtInvocation.Parameters, SbtBuildingInformation>
     {
-        class Parameters
+        public class Parameters
         {
             public string InputFilename { get; set; }
             public string OutputFilename { get; set; }
@@ -32,45 +32,23 @@ namespace GUI.Operations
             return hoursComponent + minutesComponent + secondsComponent;
         }
 
-        static public void Execute(ViewModel vm, Action begin, Action end)
+        public SbtInvocation(ViewModel vm, Action completionAction)
+            : base(_ => vm.UpdateGlobalStatus(), () => vm.ReasonForDisabledSBCalculation == null)
         {
-            // TODO: check for pre-existing building
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += new DoWorkEventHandler(DoSbtWork);
-            worker.ProgressChanged += new ProgressChangedEventHandler((sender, e) =>
+            PrepareParameters = () =>
             {
-                string msg = e.UserState as string;
-                if (msg != null) { vm.UpdateOutputDirectly(msg); }
-            });
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler((sender, e) =>
+                Parameters p = new Parameters();
+                p.InputFilename = vm.InputIfcFilePath;
+                p.OutputFilename = (vm.WriteIfc && !String.IsNullOrWhiteSpace(vm.OutputIfcFilePath)) ? vm.OutputIfcFilePath : null;
+                if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
+                if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
+                p.Flags = (Sbt.EntryPoint.SbtFlags)Convert.ToInt32(vm.Flags, 16);
+                p.NotifyMessage = p.WarnMessage = p.ErrorMessage = msg => ReportProgress(msg);
+                return p;
+            };
+            PerformLongOperation = p =>
             {
-                SbtBuildingInformation res = e.Result as SbtBuildingInformation;
-                if (res != null) { vm.CurrentSbtBuilding = res; }
-                end();
-            });
-
-            Parameters p = new Parameters();
-            p.InputFilename = vm.InputIfcFilePath;
-            p.OutputFilename = (vm.WriteIfc && !String.IsNullOrWhiteSpace(vm.OutputIfcFilePath)) ? vm.OutputIfcFilePath : null;
-
-            if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
-            if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
-
-            p.Flags = (Sbt.EntryPoint.SbtFlags)Convert.ToInt32(vm.Flags, 16);
-
-            p.NotifyMessage = p.WarnMessage = p.ErrorMessage = msg => worker.ReportProgress(0, msg);
-
-            begin();
-            worker.RunWorkerAsync(p);
-        }
-
-        static void DoSbtWork(object sender, DoWorkEventArgs e)
-        {
-            Parameters p = e.Argument as Parameters;
-            try
-            {
-                if (p != null)
+                try
                 {
                     IList<Sbt.CoreTypes.ElementInfo> elements;
                     ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
@@ -96,13 +74,20 @@ namespace GUI.Operations
                     resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
                     resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
                     resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
-                    e.Result = resultingBuilding;
+                    return resultingBuilding;
                 }
-            }
-            catch (Exception ex)
+                catch (Exception ex)
+                {
+                    ReportProgress(ex.Message, ProgressEvent.ProgressEventType.Error);
+                    return null;
+                }
+            };
+            ProgressHandler = evt => vm.UpdateOutputDirectly(evt.Message);
+            LongOperationComplete = res =>
             {
-                p.ErrorMessage(ex.Message);
-            }
+                vm.CurrentSbtBuilding = res ?? vm.CurrentSbtBuilding;
+                completionAction();
+            };
         }
     }
 }

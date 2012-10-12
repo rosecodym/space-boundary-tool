@@ -18,11 +18,12 @@ namespace GUI
     class ViewModel : INotifyPropertyChanged
     {
         readonly IddManager idds = new IddManager();
-        readonly OperationInformation sbCalculation;
-        readonly OperationInformation buildingLoad;
-        readonly OperationInformation materialLibraryLoad;
-        readonly OperationInformation idfGeneration;
-        readonly Action<OperationStatus> updateStatusDisplay;
+        readonly Operations.SbtInvocation sbCalculation;
+        readonly Operations.BuildingLoad buildingLoad;
+        readonly Operations.MaterialsLibraryLoad materialLibraryLoad;
+        readonly Operations.IdfGeneration idfGeneration;
+
+        readonly Action<Operations.OperationStatus> updateStatusDisplay = _ => { };
 
         SbtBuildingInformation sbtBuilding;
         IfcBuildingInformation ifcBuilding;
@@ -35,12 +36,13 @@ namespace GUI
         public ICommand BrowseToOutputIfcFileCommand { get; private set; }
         public ICommand BrowseToOutputIdfFileCommand { get; private set; }
         public ICommand BrowseToMaterialsLibraryCommand { get; private set; }
-        public ICommand ExecuteSbtCommand { get; private set; }
-        public ICommand LoadMaterialsLibraryCommand { get; private set; }
-        public ICommand LoadIfcBuildingCommand { get; private set; }
         public ICommand LinkConstructionsCommand { get; private set; }
-        public ICommand GenerateIdfCommand { get; private set; }
         public ICommand ViewIdfCommand { get; private set; }
+
+        public ICommand SbtInvocation { get { return sbCalculation; } }
+        public ICommand MaterialLibraryLoad { get { return materialLibraryLoad; } }
+        public ICommand IfcModelLoad { get { return buildingLoad; } }
+        public ICommand IdfGeneration { get { return idfGeneration; } }
 
         public SbtBuildingInformation CurrentSbtBuilding
         {
@@ -350,13 +352,14 @@ namespace GUI
 
         public IddManager Idds { get { return idds; } }
 
-        public ViewModel(Action<string> updateOutputDirectly, Action<OperationStatus> updateStatusDisplay)
+        public ViewModel(Action<string> updateOutputDirectly, Action<Operations.OperationStatus> updateStatusDisplay)
         {
-            this.sbCalculation = new OperationInformation(Operations.SbtInvocation.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")));
-            this.materialLibraryLoad = new OperationInformation(Operations.MaterialsLibraryLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")));
-            this.buildingLoad = new OperationInformation(Operations.BuildingLoad.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")));
-            this.idfGeneration = new OperationInformation(Operations.IdfGeneration.Execute, this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIDF")));
             this.updateStatusDisplay = updateStatusDisplay;
+
+            this.sbCalculation = new Operations.SbtInvocation(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyCalculatingSBs")));
+            this.materialLibraryLoad = new Operations.MaterialsLibraryLoad(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingMaterialLibrary")));
+            this.buildingLoad = new Operations.BuildingLoad(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyLoadingIfcModel")));
+            this.idfGeneration = new Operations.IdfGeneration(this, () => PropertyChanged(this, new PropertyChangedEventArgs("CurrentlyGeneratingIdf")));
 
             var propertyDependencies = new[] 
             {
@@ -395,7 +398,7 @@ namespace GUI
                 new { Dependent = "AvailableEndDays", DependentOn = new[] { "EndMonth" } }
             };
 
-            this.PropertyChanged += (_, args) =>
+            PropertyChanged += (_, args) =>
             {
                 foreach (var d in propertyDependencies)
                 {
@@ -408,10 +411,10 @@ namespace GUI
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            ExecuteSbtCommand = new RelayCommand(_ => sbCalculation.Operate(), _ => ReasonForDisabledSBCalculation == null);
-            GenerateIdfCommand = new RelayCommand(_ => idfGeneration.Operate(), _ => ReasonForDisabledIdfGeneration == null);
-            LoadMaterialsLibraryCommand = new RelayCommand(_ => materialLibraryLoad.Operate(), _ => ReasonForDisabledMaterialLibraryLoad == null);
-            LoadIfcBuildingCommand = new RelayCommand(_ => buildingLoad.Operate(), _ => ReasonForDisabledIfcModelLoad == null);
+            //ExecuteSbtCommand = new RelayCommand(_ => sbCalculation.Execute(), _ => ReasonForDisabledSBCalculation == null);
+            //GenerateIdfCommand = new RelayCommand(_ => idfGeneration.Execute(), _ => ReasonForDisabledIdfGeneration == null);
+            //LoadMaterialsLibraryCommand = new RelayCommand(_ => materialLibraryLoad.Execute(), _ => ReasonForDisabledMaterialLibraryLoad == null);
+            //LoadIfcBuildingCommand = new RelayCommand(_ => buildingLoad.Execute(), _ => ReasonForDisabledIfcModelLoad == null);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
                 {
@@ -455,12 +458,7 @@ namespace GUI
 
         internal void UpdateGlobalStatus()
         {
-            OperationStatus status = OperationStatus.BeforeStart;
-            if (sbCalculation.Status > status) { status = sbCalculation.Status; }
-            if (materialLibraryLoad.Status > status) { status = materialLibraryLoad.Status; }
-            if (buildingLoad.Status > status) { status = buildingLoad.Status; }
-            if (idfGeneration.Status > status) { status = idfGeneration.Status; }
-            updateStatusDisplay(status);
+            updateStatusDisplay(new[] { sbCalculation.Status, materialLibraryLoad.Status, buildingLoad.Status, idfGeneration.Status }.Max());
         }
 
         private void EstablishConstructionUsage()

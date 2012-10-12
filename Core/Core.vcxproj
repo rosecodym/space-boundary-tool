@@ -55,7 +55,7 @@
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
-      <AdditionalOptions>%(AdditionalOptions) -Zm159 /F 0x200000</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
@@ -84,7 +84,7 @@
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
-      <AdditionalOptions>%(AdditionalOptions) -Zm155 /F 0x200000</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>Async</ExceptionHandling>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>

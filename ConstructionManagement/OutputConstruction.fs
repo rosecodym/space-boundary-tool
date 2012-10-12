@@ -12,6 +12,11 @@ type OutputConstruction (layers:OutputLayer list, humanReadableName:string optio
         match humanReadableName with
         | Some(name) -> sprintf "%s!%s" name (String.concat "!" layerNames) // "!" is the separator because it can't appear in E+ names
         | None -> sprintf "!%s" (String.concat "!" layerNames)
+    let hasOutsideAirLayer =
+        match layers, List.rev layers with
+        | outside :: rest, _ when outside.IsAirLayer -> true
+        | _, outside :: rest when outside.IsAirLayer -> true
+        | _ -> false
 
     member this.Name =
         match humanReadableName, layerNames with
@@ -20,6 +25,7 @@ type OutputConstruction (layers:OutputLayer list, humanReadableName:string optio
         | _ -> sprintf "Unnamed composite (id %i)" (this.GetHashCode())
 
     member this.LayerNames = List<string>(layerNames)
+    member this.HasOutsideAirLayer = hasOutsideAirLayer
 
     member private this.Identifier = identifier
 

@@ -7,7 +7,7 @@ using ModelConstruction = ConstructionManagement.ModelConstructions.ModelConstru
 
 namespace GUI.Operations
 {
-    static partial class IdfGeneration
+    partial class IdfGeneration
     {
         public enum SolarDistribution
         {
@@ -27,7 +27,7 @@ namespace GUI.Operations
             Urban
         }
 
-        class Parameters
+        public class Parameters
         {
             public string OutputFilename { get; set; }
             public string LocationName { get; set; }
@@ -47,7 +47,6 @@ namespace GUI.Operations
             public Func<int, ModelConstruction> MaterialIDToModelConstruction { get; set; }
             public EnergyPlusVersion EPVersion { get; set; }
             public Func<LibIdf.Idd.Idd> GetIdd { get; set; }
-            public Action<string> Notify { get; set; }
             public bool AttachDebugger { get; set; }
         }
     }

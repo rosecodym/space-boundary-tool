@@ -11,7 +11,7 @@ using Material = ConstructionManagement.OutputLayer;
 
 namespace GUI.Operations
 {
-    static partial class IdfGeneration
+    partial class IdfGeneration
     {
         abstract class IdfCreator
         {

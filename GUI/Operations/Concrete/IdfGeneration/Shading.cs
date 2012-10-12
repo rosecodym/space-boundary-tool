@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUI.Operations
 {
-    static partial class IdfGeneration
+    partial class IdfGeneration
     {
         class Shading
         {
