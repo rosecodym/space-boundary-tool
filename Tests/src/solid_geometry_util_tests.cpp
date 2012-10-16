@@ -189,42 +189,6 @@ TEST(SolidGeometryUtil, ExtrusionToNefReversedBase) {
 	nef.visit_shell_objects(nef_sface_handle(marked_v->shells_begin()), checker);
 }
 
-TEST(SolidGeometryUtil, FindRootAllObtuse) {
-	equality_context c(0.01);
-
-	simple_point points[] = {
-		simple_point(0, 0, 0),
-		simple_point(2, 0, 1),
-		simple_point(1, 1, 1),
-		simple_point(-1, 1, 1),
-		simple_point(-2, 0, 1),
-		simple_point(-1, -1, 1),
-		simple_point(1, -1, 1),
-		simple_point(0, 0, 2)
-	};
-
-	std::vector<simple_face> faces;
-	faces.push_back(simple_face(create_face(3, points[0], points[1], points[2]), &c));
-	faces.push_back(simple_face(create_face(3, points[0], points[2], points[3]), &c));
-	faces.push_back(simple_face(create_face(3, points[0], points[3], points[4]), &c));
-	faces.push_back(simple_face(create_face(3, points[0], points[4], points[5]), &c));
-	faces.push_back(simple_face(create_face(3, points[0], points[5], points[6]), &c));
-	faces.push_back(simple_face(create_face(3, points[0], points[6], points[1]), &c));
-	faces.push_back(simple_face(create_face(3, points[7], points[1], points[2]), &c));
-	faces.push_back(simple_face(create_face(3, points[7], points[2], points[3]), &c));
-	faces.push_back(simple_face(create_face(3, points[7], points[3], points[4]), &c));
-	faces.push_back(simple_face(create_face(3, points[7], points[4], points[5]), &c));
-	faces.push_back(simple_face(create_face(3, points[7], points[5], points[6]), &c));
-	faces.push_back(simple_face(create_face(3, points[7], points[6], points[1]), &c));
-
-	size_t root_ix;
-	face_status root_status;
-	std::tie(root_ix, root_status) = find_root(faces, std::vector<int>(12, 0), 0);
-
-	EXPECT_GE(root_ix, 0);
-	EXPECT_LT(root_ix, faces.size());
-}
-
 } // namespace
 
 } // namespace impl

@@ -20,3 +20,8 @@ class failed_malloc_exception : public sbt_exception {
 	virtual sbt_return_t code() const { return SBT_FAILED_ALLOCATION; }
 	virtual const char * what() const throw() { return "Failed malloc."; }
 };
+
+class brep_with_voids_exception : public sbt_exception {
+	virtual sbt_return_t code() const { return SBT_UNSUPPORTED; }
+	virtual const char * what() const throw() { return "A brep had some voids."; }
+};
