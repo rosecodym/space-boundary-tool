@@ -134,4 +134,73 @@ TEST(MultiviewSolid, ThreeStairs) {
 	EXPECT_EQ(10, ms.oriented_faces(&c).size());
 }
 
+TEST(MultiviewSolid, MismatchedFaces) {
+	equality_context c(0.01);
+
+	solid s = create_brep(4,
+		create_face(3, 
+			simple_point(0, 0, 0),
+			simple_point(1, 0, 0),
+			simple_point(0, 1, 0)),
+		create_face(3,
+			simple_point(0, 0, 0),
+			simple_point(0, 0, 1),
+			simple_point(0, 1, 0)),
+		create_face(3,
+			simple_point(0, 0, 0),
+			simple_point(0, 0, 1),
+			simple_point(1, 0, 0)),
+		create_face(3,
+			simple_point(0, 0, 1),
+			simple_point(0, 1, 0),
+			simple_point(1, 0, 0)));
+
+	multiview_solid mvs(s, &c);
+	std::vector<oriented_area> faces = mvs.oriented_faces(&c);
+	EXPECT_EQ(4, faces.size());
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(0, 0, 1) && !o.sense();
+	}));
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(0, 1, 0) && !o.sense();
+	}));
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(1, 0, 0) && !o.sense();
+	}));
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(1, 1, 1);
+	}));
+}
+
+TEST(MultiviewSolid, AllObtuseAngleBrep) {
+	equality_context c(0.01);
+
+	simple_point points[] = {
+		simple_point(0, 0, 0),
+		simple_point(2, 0, 1),
+		simple_point(1, 1, 1),
+		simple_point(-1, 1, 1),
+		simple_point(-2, 0, 1),
+		simple_point(-1, -1, 1),
+		simple_point(1, -1, 1),
+		simple_point(0, 0, 2)
+	};
+
+	solid s = create_brep(12,
+		create_face(3, points[0], points[1], points[2]),
+		create_face(3, points[0], points[2], points[3]),
+		create_face(3, points[0], points[3], points[4]),
+		create_face(3, points[0], points[4], points[5]),
+		create_face(3, points[0], points[5], points[6]),
+		create_face(3, points[0], points[6], points[1]),
+		create_face(3, points[7], points[1], points[2]),
+		create_face(3, points[7], points[2], points[3]),
+		create_face(3, points[7], points[3], points[4]),
+		create_face(3, points[7], points[4], points[5]),
+		create_face(3, points[7], points[5], points[6]),
+		create_face(3, points[7], points[6], points[1]));
+
+	EXPECT_NO_THROW(multiview_solid mvs(s, &c));
+}
+
 } // namespace
