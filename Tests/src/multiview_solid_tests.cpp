@@ -5,6 +5,7 @@
 #include "common.h"
 #include "element.h"
 #include "equality_context.h"
+#include "exceptions.h"
 #include "multiview_solid.h"
 
 namespace {
@@ -201,6 +202,83 @@ TEST(MultiviewSolid, AllObtuseAngleBrep) {
 		create_face(3, points[7], points[6], points[1]));
 
 	EXPECT_NO_THROW(multiview_solid mvs(s, &c));
+}
+
+TEST(MultiviewSolid, BadFaces) {
+	equality_context c(0.01);
+
+	solid s = create_brep(10,
+		// base
+		create_face(4,
+			simple_point(1.5, 2.8333333333333, 0),
+			simple_point(1.5, 0, 0),
+			simple_point(0, 0, 0),
+			simple_point(0, 2.83333333333333, 0)),
+		// ?
+		create_face(6,
+			simple_point(1.5, 0, 0),
+			simple_point(1.5, 2.8333333333333333, 0),
+			simple_point(1.5, 2.8333333333333333, 10.666666666666),
+			simple_point(1.5, 2.826055508613251, 10.666666666666),
+			simple_point(1.5, 2.826055508613251, 10.5),
+			simple_point(1.5, 0, 10.5)),
+		// front short side
+		create_face(4,
+			simple_point(0, 0, 0),
+			simple_point(1.5, 0, 0),
+			simple_point(1.5, 0, 10.5),
+			simple_point(0, 0, 10.5)),
+		// ?
+		create_face(6,
+			simple_point(0, 2.833333333333, 0),
+			simple_point(0, 2.833333333333, 10.666666666666),
+			simple_point(0, 1.251142620394262, 10.666666666666666),
+			simple_point(0, 1.251142620394262, 10.5),
+			simple_point(0, 0, 10.5),
+			simple_point(0, 0, 0)),
+		// back short side
+		create_face(4,
+			simple_point(1.5, 2.8333333333, 0),
+			simple_point(1.5, 2.8333333333, 10.666666666666),
+			simple_point(0, 2.8333333333, 10.666666666666),
+			simple_point(0, 2.8333333333, 0)),
+		// ?
+		create_face(6,
+			simple_point(1.5, 2.83333333333333, 10.6666666666),
+			simple_point(0, 2.83333333333333, 10.6666666666),
+			simple_point(0, 1.251142620394262, 10.6666666666),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.6666666666),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.6666666666),
+			simple_point(1.5, 2.826055508613251, 10.6666666666)),
+		// ?
+		create_face(6,
+			simple_point(0.003271982629939885, 2.826055508613251, 10.5),
+			simple_point(1.5, 2.826055508613251, 10.5),
+			simple_point(1.5, 0, 10.5),
+			simple_point(0, 0, 10.5),
+			simple_point(0, 1.251142620394262, 10.5),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.5)),
+		// half lip edge
+		create_face(4,
+			simple_point(0.003271982629936332, 1.251142620394262, 10.5),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.6666666666),
+			simple_point(0, 1.251142620394262, 10.6666666666),
+			simple_point(0, 1.251142620394262, 10.5)),
+		// half lip inside
+		create_face(4,
+			simple_point(0.003271982629936332, 1.251142620394262, 10.5),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.5),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.6666666666),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.6666666666)),
+		// full lip inside
+		create_face(4,
+			simple_point(0.003271982629939885, 2.826055508613251, 10.6666666666),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.5),
+			simple_point(1.5, 2.826055508613251, 10.5),
+			simple_point(1.5, 2.826055508613251, 10.6666666666)));
+			
+	multiview_solid mvs(s, &c);
+	EXPECT_TRUE(mvs.is_single_volume());
 }
 
 } // namespace

@@ -77,6 +77,10 @@ typedef CGAL::Nef_polyhedron_3<K>		nef_polyhedron_3;
 typedef CGAL::Bbox_2					bbox_2;
 typedef CGAL::Bbox_3					bbox_3;
 
+typedef CGAL::Simple_cartesian<double>	iK;
+typedef CGAL::Point_3<iK>				ipoint_3;
+typedef CGAL::Line_3<iK>				iline_3;
+
 typedef nef_polyhedron_3::Volume_const_iterator		nef_volume_iterator;
 typedef nef_polyhedron_3::Volume_const_handle		nef_volume_handle;
 typedef nef_polyhedron_3::Vertex_const_handle		nef_vertex_handle;

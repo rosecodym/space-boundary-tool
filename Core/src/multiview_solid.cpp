@@ -31,7 +31,12 @@ bbox_3 nef_bounding_box(const nef_polyhedron_3 & nef) {
 
 std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
 	std::vector<simple_face> res;
-	std::transform(b.faces, b.faces + b.face_count, std::back_inserter(res), [c](const face & f) { return simple_face(f, c); });
+	for (size_t i = 0; i < b.face_count; ++i) {
+		try {
+			res.push_back(simple_face(b.faces[i], c));
+		}
+		catch (internal_exceptions::invalid_face_exception & /*ex*/) { }
+	}
 	return res;
 }
 
@@ -178,7 +183,7 @@ oriented_area_groups nef_to_oriented_area_groups(const nef_polyhedron_3 & nef, e
 
 } // namespace
 
-multiview_solid::multiview_solid(const solid & s, equality_context * c) {
+multiview_solid::multiview_solid(const solid & s, equality_context * c) : m_faces_dropped_during_construction(false) {
 	if (s.rep_type == REP_BREP) {
 		std::vector<simple_face> all_faces = faces_from_brep(s.rep.as_brep, c);
 		if (boost::find_if(all_faces, [](const simple_face & f) { return !f.inners().empty(); }) != all_faces.end()) {
@@ -187,6 +192,7 @@ multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 			// since we don't even have a way to *verify* normals, this is fatal
 			throw brep_with_voids_exception();
 		}
+		if (all_faces.size() != s.rep.as_brep.face_count) { m_faces_dropped_during_construction = true; }
 		geometry = to_nef_polyhedron(std::move(all_faces));
 	}
 	else if (s.rep_type == REP_EXT) {

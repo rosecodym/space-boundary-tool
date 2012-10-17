@@ -1,51 +1,25 @@
 #include "precompiled.h"
 
+#include "cleanup_loop.h"
 #include "equality_context.h"
+#include "exceptions.h"
 #include "sbt-core.h"
 
 #include "simple_face.h"
 
 namespace {
 
-typedef CGAL::Simple_cartesian<double> iK;
-typedef CGAL::Point_3<iK> ipoint_3;
-typedef CGAL::Line_3<iK> iline_3;
-
 typedef std::vector<point_3> loop;
 
-bool are_same(const ipoint_3 & a, const ipoint_3 & b, const equality_context & ctxt) {
-	return ctxt.is_zero(a.x() - b.x()) && ctxt.is_zero(a.y() - b.y()) && ctxt.is_zero(a.z() - b.z());
-}
-
-bool are_collinear(const ipoint_3 & a, const ipoint_3 & b, const ipoint_3 & c, const equality_context & ctxt) {
-	return are_same(a, c, ctxt) || ctxt.is_zero_squared(CGAL::squared_distance(b, iline_3(a, c)));
-}
-
-std::vector<ipoint_3> cleanup_polyloop(const polyloop & p, const equality_context & c) {
-	std::vector<ipoint_3> res;
-
-	for (size_t i = 0; i < p.vertex_count; ++i) {
-		ipoint_3 pt(p.vertices[i].x, p.vertices[i].y, p.vertices[i].z);
-
-		if (res.empty()) {
-			res.push_back(pt);
-		}
-
-		else if (!are_same(pt, res.front(), c) && !are_same(pt, res.back(), c)) {
-			if (res.size() > 1 && are_collinear(res[res.size() - 2], res.back(), pt, c)) {
-				res.pop_back();
-			}
-			res.push_back(pt);
-		}
-	}
-
-	return res;
-}
-
 loop create_loop(const polyloop & p, equality_context * c) {
-	auto clean_points = cleanup_polyloop(p, *c);
+	std::vector<ipoint_3> pts;
+	for (size_t i = 0; i < p.vertex_count; ++i) {
+		pts.push_back(ipoint_3(p.vertices[i].x, p.vertices[i].y, p.vertices[i].z));
+	}
 	loop res;
-	boost::transform(clean_points, std::back_inserter(res), [c](const ipoint_3 & p) { return c->request_point(p.x(), p.y(), p.z()); });
+	if (geometry_common::cleanup_loop(&pts, c->height_epsilon())) {
+		boost::transform(pts, std::back_inserter(res), [c](const ipoint_3 & p) { return c->request_point(p.x(), p.y(), p.z()); });
+	}
 	return res;
 }
 
@@ -80,6 +54,9 @@ bool opposite_sense(const direction_3 & a, const direction_3 & b) {
 } // namespace
 
 simple_face::simple_face(const face & f, equality_context * c) : m_outer(create_loop(f.outer_boundary, c)) {
+	if (m_outer.size() < 3) {
+		throw internal_exceptions::invalid_face_exception();
+	}
 	std::tie(m_plane, m_average_point) = calculate_plane_and_average_point(m_outer);
 	std::transform(f.voids, f.voids + f.void_count, std::back_inserter(m_inners), [c, this](const polyloop & p) -> loop {
 		loop inner = create_loop(p, c);

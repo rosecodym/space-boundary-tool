@@ -91,4 +91,15 @@ TEST(LoopCleanup, AngledOutPoint2) {
 	EXPECT_EQ(4, vec.size());
 }
 
+TEST(LoopCleanup, DegenerateRectanglePoint3) {
+	point_3 pts[] = {
+		point_3(0.003271982629936332, 1.251142620394262, 10.5),
+		point_3(0.003271982629936332, 1.251142620394262, 10.6666666666),
+		point_3(0, 1.251142620394262, 10.6666666666),
+		point_3(0, 1.251142620394262, 10.5)
+	};
+	std::vector<point_3> vec(pts, pts + 4);
+	EXPECT_FALSE(geometry_common::cleanup_loop(&vec, 0.01));
+}
+
 } // namespace geometry_2d

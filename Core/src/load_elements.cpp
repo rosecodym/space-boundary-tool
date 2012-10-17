@@ -21,9 +21,12 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 			}
 			try {
 				complex_elements.push_back(element(infos[i], c));
+				if (complex_elements.back().geometry().faces_dropped_during_construction()) {
+					report_warning(boost::format("Some faces of element %s were dropped. Processing will continue, but the IFC file should be double-checked.\n") % infos[i]->id);
+				}
 			}
-			catch (brep_with_voids_exception & /*ex*/) {
-				report_warning(boost::format("Element %s has b-rep geometry, but some of its faces have voids. This is unsupported and this element will be ignored.") % infos[i]->id);
+			catch (unsupported_geometry_exception & ex) {
+				report_warning(boost::format("Element %s has unsupported geometry (%s). It will be ignored.") % infos[i]->id % ex.condition());
 			}
 		}
 	}

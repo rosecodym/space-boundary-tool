@@ -12,7 +12,6 @@ namespace solid_geometry {
 
 class multiview_solid {
 private:
-
 	typedef impl::oriented_area_groups oriented_area_groups;
 	typedef impl::extrusion_information extrusion_information;
 
@@ -20,11 +19,12 @@ private:
 
 	mutable geometry_representation geometry;
 
+	bool m_faces_dropped_during_construction;
+
 	bool is_nef_representable() const;
 
 	void convert_to_nef(std::function<equality_context *(void)>) const;
 
-	//multiview_solid(const std::vector<simple_face> & simple_face_volume) : geometry(simple_face_groups(1, simple_face_volume)) { }
 	multiview_solid(const std::vector<oriented_area> & oriented_area_volume) : geometry(oriented_area_groups()) { boost::get<oriented_area_groups>(geometry).push_back(oriented_area_volume); }
 	multiview_solid(const extrusion_information & ext) : geometry(ext) { }
 	multiview_solid(const nef_polyhedron_3 & nef, nef_volume_handle v, equality_context * c);
@@ -39,6 +39,8 @@ public:
 	bool is_single_volume() const;
 	std::vector<multiview_solid> as_single_volumes(equality_context * c) const;
 	std::vector<oriented_area> oriented_faces(equality_context * c) const;
+
+	bool faces_dropped_during_construction() const { return m_faces_dropped_during_construction; }
 
 	void subtract(const multiview_solid & other, equality_context * c);
 };
