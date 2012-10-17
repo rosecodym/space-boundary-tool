@@ -204,7 +204,7 @@ TEST(MultiviewSolid, AllObtuseAngleBrep) {
 	EXPECT_NO_THROW(multiview_solid mvs(s, &c));
 }
 
-TEST(MultiviewSolid, OpenBrep) {
+TEST(MultiviewSolid, SimplifiedToOpenBrep) {
 	equality_context c(0.01);
 
 	solid s = create_brep(10,
