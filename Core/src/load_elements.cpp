@@ -14,20 +14,16 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 
 	std::vector<element> complex_elements;
 	for (size_t i = 0; i < count; ++i) {
-		if (filter(infos[i]->id)) {
-			if (infos[i]->geometry.rep_type != REP_BREP && infos[i]->geometry.rep_type != REP_EXT) {
-				report_warning(boost::format("Element %s has an unknown geometry representation type. It will be skipped.\n") % infos[i]->id);
-				continue;
-			}
-			try {
+		try {
+			if (filter(infos[i]->id)) {
 				complex_elements.push_back(element(infos[i], c));
-				if (complex_elements.back().geometry().faces_dropped_during_construction()) {
-					report_warning(boost::format("Some faces of element %s were dropped. Processing will continue, but the IFC file should be double-checked.\n") % infos[i]->id);
-				}
 			}
-			catch (unsupported_geometry_exception & ex) {
-				report_warning(boost::format("Element %s has unsupported geometry (%s). It will be ignored.") % infos[i]->id % ex.condition());
-			}
+		}
+		catch (unsupported_geometry_exception & ex) {
+			report_warning(boost::format("Element %s has unsupported geometry (%s). It will be ignored.\n") % infos[i]->id % ex.condition());
+		}
+		catch (unknown_geometry_rep_exception & /*ex*/) {
+			report_warning(boost::format("Element %s has unknown internal geometry represetnation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
 		}
 	}
 

@@ -204,17 +204,17 @@ TEST(MultiviewSolid, AllObtuseAngleBrep) {
 	EXPECT_NO_THROW(multiview_solid mvs(s, &c));
 }
 
-TEST(MultiviewSolid, BadFaces) {
+TEST(MultiviewSolid, OpenBrep) {
 	equality_context c(0.01);
 
 	solid s = create_brep(10,
-		// base
+		// base/out
 		create_face(4,
 			simple_point(1.5, 2.8333333333333, 0),
 			simple_point(1.5, 0, 0),
 			simple_point(0, 0, 0),
 			simple_point(0, 2.83333333333333, 0)),
-		// ?
+		// ?/out
 		create_face(6,
 			simple_point(1.5, 0, 0),
 			simple_point(1.5, 2.8333333333333333, 0),
@@ -222,13 +222,13 @@ TEST(MultiviewSolid, BadFaces) {
 			simple_point(1.5, 2.826055508613251, 10.666666666666),
 			simple_point(1.5, 2.826055508613251, 10.5),
 			simple_point(1.5, 0, 10.5)),
-		// front short side
+		// front short side/out
 		create_face(4,
 			simple_point(0, 0, 0),
 			simple_point(1.5, 0, 0),
 			simple_point(1.5, 0, 10.5),
 			simple_point(0, 0, 10.5)),
-		// ?
+		// ?/in
 		create_face(6,
 			simple_point(0, 2.833333333333, 0),
 			simple_point(0, 2.833333333333, 10.666666666666),
@@ -236,13 +236,13 @@ TEST(MultiviewSolid, BadFaces) {
 			simple_point(0, 1.251142620394262, 10.5),
 			simple_point(0, 0, 10.5),
 			simple_point(0, 0, 0)),
-		// back short side
+		// back short side/in
 		create_face(4,
 			simple_point(1.5, 2.8333333333, 0),
 			simple_point(1.5, 2.8333333333, 10.666666666666),
 			simple_point(0, 2.8333333333, 10.666666666666),
 			simple_point(0, 2.8333333333, 0)),
-		// ?
+		// lip top (rejected)
 		create_face(6,
 			simple_point(1.5, 2.83333333333333, 10.6666666666),
 			simple_point(0, 2.83333333333333, 10.6666666666),
@@ -258,7 +258,7 @@ TEST(MultiviewSolid, BadFaces) {
 			simple_point(0, 0, 10.5),
 			simple_point(0, 1.251142620394262, 10.5),
 			simple_point(0.003271982629936332, 1.251142620394262, 10.5)),
-		// half lip edge
+		// half lip edge (rejected)
 		create_face(4,
 			simple_point(0.003271982629936332, 1.251142620394262, 10.5),
 			simple_point(0.003271982629936332, 1.251142620394262, 10.6666666666),
@@ -277,8 +277,7 @@ TEST(MultiviewSolid, BadFaces) {
 			simple_point(1.5, 2.826055508613251, 10.5),
 			simple_point(1.5, 2.826055508613251, 10.6666666666)));
 			
-	multiview_solid mvs(s, &c);
-	EXPECT_TRUE(mvs.is_single_volume());
+	EXPECT_THROW(multiview_solid mvs(s, &c);, bad_brep_exception);
 }
 
 } // namespace

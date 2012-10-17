@@ -34,19 +34,10 @@ public:
 	virtual const char * condition() const throw() { return "b-rep with a face void"; }
 };
 
-class non_manifold_solid_exception : public unsupported_geometry_exception {
+class bad_brep_exception : public unsupported_geometry_exception {
 public:
-	virtual const char * condition() const throw() { return "non-manifold solid"; }
+	virtual const char * condition() const throw() { return "bad b-rep"; }
 };
 
-class internal_exception : public sbt_exception {
-public:
-	virtual sbt_return_t code() const { return SBT_UNKNOWN; }
-	virtual const char * what() const throw() { return "Internal error.\n"; }
-};
-
-namespace internal_exceptions {
-
-class invalid_face_exception : public internal_exception { };
-
-} // namespace internal_exceptions
+class unknown_geometry_rep_exception : public sbt_exception { };
+class invalid_face_exception : public sbt_exception { };

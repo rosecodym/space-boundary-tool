@@ -19,8 +19,6 @@ private:
 
 	mutable geometry_representation geometry;
 
-	bool m_faces_dropped_during_construction;
-
 	bool is_nef_representable() const;
 
 	void convert_to_nef(std::function<equality_context *(void)>) const;
@@ -39,8 +37,6 @@ public:
 	bool is_single_volume() const;
 	std::vector<multiview_solid> as_single_volumes(equality_context * c) const;
 	std::vector<oriented_area> oriented_faces(equality_context * c) const;
-
-	bool faces_dropped_during_construction() const { return m_faces_dropped_during_construction; }
 
 	void subtract(const multiview_solid & other, equality_context * c);
 };

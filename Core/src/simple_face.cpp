@@ -55,7 +55,7 @@ bool opposite_sense(const direction_3 & a, const direction_3 & b) {
 
 simple_face::simple_face(const face & f, equality_context * c) : m_outer(create_loop(f.outer_boundary, c)) {
 	if (m_outer.size() < 3) {
-		throw internal_exceptions::invalid_face_exception();
+		throw invalid_face_exception();
 	}
 	std::tie(m_plane, m_average_point) = calculate_plane_and_average_point(m_outer);
 	std::transform(f.voids, f.voids + f.void_count, std::back_inserter(m_inners), [c, this](const polyloop & p) -> loop {

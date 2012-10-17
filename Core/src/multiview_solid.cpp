@@ -29,17 +29,6 @@ bbox_3 nef_bounding_box(const nef_polyhedron_3 & nef) {
 	return *res;
 }
 
-std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
-	std::vector<simple_face> res;
-	for (size_t i = 0; i < b.face_count; ++i) {
-		try {
-			res.push_back(simple_face(b.faces[i], c));
-		}
-		catch (internal_exceptions::invalid_face_exception & /*ex*/) { }
-	}
-	return res;
-}
-
 extrusion_information get_extrusion_information(const extruded_area_solid & e, equality_context * c) {
 	return std::make_tuple(simple_face(e.area, c), geometry_common::normalize(c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz)).to_vector()) * e.extrusion_depth);
 }
@@ -85,7 +74,7 @@ oriented_area_groups nef_to_oriented_area_groups(const nef_polyhedron_3 & nef, e
 
 } // namespace
 
-multiview_solid::multiview_solid(const solid & s, equality_context * c) : m_faces_dropped_during_construction(false) {
+multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 	if (s.rep_type == REP_BREP) {
 		std::vector<simple_face> all_faces = faces_from_brep(s.rep.as_brep, c);
 		if (boost::find_if(all_faces, [](const simple_face & f) { return !f.inners().empty(); }) != all_faces.end()) {
@@ -94,11 +83,13 @@ multiview_solid::multiview_solid(const solid & s, equality_context * c) : m_face
 			// since we don't even have a way to *verify* normals, this is fatal
 			throw brep_with_voids_exception();
 		}
-		if (all_faces.size() != s.rep.as_brep.face_count) { m_faces_dropped_during_construction = true; }
 		geometry = simple_faces_to_nef(std::move(all_faces));
 	}
 	else if (s.rep_type == REP_EXT) {
 		geometry = get_extrusion_information(s.rep.as_ext, c);
+	}
+	else {
+		throw unknown_geometry_rep_exception();
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+#include "exceptions.h"
 #include "poly_builder.h"
 #include "simple_face.h"
 
@@ -115,18 +116,35 @@ nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_co
 	return res;
 }
 
+std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
+	std::vector<simple_face> res;
+	for (size_t i = 0; i < b.face_count; ++i) {
+		try {
+			res.push_back(simple_face(b.faces[i], c));
+		}
+		catch (invalid_face_exception & /*ex*/) {
+			throw bad_brep_exception();
+		}
+	}
+	return res;
+}
+
 nef_polyhedron_3 simple_faces_to_nef(std::vector<simple_face> && all_faces) {
 	auto as_groups = to_volume_groups(std::move(all_faces));
 	nef_polyhedron_3 res;
 	boost::for_each(as_groups, [&res](const std::vector<simple_face> & group) {
-		polyhedron_3 poly;
-		poly_builder builder(group);
-		poly.delegate(builder);
-		res += nef_polyhedron_3(poly);
+		res += volume_group_to_nef(group);
 	});
 	return res.interior();
 }
 
-} // namespace impl
+nef_polyhedron_3 volume_group_to_nef(const std::vector<simple_face> & group) {
+	polyhedron_3 poly;
+	poly_builder b(group);
+	poly.delegate(b);
+	return nef_polyhedron_3(poly).interior();
+}
 
 } // namespace impl
+
+} // namespace solid_geometry
