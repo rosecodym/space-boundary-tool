@@ -32,7 +32,7 @@
         <converters:BuildingInformationTo3rdLevelCountString x:Key="BuildingInformationTo3rdLevelCountString" />
         <converters:BuildingInformationTo4thLevelCountString x:Key="BuildingInformationTo4thLevelCountString" />
         <converters:BuildingInformationToVirtualCountString x:Key="BuildingInformationToVirtualCountString" />
-        <CollectionViewSource x:Key="SbCalculationProblems" Source="{Binding SbInvocation.Problems}" />
+        <CollectionViewSource x:Key="SbCalculationProblems" Source="{Binding SbtInvocation.Problems}" />
         <CollectionViewSource x:Key="MaterialLibraryLoadProblems" Source="{Binding MaterialLibraryLoad.Problems}" />
         <CollectionViewSource x:Key="IfcModelLoadProblems" Source="{Binding BuildingLoad.Problems}" />
         <CollectionViewSource x:Key="IdfGenerationProblems" Source="{Binding IdfGeneration.Problems}" />
