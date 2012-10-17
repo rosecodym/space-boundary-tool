@@ -76,6 +76,9 @@ oriented_area_groups nef_to_oriented_area_groups(const nef_polyhedron_3 & nef, e
 
 multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 	if (s.rep_type == REP_BREP) {
+		if (s.rep.as_brep.face_count < 4) {
+			throw bad_brep_exception();
+		}
 		std::vector<simple_face> all_faces = faces_from_brep(s.rep.as_brep, c);
 		if (boost::find_if(all_faces, [](const simple_face & f) { return !f.inners().empty(); }) != all_faces.end()) {
 			// if any faces have voids we can't build a nef polyhedron

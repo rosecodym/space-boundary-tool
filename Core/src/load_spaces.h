@@ -2,28 +2,25 @@
 
 #include "precompiled.h"
 
+#include "exceptions.h"
 #include "guid_filter.h"
 #include "report.h"
 #include "space.h"
 
-std::vector<space> load_spaces(space_info ** infos, size_t space_count, equality_context * c, const guid_filter & filter) {
+inline std::vector<space> load_spaces(space_info ** infos, size_t space_count, equality_context * c, const guid_filter & filter) {
 	std::vector<space> res;
-	boost::transform(
-		boost::make_iterator_range(infos, infos + space_count) |
-			boost::adaptors::filtered([&filter](space_info * sp) -> bool { 
-				if (!sp->id || !filter(sp->id)) { return false; }
-				else if (sp->geometry.rep_type == REP_BREP && sp->geometry.rep.as_brep.face_count < 4) {
-					reporting::report_warning(boost::format("Warning - skipping space %s, as it only has %u face(s).\n") % sp->id % sp->geometry.rep.as_brep.face_count);
-					return false;
-				}
-				else { return true; }
-			}),
-		std::back_inserter(res),
-		[c](space_info * s) -> space {
-			reporting::report_progress(boost::format("Loading space %s...") % s->id);
-			space sp(s, c);
-			reporting::report_progress("done.\n");
-			return sp;
-		});
+	for (size_t i = 0; i < space_count; ++i) {
+		try {
+			if (filter(infos[i]->id)) {
+				res.push_back(space(infos[i], c));
+			}
+		}
+		catch (unsupported_geometry_exception & ex) {
+			reporting::report_warning(boost::format("Space %s has unsupported geometry (%s). It will be ignored.\n") % infos[i]->id % ex.condition());
+		}
+		catch (unknown_geometry_rep_exception & /*ex*/) {
+			reporting::report_warning(boost::format("Element %s has unknown internal geometry represetnation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
+		}
+	}
 	return res;
 }
