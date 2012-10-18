@@ -91,12 +91,12 @@ space_boundary * create_unlinked_space_boundary(const surface & surf) {
 	if (stack_overflowed) {
 		_resetstkoflw();
 		if (surf.is_virtual()) {
-			report_warning(boost::format("Warning: a resulting space boundary was too complicated. Try simplifying the connection between space %s and space %s.\n") %
+			report_warning(boost::format("A space boundary could not be generated due to connection geometry being too complicated. Try simplifying the connection between space %s and space %s.\n") %
 				surf.bounded_space().global_id().c_str() %
 				surf.other_side()->bounded_space().global_id().c_str());
 		}
 		else {
-			report_warning(boost::format("Warning: a resulting space boundary was too complicated. Try simplifying the connection between space %s and element %s.\n") %
+			report_warning(boost::format("A space boundary could not be generated due to connection geometry being too complicated. Try simplifying the connection between space %s and element %s.\n") %
 				surf.bounded_space().global_id().c_str() %
 				surf.bounded_element()->source_id().c_str());
 		} 

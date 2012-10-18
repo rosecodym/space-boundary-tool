@@ -23,7 +23,7 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 			report_warning(boost::format("Element %s has unsupported geometry (%s). It will be ignored.\n") % infos[i]->id % ex.condition());
 		}
 		catch (unknown_geometry_rep_exception & /*ex*/) {
-			report_warning(boost::format("Element %s has unknown internal geometry represetnation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
+			report_warning(boost::format("Element %s has unknown internal geometry representation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
 		}
 	}
 

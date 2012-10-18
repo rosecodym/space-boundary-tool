@@ -85,7 +85,7 @@ std::vector<block> build_blocks(const std::vector<element> & elements, equality_
 		}
 		if (stack_overflow) {
 			_resetstkoflw();
-			report_warning("\nWarning: building element geometry is too complicated. Space boundaries for this element will not be generated.\n");
+			report_warning(boost::format("The geometry for building element %s is too complicated. Space boundaries for this element will not be generated.\n") % e.source_id().c_str());
 		}
 	});
 	return res;

@@ -21,7 +21,7 @@ inline std::vector<space> load_spaces(space_info ** infos, size_t space_count, e
 			reporting::report_warning(boost::format("Space %s has unsupported geometry (%s). It will be ignored.\n") % infos[i]->id % ex.condition());
 		}
 		catch (unknown_geometry_rep_exception & /*ex*/) {
-			reporting::report_warning(boost::format("Element %s has unknown internal geometry represetnation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
+			reporting::report_warning(boost::format("Element %s has an unknown internal geometry represetnation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
 		}
 	}
 	return res;
