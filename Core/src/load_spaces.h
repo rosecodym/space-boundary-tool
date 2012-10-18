@@ -12,7 +12,9 @@ inline std::vector<space> load_spaces(space_info ** infos, size_t space_count, e
 	for (size_t i = 0; i < space_count; ++i) {
 		try {
 			if (filter(infos[i]->id)) {
+				reporting::report_progress(boost::format("Loading space %s...") % infos[i]->id);
 				res.push_back(space(infos[i], c));
+				reporting::report_progress("done.\n");
 			}
 		}
 		catch (unsupported_geometry_exception & ex) {
