@@ -25,6 +25,8 @@ namespace GUI
 
         readonly Action<Operations.OperationStatus> updateStatusDisplay = _ => { };
 
+        bool debugOptionsAvailable = false;
+
         SbtBuildingInformation sbtBuilding;
         IfcBuildingInformation ifcBuilding;
         ICollection<MaterialLibraryEntry> libraryMaterials;
@@ -37,12 +39,23 @@ namespace GUI
         public ICommand BrowseToOutputIdfFileCommand { get; private set; }
         public ICommand BrowseToMaterialsLibraryCommand { get; private set; }
         public ICommand LinkConstructionsCommand { get; private set; }
+        public ICommand ShowDebugOptionsCommand { get; private set; }
         public ICommand ViewIdfCommand { get; private set; }
 
         public ICommand SbtInvocation { get { return sbCalculation; } }
         public ICommand MaterialLibraryLoad { get { return materialLibraryLoad; } }
         public ICommand IfcModelLoad { get { return buildingLoad; } }
         public ICommand IdfGeneration { get { return idfGeneration; } }
+
+        public bool DebugOptionsAvailable
+        {
+            get { return debugOptionsAvailable; }
+            set
+            {
+                debugOptionsAvailable = value;
+                Updated("DebugOptionsAvailable");
+            }
+        }
 
         public SbtBuildingInformation CurrentSbtBuilding
         {
@@ -411,10 +424,7 @@ namespace GUI
             BrowseToOutputIfcFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIfcFile(this), _ => this.WriteIfc);
             BrowseToOutputIdfFileCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToOutputIdfFile(this));
             BrowseToMaterialsLibraryCommand = new RelayCommand(_ => Operations.Miscellaneous.BrowseToMaterialsLibrary(this));
-            //ExecuteSbtCommand = new RelayCommand(_ => sbCalculation.Execute(), _ => ReasonForDisabledSBCalculation == null);
-            //GenerateIdfCommand = new RelayCommand(_ => idfGeneration.Execute(), _ => ReasonForDisabledIdfGeneration == null);
-            //LoadMaterialsLibraryCommand = new RelayCommand(_ => materialLibraryLoad.Execute(), _ => ReasonForDisabledMaterialLibraryLoad == null);
-            //LoadIfcBuildingCommand = new RelayCommand(_ => buildingLoad.Execute(), _ => ReasonForDisabledIfcModelLoad == null);
+            ShowDebugOptionsCommand = new RelayCommand(_ => DebugOptionsAvailable = true);
             LinkConstructionsCommand = new RelayCommand(
                 obj =>
                 {

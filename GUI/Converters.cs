@@ -35,12 +35,12 @@ namespace GUI.Converters
         }
     }
 
-    [ValueConversion(typeof(string), typeof(ImageSource))]
-    public class StatusToIconConverter : IValueConverter
+    [ValueConversion(typeof(bool), typeof(System.Windows.Visibility))]
+    public class BoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return (bool)value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
