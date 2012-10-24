@@ -63,23 +63,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="OperationInformation.cs" />
-    <Compile Include="OperationStatus.cs" />
-    <Compile Include="Operations\BuildingLoad.cs" />
-    <Compile Include="Operations\IdfGeneration\BuildingSurface.cs" />
-    <Compile Include="Operations\IdfGeneration\FenestrationSurface.cs" />
-    <Compile Include="Operations\IdfGeneration\Shading.cs" />
+    <Compile Include="Operations\Infrastructure\Operation.cs" />
+    <Compile Include="Operations\Infrastructure\ProgressEvent.cs" />
+    <Compile Include="Operations\Concrete\BuildingLoad.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\BuildingSurface.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\FenestrationSurface.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\Shading.cs" />
+    <Compile Include="Operations\Infrastructure\Problem.cs" />
     <Compile Include="SbtBuildingInformation.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="IddManager.cs" />
     <Compile Include="EnergyPlusVersion.cs" />
-    <Compile Include="Operations\IdfGeneration\Execute.cs" />
-    <Compile Include="Operations\IdfGeneration\Idf Creators\IdfCreator.cs" />
-    <Compile Include="Operations\IdfGeneration\Idf Creators\IdfV710Creator.cs" />
-    <Compile Include="Operations\IdfGeneration\Parameters.cs" />
-    <Compile Include="Operations\MaterialsLibraryLoad.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\IdfGeneration.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfCreator.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV710Creator.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\Parameters.cs" />
+    <Compile Include="Operations\Concrete\MaterialsLibraryLoad.cs" />
     <Compile Include="Operations\Miscellaneous.cs" />
-    <Compile Include="Operations\SbtInvocation.cs" />
+    <Compile Include="Operations\Concrete\SbtInvocation.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SbtExtensions.cs" />
     <Compile Include="SpaceBoundaryCollection.cs" />
@@ -153,6 +154,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\error-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

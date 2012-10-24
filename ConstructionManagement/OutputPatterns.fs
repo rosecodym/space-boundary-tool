@@ -21,7 +21,7 @@ let (|Empty|SimpleOnly|MappedWindow|SingleComposite|UnmappedWindow|MixedSingleAn
         let asSimple = List.map (fun m ->
             match m with
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> Some(Unchecked.defaultof<LibraryEntry>)
-            | Opaque(_) | AirGap(_) -> Some(m)
+            | AirGap(_) | NoMass(_) | Opaque(_) -> Some(m)
             | _ -> None) mapped
         if not (List.exists (fun (maybe:LibraryEntry option) -> maybe.IsNone) asSimple) then SimpleOnly(List.choose id asSimple) else
         Unknown

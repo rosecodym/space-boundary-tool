@@ -103,7 +103,7 @@
     <ClCompile Include="..\Core\src\oriented_area.cpp" />
     <ClCompile Include="..\Core\src\polygon_with_holes_2.cpp" />
     <ClCompile Include="..\Core\src\simple_face.cpp" />
-    <ClCompile Include="..\Core\src\solid_conversion_operations.cpp" />
+    <ClCompile Include="..\Core\src\solid_geometry_util.cpp" />
     <ClCompile Include="..\Core\src\stackable.cpp" />
     <ClCompile Include="..\Core\src\stacking_graph.cpp" />
     <ClCompile Include="..\Core\src\stacking_sequence.cpp" />
@@ -127,7 +127,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\solid_conversion_tests.cpp" />
+    <ClCompile Include="src\solid_geometry_util_tests.cpp" />
     <ClCompile Include="src\surface_pair_tests.cpp" />
     <ClCompile Include="src\tests_main.cpp" />
   </ItemGroup>

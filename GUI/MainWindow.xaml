@@ -1,15 +1,11 @@
-﻿<Window x:Class="GUI.MainWindow"
+<Window x:Class="GUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GUI"
-        Title="Space Boundary Tool" Height="502" Width="1156" Closed="MainWindowClosed" xmlns:my="clr-namespace:GUI.Converters">
+        Height="502" Width="1156" Closed="MainWindowClosed" 
+        xmlns:converters="clr-namespace:GUI.Converters">
+    <Window.Title>Space Boundary Tool 1.4.5</Window.Title>
     <Window.Resources>
-        <my:BuildingInformationToSbSummaryTitleConverter x:Key="BuildingInformationToSbSummaryTitleConverter" />
-        <my:BuildingInformationTo2ndLevelPhysicalInternalCountString x:Key="BuildingInformationTo2ndLevelPhysicalInternalCountString" />
-        <my:BuildingInformationTo2ndLevelPhysicalExternalCountString x:Key="BuildingInformationTo2ndLevelPhysicalExternalCountString" />
-        <my:BuildingInformationTo3rdLevelCountString x:Key="BuildingInformationTo3rdLevelCountString" />
-        <my:BuildingInformationTo4thLevelCountString x:Key="BuildingInformationTo4thLevelCountString" />
-        <my:BuildingInformationToVirtualCountString x:Key="BuildingInformationToVirtualCountString" />
         <DrawingImage x:Key="OKSmall">
             <DrawingImage.Drawing>
                 <ImageDrawing Rect="0,0,16,16" ImageSource="/SBT-GUI;component/Images/done-small.png" />
@@ -30,7 +26,25 @@
                 <ImageDrawing Rect="0,0,16,16" ImageSource="/SBT-GUI;component/Images/error-small.png" />
             </DrawingImage.Drawing>
         </DrawingImage>
+        <converters:StatusToImageConverter x:Key="StatusToIconConverter" WarningImage="{StaticResource WarningSmall}" ErrorImage="{StaticResource ErrorSmall}" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:BuildingInformationToSbSummaryTitleConverter x:Key="BuildingInformationToSbSummaryTitleConverter" />
+        <converters:BuildingInformationTo2ndLevelPhysicalInternalCountString x:Key="BuildingInformationTo2ndLevelPhysicalInternalCountString" />
+        <converters:BuildingInformationTo2ndLevelPhysicalExternalCountString x:Key="BuildingInformationTo2ndLevelPhysicalExternalCountString" />
+        <converters:BuildingInformationTo3rdLevelCountString x:Key="BuildingInformationTo3rdLevelCountString" />
+        <converters:BuildingInformationTo4thLevelCountString x:Key="BuildingInformationTo4thLevelCountString" />
+        <converters:BuildingInformationToVirtualCountString x:Key="BuildingInformationToVirtualCountString" />
+        <CollectionViewSource x:Key="SbCalculationProblems" Source="{Binding SbtInvocation.Problems}" />
+        <CollectionViewSource x:Key="MaterialLibraryLoadProblems" Source="{Binding MaterialLibraryLoad.Problems}" />
+        <CollectionViewSource x:Key="IfcModelLoadProblems" Source="{Binding BuildingLoad.Problems}" />
+        <CollectionViewSource x:Key="IdfGenerationProblems" Source="{Binding IdfGeneration.Problems}" />
+        <Style x:Key="NoCellSelection" TargetType="DataGridCell">
+            <Setter Property="Focusable" Value="False" />
+        </Style>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding ShowDebugOptionsCommand}" Gesture="CTRL+D" />
+    </Window.InputBindings>
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo />
     </Window.TaskbarItemInfo>
@@ -89,7 +103,7 @@
                                         Width="Auto" 
                                         Grid.ColumnSpan="3" 
                                         Padding="3,1" 
-                                        Command="{Binding ExecuteSbtCommand}" 
+                                        Command="{Binding SbtInvocation}" 
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding ReasonForDisabledSBCalculation}" />
                                     <CheckBox Content="Write IFC file with new space boundaries to:" Grid.Row="1" Height="16" HorizontalAlignment="Left" Margin="4" Name="checkBox4" VerticalAlignment="Center" IsChecked="{Binding WriteIfc}"/>
@@ -158,14 +172,14 @@
                                         Name="button8" 
                                         VerticalAlignment="Top" 
                                         Width="75" 
-                                        Command="{Binding LoadMaterialsLibraryCommand}"
+                                        Command="{Binding MaterialLibraryLoad}"
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding ReasonForDisabledMaterialLibraryLoad}" />
                                 </Grid>
-                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding LibraryMaterials}" SelectionMode="Single" SelectedItem="{Binding SelectedIdfConstruction}" AutoGenerateColumns="False">
+                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid1" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding LibraryMaterials}" SelectionMode="Single" SelectedItem="{Binding SelectedIdfConstruction}" AutoGenerateColumns="False" CellStyle="{StaticResource NoCellSelection}">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Type" Binding="{Binding TypeString}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="Type" Binding="{Binding TypeString}" IsReadOnly="True" Width="*" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>
@@ -178,7 +192,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="143*" />
                                 </Grid.RowDefinitions>
-                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructionMappingSources}" AutoGenerateColumns="False">
+                                <DataGrid Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid2" VerticalAlignment="Stretch" Width="Auto" ItemsSource="{Binding IfcConstructionMappingSources}" AutoGenerateColumns="False" CellStyle="{StaticResource NoCellSelection}">
                                     <DataGrid.Columns>
                                         <DataGridTemplateColumn Header="Name" IsReadOnly="True">
                                             <DataGridTemplateColumn.CellTemplate>
@@ -188,7 +202,7 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                         <DataGridTextColumn Header="For Windows" Binding="{Binding IsForWindows}" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding MappingTarget}" IsReadOnly="True" />
+                                        <DataGridTextColumn Header="IDF Mapping Target" Binding="{Binding MappingTarget}" IsReadOnly="True" Width="*"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
                                 <Grid Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="grid13" VerticalAlignment="Stretch" Width="Auto">
@@ -198,7 +212,7 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <Button 
-                                        Command="{Binding LoadIfcBuildingCommand}" 
+                                        Command="{Binding IfcModelLoad}" 
                                         Content="Load" 
                                         Height="23" 
                                         HorizontalAlignment="Right" 
@@ -236,7 +250,7 @@
                         <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button5" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIdfFileCommand}"/>
                         <Button 
                             Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" 
-                            Command="{Binding GenerateIdfCommand}"
+                            Command="{Binding IdfGeneration}"
                             ToolTipService.ShowOnDisabled="True" 
                             ToolTip="{Binding ReasonForDisabledIdfGeneration}" Padding="1" />
                         <ComboBox Grid.Column="3" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionIndexToWrite}"/>
@@ -292,7 +306,43 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Debug">
+            <TabItem Header="Output">
+                <Grid Height="Auto" Name="grid2" Width="Auto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBox Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tbOutput" VerticalAlignment="Stretch" Width="Auto" IsReadOnly="True" TextChanged="OutputTextChanged" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Errors &amp; Warnings" Name="tabItem2">
+                <Grid>
+                    <DataGrid AutoGenerateColumns="False" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="dataGrid3" VerticalAlignment="Stretch" Width="Auto" CanUserReorderColumns="False" CellStyle="{StaticResource NoCellSelection}">
+                        <DataGrid.ItemsSource>
+                            <CompositeCollection>
+                                <CollectionContainer Collection="{Binding Source={StaticResource SbCalculationProblems}}" />
+                                <CollectionContainer Collection="{Binding Source={StaticResource MaterialLibraryLoadProblems}}" />
+                                <CollectionContainer Collection="{Binding Source={StaticResource IfcModelLoadProblems}}" />
+                                <CollectionContainer Collection="{Binding Source={StaticResource IdfGenerationProblems}}" />
+                            </CompositeCollection>
+                        </DataGrid.ItemsSource>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn IsReadOnly="True" CanUserResize="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type local:Operations.Problem}">
+                                        <Image Source="{Binding
+                                            Path=Type,
+                                            Mode=OneWay,
+                                            Converter={StaticResource StatusToIconConverter}}"
+                                        />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" IsReadOnly="True" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Debug" Visibility="{Binding DebugOptionsAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Grid Height="Auto" Name="grid15" Width="Auto">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -313,14 +363,6 @@
                     <TextBox Grid.Column="1" Grid.Row="2" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox10" VerticalAlignment="Center" Width="Auto" Text="{Binding SbElementFilter}" />
                     <Label Content="Flags:" Grid.Row="3" Height="28" HorizontalAlignment="Left" Margin="0" Name="label29" VerticalAlignment="Center" />
                     <TextBox Grid.Column="1" Grid.Row="3" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox11" VerticalAlignment="Center" Width="Auto" Text="{Binding Flags}"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Output">
-                <Grid Height="Auto" Name="grid2" Width="Auto">
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <TextBox Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="tbOutput" VerticalAlignment="Stretch" Width="Auto" IsReadOnly="True" TextChanged="OutputTextChanged" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
                 </Grid>
             </TabItem>
         </TabControl>

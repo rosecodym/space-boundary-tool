@@ -33,6 +33,23 @@ face create_face(size_t vertex_count, ...) {
 	return f;
 }
 
+solid create_brep(size_t face_count, ...) {
+	va_list ap;
+	va_start(ap, face_count);
+	
+	solid s;
+	memset(&s, 0, sizeof(solid));
+	s.rep_type = REP_BREP;
+	brep & b = s.rep.as_brep;
+	b.face_count = face_count;
+	b.faces = (face *)malloc(sizeof(face) * b.face_count);
+	for (size_t i = 0; i < face_count; ++i) {
+		b.faces[i] = va_arg(ap, face);
+	}
+	va_end(ap);
+	return s;
+}
+
 solid create_ext(double dx, double dy, double dz, double depth, face geometry) {
 	solid res;
 	res.rep_type = REP_EXT;

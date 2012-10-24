@@ -1,10 +1,11 @@
 #include "precompiled.h"
 
 #include "equality_context.h"
+#include "exceptions.h"
 #include "poly_builder.h"
 #include "sbt-core.h"
 #include "simple_face.h"
-#include "solid_conversion_operations.h"
+#include "solid_geometry_util.h"
 
 #include "multiview_solid.h"
 
@@ -28,143 +29,8 @@ bbox_3 nef_bounding_box(const nef_polyhedron_3 & nef) {
 	return *res;
 }
 
-std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
-	std::vector<simple_face> res;
-	std::transform(b.faces, b.faces + b.face_count, std::back_inserter(res), [c](const face & f) { return simple_face(f, c); });
-	return res;
-}
-
 extrusion_information get_extrusion_information(const extruded_area_solid & e, equality_context * c) {
 	return std::make_tuple(simple_face(e.area, c), geometry_common::normalize(c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz)).to_vector()) * e.extrusion_depth);
-}
-
-enum face_status { FLIP = -1, NOT_DECIDED = 0, OK = 1};
-
-std::tuple<size_t, face_status> find_root(const std::vector<simple_face> & all_faces, const std::vector<int> & group_memberships, int group) {
-	size_t root_ix;
-	face_status root_status = NOT_DECIDED;
-	for (root_ix = 0; root_ix < all_faces.size(); ++root_ix) {
-		if (group_memberships[root_ix] == group) {
-			ray_3 shoot(all_faces[root_ix].average_outer_point(), all_faces[root_ix].plane().orthogonal_direction());
-			bool found_intersection = false;
-			bool found_intersection_reversed = false;
-			for (size_t i = 0; i < all_faces.size(); ++i) {
-				if (i != root_ix && group_memberships[i] == group) {
-					if (!found_intersection && CGAL::do_intersect(shoot, all_faces[i].plane())) {
-						found_intersection = true;
-					}
-					if (!found_intersection_reversed && CGAL::do_intersect(shoot.opposite(), all_faces[i].plane())) {
-						found_intersection_reversed = true;
-					}
-					if (found_intersection && found_intersection_reversed) {
-						break;
-					}
-				}
-			}
-			if (!found_intersection) {
-				root_status = OK;
-				break;
-			}
-			if (!found_intersection_reversed) {
-				root_status = FLIP;
-				break;
-			}
-		}
-	}
-	return std::make_tuple(root_ix, root_status);
-}
-
-enum face_relationship { MISMATCH = -1, NOT_CONNECTED = 0, MATCH = 1};
-
-std::vector<simple_face> fix_orientations_for_group(
-	const std::vector<simple_face> & all_faces, 
-	const std::vector<int> & group_memberships,
-	int group,
-	const std::vector<std::vector<face_relationship>> & relationships)
-{
-	size_t root_ix;
-	face_status root_status;
-	std::tie(root_ix, root_status) = find_root(all_faces, group_memberships, group);
-
-	std::vector<face_status> statuses(all_faces.size(), NOT_DECIDED);
-
-	std::queue<std::tuple<size_t, face_status>> process_queue;
-	process_queue.push(std::make_tuple(root_ix, root_status));
-
-	while (!process_queue.empty()) {
-		size_t next_ix;
-		face_status next_status;
-		std::tie(next_ix, next_status) = process_queue.front();
-		process_queue.pop();
-		if (statuses[next_ix] == NOT_DECIDED) {
-			statuses[next_ix] = next_status;
-			for (size_t i = 0; i < relationships.size(); ++i) {
-				if (statuses[i] == NOT_DECIDED && relationships[next_ix][i] != NOT_CONNECTED) {
-					process_queue.push(std::make_tuple(i, (face_status)(relationships[next_ix][i] * next_status)));
-				}
-			}
-		}
-	}
-
-	std::vector<simple_face> res;
-	for (size_t i = 0; i < all_faces.size(); ++i) {
-		if (group_memberships[i] == group) {
-			res.push_back(statuses[i] == FLIP ? all_faces[i].reversed() : all_faces[i]);
-		}
-	}
-
-	return res;
-}
-
-std::vector<std::vector<simple_face>> to_simple_faces(std::vector<simple_face> && all_faces) {
-
-	struct segment_comparator : public std::unary_function<segment_3, bool> {
-		bool operator () (const segment_3 & a, const segment_3 & b) const {
-			return a.source() == b.source() ? a.target() < b.target() : a.source() < b.source();
-		}
-	};
-
-	std::vector<std::vector<face_relationship>> relationships(all_faces.size(), std::vector<face_relationship>(all_faces.size(), NOT_CONNECTED));
-
-	std::map<segment_3, size_t, segment_comparator> edge_memberships;
-
-	boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> graph;
-
-	for (size_t face_ix = 0; face_ix < all_faces.size(); ++face_ix) {
-		boost::for_each(all_faces[face_ix].all_edges_voids_reversed(), [&edge_memberships, &relationships, &graph, face_ix](const segment_3 & e) {
-			bool opposite = false;
-			auto exists = edge_memberships.find(e);
-			if (exists == edge_memberships.end()) {
-				exists = edge_memberships.find(e.opposite());
-				opposite = true;
-			}
-			if (exists != edge_memberships.end()) {
-				size_t match_ix = exists->second;
-				relationships[face_ix][match_ix] = relationships[match_ix][face_ix] = opposite ? MATCH : MISMATCH;
-				boost::add_edge(face_ix, match_ix, graph);
-			}
-			else {
-				edge_memberships.insert(std::make_pair(e, face_ix));
-			}
-		});
-	}
-	
-	std::vector<int> group_memberships(all_faces.size());
-	int group_count = boost::connected_components(graph, &group_memberships[0]);
-
-	std::vector<std::vector<simple_face>> res;
-	for (int i = 0; i < group_count; ++i) {
-		res.push_back(fix_orientations_for_group(all_faces, group_memberships, i, relationships));
-	}
-
-	return res;
-}
-
-bool simple_faces_are_nef_representable(const std::vector<std::vector<simple_face>> & volume_groups) {
-	return boost::find_if(volume_groups, [](const std::vector<simple_face> & group) {
-		return boost::find_if(group, [](const simple_face & f) {
-			return !f.inners().empty();
-		}) != group.end(); }) == volume_groups.end();
 }
 
 std::vector<oriented_area> to_oriented_face_group(const nef_polyhedron_3 & nef, nef_volume_handle v, equality_context * c) {
@@ -210,10 +76,23 @@ oriented_area_groups nef_to_oriented_area_groups(const nef_polyhedron_3 & nef, e
 
 multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 	if (s.rep_type == REP_BREP) {
-		geometry = to_simple_faces(faces_from_brep(s.rep.as_brep, c));
+		if (s.rep.as_brep.face_count < 4) {
+			throw bad_brep_exception();
+		}
+		std::vector<simple_face> all_faces = faces_from_brep(s.rep.as_brep, c);
+		if (boost::find_if(all_faces, [](const simple_face & f) { return !f.inners().empty(); }) != all_faces.end()) {
+			// if any faces have voids we can't build a nef polyhedron
+			// if we can't build a nef polyhedron then we can't fix normals
+			// since we don't even have a way to *verify* normals, this is fatal
+			throw brep_with_voids_exception();
+		}
+		geometry = simple_faces_to_nef(std::move(all_faces));
 	}
 	else if (s.rep_type == REP_EXT) {
 		geometry = get_extrusion_information(s.rep.as_ext, c);
+	}
+	else {
+		throw unknown_geometry_rep_exception();
 	}
 }
 
@@ -289,13 +168,6 @@ std::vector<multiview_solid> multiview_solid::as_single_volumes(equality_context
 	struct visitor : public boost::static_visitor<std::vector<multiview_solid>> {
 		equality_context * c;
 		visitor(equality_context * c) : c(c) { }
-		std::vector<multiview_solid> operator () (const simple_face_groups & simple_faces) const {
-			std::vector<multiview_solid> res;
-			boost::transform(simple_faces, std::back_inserter(res), [](const std::vector<simple_face> & group) {
-				return multiview_solid(group);
-			});
-			return res;
-		}
 		std::vector<multiview_solid> operator () (const oriented_area_groups & oriented_areas) const {
 			std::vector<multiview_solid> res;
 			boost::transform(oriented_areas, std::back_inserter(res), [](const std::vector<oriented_area> & group) {
@@ -325,13 +197,6 @@ std::vector<oriented_area> multiview_solid::oriented_faces(equality_context * c)
 	struct convert_to_oriented_areas : public boost::static_visitor<geometry_representation> {
 		equality_context * c;
 		convert_to_oriented_areas(equality_context * c) : c(c) { }
-		geometry_representation operator () (const simple_face_groups & simple_faces) const {
-			oriented_area_groups g(1);
-			boost::transform(simple_faces.front(), std::back_inserter(g.front()), [this](const simple_face & f) {
-				return oriented_area(f, c);
-			});
-			return g;
-		}
 		geometry_representation operator () (const oriented_area_groups & oriented_areas) const { 
 			return oriented_areas;
 		}
@@ -357,12 +222,6 @@ void multiview_solid::subtract(const multiview_solid & other, equality_context *
 
 bool multiview_solid::is_nef_representable() const {
 	struct visitor : public boost::static_visitor<bool> {
-		bool operator () (const simple_face_groups & simple_faces) const {
-			return boost::find_if(simple_faces, [](const std::vector<simple_face> & group) {
-				return boost::find_if(group, [](const simple_face & f) {
-					return !f.inners().empty();
-				}) != group.end(); }) == simple_faces.end();
-		}
 		bool operator () (const oriented_area_groups & /*oriented_areas*/) const { return false; } // yeah, maybe, but it shouldn't happen and it's hard
 		bool operator () (const extrusion_information & /*extrusion_information*/) const { return true; }
 		bool operator () (const nef_polyhedron_3 & /*nef*/) const { return true; }
@@ -374,16 +233,6 @@ void multiview_solid::convert_to_nef(std::function<equality_context *(void)> laz
 	struct visitor : public boost::static_visitor<geometry_representation> {
 		std::function<equality_context *(void)> lazy_c;
 		visitor(std::function<equality_context *(void)> lazy_c) : lazy_c(lazy_c) { }
-		geometry_representation operator () (const simple_face_groups & simple_faces) const {
-			nef_polyhedron_3 res;
-			for (auto group = simple_faces.begin(); group != simple_faces.end(); ++group) {
-				polyhedron_3 poly;
-				poly_builder builder(*group);
-				poly.delegate(builder);
-				res += nef_polyhedron_3(poly);
-			}
-			return res.interior();
-		}
 		geometry_representation operator () (const oriented_area_groups & /*oriented_areas*/) const {
 			return nef_polyhedron_3::EMPTY;
 		}

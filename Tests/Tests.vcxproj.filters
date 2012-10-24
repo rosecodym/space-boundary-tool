@@ -60,12 +60,6 @@
     <ClCompile Include="src\oriented_area_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Core\src\solid_conversion_operations.cpp">
-      <Filter>Recompiled Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\solid_conversion_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\precompiled.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -130,6 +124,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\flatten.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solid_geometry_util_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\solid_geometry_util.cpp">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
   </ItemGroup>

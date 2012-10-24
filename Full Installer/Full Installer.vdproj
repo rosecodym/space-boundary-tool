@@ -63,38 +63,26 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_603184890994A476E3CA19B344A8E788"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6168E41675F04E8AB8A4C5369543A13F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_65FB63012980B2B32B45C9CE36E622B6"
+        "MsmKey" = "8:_696E1D52A998DFD0900ABC39477BE881"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6B1887EBDE0F46C78455E307A6D0D5BE"
-        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6B1887EBDE0F46C78455E307A6D0D5BE"
-        "OwnerKey" = "8:_7FDEBF7B4F894937AE29E4A840C73F2E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_7FDEBF7B4F894937AE29E4A840C73F2E"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_93465DFE448F2EA37763F35A86B0B8E6"
-        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -111,14 +99,26 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B26F08C5666F34127AB1CFACCDCDA04E"
-        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
+        "MsmKey" = "8:_D60C59AA9ED442BCBF727980E6FDD498"
+        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D60C59AA9ED442BCBF727980E6FDD498"
+        "OwnerKey" = "8:_7FDEBF7B4F894937AE29E4A840C73F2E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_E5920DBCFFB647529918FE97AFF6B3F5"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F8C37552ED70350397259347881124A0"
+        "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -458,15 +458,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
-        "ProductCode" = "8:{5280B257-77BE-4441-B38A-3CAC941F09B9}"
-        "PackageCode" = "8:{3579AA54-EDFC-4869-88A0-C2D67BF6B805}"
+        "ProductCode" = "8:{DE288438-7ACE-437E-B664-A3D447F532F3}"
+        "PackageCode" = "8:{0EFD4C71-2BFE-4F0F-A4C5-BAEA94311D88}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.4.4"
+        "ProductVersion" = "8:1.4.5"
         "Manufacturer" = "8:LBNL"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -994,7 +994,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_45C977EBEB72431CA26FBA6628F22EDE"
             {
-            "SourcePath" = "8:..\\Debug\\SBT-IFC.dll"
+            "SourcePath" = "8:..\\Release\\SBT-IFC.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1022,7 +1022,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7FDEBF7B4F894937AE29E4A840C73F2E"
             {
-            "SourcePath" = "8:..\\Debug\\SBT-Core.dll"
+            "SourcePath" = "8:..\\Release\\SBT-Core.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1050,7 +1050,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9B1CA4A537D84F909A3C601BF6270C67"
             {
-            "SourcePath" = "8:..\\Debug\\SBT-CL.exe"
+            "SourcePath" = "8:..\\Release\\SBT-CL.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1078,7 +1078,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A0B7928A50CB4C8197B788BDCD8095DE"
             {
-            "SourcePath" = "8:..\\GUI\\obj\\x86\\Debug\\SBT-GUI.exe"
+            "SourcePath" = "8:..\\GUI\\obj\\x86\\Release\\SBT-GUI.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"

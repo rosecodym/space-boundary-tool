@@ -55,7 +55,7 @@
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
-      <AdditionalOptions>%(AdditionalOptions) -Zm159 /F 0x200000</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
@@ -84,7 +84,7 @@
       <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
-      <AdditionalOptions>%(AdditionalOptions) -Zm155 /F 0x200000</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>Async</ExceptionHandling>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -140,7 +140,7 @@
     <ClInclude Include="src\one_dimensional_equality_context.h" />
     <ClInclude Include="src\precompiled.h" />
     <ClInclude Include="src\sbt-core.h" />
-    <ClInclude Include="src\solid_conversion_operations.h" />
+    <ClInclude Include="src\solid_geometry_util.h" />
     <ClInclude Include="src\solid_geometry_common.h" />
     <ClInclude Include="src\space.h" />
     <ClInclude Include="src\space_face.h" />
@@ -185,7 +185,7 @@
     <ClCompile Include="src\sbt-core.cpp">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
     </ClCompile>
-    <ClCompile Include="src\solid_conversion_operations.cpp" />
+    <ClCompile Include="src\solid_geometry_util.cpp" />
     <ClCompile Include="src\stackable.cpp" />
     <ClCompile Include="src\stacking_graph.cpp" />
     <ClCompile Include="src\stacking_sequence.cpp" />

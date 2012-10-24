@@ -42,6 +42,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="MaterialLibrary.fs" />
     <Compile Include="ModelConstructionUsage.fs" />
     <Compile Include="ModelMappingSource.fs" />

@@ -91,4 +91,42 @@ TEST(LoopCleanup, AngledOutPoint2) {
 	EXPECT_EQ(4, vec.size());
 }
 
+TEST(LoopCleanup, DegenerateRectanglePoint3) {
+	point_3 pts[] = {
+		point_3(0.003271982629936332, 1.251142620394262, 10.5),
+		point_3(0.003271982629936332, 1.251142620394262, 10.6666666666),
+		point_3(0, 1.251142620394262, 10.6666666666),
+		point_3(0, 1.251142620394262, 10.5)
+	};
+	std::vector<point_3> vec(pts, pts + 4);
+	EXPECT_FALSE(geometry_common::cleanup_loop(&vec, 0.01));
+}
+
+TEST(LoopCleanup, SimpleCollinearPoint3) {
+	point_3 pts[] = {
+		point_3(6.8, 2.3, 10.5),
+		point_3(5.8, 2.3, 10.5),
+		point_3(5.8, 2.3, 9),
+		point_3(5.8, 2.3, 0),
+		point_3(6.8, 2.3, 0)
+	};
+	std::vector<point_3> vec(pts, pts + 5);
+	ASSERT_TRUE(geometry_common::cleanup_loop(&vec, 0.01));
+	EXPECT_EQ(4, vec.size());
+}
+
+TEST(LoopCleanup, InitialCollinearPoint3) {
+	ipoint_3 pts[] = {
+		ipoint_3(5.8, 2.3, 9),
+		ipoint_3(5.8, 2.0, 9),
+		ipoint_3(0, 2.0, 9),
+		ipoint_3(0, 3.7, 9),
+		ipoint_3(0, 8.9, 9),
+		ipoint_3(5.8, 8.9, 9)
+	};
+	std::vector<ipoint_3> vec(pts, pts + 6);
+	ASSERT_TRUE(geometry_common::cleanup_loop(&vec, 0.01));
+	EXPECT_EQ(4, vec.size());
+}
+
 } // namespace geometry_2d

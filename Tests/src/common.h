@@ -15,6 +15,7 @@ struct simple_point {
 
 face create_face(size_t vertex_count, ...);
 
+solid create_brep(size_t face_count, ...);
 solid create_ext(double dx, double dy, double dz, double depth, face base);
 
 element_info * create_element(const char * name, element_type type, material_id_t mat, solid geometry);

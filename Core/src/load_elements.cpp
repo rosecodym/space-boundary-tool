@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "element.h"
+#include "exceptions.h"
 #include "guid_filter.h"
 #include "report.h"
 
@@ -13,12 +14,16 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 
 	std::vector<element> complex_elements;
 	for (size_t i = 0; i < count; ++i) {
-		if (filter(infos[i]->id)) {
-			if (infos[i]->geometry.rep_type != REP_BREP && infos[i]->geometry.rep_type != REP_EXT) {
-				report_warning(boost::format("Warning: element %s has an unknown geometry representation type. It will be skipped.\n") % infos[i]->id);
-				continue;
+		try {
+			if (filter(infos[i]->id)) {
+				complex_elements.push_back(element(infos[i], c));
 			}
-			complex_elements.push_back(element(infos[i], c));
+		}
+		catch (unsupported_geometry_exception & ex) {
+			report_warning(boost::format("Element %s has unsupported geometry (%s). It will be ignored.\n") % infos[i]->id % ex.condition());
+		}
+		catch (unknown_geometry_rep_exception & /*ex*/) {
+			report_warning(boost::format("Element %s has unknown internal geometry representation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
 		}
 	}
 

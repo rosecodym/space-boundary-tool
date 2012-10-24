@@ -12,7 +12,7 @@ using Point = Sbt.CoreTypes.Point;
 
 namespace GUI.Operations
 {
-    static partial class IdfGeneration
+    partial class IdfGeneration
     {
         class IdfV710Creator : IdfCreator
         {

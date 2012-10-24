@@ -180,7 +180,7 @@ cppw::Application_instance create_owner_history(cppw::Open_model * model) {
 	cppw::Application_instance org = model->create("IfcOrganization");
 	org.put("Name", "Lawrence Berkeley National Laboratory");
 	app.put("ApplicationDeveloper", org);
-	app.put("Version", "1.4.3b");
+	app.put("Version", "1.4.5");
 	app.put("ApplicationFullName", "Space Boundary Tool");
 	app.put("ApplicationIdentifier", "SBT");
 	inst.put("LastModifyingApplication", app);

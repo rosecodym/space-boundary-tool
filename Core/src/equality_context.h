@@ -50,6 +50,7 @@ public:
 	static bool are_effectively_same<point_3>(const point_3 & a, const point_3 & b, double eps) { return are_equal(a.x(), b.x(), eps) && are_equal(a.y(), b.y(), eps) && are_equal(a.z(), b.z(), eps); }
 	static bool are_effectively_collinear(const point_2 & a, const point_2 & b, const point_2 & c, double eps) { return are_effectively_same(a, c, eps) || is_zero_squared(CGAL::squared_distance(b, line_2(a, c)), eps); }
 	static bool are_effectively_collinear(const point_3 & a, const point_3 & b, const point_3 & c, double eps) { return are_effectively_same(a, c, eps) || is_zero_squared(CGAL::squared_distance(b, line_3(a, c)), eps); }
+	static bool are_effectively_collinear(const ipoint_3 & a, const ipoint_3 & b, const ipoint_3 & c, double eps) { return are_effectively_same(a, c, eps) || is_zero_squared(CGAL::squared_distance(b, iline_3(a, c)), eps); }
 	static bool are_effectively_perpendicular(const vector_3 & a, const vector_3 & b, double eps) { return is_zero_squared((geometry_common::normalize(a) * geometry_common::normalize(b)), eps); }
 
 	bool is_zero(double d) const { return is_zero(d, tolerance); }
@@ -63,8 +64,8 @@ public:
 
 	bool are_effectively_parallel(const vector_3 & a, const vector_3 & b) const { return is_zero_squared(CGAL::cross_product(geometry_common::normalize(a), geometry_common::normalize(b)).squared_length()); }
 	bool are_effectively_parallel(const direction_3 & a, const direction_3 & b) const { return are_effectively_parallel(a.to_vector(), b.to_vector()); }
-	bool are_effectively_collinear(const point_2 & a, const point_2 & b, const point_2 & c) const { return are_effectively_same(a, c) || is_zero_squared(CGAL::squared_distance(b, line_2(a, c))); }
-	bool are_effectively_collinear(const point_3 & a, const point_3 & b, const point_3 & c) const { return are_effectively_same(a, c) || is_zero_squared(CGAL::squared_distance(b, line_3(a, c))); }
+	template <typename PointT>
+	bool are_effectively_collinear(const PointT & a, const PointT & b, const PointT & c) const { return are_effectively_collinear(a, b, c, tolerance); }
 	bool are_effectively_perpendicular(const vector_3 & a, const vector_3 & b) const { return is_zero_squared((geometry_common::normalize(a) * geometry_common::normalize(b)), tolerance); }
 
 	// one version or the other will be more convenient in different cases, so they're both provided

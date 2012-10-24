@@ -5,6 +5,7 @@
 #include "common.h"
 #include "element.h"
 #include "equality_context.h"
+#include "exceptions.h"
 #include "multiview_solid.h"
 
 namespace {
@@ -132,6 +133,151 @@ TEST(MultiviewSolid, ThreeStairs) {
 
 	multiview_solid ms(s, &c);
 	EXPECT_EQ(10, ms.oriented_faces(&c).size());
+}
+
+TEST(MultiviewSolid, MismatchedFaces) {
+	equality_context c(0.01);
+
+	solid s = create_brep(4,
+		create_face(3, 
+			simple_point(0, 0, 0),
+			simple_point(1, 0, 0),
+			simple_point(0, 1, 0)),
+		create_face(3,
+			simple_point(0, 0, 0),
+			simple_point(0, 0, 1),
+			simple_point(0, 1, 0)),
+		create_face(3,
+			simple_point(0, 0, 0),
+			simple_point(0, 0, 1),
+			simple_point(1, 0, 0)),
+		create_face(3,
+			simple_point(0, 0, 1),
+			simple_point(0, 1, 0),
+			simple_point(1, 0, 0)));
+
+	multiview_solid mvs(s, &c);
+	std::vector<oriented_area> faces = mvs.oriented_faces(&c);
+	EXPECT_EQ(4, faces.size());
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(0, 0, 1) && !o.sense();
+	}));
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(0, 1, 0) && !o.sense();
+	}));
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(1, 0, 0) && !o.sense();
+	}));
+	EXPECT_TRUE(faces.end() != boost::find_if(faces, [](const oriented_area & o) {
+		return o.orientation().direction() == direction_3(1, 1, 1);
+	}));
+}
+
+TEST(MultiviewSolid, AllObtuseAngleBrep) {
+	equality_context c(0.01);
+
+	simple_point points[] = {
+		simple_point(0, 0, 0),
+		simple_point(2, 0, 1),
+		simple_point(1, 1, 1),
+		simple_point(-1, 1, 1),
+		simple_point(-2, 0, 1),
+		simple_point(-1, -1, 1),
+		simple_point(1, -1, 1),
+		simple_point(0, 0, 2)
+	};
+
+	solid s = create_brep(12,
+		create_face(3, points[0], points[1], points[2]),
+		create_face(3, points[0], points[2], points[3]),
+		create_face(3, points[0], points[3], points[4]),
+		create_face(3, points[0], points[4], points[5]),
+		create_face(3, points[0], points[5], points[6]),
+		create_face(3, points[0], points[6], points[1]),
+		create_face(3, points[7], points[1], points[2]),
+		create_face(3, points[7], points[2], points[3]),
+		create_face(3, points[7], points[3], points[4]),
+		create_face(3, points[7], points[4], points[5]),
+		create_face(3, points[7], points[5], points[6]),
+		create_face(3, points[7], points[6], points[1]));
+
+	EXPECT_NO_THROW(multiview_solid mvs(s, &c));
+}
+
+TEST(MultiviewSolid, SimplifiedToOpenBrep) {
+	equality_context c(0.01);
+
+	solid s = create_brep(10,
+		// base/out
+		create_face(4,
+			simple_point(1.5, 2.8333333333333, 0),
+			simple_point(1.5, 0, 0),
+			simple_point(0, 0, 0),
+			simple_point(0, 2.83333333333333, 0)),
+		// ?/out
+		create_face(6,
+			simple_point(1.5, 0, 0),
+			simple_point(1.5, 2.8333333333333333, 0),
+			simple_point(1.5, 2.8333333333333333, 10.666666666666),
+			simple_point(1.5, 2.826055508613251, 10.666666666666),
+			simple_point(1.5, 2.826055508613251, 10.5),
+			simple_point(1.5, 0, 10.5)),
+		// front short side/out
+		create_face(4,
+			simple_point(0, 0, 0),
+			simple_point(1.5, 0, 0),
+			simple_point(1.5, 0, 10.5),
+			simple_point(0, 0, 10.5)),
+		// ?/in
+		create_face(6,
+			simple_point(0, 2.833333333333, 0),
+			simple_point(0, 2.833333333333, 10.666666666666),
+			simple_point(0, 1.251142620394262, 10.666666666666666),
+			simple_point(0, 1.251142620394262, 10.5),
+			simple_point(0, 0, 10.5),
+			simple_point(0, 0, 0)),
+		// back short side/in
+		create_face(4,
+			simple_point(1.5, 2.8333333333, 0),
+			simple_point(1.5, 2.8333333333, 10.666666666666),
+			simple_point(0, 2.8333333333, 10.666666666666),
+			simple_point(0, 2.8333333333, 0)),
+		// lip top (rejected)
+		create_face(6,
+			simple_point(1.5, 2.83333333333333, 10.6666666666),
+			simple_point(0, 2.83333333333333, 10.6666666666),
+			simple_point(0, 1.251142620394262, 10.6666666666),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.6666666666),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.6666666666),
+			simple_point(1.5, 2.826055508613251, 10.6666666666)),
+		// ?
+		create_face(6,
+			simple_point(0.003271982629939885, 2.826055508613251, 10.5),
+			simple_point(1.5, 2.826055508613251, 10.5),
+			simple_point(1.5, 0, 10.5),
+			simple_point(0, 0, 10.5),
+			simple_point(0, 1.251142620394262, 10.5),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.5)),
+		// half lip edge (rejected)
+		create_face(4,
+			simple_point(0.003271982629936332, 1.251142620394262, 10.5),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.6666666666),
+			simple_point(0, 1.251142620394262, 10.6666666666),
+			simple_point(0, 1.251142620394262, 10.5)),
+		// half lip inside
+		create_face(4,
+			simple_point(0.003271982629936332, 1.251142620394262, 10.5),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.5),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.6666666666),
+			simple_point(0.003271982629936332, 1.251142620394262, 10.6666666666)),
+		// full lip inside
+		create_face(4,
+			simple_point(0.003271982629939885, 2.826055508613251, 10.6666666666),
+			simple_point(0.003271982629939885, 2.826055508613251, 10.5),
+			simple_point(1.5, 2.826055508613251, 10.5),
+			simple_point(1.5, 2.826055508613251, 10.6666666666)));
+			
+	EXPECT_THROW(multiview_solid mvs(s, &c);, bad_brep_exception);
 }
 
 } // namespace
