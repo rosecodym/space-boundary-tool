@@ -3,7 +3,7 @@ open System.Text.RegularExpressions
 
 let major = 1
 let minor = 4
-let revision = 5
+let revision = 4
 
 let shortString = sprintf "%i.%i.%i" major minor revision
 let fullString = sprintf "%i.%i.%i.0" major minor revision
@@ -25,8 +25,11 @@ let operate (localDir, filename, prefix, suffix, useFull) =
         |> Seq.iter (fun line -> writer.WriteLine(line))
 
 let cases = [
+    ("ConstructionManagement", "AssemblyInfo.fs", "\[<assembly: Assembly(File)?Version\(\"", "\"\)>\]", true)
     ("GUI/Properties", "AssemblyInfo.cs", "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
     ("Ifc Adapter/src", "add_to_model.cpp", "app\.put\(\"Version\", \"", "\"\);", false)
+    ("IfcInformationExtractor", "AssemblyInfo.cpp", "\[assembly:AssemblyVersionAttribute\(\"", "\"\)\];", true)
+    ("CSharpCoreWrapper/Properties", "AssemblyInfo.cs", "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
     ]
 
 cases |> List.iter operate
