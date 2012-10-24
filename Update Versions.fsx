@@ -1,4 +1,9 @@
-﻿open System.IO
+﻿// This script updates all version strings in the solution to match the
+// specified one. It operates by searching for known locations of version 
+// strings, so there's minimal risk of an improper change. However, this means
+// that each location must be manually specified (in the 'cases' variable).
+
+open System.IO
 open System.Text.RegularExpressions
 
 let major = 1
@@ -8,7 +13,8 @@ let revision = 4
 let shortString = sprintf "%i.%i.%i" major minor revision
 let fullString = sprintf "%i.%i.%i.0" major minor revision
 
-let solutionDir = @"C:/Users/Cody/Documents/Visual Studio 2010/Projects/space-boundary-tool"
+let solutionDir = 
+    @"C:/Users/Cody/Documents/Visual Studio 2010/Projects/space-boundary-tool"
 
 let buildNeedle prefix suffix =
     sprintf @"(?<prefix>%s)\S+(?<suffix>%s)" prefix suffix
@@ -25,11 +31,18 @@ let operate (localDir, filename, prefix, suffix, useFull) =
         |> Seq.iter (fun line -> writer.WriteLine(line))
 
 let cases = [
-    ("ConstructionManagement", "AssemblyInfo.fs", "\[<assembly: Assembly(File)?Version\(\"", "\"\)>\]", true)
-    ("GUI/Properties", "AssemblyInfo.cs", "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
-    ("Ifc Adapter/src", "add_to_model.cpp", "app\.put\(\"Version\", \"", "\"\);", false)
-    ("IfcInformationExtractor", "AssemblyInfo.cpp", "\[assembly:AssemblyVersionAttribute\(\"", "\"\)\];", true)
-    ("CSharpCoreWrapper/Properties", "AssemblyInfo.cs", "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
+    ("ConstructionManagement", "AssemblyInfo.fs", 
+     "\[<assembly: Assembly(File)?Version\(\"", "\"\)>\]", true)
+    ("GUI", "MainWindow.xaml", "<Window\.Title>Space Boundary Tool ", 
+     "</Window\.Title>", false)
+    ("GUI/Properties", "AssemblyInfo.cs", 
+     "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
+    ("Ifc Adapter/src", "add_to_model.cpp", 
+     "app\.put\(\"Version\", \"", "\"\);", false)
+    ("IfcInformationExtractor", "AssemblyInfo.cpp", 
+     "\[assembly:AssemblyVersionAttribute\(\"", "\"\)\];", true)
+    ("CSharpCoreWrapper/Properties", "AssemblyInfo.cs", 
+     "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
     ]
 
 cases |> List.iter operate

@@ -1,9 +1,10 @@
-﻿<Window x:Class="GUI.MainWindow"
+<Window x:Class="GUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GUI"
-        Title="Space Boundary Tool" Height="502" Width="1156" Closed="MainWindowClosed" 
+        Height="502" Width="1156" Closed="MainWindowClosed" 
         xmlns:converters="clr-namespace:GUI.Converters">
+    <Window.Title>Space Boundary Tool 1.4.4</Window.Title>
     <Window.Resources>
         <DrawingImage x:Key="OKSmall">
             <DrawingImage.Drawing>
