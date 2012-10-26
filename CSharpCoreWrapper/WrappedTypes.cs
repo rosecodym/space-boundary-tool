@@ -306,8 +306,13 @@ namespace Sbt.CoreTypes
         public double Dz { get { return dz; } }
         public double Depth { get { return depth; } }
 
-        internal ExtrudedAreaSolid(NativeCoreTypes.ExtrudedAreaSolid fromNative)
-            : this(new Face(fromNative.area), fromNative.dx, fromNative.dy, fromNative.dz, fromNative.depth)
+        internal ExtrudedAreaSolid(NativeCoreTypes.ExtrudedAreaSolid native)
+            : this(
+                new Face(native.area), 
+                native.dx,
+                native.dy,
+                native.dz,
+                native.depth)
         { }
 
         public ExtrudedAreaSolid(Face area, double dx, double dy, double dz, double depth)
@@ -321,37 +326,100 @@ namespace Sbt.CoreTypes
 
         public override IList<Face> ToFaces()
         {
-            double mag = Math.Sqrt(dx * dx + dy * dy + dz * dz);
-            Tuple<double, double, double> extrusion = Tuple.Create(dx / mag * depth, dy / mag * depth, dz / mag * depth);
-            Face extruded = this.area.Translated(extrusion.Item1, extrusion.Item2, extrusion.Item3);
+            double magSq = dx * dx + dy * dy + dz * dz;
+            double mag = Math.Sqrt(magSq);
+            Tuple<double, double, double> extrusion = 
+                Tuple.Create(
+                    dx / mag * depth, 
+                    dy / mag * depth, 
+                    dz / mag * depth);
+
+            // The normal of the base should be "out," but there's no guarantee
+            // that the normal of the defining area is "out". So a check is
+            // necessary.
+            Tuple<double, double, double> baseNorm = CalculateNormal(area);
+            double baseMagSq =
+                baseNorm.Item1 * baseNorm.Item1 +
+                baseNorm.Item2 * baseNorm.Item2 +
+                baseNorm.Item3 * baseNorm.Item3;
+            double combinedX = baseNorm.Item1 + dx;
+            double combinedY = baseNorm.Item2 + dy;
+            double combinedZ = baseNorm.Item3 + dz;
+            double combinedMagSq =
+                combinedX * combinedX +
+                combinedY * combinedY +
+                combinedZ * combinedZ;
+            Face usedBase;
+            if (combinedMagSq < baseMagSq + magSq)
+            {
+                usedBase = area;
+            }
+            else
+            {
+                usedBase = area.Reversed();
+            }
+            
+            Face extruded = 
+                usedBase.Translated(
+                    extrusion.Item1, 
+                    extrusion.Item2, 
+                    extrusion.Item3);
 
             List<Face> res = new List<Face>();
 
-            Func<Polyloop, Polyloop, IEnumerable<Polyloop>> getSides = (source, target) =>
+            Func<Polyloop, Polyloop, IEnumerable<Polyloop>> getSides = 
+                (source, target) =>
                 {
-                    List<LinkedList<Point>> sides = new List<LinkedList<Point>>();
-                    sides.AddRange(source.Vertices.Select(_ => new LinkedList<Point>()));
+                    List<LinkedList<Point>> sides = 
+                        new List<LinkedList<Point>>();
+                    sides.AddRange(
+                        source.Vertices.Select(_ => new LinkedList<Point>()));
                     for (int i = 0; i < source.Vertices.Count; ++i)
                     {
+                        int nextI = (i + 1) % source.Vertices.Count;
                         sides[i].AddLast(target.Vertices[i]);
                         sides[i].AddLast(source.Vertices[i]);
-                        sides[(i + 1) % source.Vertices.Count].AddFirst(target.Vertices[i]);
-                        sides[(i + 1) % source.Vertices.Count].AddFirst(source.Vertices[i]);
+                        sides[nextI].AddFirst(target.Vertices[i]);
+                        sides[nextI].AddFirst(source.Vertices[i]);
                     }
                     return sides.Select(points => new Polyloop(points));
                 };
 
-            res.Add(this.area);
+            res.Add(usedBase);
             res.Add(extruded.Reversed());
-            res.AddRange(getSides(this.area.OuterBoundary, extruded.OuterBoundary).Select(loop => new Face(loop)));
+            res.AddRange(
+                getSides(usedBase.OuterBoundary, extruded.OuterBoundary)
+                .Select(loop => new Face(loop)));
 
             res.AddRange(this.area.Voids.SelectMany(v =>
                 {
-                    Polyloop target = v.Translated(extrusion.Item1, extrusion.Item2, extrusion.Item3);
+                    Polyloop target = 
+                        v.Translated(
+                            extrusion.Item1, 
+                            extrusion.Item2, 
+                            extrusion.Item3);
                     return getSides(v, target).Select(loop => new Face(loop));
                 }));
 
             return res;
+        }
+
+        private static Tuple<double, double, double> CalculateNormal(Face f)
+        {
+            // http://cs.haifa.ac.il/~gordon/plane.pdf
+            double a = 0;
+            double b = 0;
+            double c = 0;
+            int count = f.OuterBoundary.Vertices.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                Point curr = f.OuterBoundary.Vertices[i];
+                Point next = f.OuterBoundary.Vertices[(i + 1) % count];
+                a += (curr.Y - next.Y) * (curr.Z + next.Z);
+                b += (curr.Z - next.Z) * (curr.X + next.X);
+                c += (curr.X - next.X) * (curr.Y + next.Y);
+            }
+            return Tuple.Create(a, b, c);
         }
 
         internal override Solid ScaledBy(double factor)

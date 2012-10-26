@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 
 using Sbt.CoreTypes;
+using Vector3 = GUI.SbtExtensions.Vector3;
+using Plane3 = GUI.SbtExtensions.Plane3;
 
 namespace GUI.Operations
 {
@@ -28,12 +30,19 @@ namespace GUI.Operations
             }
 
             readonly SpaceBoundary sbtInfo;
+            readonly Polyloop geometry;
+            readonly Plane3 plane;
             readonly string constructionName;
             readonly string zoneName;
 
-            public BuildingSurface(SpaceBoundary sb, string constructionName, string zoneName)
+            public BuildingSurface(
+                SpaceBoundary sb, 
+                string constructionName, 
+                string zoneName)
             {
                 this.sbtInfo = sb;
+                this.geometry = sbtInfo.Geometry.Cleaned(0.01);
+                this.plane = sb.Plane();
                 this.constructionName = constructionName;
                 this.zoneName = zoneName;
             }
@@ -45,35 +54,86 @@ namespace GUI.Operations
             {
                 get
                 {
-                    if (Normal.Item1 != 0 || Normal.Item2 != 0) { return SurfaceType.Wall; }
-                    else if (Normal.Item3 < 0) { return SurfaceType.Floor; }
-                    else { return OtherSideCondition == OtherSideConditionType.Outdoors ? SurfaceType.Roof : SurfaceType.Ceiling; }
+                    if (Plane.Normal.X != 0 || Plane.Normal.Y != 0)
+                    {
+                        return SurfaceType.Wall;
+                    }
+                    else if (Plane.Normal.Z < 0) { return SurfaceType.Floor; }
+                    else
+                    {
+                    Func<bool> isOutdoors = 
+                        () => 
+                            OtherSideCondition == 
+                            OtherSideConditionType.Outdoors;
+                        return isOutdoors() ? 
+                            SurfaceType.Roof : SurfaceType.Ceiling;
+                    }
                 }
             }
             public OtherSideConditionType OtherSideCondition
             {
                 get
                 {
-                    return
-                        sbtInfo.IsConnectedToGround() ? OtherSideConditionType.Ground :
-                        sbtInfo.IsExternal ? OtherSideConditionType.Outdoors :
-                        sbtInfo.Opposite != null && sbtInfo.Opposite.BoundedSpace != sbtInfo.BoundedSpace ? OtherSideConditionType.Surface : OtherSideConditionType.Adiabatic;
+                    if (sbtInfo.IsConnectedToGround())
+                    {
+                        return OtherSideConditionType.Ground;
+                    }
+                    else if (sbtInfo.IsExternal)
+                    {
+                        return OtherSideConditionType.Outdoors;
+                    }
+                    else if (
+                        sbtInfo.Opposite != null &&
+                        sbtInfo.Opposite.BoundedSpace != sbtInfo.BoundedSpace)
+                    {
+                        return OtherSideConditionType.Surface;
+                    }
+                    else
+                    {
+                        return OtherSideConditionType.Adiabatic;
+                    }
                 }
             }
 
             public bool IsVirtual { get { return sbtInfo.IsVirtual; } }
-            public string ElementGuid { get { return sbtInfo.Element != null ? sbtInfo.Element.Guid : null; } }
+            public string ElementGuid
+            {
+                get
+                {
+                    if (sbtInfo.Element != null)
+                    {
+                        return sbtInfo.Element.Guid;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
             public string OtherSideName
             {
                 get
                 {
-                    return sbtInfo.Opposite != null ? sbtInfo.Opposite.Guid : null;
+                    if (sbtInfo.Opposite != null)
+                    {
+                        return sbtInfo.Opposite.Guid;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
-            public Sbt.CoreTypes.Polyloop Geometry { get { return sbtInfo.Geometry.Cleaned(0.01); } }
-            public Tuple<double, double, double> Normal { get { return sbtInfo.Normal; } }
+            public Polyloop Geometry { get { return geometry; } }
+            public Plane3 Plane { get { return plane; } }
+            public Vector3 Normal { get { return plane.Normal; } }
 
-            public bool HasElementType(Sbt.CoreTypes.ElementType type) { return sbtInfo.Element != null && sbtInfo.Element.Type == type; }
+            public bool HasElementType(ElementType type)
+            {
+                return
+                    sbtInfo.Element != null &&
+                    sbtInfo.Element.Type == type;
+            }
         }
     }
 }

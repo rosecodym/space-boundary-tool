@@ -9,11 +9,15 @@ namespace GUI
 {
     static class SbtExtensions
     {
-        private class Vector3
+        public class Vector3
         {
             readonly private double x;
             readonly private double y;
             readonly private double z;
+
+            public double X { get { return x; } }
+            public double Y { get { return y; } }
+            public double Z { get { return z; } }
 
             public Vector3(Point from, Point to)
             {
@@ -22,22 +26,100 @@ namespace GUI
                 z = to.Z - from.Z;
             }
 
-            private Vector3(double x, double y, double z)
+            public Vector3(double x, double y, double z)
             {
                 this.x = x;
                 this.y = y;
                 this.z = z;
             }
 
-            public double Magnitude { get { return Math.Sqrt(x * x + y * y + z * z); } }
+            public double Magnitude // pop pop
+            {
+                get { return Math.Sqrt(MagnitudeSquared); }
+            }
 
-            static public Vector3 CrossProduct(Vector3 u, Vector3 v)
+            public double MagnitudeSquared // pop pop pop pop
+            {
+                get { return x * x + y * y + z * z; }
+            }
+
+            public static Vector3 operator +(Vector3 a, Vector3 b)
+            {
+                return new Vector3(
+                    a.X + b.X,
+                    a.Y + b.Y,
+                    a.Z + b.Z);
+            }
+
+            public static bool AreAntiparallel(Vector3 a, Vector3 b)
+            {
+                double combined = (a + b).MagnitudeSquared;
+                double separate = a.MagnitudeSquared + b.MagnitudeSquared;
+                if (combined < separate)
+                {
+                    Vector3 cross = Vector3.CrossProduct(a, b);
+                    return cross.MagnitudeSquared < 0.01 * 0.01;
+                }
+                return false;
+            }
+
+            public static Vector3 CrossProduct(Vector3 u, Vector3 v)
             {
                 return new Vector3(
                     u.y * v.z - u.z * v.y,
                     u.z * v.x - u.x * v.z,
                     u.x * v.y - u.y * v.x);
             }
+        }
+
+        public class Plane3
+        {
+            readonly private double a;
+            readonly private double b;
+            readonly private double c;
+            readonly private double d;
+
+            public Vector3 Normal { get { return new Vector3(a, b, c); } }
+
+            public Plane3(Polyloop loop)
+            {
+            	// http://cs.haifa.ac.il/~gordon/plane.pdf
+                a = 0;
+                b = 0;
+                c = 0;
+                double x = 0;
+                double y = 0;
+                double z = 0;
+                int count = loop.Vertices.Count;
+                for (int i = 0; i < count; ++i)
+                {
+                    Point curr = loop.Vertices[i];
+                    Point next = loop.Vertices[(i + 1) % count];
+                    a += (curr.Y - next.Y) * (curr.Z + next.Z);
+                    b += (curr.Z - next.Z) * (curr.X + next.X);
+                    c += (curr.X - next.X) * (curr.Y + next.Y);
+                    x += curr.X;
+                    y += curr.Y;
+                    z += curr.Z;
+                }
+                x /= count;
+                y /= count;
+                z /= count;
+                d = -x * a + -y * b + -z * c;
+            }
+
+            public double SignedDistanceFrom(Point p)
+            {
+                // http://mathworld.wolfram.com/Point-PlaneDistance.html
+                return
+                    (a * p.X + b * p.Y + c * p.Z + d) /
+                    Math.Sqrt(a * a + b * b + c * c);
+            }
+        }
+
+        public static Plane3 Plane(this Polyloop loop)
+        {
+            return new Plane3(loop);
         }
 
         public static Polyloop Cleaned(this Polyloop loop, double eps)
@@ -125,9 +207,15 @@ namespace GUI
             return new Point(x / faces.Count, y / faces.Count, z / faces.Count);
         }
 
-        internal static Polyloop Translate(this Polyloop loop, double dx, double dy, double dz)
+        internal static Polyloop Translate(this Polyloop loop, Vector3 v)
         {
-            return new Polyloop(loop.Vertices.Select(p => new Point(p.X + dx, p.Y + dy, p.Z + dz)));
+            return new Polyloop(loop.Vertices.Select(p =>
+                new Point(p.X + v.X, p.Y + v.Y, p.Z + v.Z)));
+        }
+
+        public static Plane3 Plane(this SpaceBoundary sb)
+        {
+            return new Plane3(sb.Geometry);
         }
     }
 }

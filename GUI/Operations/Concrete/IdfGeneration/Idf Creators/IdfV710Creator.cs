@@ -82,40 +82,83 @@ namespace GUI.Operations
             {
                 if (surf.Geometry.Vertices.Count > 0)
                 {
-                    IdfObject obj = idf.CreateObject("BuildingSurface:Detailed");
+                    IdfObject obj = 
+                        idf.CreateObject("BuildingSurface:Detailed");
 
                     obj.Fields["Name"].Value = surf.Name;
                     obj.Fields["Zone Name"].Value = surf.ZoneName;
                     obj.Fields["Surface Type"].Value = surf.Type.ToString();
 
-                    obj.Fields["Outside Boundary Condition"].Value = surf.OtherSideCondition.ToString();
-                    if (surf.OtherSideCondition == BuildingSurface.OtherSideConditionType.Surface)
+                    obj.Fields["Outside Boundary Condition"].Value = 
+                        surf.OtherSideCondition.ToString();
+                    if (surf.OtherSideCondition == 
+                        BuildingSurface.OtherSideConditionType.Surface)
                     {
-                        obj.Fields["Outside Boundary Condition Object"].Value = surf.OtherSideName;
+                        obj.Fields["Outside Boundary Condition Object"].Value = 
+                            surf.OtherSideName;
                     }
 
-                    Func<Point, Point, int> vertexOrderComparer =
-                        surf.Type == BuildingSurface.SurfaceType.Floor ? ComparePointsForRighterLownessFlat :
-                        surf.Type == BuildingSurface.SurfaceType.Ceiling ? ComparePointsForUpperLeftnessFlat :
-                        surf.Type == BuildingSurface.SurfaceType.Roof ? (Func<Point, Point, int>)ComparePointsForUpperLeftnessFlat : ComparePointsForUpperLeftness;
-
-                    foreach (var pair in VertexOrderRotatedGeometry(surf.Geometry, vertexOrderComparer).Select((point, index) => new { Point = point, Index = index }))
+                    Func<Point, Point, int> vertexOrderCmp;
+                    if (surf.Type == BuildingSurface.SurfaceType.Floor)
                     {
-                        obj.Fields[String.Format("Vertex {0} X-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.X, 3);
-                        obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Y, 3);
-                        obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Z, 3);
+                        vertexOrderCmp = ComparePointsForRighterLownessFlat;
+                    }
+                    else if (
+                        surf.Type == BuildingSurface.SurfaceType.Ceiling ||
+                        surf.Type == BuildingSurface.SurfaceType.Roof)
+                    {
+                        vertexOrderCmp = ComparePointsForUpperLeftnessFlat;
+                    }
+                    else
+                    {
+                        vertexOrderCmp = ComparePointsForUpperLeftness;
                     }
 
-                    if (surf.OtherSideCondition != BuildingSurface.OtherSideConditionType.Outdoors || surf.Type == BuildingSurface.SurfaceType.Floor)
+                    var rotated =
+                        VertexOrderRotatedGeometry(
+                            surf.Geometry, 
+                            vertexOrderCmp);
+                    var withIndices = rotated.Select((p, i) =>
+                        new { Point = p, Index = i });
+
+                    foreach (var pair in withIndices)
+                    {
+                        string name;
+                        name = String.Format(
+                            "Vertex {0} X-coordinate", 
+                            pair.Index + 1);
+                        obj.Fields[name].Value = Math.Round(pair.Point.X, 3);
+                        name = String.Format(
+                            "Vertex {0} Y-coordinate",
+                            pair.Index + 1);
+                        obj.Fields[name].Value = Math.Round(pair.Point.Y, 3);
+                        name = String.Format(
+                            "Vertex {0} Z-coordinate",
+                            pair.Index + 1);
+                        obj.Fields[name].Value = Math.Round(pair.Point.Z, 3);
+                    }
+
+                    if (surf.OtherSideCondition != 
+                        BuildingSurface.OtherSideConditionType.Outdoors || 
+                        surf.Type == 
+                        BuildingSurface.SurfaceType.Floor)
                     {
                         obj.Fields["Sun Exposure"].Value = "NoSun";
                         obj.Fields["Wind Exposure"].Value = "NoWind";
                     }
 
-                    obj.Fields["Construction Name"].Value = surf.ConstructionName;
+                    obj.Fields["Construction Name"].Value = 
+                        surf.ConstructionName;
 
-                    if (!surf.IsVirtual) { obj.AddComment("  ! IFC element GUID: " + surf.ElementGuid); }
-                    obj.AddComment(String.Format("  ! Normal: <{0}, {1}, {2}>", surf.Normal.Item1, surf.Normal.Item2, surf.Normal.Item3));
+                    if (!surf.IsVirtual) { 
+                        obj.AddComment(
+                            "  ! IFC element GUID: " + surf.ElementGuid); 
+                    }
+                    obj.AddComment(String.Format(
+                        "  ! Normal: <{0}, {1}, {2}>", 
+                        surf.Normal.X, 
+                        surf.Normal.Y, 
+                        surf.Normal.Z));
                 }
             }
 
