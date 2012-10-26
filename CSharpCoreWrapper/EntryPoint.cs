@@ -14,8 +14,8 @@ namespace Sbt
         private struct SBCalculationOptions
         {
             internal SbtFlags flags;
-            internal double equalityTolerance;
-            internal double maxPairDistance;
+            internal double lengthUnitsPerMeter;
+            internal double maxPairDistanceInMeters;
             internal int spaceVerificationTimeout;
             internal IntPtr spaceFilter;
             internal uint spaceFilterCount;
@@ -86,8 +86,8 @@ namespace Sbt
             ICollection<CoreTypes.SpaceInfo> spaces,
             out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
             SbtFlags flags = SbtFlags.None,
-            double internalEpsilon = 0.01,
-            double maxPairDistance = 0.5,
+            double lengthUnitsPerMeter = 1.0,
+            double maxPairDistanceInMeters = 0.5,
             MessageDelegate notifyMsg = null,
             MessageDelegate warningMsg = null,
             MessageDelegate errorMsg = null)
@@ -95,8 +95,8 @@ namespace Sbt
             SBCalculationOptions opts;
             opts.flags = flags;
             opts.spaceVerificationTimeout = 0; // no longer does anything
-            opts.equalityTolerance = internalEpsilon;
-            opts.maxPairDistance = maxPairDistance;
+            opts.lengthUnitsPerMeter = lengthUnitsPerMeter;
+            opts.maxPairDistanceInMeters = maxPairDistanceInMeters;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;
@@ -151,8 +151,7 @@ namespace Sbt
             out ICollection<CoreTypes.SpaceInfo> spaces,
             out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
             SbtFlags flags = SbtFlags.None,
-            double internalEpsilon = 0.01,
-            double maxPairDistance = 0.5,
+            double maxPairDistanceInMeters = 0.5,
             IEnumerable<string> spaceFilter = null,
             IEnumerable<string> elementFilter = null,
             MessageDelegate notifyMsg = null,
@@ -162,8 +161,8 @@ namespace Sbt
             SBCalculationOptions opts;
             opts.flags = flags;
             opts.spaceVerificationTimeout = 0; // no longer does anything
-            opts.equalityTolerance = internalEpsilon;
-            opts.maxPairDistance = maxPairDistance;
+            opts.lengthUnitsPerMeter = 1.0;
+            opts.maxPairDistanceInMeters = maxPairDistanceInMeters;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;

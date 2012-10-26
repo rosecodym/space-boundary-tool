@@ -56,39 +56,82 @@ void process_group(SpaceFaceRange * space_faces, const BlockRange & blocks, cons
 } // namespace impl
 
 template <typename BlockRange, typename SpaceRange>
-std::vector<blockstack> build_stacks(const BlockRange & blocks, const SpaceRange & spaces, double height_cutoff, equality_context * c) {
-	reporting::report_progress(boost::format("Beginning stack construction for %u blocks and %u spaces. Max stack height is %f.\n") %
+std::vector<blockstack> build_stacks(
+	const BlockRange & blocks, 
+	const SpaceRange & spaces, 
+	double height_cutoff, 
+	equality_context * c) 
+{
+	using namespace boost::adaptors;
+	using namespace impl;
+	using namespace reporting;
+	typedef boost::format fmt;
+	report_progress(
+		fmt(
+			"Beginning stack construction for %u blocks and %u spaces. Max "
+			"stack height is %f.\n") %
 		blocks.size() %
 		spaces.size() %
 		height_cutoff);
 
-	double height_eps = c->height_epsilon();
+	double height_eps = c->height_epsilon() * g_opts.length_units_per_meter;
 
 	auto space_faces = impl::get_space_faces_by_orientation(spaces, c);
 
-	reporting::report_progress(boost::format("Identified %u relevant orientations.\n") % space_faces.size());
+	report_progress(
+		fmt("Identified %u relevant orientations.\n") % space_faces.size());
 
-	auto fenestration_blocks = impl::get_blocks_by_orientation(blocks | boost::adaptors::filtered([](const block & b) { return b.is_fenestration(); }));
-	auto nonfenestration_blocks = impl::get_blocks_by_orientation(blocks | boost::adaptors::filtered([](const block & b) { return !b.is_fenestration(); }));
+	auto fen_blks = 
+		get_blocks_by_orientation(
+			blocks | filtered([](const block & b) { 
+				return b.is_fenestration(); 
+			}));
+	auto nonfen_blks = 
+		get_blocks_by_orientation(
+			blocks | filtered([](const block & b) { 
+				return !b.is_fenestration(); 
+			}));
 
+	typedef std::pair<const orientation * const, std::vector<space_face>> or;
 	std::vector<blockstack> res;
-	boost::for_each(space_faces, [&res, &space_faces, &fenestration_blocks, height_cutoff, height_eps](std::pair<const orientation * const, std::vector<impl::space_face>> & o_info) {
-		reporting::report_progress(boost::format("Building fenestration stacks along %s.\n") % o_info.first->to_string().c_str());
-		impl::process_group(&o_info.second, fenestration_blocks[o_info.first], o_info.first, height_cutoff, height_eps, std::back_inserter(res));
-		reporting::report_progress("Built stacks.\n");
+	boost::for_each(space_faces, [&, height_cutoff, height_eps](or & o_info) {
+		std::string ostring = o_info.first->to_string();
+		report_progress(
+			fmt("Building fenestration stacks along %s.\n") % ostring);
+		process_group(
+			&o_info.second, 
+			fen_blks[o_info.first], 
+			o_info.first, 
+			height_cutoff, 
+			height_eps, 
+			std::back_inserter(res));
+		report_progress("Built stacks.\n");
 	});
-	reporting::report_progress("Resetting space faces");
-	boost::for_each(space_faces, [](std::pair<const orientation * const, std::vector<impl::space_face>> & o_info) {
-		boost::for_each(o_info.second, [](impl::space_face & f) { f.reset_area_to_original(); reporting::report_progress("."); });
+	report_progress("Resetting space faces");
+	boost::for_each(space_faces, [](or & o_info) {
+		boost::for_each(
+			o_info.second, 
+			[](impl::space_face & f) { 
+				f.reset_area_to_original(); 
+				reporting::report_progress(".");
+			});
 	});
-	reporting::report_progress("done.\n");
-	boost::for_each(space_faces, [&res, &space_faces, &nonfenestration_blocks, height_cutoff, height_eps](std::pair<const orientation * const, std::vector<impl::space_face>> & o_info) {
-		reporting::report_progress(boost::format("Building nonfenestration stacks along %s.\n") % o_info.first->to_string().c_str());
-		impl::process_group(&o_info.second, nonfenestration_blocks[o_info.first], o_info.first, height_cutoff, height_eps, std::back_inserter(res));
-		reporting::report_progress("Built stacks.\n");
+	report_progress("done.\n");
+	boost::for_each(space_faces, [&, height_cutoff, height_eps](or & o_info) {
+		std::string ostring = o_info.first->to_string().c_str();
+		report_progress(
+			fmt("Building nonfenestration stacks along %s.\n") % ostring);
+		process_group(
+			&o_info.second, 
+			nonfen_blks[o_info.first], 
+			o_info.first, 
+			height_cutoff, 
+			height_eps, 
+			std::back_inserter(res));
+		report_progress("Built stacks.\n");
 	});
 
-	reporting::report_progress(boost::format("Built %u stacks.\n") % res.size());
+	report_progress(fmt("Built %u stacks.\n") % res.size());
 	return res;
 }
 

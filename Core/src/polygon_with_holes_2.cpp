@@ -10,9 +10,9 @@
 extern sb_calculation_options g_opts;
 
 void polygon_with_holes_2::cleanup() {
-	geometry_common::cleanup_loop(&m_outer, g_opts.equality_tolerance);
+	geometry_common::cleanup_loop(&m_outer, EPS_MAGIC);
 	boost::for_each(m_holes, [](polygon_2 & hole) {
-		geometry_common::cleanup_loop(&hole, g_opts.equality_tolerance);
+		geometry_common::cleanup_loop(&hole, EPS_MAGIC);
 	});
 }
 

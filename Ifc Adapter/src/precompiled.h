@@ -31,3 +31,5 @@
 
 #include <cpp_edmi.h>
 #include <sdai.h>
+
+#define EPS_MAGIC 0.01

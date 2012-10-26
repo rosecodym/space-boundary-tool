@@ -63,7 +63,7 @@ boost::optional<polygon_with_holes_2> face::to_pwh() const {
 			outer.push_back(e->point(p->vertex()));
 		}
 	}
-	if (!geometry_common::cleanup_loop(&outer, g_opts.equality_tolerance)) {
+	if (!geometry_common::cleanup_loop(&outer, EPS_MAGIC)) {
 		return boost::optional<polygon_with_holes_2>();
 	}
 	for (auto h = e->holes_begin(f); h != e->holes_end(f); ++h) {
@@ -75,7 +75,7 @@ boost::optional<polygon_with_holes_2> face::to_pwh() const {
 				holes.back().push_back(e->point(curr->vertex()));
 			}
 		}
-		if (!geometry_common::cleanup_loop(&holes.back(), g_opts.equality_tolerance)) {
+		if (!geometry_common::cleanup_loop(&holes.back(), EPS_MAGIC)) {
 			holes.pop_back();
 		}
 	}

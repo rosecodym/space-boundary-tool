@@ -164,16 +164,21 @@ std::function<bool(const char *)> create_guid_filter(char ** first, size_t count
 
 } // namespace
 
-ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * output_filename, sb_calculation_options options, sb_counts * counts) {
+ifcadapter_return_t add_to_ifc_file(
+	const char * input_filename, 
+	const char * output_filename, 
+	sb_calculation_options opts, 
+	sb_counts * counts) 
+{
 	char buf[256];
 	try {
-		g_opts = options;
-		number_collection<K> ctxt(g_opts.equality_tolerance / 20);
+		g_opts = opts;
+		number_collection<K> ctxt(EPS_MAGIC / 20);
 		sprintf(buf, "Processing file %s", input_filename);
-		options.notify_func(buf);
+		opts.notify_func(buf);
 		edm_wrapper edm;
 		cppw::Open_model model = edm.load_ifc_file(input_filename);
-		options.notify_func("File loaded.\n");
+		opts.notify_func("File loaded.\n");
 		element_info ** elements;
 		space_boundary ** sbs;
 		space_info ** loaded_spaces;
@@ -186,29 +191,42 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 			&elements, 
 			&loaded_space_count, 
 			&loaded_spaces, 
-			options.notify_func, 
+			opts.notify_func, 
 			unit_scaler::identity_scaler, 
-			create_guid_filter(options.element_filter, options.element_filter_count),
-			create_guid_filter(options.space_filter, options.space_filter_count),
+			create_guid_filter(opts.element_filter, opts.element_filter_count),
+			create_guid_filter(opts.space_filter, opts.space_filter_count),
 			&ctxt,
 			nullptr);
-		double length_units_per_meter = get_length_units_per_meter(model);
+		opts.length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
-			sb_calculation_options opts;
-			opts = options;
-			opts.max_pair_distance *= length_units_per_meter;
-			sbt_return_t generate_res = calculate_space_boundaries(element_count, elements, loaded_space_count, loaded_spaces, &sb_count, &sbs, opts);
+			sbt_return_t generate_res = 
+				calculate_space_boundaries(
+					element_count, 
+					elements, 
+					loaded_space_count, 
+					loaded_spaces, 
+					&sb_count, 
+					&sbs, 
+					opts);
 			if (generate_res == SBT_OK) {
 				generate_sb_summary(counts, sbs, sb_count);
 				sprintf(buf, "Generated count summary.\n");
-				options.notify_func(buf);
+				opts.notify_func(buf);
 				clear_sbs(&model);
-				// add_to_model figures out the right spaces by re-extracting them based on guids
-				if (add_to_model(model, sb_count, sbs, options.notify_func, unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
+				// add_to_model figures out the right spaces by re-extracting 
+				// them based on guids
+				if (add_to_model(
+						model, 
+						sb_count, 
+						sbs, 
+						opts.notify_func, 
+						unit_scaler::identity_scaler, 
+						&ctxt) == IFCADAPT_OK)
+				{
 					sprintf(buf, "Writing model to %s...", output_filename);
-					options.notify_func(buf);
+					opts.notify_func(buf);
 					edm.write_ifc_file(output_filename);
-					options.notify_func("done.\n");
+					opts.notify_func("done.\n");
 					res = IFCADAPT_OK;
 				}
 				release_space_boundaries(sbs, sb_count);
@@ -226,7 +244,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 	}
 	catch (cppw::Error & e) {
 		sprintf(buf, "edm error: %s\n", e.message.data());
-		options.error_func(buf);
+		opts.error_func(buf);
 		return IFCADAPT_EDM_ERROR;
 	}
 }
@@ -234,7 +252,7 @@ ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * ou
 ifcadapter_return_t load_and_run_from(
 	const char * input_filename,
 	const char * output_filename, // NULL if you don't want to write back
-	sb_calculation_options options,
+	sb_calculation_options opts,
 	element_info *** elements,
 	size_t * element_count,
 	space_info *** spaces,
@@ -244,13 +262,13 @@ ifcadapter_return_t load_and_run_from(
 {
 	char buf[256];
 	try {
-		g_opts = options;
-		number_collection<K> ctxt(g_opts.equality_tolerance / 20);
+		g_opts = opts;
+		number_collection<K> ctxt(EPS_MAGIC / 20);
 		sprintf(buf, "Processing file %s", input_filename);
-		options.notify_func(buf);
+		opts.notify_func(buf);
 		edm_wrapper edm;
 		cppw::Open_model model = edm.load_ifc_file(input_filename);
-		options.notify_func("File loaded.\n");
+		opts.notify_func("File loaded.\n");
 		unit_scaler scaler(model);
 		std::vector<element_info *> shadings;
 		ifcadapter_return_t res = extract_from_model(
@@ -259,27 +277,24 @@ ifcadapter_return_t load_and_run_from(
 			elements, 
 			space_count, 
 			spaces, 
-			options.notify_func, 
+			opts.notify_func, 
 			unit_scaler::identity_scaler, 
-			create_guid_filter(options.element_filter, options.element_filter_count),
-			create_guid_filter(options.space_filter, options.space_filter_count),
+			create_guid_filter(opts.element_filter, opts.element_filter_count),
+			create_guid_filter(opts.space_filter, opts.space_filter_count),
 			&ctxt,
 			&shadings);
-		double length_units_per_meter = get_length_units_per_meter(model);
+		opts.length_units_per_meter = get_length_units_per_meter(model);
 		if (res == IFCADAPT_OK) {
-			sb_calculation_options opts;
-			opts = options;
-			opts.max_pair_distance *= length_units_per_meter;
 			sbt_return_t generate_res = calculate_space_boundaries(*element_count, *elements, *space_count, *spaces, total_sb_count, sbs, opts);
 			if (generate_res == SBT_OK && output_filename != nullptr) {
 				// add_to_model figures out the right spaces by re-extracting them based on guids
 				clear_sbs(&model);
-				options.notify_func("Existing space boundaries removed from model.\n");
-				if (add_to_model(model, *total_sb_count, *sbs, options.notify_func, /*scaler*/unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
+				opts.notify_func("Existing space boundaries removed from model.\n");
+				if (add_to_model(model, *total_sb_count, *sbs, opts.notify_func, /*scaler*/unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
 					sprintf(buf, "Writing model to %s...", output_filename);
-					options.notify_func(buf);
+					opts.notify_func(buf);
 					edm.write_ifc_file(output_filename);
-					options.notify_func("done.\n");
+					opts.notify_func("done.\n");
 					scale_elements(*elements, *element_count, scaler);
 					scale_spaces(*spaces, *space_count, scaler);
 					scale_space_boundaries(*sbs, *total_sb_count, scaler);
@@ -302,7 +317,7 @@ ifcadapter_return_t load_and_run_from(
 	}
 	catch (cppw::Error & e) {
 		sprintf(buf, "edm error: %s\n", e.message.data());
-		options.error_func(buf);
+		opts.error_func(buf);
 		return IFCADAPT_EDM_ERROR;
 	}
 }

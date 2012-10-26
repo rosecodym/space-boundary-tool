@@ -76,7 +76,6 @@ public:
 
 	bool is_self() const { return m_base == m_other; }
 	bool are_parallel() const { return !is_self() && oriented_area::are_parallel(*m_base, *m_other); }
-	bool are_perpendicular() const { return oriented_area::are_perpendicular(*m_base, *m_other, g_opts.equality_tolerance); }
 	bool is_orthogonal_translation() const { return are_parallel() && areas_match(); }
 	bool opposite_senses() const { return base().sense() != other().sense(); }
 	bool other_is_above_base() const { return base().height() > other().height() == base().sense(); }
@@ -84,6 +83,10 @@ public:
 	bool other_in_correct_halfspace() const { return other().any_point_in_halfspace(base().backing_plane().opposite(), c3d); }
 	bool drape_hits_other_plane() const;
 	bool contributes_to_envelope() const;
+	
+	bool are_perpendicular() const { 
+		return oriented_area::are_perpendicular(*m_base, *m_other, EPS_MAGIC); 
+	}
 
 	const oriented_area & base_minus_other_projected() const {
 		return get_base_minus_other_projected();

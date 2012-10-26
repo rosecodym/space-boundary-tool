@@ -55,36 +55,69 @@ sbt_return_t calculate_space_boundaries(
 	space_boundary *** space_boundaries,
 	sb_calculation_options opts)
 {
+	typedef boost::format fmt;
+
 	g_opts = opts;
 
 	if (g_opts.notify_func == NULL) { g_opts.notify_func = &do_nothing; }
 	if (g_opts.warn_func == NULL) { g_opts.warn_func = &do_nothing; }
 	if (g_opts.error_func == NULL) { g_opts.error_func = &do_nothing; }
 
-	guid_filter element_filter = create_guid_filter(g_opts.element_filter, g_opts.element_filter_count);
-	guid_filter space_filter = create_guid_filter(g_opts.space_filter, g_opts.space_filter_count);
+	guid_filter element_filter = create_guid_filter(
+		g_opts.element_filter, 
+		g_opts.element_filter_count);
+	guid_filter space_filter = create_guid_filter(
+		g_opts.space_filter, 
+		g_opts.space_filter_count);
 
 	sbt_return_t retval;
 
 	_set_se_translator(&exception_translator);
 
 	try {
-		report_progress(boost::format("Beginning processing for %u building elements.\n") % element_count);
+		report_progress(
+			fmt("Beginning processing for %u building elements.\n") 
+			% element_count);
 
-		equality_context whole_building_context(g_opts.equality_tolerance);
+		equality_context ctxt(EPS_MAGIC);
+		double height_cutoff =
+			g_opts.max_pair_distance_in_meters *
+			g_opts.length_units_per_meter;
 
-		std::vector<element> elements = load_elements(element_infos, element_count, &whole_building_context, element_filter);
-		std::vector<space> spaces = load_spaces(space_infos, space_count, &whole_building_context, space_filter);
-		std::vector<block> blocks = blocking::build_blocks(elements, &whole_building_context);
-		std::vector<blockstack> stacks = stacking::build_stacks(blocks, spaces, g_opts.max_pair_distance, &whole_building_context);
+		std::vector<element> elements = 
+			load_elements(
+				element_infos, 
+				element_count, 
+				&ctxt, 
+				element_filter);
+		std::vector<space> spaces = 
+			load_spaces(
+				space_infos, 
+				space_count, 
+				&ctxt, 
+				space_filter);
+		std::vector<block> blocks = blocking::build_blocks(elements, &ctxt);
+		std::vector<blockstack> stacks = 
+			stacking::build_stacks(
+				blocks, 
+				spaces, 
+				height_cutoff, 
+				&ctxt);
 
 		std::vector<std::unique_ptr<surface>> surfaces;
-		boost::for_each(stacks, [&surfaces](const blockstack & st) { st.to_surfaces(std::back_inserter(surfaces)); });
+		boost::for_each(stacks, [&surfaces](const blockstack & st) { 
+			st.to_surfaces(std::back_inserter(surfaces)); 
+		});
 
-		opening_assignment::assign_openings(&surfaces, g_opts.equality_tolerance);
+		opening_assignment::assign_openings(&surfaces, EPS_MAGIC);
 
-		report_progress("Converting internal structures to interface structures");
-		retval = interface_conversion::convert_to_space_boundaries(surfaces, space_boundaries, space_boundary_count);
+		report_progress(
+			"Converting internal structures to interface structures");
+		retval = 
+			interface_conversion::convert_to_space_boundaries(
+				surfaces, 
+				space_boundaries, 
+				space_boundary_count);
 		report_progress("done.\n");
 	}
 	catch (sbt_exception & ex) {
@@ -109,8 +142,8 @@ void release_space_boundaries(space_boundary ** sbs, size_t count) {
 sb_calculation_options create_default_options() {
 	sb_calculation_options opts;
 	opts.flags = SBT_NONE;
-	opts.equality_tolerance = 0.01;
-	opts.max_pair_distance = 3.0;
+	opts.length_units_per_meter = 1.0;
+	opts.max_pair_distance_in_meters = 0.5;
 	opts.space_verification_timeout = 0;
 	opts.space_filter = nullptr;
 	opts.space_filter_count = 0;

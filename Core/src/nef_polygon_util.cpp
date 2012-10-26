@@ -34,16 +34,20 @@ void get_all_lines(const nef_polygon_2 & nef, OutputIterator oi) {
 }
 
 bool point_matches(const espoint_2 & espoint, const point_2 & p) {
-	NT squared_distance = CGAL::square(espoint.x() - p.x()) + CGAL::square(espoint.y() - p.y());
-	return equality_context::is_zero_squared(squared_distance, g_opts.equality_tolerance);
+	NT squared_distance = 
+		CGAL::square(espoint.x() - p.x()) + CGAL::square(espoint.y() - p.y());
+	return equality_context::is_zero_squared(squared_distance, EPS_MAGIC);
 }
 
-template <typename LineIter>
-LineIter find_close_line(const epoint_2 & epoint, LineIter begin, LineIter end) {
+template <typename LineIt>
+LineIt find_close_line(const epoint_2 & epoint, LineIt begin, LineIt end) {
+	using CGAL::to_double;
 	// this flattening is legacy and i'm terrified to take it out
-	epoint_2 flattened(CGAL::to_double(epoint.x()), CGAL::to_double(epoint.y()));
+	epoint_2 flattened(to_double(epoint.x()), to_double(epoint.y()));
 	return std::find_if(begin, end, [&flattened](const eline_2 & line) {
-		return equality_context::is_zero_squared(CGAL::to_double(CGAL::squared_distance(flattened, line)), g_opts.equality_tolerance);
+		return equality_context::is_zero_squared(
+			CGAL::to_double(
+				CGAL::squared_distance(flattened, line)), EPS_MAGIC);
 	});
 }
 
@@ -159,7 +163,7 @@ nef_polygon_2 clean(const nef_polygon_2 & nef) {
 	bool changed = false;
 	boost::for_each(loops, [&changed](loop_t & loop) { 
 		size_t in_size = loop.size();
-		if (!geometry_common::cleanup_loop(&loop, g_opts.equality_tolerance)) { loop.clear(); }
+		if (!geometry_common::cleanup_loop(&loop, EPS_MAGIC)) { loop.clear(); }
 		if (loop.size() != in_size) { changed = true; }
 	});
 
@@ -175,16 +179,19 @@ nef_polygon_2 clean(const nef_polygon_2 & nef) {
 }
 
 nef_polygon_2 create_nef_polygon(polygon_2 poly) {
-	if (!geometry_common::cleanup_loop(&poly, g_opts.equality_tolerance)) {
+	if (!geometry_common::cleanup_loop(&poly, EPS_MAGIC)) {
 		return nef_polygon_2::EMPTY;
 	}
-	std::vector<espoint_2> extended;
-	std::transform(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(extended), [](const point_2 & p) { 
-		return to_espoint(p); 
-	});
+	std::vector<espoint_2> ext;
+	std::transform(
+		poly.vertices_begin(), 
+		poly.vertices_end(), 
+		std::back_inserter(ext), [](const point_2 & p) { 
+			return to_espoint(p); 
+		});
 	return poly.is_counterclockwise_oriented() ?
-		nef_polygon_2(extended.begin(), extended.end(), nef_polygon_2::EXCLUDED) :
-		nef_polygon_2(extended.rbegin(), extended.rend(), nef_polygon_2::EXCLUDED);
+		nef_polygon_2(ext.begin(), ext.end(), nef_polygon_2::EXCLUDED) :
+		nef_polygon_2(ext.rbegin(), ext.rend(), nef_polygon_2::EXCLUDED);
 }
 
 void snap(nef_polygon_2 * from, const nef_polygon_2 & to) {

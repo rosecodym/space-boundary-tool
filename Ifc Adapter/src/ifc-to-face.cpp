@@ -143,7 +143,10 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 	}
 }
 
-bool normal_matches_extrusion(const exact_face & face, const direction_3 & ext_dir) {
+bool normal_matches_extrusion(
+	const exact_face & face, 
+	const direction_3 & ext_dir) 
+{
 	// http://cs.haifa.ac.il/~gordon/plane.pdf
 	NT a(0.0), b(0.0), c(0.0);
 	auto & loop = face.outer_boundary.vertices;
@@ -154,5 +157,8 @@ bool normal_matches_extrusion(const exact_face & face, const direction_3 & ext_d
 		b += (curr.z - next.z) * (curr.x + next.x);
 		c += (curr.x - next.x) * (curr.y + next.y);
 	}
-	return number_collection<K>::are_effectively_parallel(direction_3(a, b, c), ext_dir, g_opts.equality_tolerance);
+	return number_collection<K>::are_effectively_parallel(
+		direction_3(a, b, c), 
+		ext_dir, 
+		EPS_MAGIC);
 }

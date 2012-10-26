@@ -54,6 +54,8 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #pragma warning (pop)
 
+#define EPS_MAGIC 0.01
+
 typedef CORE::Expr						NT;
 
 typedef CGAL::Simple_cartesian<NT>		K;

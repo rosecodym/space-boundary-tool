@@ -149,8 +149,8 @@ END(sbt_options_flags)
 
 BEGINSTRUCT(sb_calculation_options)
 	int flags;
-	double equality_tolerance;
-	double max_pair_distance;
+	double length_units_per_meter;
+	double max_pair_distance_in_meters;
 	int space_verification_timeout;
 	char ** space_filter;
 	size_t space_filter_count;

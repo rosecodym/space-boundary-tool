@@ -23,10 +23,14 @@ private:
 
 public:
 	template <typename PointRange, typename HoleRange>
-	polygon_with_holes_3(const PointRange & outer, const HoleRange & holes) : m_outer(outer.begin(), outer.end()), m_holes(holes.begin(), holes.end()) { 
-		geometry_common::cleanup_loop(&m_outer, g_opts.equality_tolerance);
+	polygon_with_holes_3(const PointRange & outer, const HoleRange & holes) 
+		: m_outer(outer.begin(), 
+		outer.end()), 
+		m_holes(holes.begin(), holes.end()) 
+	{ 
+		geometry_common::cleanup_loop(&m_outer, EPS_MAGIC);
 		boost::for_each(m_holes, [](std::vector<point_3> & hole) {
-			geometry_common::cleanup_loop(&hole, g_opts.equality_tolerance);
+			geometry_common::cleanup_loop(&hole, EPS_MAGIC);
 		});
 	}
 

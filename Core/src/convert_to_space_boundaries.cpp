@@ -34,27 +34,36 @@ void set_geometry(space_boundary * sb, const PointRange & geometry) {
 
 } // namespace
 
-space_boundary * create_unlinked_space_boundary(const surface & surf) {
+space_boundary * create_unlinked_space_boundary(const surface & s) {
+	using namespace CGAL;
+	typedef boost::format fmt;
+
 	space_boundary * newsb = (space_boundary *)malloc(sizeof(space_boundary));
 	if (!newsb) { throw failed_malloc_exception(); }
 
 	bool stack_overflowed = false;
 
 	try {
-		strncpy(newsb->global_id, surf.guid().c_str(), SB_ID_MAX_LEN);
-		strncpy(newsb->element_id, surf.is_virtual() ? "" : surf.bounded_element()->source_id().c_str(), ELEMENT_ID_MAX_LEN);
+		strncpy(newsb->global_id, s.guid().c_str(), SB_ID_MAX_LEN);
+		strncpy(
+			newsb->element_id, 
+			s.is_virtual() ? "" : s.bounded_element()->source_id().c_str(), 
+			ELEMENT_ID_MAX_LEN);
 
-		auto cleaned_geometry = surf.geometry().to_3d(true).front().outer();
-		geometry_common::cleanup_loop(&cleaned_geometry, g_opts.equality_tolerance);
+		auto cleaned_geometry = s.geometry().to_3d(true).front().outer();
+		geometry_common::cleanup_loop(&cleaned_geometry, EPS_MAGIC);
 
-		if (surf.geometry().sense()) {
+		if (s.geometry().sense()) {
 			set_geometry(newsb, cleaned_geometry);
 		}
 		else {
 			set_geometry(newsb, cleaned_geometry | boost::adaptors::reversed);
 		}
 	
-		direction_3 norm = surf.geometry().sense() ? surf.geometry().orientation().direction() : -surf.geometry().orientation().direction();
+		direction_3 norm = 
+			s.geometry().sense() ? 
+				s.geometry().orientation().direction() : 
+				-s.geometry().orientation().direction();
 		newsb->normal_x = CGAL::to_double(norm.dx());
 		newsb->normal_y = CGAL::to_double(norm.dy());
 		newsb->normal_z = CGAL::to_double(norm.dz());
@@ -62,16 +71,22 @@ space_boundary * create_unlinked_space_boundary(const surface & surf) {
 		newsb->opposite = nullptr;
 		newsb->parent = nullptr;
 		
-		equality_context layers_context(g_opts.equality_tolerance);
+		equality_context lc(EPS_MAGIC);
 	
-		newsb->material_layer_count = surf.material_layers().size();
+		newsb->material_layer_count = s.material_layers().size();
 		if (newsb->material_layer_count > 0) {
-			newsb->layers = (material_id_t *)malloc(sizeof(material_id_t) * newsb->material_layer_count);
-			newsb->thicknesses = (double *)malloc(sizeof(double) * newsb->material_layer_count);
-			if (!newsb->layers || !newsb->thicknesses) { throw failed_malloc_exception(); }
+			auto ids_sz = sizeof(material_id_t) * newsb->material_layer_count;
+			auto layers_sz = sizeof(double) * newsb->material_layer_count;
+			newsb->layers = (material_id_t *)malloc(ids_sz);
+			newsb->thicknesses = (double *)malloc(layers_sz);
+			if (!newsb->layers || !newsb->thicknesses) { 
+				throw failed_malloc_exception(); 
+			}
 			for (size_t j = 0; j < newsb->material_layer_count; ++j) {
-				newsb->layers[j] = surf.material_layers()[j].layer_element().material();
-				newsb->thicknesses[j] = CGAL::to_double(layers_context.snap_height(*surf.material_layers()[j].thickness()));
+				auto id = s.material_layers()[j].layer_element().material();
+				auto thickness = *s.material_layers()[j].thickness();
+				newsb->layers[j] = id;
+				newsb->thicknesses[j] = to_double(lc.snap_height(thickness));
 			}
 		}
 		else {
@@ -79,9 +94,9 @@ space_boundary * create_unlinked_space_boundary(const surface & surf) {
 			newsb->thicknesses = nullptr;
 		}
 
-		newsb->bounded_space = surf.bounded_space().original_info();
+		newsb->bounded_space = s.bounded_space().original_info();
 		newsb->lies_on_outside = false;
-		newsb->is_virtual = surf.is_virtual();
+		newsb->is_virtual = s.is_virtual();
 	}
 	catch (stack_overflow_exception &) {
 		// do as little possible here because the stack is still damaged
@@ -90,15 +105,25 @@ space_boundary * create_unlinked_space_boundary(const surface & surf) {
 
 	if (stack_overflowed) {
 		_resetstkoflw();
-		if (surf.is_virtual()) {
-			report_warning(boost::format("A space boundary could not be generated due to connection geometry being too complicated. Try simplifying the connection between space %s and space %s.\n") %
-				surf.bounded_space().global_id().c_str() %
-				surf.other_side()->bounded_space().global_id().c_str());
+		if (s.is_virtual()) {
+			report_warning(
+				fmt(
+					"A space boundary could not be generated due to "
+					"connection geometry being too complicated. Try "
+					"simplifying the connection between space %s and space "
+					"%s.\n") %
+				s.bounded_space().global_id().c_str() %
+				s.other_side()->bounded_space().global_id().c_str());
 		}
 		else {
-			report_warning(boost::format("A space boundary could not be generated due to connection geometry being too complicated. Try simplifying the connection between space %s and element %s.\n") %
-				surf.bounded_space().global_id().c_str() %
-				surf.bounded_element()->source_id().c_str());
+			report_warning(
+				fmt(
+					"A space boundary could not be generated due to "
+					"connection geometry being too complicated. Try "
+					"simplifying the connection between space %s and element "
+					"%s.\n") %
+				s.bounded_space().global_id().c_str() %
+				s.bounded_element()->source_id().c_str());
 		} 
 		newsb = nullptr;
 	}
