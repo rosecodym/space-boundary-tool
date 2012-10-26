@@ -2813,9 +2813,10 @@ Material,
     800,                     !- Density {kg/m3}
     1090;                    !- Specific Heat {J/kg-K}
 
-Material:AirGap,
+Material:NoMass,
     07 | Vapor Barrier+Bldg.Paper,  !- Name
-    0.15;                    !- Thermal Resistance {m2-K/W}
+    Rough,                   !- Roughness
+	0.002,                   !- Thermal Resistance {m2-K/W}
 
 Material,
     09 | Gypsum Board,   !- Name
