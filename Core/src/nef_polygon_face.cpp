@@ -48,7 +48,8 @@ boost::optional<polygon_2> face::to_simple_polygon() const {
 	auto end = p;
 	CGAL_For_all(p, end) {
 		if (!e->is_standard(p->vertex())) { return boost::optional<polygon_2>(); }
-		res.push_back(e->point(p->vertex()));
+		auto pt = e->point(p->vertex());
+		res.push_back(point_2(pt.x(), pt.y()));
 	}
 	return res;
 }
@@ -60,7 +61,8 @@ boost::optional<polygon_with_holes_2> face::to_pwh() const {
 	auto end = p;
 	CGAL_For_all(p, end) {
 		if (e->is_standard(p->vertex())) {
-			outer.push_back(e->point(p->vertex()));
+			auto pt = e->point(p->vertex());
+			outer.push_back(point_2(pt.x(), pt.y()));
 		}
 	}
 	if (!geometry_common::cleanup_loop(&outer, EPS_MAGIC)) {
@@ -72,7 +74,8 @@ boost::optional<polygon_with_holes_2> face::to_pwh() const {
 		holes.push_back(polygon_2());
 		CGAL_For_all(curr, end) {
 			if (e->is_standard(curr->vertex())) {
-				holes.back().push_back(e->point(curr->vertex()));
+				auto pt = e->point(curr->vertex());
+				holes.back().push_back(point_2(pt.x(), pt.y()));
 			}
 		}
 		if (!geometry_common::cleanup_loop(&holes.back(), EPS_MAGIC)) {

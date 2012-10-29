@@ -37,8 +37,11 @@ bool wrapped_nef_polygon::any_points_satisfy_predicate(const std::function<bool(
 	auto e = wrapped->explorer();
 	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
 		// don't check marks - points are never marked
-		if (e.is_standard(v) && pred(e.point(v))) {
-			return true;
+		if (e.is_standard(v)) {
+			auto p = e.point(v);
+			if (pred(point_2(p.x(), p.y()))) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -65,7 +68,8 @@ bool wrapped_nef_polygon::is_valid(double eps) const {
 	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
 		// don't check marks - points are never marked
 		if (e.is_standard(v)) {
-			points.push_back(e.point(v));
+			auto pt = e.point(v);
+			points.push_back(point_2(pt.x(), pt.y()));
 		}
 	}
 	return !equality_context::is_zero_squared(geometry_common::smallest_squared_distance(points.begin(), points.end()), eps);
@@ -104,7 +108,13 @@ std::vector<polygon_2> wrapped_nef_polygon::to_simple_convex_pieces() const {
 
 		std::vector<nef_polygon_2> sections;
 		for (size_t i = 0; i < cut_lines.size() - 1; ++i) {
-			sections.push_back(nef_polygon_2(cut_lines[i].opposite(), nef_polygon_2::EXCLUDED) * nef_polygon_2(cut_lines[i + 1], nef_polygon_2::EXCLUDED));
+			line_2 cut_a = cut_lines[i].opposite();
+			line_2 cut_b = cut_lines[i + 1];
+			esline_2 esline_a(cut_a.a(), cut_a.b(), cut_a.c());
+			esline_2 esline_b(cut_b.a(), cut_b.b(), cut_b.c());
+			nef_polygon_2 poly_a(esline_a, nef_polygon_2::EXCLUDED);
+			nef_polygon_2 poly_b(esline_b, nef_polygon_2::EXCLUDED);
+			sections.push_back(poly_a * poly_b);
 		}
 
 		boost::for_each(sections, [&res, this](const nef_polygon_2 & section) {

@@ -20,7 +20,8 @@ void get_all_points(const nef_polygon_2 & nef, OutputIterator oi) {
 	auto e = nef.explorer();
 	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
 		if (e.is_standard(v)) {
-			*oi++ = e.point(v);
+			auto p = e.point(v);
+			*oi++ = point_2(p.x(), p.y());
 		}
 	}
 }

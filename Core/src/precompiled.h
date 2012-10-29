@@ -58,7 +58,7 @@
 
 typedef CORE::Expr						NT;
 
-typedef CGAL::Simple_cartesian<NT>		K;
+typedef CGAL::Cartesian<NT>				K;
 typedef CGAL::Point_2<K>				point_2;
 typedef CGAL::Point_3<K>				point_3;
 typedef CGAL::Direction_3<K>			direction_3;
@@ -100,4 +100,5 @@ typedef eK::Line_2						eline_2;
 typedef CGAL::Nef_polyhedron_2<eK>		nef_polygon_2;
 typedef eK::Standard_point_2			espoint_2;
 typedef eK::Standard_segment_2			essegment_2;
+typedef eK::Standard_line_2				esline_2;
 typedef CGAL::Polygon_2<eK>				epolygon_2;

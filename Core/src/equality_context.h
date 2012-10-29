@@ -7,7 +7,6 @@
 #include "orientation.h"
 
 class equality_context {
-	
 private:
 
 	double tolerance;
@@ -49,6 +48,7 @@ public:
 	template <>
 	static bool are_effectively_same<point_3>(const point_3 & a, const point_3 & b, double eps) { return are_equal(a.x(), b.x(), eps) && are_equal(a.y(), b.y(), eps) && are_equal(a.z(), b.z(), eps); }
 	static bool are_effectively_collinear(const point_2 & a, const point_2 & b, const point_2 & c, double eps) { return are_effectively_same(a, c, eps) || is_zero_squared(CGAL::squared_distance(b, line_2(a, c)), eps); }
+	static bool are_effectively_collinear(const espoint_2 & a, const espoint_2 & b, const espoint_2 & c, double eps) { return are_effectively_same(a, c, eps) || is_zero_squared(CGAL::squared_distance(b, esline_2(a, c)), eps); }
 	static bool are_effectively_collinear(const point_3 & a, const point_3 & b, const point_3 & c, double eps) { return are_effectively_same(a, c, eps) || is_zero_squared(CGAL::squared_distance(b, line_3(a, c)), eps); }
 	static bool are_effectively_collinear(const ipoint_3 & a, const ipoint_3 & b, const ipoint_3 & c, double eps) { return are_effectively_same(a, c, eps) || is_zero_squared(CGAL::squared_distance(b, iline_3(a, c)), eps); }
 	static bool are_effectively_perpendicular(const vector_3 & a, const vector_3 & b, double eps) { return is_zero_squared((geometry_common::normalize(a) * geometry_common::normalize(b)), eps); }
