@@ -64,9 +64,8 @@ std::vector<blockstack> build_stacks(
 {
 	using namespace boost::adaptors;
 	using namespace impl;
-	using namespace reporting;
 	typedef boost::format fmt;
-	report_progress(
+	reporting::report_progress(
 		fmt(
 			"Beginning stack construction for %u blocks and %u spaces. Max "
 			"stack height is %f.\n") %
@@ -78,7 +77,7 @@ std::vector<blockstack> build_stacks(
 
 	auto space_faces = impl::get_space_faces_by_orientation(spaces, c);
 
-	report_progress(
+	reporting::report_progress(
 		fmt("Identified %u relevant orientations.\n") % space_faces.size());
 
 	auto fen_blks = 
@@ -96,7 +95,7 @@ std::vector<blockstack> build_stacks(
 	std::vector<blockstack> res;
 	boost::for_each(space_faces, [&, height_cutoff, height_eps](or & o_info) {
 		std::string ostring = o_info.first->to_string();
-		report_progress(
+		reporting::report_progress(
 			fmt("Building fenestration stacks along %s.\n") % ostring);
 		process_group(
 			&o_info.second, 
@@ -105,9 +104,9 @@ std::vector<blockstack> build_stacks(
 			height_cutoff, 
 			height_eps, 
 			std::back_inserter(res));
-		report_progress("Built stacks.\n");
+		reporting::report_progress("Built stacks.\n");
 	});
-	report_progress("Resetting space faces");
+	reporting::report_progress("Resetting space faces");
 	boost::for_each(space_faces, [](or & o_info) {
 		boost::for_each(
 			o_info.second, 
@@ -116,10 +115,10 @@ std::vector<blockstack> build_stacks(
 				reporting::report_progress(".");
 			});
 	});
-	report_progress("done.\n");
+	reporting::report_progress("done.\n");
 	boost::for_each(space_faces, [&, height_cutoff, height_eps](or & o_info) {
 		std::string ostring = o_info.first->to_string().c_str();
-		report_progress(
+		reporting::report_progress(
 			fmt("Building nonfenestration stacks along %s.\n") % ostring);
 		process_group(
 			&o_info.second, 
@@ -128,10 +127,10 @@ std::vector<blockstack> build_stacks(
 			height_cutoff, 
 			height_eps, 
 			std::back_inserter(res));
-		report_progress("Built stacks.\n");
+		reporting::report_progress("Built stacks.\n");
 	});
 
-	report_progress(fmt("Built %u stacks.\n") % res.size());
+	reporting::report_progress(fmt("Built %u stacks.\n") % res.size());
 	return res;
 }
 
