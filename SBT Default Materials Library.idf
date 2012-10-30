@@ -2816,7 +2816,7 @@ Material,
 Material:NoMass,
     07 | Vapor Barrier+Bldg.Paper,  !- Name
     Rough,                   !- Roughness
-	0.002,                   !- Thermal Resistance {m2-K/W}
+	0.002;                   !- Thermal Resistance {m2-K/W}
 
 Material,
     09 | Gypsum Board,   !- Name
