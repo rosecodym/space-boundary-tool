@@ -138,10 +138,12 @@ TEST(LibraryAssumptions, PolyhedronAssembly) {
 	nef_polyhedron_3::Halffacet_const_handle f;
 	o = nef.locate(point_3(0.25, 0, 0.25));
 	ASSERT_TRUE(CGAL::assign(f, o));
-	EXPECT_EQ(direction_3(0, -1, 0), f->plane().orthogonal_direction());
+	// here's where i would check the face normal, but i have no idea how CGAL
+	// decides which halffacet to return
 
-	// see, it looks like whatever the orientation of the faces, the nef polygon constructor will just "figure it out"
-	// this is with respect to the mark of the internal volume
+	// see, it looks like whatever the orientation of the faces, the nef 
+	// polygon constructor will just "figure it out." this is with respect to 
+	// the mark of the internal volume
 	polyhedron_3 rev;
 	b = builder(true);
 	rev.delegate(b);
@@ -151,7 +153,8 @@ TEST(LibraryAssumptions, PolyhedronAssembly) {
 	ASSERT_TRUE(CGAL::assign(v, o));
 	EXPECT_TRUE(v->mark());
 	
-	// it's *not* with respect to the orientation of the face normals though, so i have no idea what's going on
+	// it's *not* with respect to the orientation of the face normals though, 
+	// so i have no idea what's going on
 	o = nef.locate(point_3(0.25, 0, 0.25));
 	ASSERT_TRUE(CGAL::assign(f, o));
 	EXPECT_EQ(direction_3(0, 1, 0), f->plane().orthogonal_direction());
