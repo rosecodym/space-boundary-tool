@@ -40,8 +40,7 @@ int main(int argc, char * argv[]) {
 	
 	bpo::options_description all("all options");
 	all.add_options()
-		("input-ifc-file", bpo::value<std::string>())
-		("equality-tolerance", bpo::value<double>(&opts.equality_tolerance), "equality tolerance");
+		("input-ifc-file", bpo::value<std::string>());
 
 	all.add(visible);
 
