@@ -18,11 +18,18 @@ type OutputConstruction (layers:OutputLayer list, humanReadableName:string optio
         | _, outside :: rest when outside.IsAirLayer -> true
         | _ -> false
 
-    member this.Name =
-        match humanReadableName, layerNames with
-        | Some(name), _ -> name
-        | None, [|layerName|] -> layerName
-        | _ -> sprintf "Unnamed composite (id %i)" (this.GetHashCode())
+    member this.HumanReadableName = humanReadableName
+    member this.IdName = sprintf "Composite id %i" (this.GetHashCode())
+    member this.DerivedName =
+        match layerNames with
+        | [|layerName|] -> Some(layerName)
+        | _ -> None
+
+    member this.IdfName =
+        match this.HumanReadableName, this.DerivedName with
+        | Some(hname), _ when hname.Length <= 100 -> hname
+        | _, Some(dname) when dname.Length <= 100 -> dname
+        | _ -> this.IdName
 
     member this.LayerNames = List<string>(layerNames)
     member this.HasOutsideAirLayer = hasOutsideAirLayer
