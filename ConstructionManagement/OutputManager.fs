@@ -65,10 +65,20 @@ type OutputManager (warnDelegate : Action<string>) =
         layer
 
     let retrieveOpaqueLayer (libraryEntry:LibraryEntryOpaque) thickness =
-        retrieveLayer (OutputLayerOpaque(sprintf "%s (%.3f)" (libraryEntry.Name.ToString()) thickness, libraryEntry, thickness))
+        let n = sprintf "%s (%.3f)" (libraryEntry.Name.ToString()) thickness
+        let name =
+            if n.Length <= 100 
+            then n 
+            else sprintf "Material id %i" (n.GetHashCode())
+        retrieveLayer (OutputLayerOpaque(name, libraryEntry, thickness))
 
     let retrieveOpaqueSurface (libraryEntry:LibraryEntryOpaque) =
-        retrieveLayer (OutputLayerOpaque(sprintf "%s (surface only)" (libraryEntry.Name.ToString()), libraryEntry, 0.001))
+        let n = sprintf "%s (surface only)" (libraryEntry.Name.ToString())
+        let name =
+            if n.Length <= 100
+            then n
+            else sprintf "Material id %i" (n.GetHashCode())
+        retrieveLayer (OutputLayerOpaque(name, libraryEntry, 0.001))
 
     let retrieveCopy (newThickness: double option) (libraryEntry:LibraryEntry) =
         match libraryEntry, newThickness with
