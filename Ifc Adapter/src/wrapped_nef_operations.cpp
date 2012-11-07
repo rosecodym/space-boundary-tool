@@ -17,14 +17,21 @@ typedef eK::Point_3								extended_point_3;
 typedef eK::Plane_3								extended_plane_3;
 typedef CGAL::Nef_polyhedron_3<eK>				nef_polyhedron_3;
 
-point_3 to_exact_point(const cppw::Instance & inst, number_collection<K> * c) {
+typedef number_collection<K> eqc;
+
+point_3 to_exact_point(const cppw::Instance & inst, eqc * c) {
 	cppw::List coords = inst.get("Coordinates");
 	return c->request_point((cppw::Real)coords.get_(0), (cppw::Real)coords.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Real)coords.get_(2) : 0);
 }
 
-direction_3 to_exact_direction(const cppw::Instance & inst, number_collection<K> * c) {
+direction_3 to_exact_direction(const cppw::Instance & inst, eqc * c) {
 	cppw::List ratios = inst.get("DirectionRatios");
-	return c->request_direction((cppw::Integer)ratios.get_(0), (cppw::Integer)ratios.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Integer)ratios.get_(2) : 0);
+	cppw::Real dx = ratios.get_(0);
+	cppw::Real dy = ratios.get_(1);
+	cppw::Real dz = 0.0;
+	if ((cppw::Integer)inst.get("Dim") == 3) { dz = ratios.get_(2); }
+	assert(!(dx == 0 && dy == 0 && dz == 0));
+	return c->request_direction(dx, dy, dz);
 }
 
 extended_plane_3 create_extended_plane(const point_3 & p1, const point_3 & p2, const point_3 & p3, number_collection<eK> * c) {
@@ -44,7 +51,7 @@ extended_plane_3 create_extended_plane(const ray_3 & r, const point_3 & p, numbe
 	return create_extended_plane(p, r.direction(), c);
 }
 
-nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, number_collection<K> * c, number_collection<eK> * ec) {
+nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, eqc * c, number_collection<eK> * ec) {
 	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
 		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
 		std::vector<point_3> base_points;
@@ -139,7 +146,7 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 	}
 }
 
-void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_collection<K> * c) {
+void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, eqc * c) {
 	s->set_rep_type(REP_BREP);
 	nef_polyhedron_3::Halffacet_const_iterator facet;
 	int face_index = 0;
@@ -172,7 +179,7 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, number_coll
 
 namespace wrapped_nef_operations {
 
-void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, number_collection<K> * c) {
+void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, eqc * c) {
 	g_opts.notify_func("(geometry requires boolean operations)...");
 	number_collection<eK> extended_context(EPS_MAGIC / 20);
 	convert_to_solid(s, create_nef(inst, scaler, c, &extended_context), c);

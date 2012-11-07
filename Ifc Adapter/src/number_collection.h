@@ -64,12 +64,22 @@ public:
 		}
 	}
 
-	static bool are_effectively_parallel(const direction_3 & a, const direction_3 & b, double eps) {
+	static bool are_effectively_parallel(
+		const direction_3 & a, 
+		const direction_3 & b, 
+		double eps) 
+	{
 		vector_3 v_a = a.to_vector();
+		assert(!CGAL::is_zero(v_a.squared_length()));
 		vector_3 v_b = b.to_vector();
+		assert(!CGAL::is_zero(v_b.squared_length()));
+		auto denominator = v_a.squared_length() * v_b.squared_length();
+		// The whole point of this stupid exact geometry stuff is that this
+		// assert will *never* trip. But let's just make sure.
+		assert(!CGAL::is_zero(denominator));
 		return one_dimensional_equality_context<NT>::is_zero_squared(
-			CGAL::cross_product(v_a, v_b).squared_length() /
-			(v_a.squared_length() * v_b.squared_length()), eps);
+			CGAL::cross_product(v_a, v_b).squared_length() / denominator,
+			eps);
 	}
 
 };
