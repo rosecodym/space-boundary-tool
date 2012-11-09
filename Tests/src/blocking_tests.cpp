@@ -48,7 +48,7 @@ TEST(Blocking, ParallelPairHalfblocks) {
 
 	std::vector<oriented_area> halfblocks;
 
-	auto rels = build_relations_grid(surfaces, &c);
+	auto rels = surface_pair::build_relations_grid(surfaces, &c);
 
 	halfblocks.clear();
 	halfblocks_for_base(rels, 0, &c, std::back_inserter(halfblocks));
@@ -99,7 +99,7 @@ TEST(Blocking, TwoStairs) {
 	ASSERT_EQ(18195.109, surfaces.back().height()) << "(Far)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Far)";
 
-	relations_grid rels = build_relations_grid(surfaces, &c);
+	relations_grid rels = surface_pair::build_relations_grid(surfaces, &c);
 
 	const surface_pair & bb = rels[0][0];
 	EXPECT_TRUE(bb.is_self());
@@ -228,7 +228,7 @@ TEST(Blocking, ThreeStairsHalfblocks) {
 	ASSERT_EQ(18195.109, surfaces.back().height()) << "(Far)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Far)";
 
-	relations_grid rels = build_relations_grid(surfaces, &c);
+	relations_grid rels = surface_pair::build_relations_grid(surfaces, &c);
 	std::vector<oriented_area> halfblocks;
 
 	halfblocks_for_base(rels, 0, &c, std::back_inserter(halfblocks));
@@ -287,7 +287,7 @@ TEST(Blocking, NonparallelPairHalfblocksForSmallerBase) {
 		simple_point(17181.249, -8200, 0));
 	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
 
-	auto rels = build_relations_grid(surfaces, &c);
+	auto rels = surface_pair::build_relations_grid(surfaces, &c);
 
 	std::vector<oriented_area> halfblocks;
 	halfblocks_for_base(rels, 0, &c, std::back_inserter(halfblocks));
@@ -322,7 +322,7 @@ TEST(Blocking, HalfblocksWithNonParallelOthers) {
 		simple_point(8200, 17181.249, 0));
 	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
 
-	auto rels = build_relations_grid(surfaces, &c);
+	auto rels = surface_pair::build_relations_grid(surfaces, &c);
 
 	std::vector<oriented_area> halfblocks;
 	halfblocks_for_base(rels, 0, &c, std::back_inserter(halfblocks));

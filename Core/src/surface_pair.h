@@ -10,32 +10,42 @@
 namespace blocking {
 
 namespace impl {
+
+class surface_pair;
+
+typedef boost::multi_array<surface_pair, 2> relations_grid;
 	
 class surface_pair {
 private:
 	const oriented_area * m_base;
 	const oriented_area * m_other;
-	equality_context * c3d;
+	equality_context * m_c3d;
 
-	double rotation;
+	double m_thickness_cutoff;
+	double m_rotation;
 
-	// memoized comparisons
+	// These fields memoize comparisons.
 	mutable boost::optional<bool> m_areas_match;
-	mutable boost::optional<oriented_area> projection_onto_base;
+	mutable boost::optional<oriented_area> m_projection_onto_base;
 	mutable boost::optional<oriented_area> m_base_minus_other;
 	mutable boost::optional<oriented_area> m_base_intr_other;
 
+	// This constructor is used to generate a surface pair opposite.
 	surface_pair(
 		const oriented_area * base, 
 		const oriented_area * other,
+		double thickness_cutoff,
 		equality_context * context_3d,
 		boost::optional<bool> areas_match)
 		: m_base(base),
-		m_other(other),
-		c3d(context_3d),
-		m_areas_match(areas_match)
+		  m_other(other),
+		  m_c3d(context_3d),
+		  m_thickness_cutoff(thickness_cutoff),
+		  m_areas_match(areas_match)
 	{ 
-		rotation = dihedral_angle(base->parallel_plane_through_origin(), other->parallel_plane_through_origin());
+		m_rotation = dihedral_angle(
+			base->parallel_plane_through_origin(), 
+			other->parallel_plane_through_origin());
 	}
 
 	bool areas_match() const {
@@ -46,10 +56,10 @@ private:
 	}
 
 	const oriented_area & get_projection_onto_base() const {
-		if (!projection_onto_base) {
-			projection_onto_base = m_base->project_onto_self(*m_other);
+		if (!m_projection_onto_base) {
+			m_projection_onto_base = m_base->project_onto_self(*m_other);
 		}
-		return *projection_onto_base;
+		return *m_projection_onto_base;
 	}
 
 	const oriented_area & get_base_minus_other_projected() const {
@@ -67,9 +77,15 @@ private:
 	}
 
 public:
-	surface_pair() : m_base(nullptr), m_other(nullptr), c3d(nullptr) { }
-	surface_pair(const oriented_area & base, const oriented_area & other, equality_context * context_3d)
-		: m_base(&base), m_other(&other), c3d(context_3d), rotation(dihedral_angle(base.parallel_plane_through_origin(), other.parallel_plane_through_origin())) { }
+	// The default constructor is present because these are used in
+	// multiarrays.
+	surface_pair() { }
+	// A negative thickness_cutoff signifies "infinite."
+	surface_pair(
+		const oriented_area & base, 
+		const oriented_area & other, 
+		equality_context * context_3d,
+		double thickness_cutoff = -1);
 
 	const oriented_area & base() const { return *m_base; }
 	const oriented_area & other() const { return *m_other; }
@@ -80,7 +96,11 @@ public:
 	bool opposite_senses() const { return base().sense() != other().sense(); }
 	bool other_is_above_base() const { return base().height() > other().height() == base().sense(); }
 	bool areas_intersect() const { return area::do_intersect(base().area_2d(), other().area_2d()); }
-	bool other_in_correct_halfspace() const { return other().any_point_in_halfspace(base().backing_plane().opposite(), c3d); }
+	bool other_in_correct_halfspace() const { 
+		return other().any_point_in_halfspace(
+			base().backing_plane().opposite(), 
+			m_c3d); 
+	}
 	bool drape_hits_other_plane() const;
 	bool contributes_to_envelope() const;
 	
@@ -101,27 +121,27 @@ public:
 		return outer ? *outer : polygon_2();
 	}
 
-	surface_pair opposite() const { return surface_pair(m_other, m_base, c3d, m_areas_match); }
+	surface_pair opposite() const { 
+		return surface_pair(
+			m_other, 
+			m_base, 
+			m_thickness_cutoff, 
+			m_c3d, 
+			m_areas_match); 
+	}
 	block to_block(const element & e) const { return block(*m_base, *m_other, e); }
 	block to_halfblock(const element & e) const { return block(*m_base, e); }
 
 	double dihedral_angle(const plane_3 & from, const plane_3 & to) const;
 
 	double relative_height_at(const point_2 & p) const;
+
+	// A negative thickness_cutoff signifies "infinite."
+	static relations_grid build_relations_grid(
+		const std::vector<oriented_area> & faces,
+		equality_context * context_3d, 
+		double thickness_cutoff = -1);
 };
-
-typedef boost::multi_array<surface_pair, 2> relations_grid;
-
-inline relations_grid build_relations_grid(const std::vector<oriented_area> & faces, equality_context * context_3d) {
-	relations_grid res(boost::extents[faces.size()][faces.size()]);
-	for (size_t i = 0; i < faces.size(); ++i) {
-		for (size_t j = i; j < faces.size(); ++j) {
-			res[i][j] = surface_pair(faces[i], faces[j], context_3d);
-			res[j][i] = res[i][j].opposite();
-		}
-	}
-	return res;
-}
 
 class Surface_pair_envelope_traits : public CGAL::Arr_segment_traits_2<K> {
 

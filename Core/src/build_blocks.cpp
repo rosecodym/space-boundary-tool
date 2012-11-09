@@ -22,7 +22,14 @@ namespace impl {
 namespace {
 
 template <typename OutputIterator>
-void blocks_from_envelope(const relations_grid & surface_relationships, size_t face_count, const element & e, equality_context * c, OutputIterator oi) {
+void blocks_from_envelope(
+	const relations_grid & surface_relationships, 
+	size_t face_count, 
+	const element & e, 
+	double /*max_block_thickness*/,
+	equality_context * c, 
+	OutputIterator oi) 
+{
 	auto degenerate_indices = scan_for_degenerate_halfblocks(surface_relationships, face_count, e, oi);
 
 	std::list<oriented_area> halfblocks;
@@ -37,7 +44,11 @@ void blocks_from_envelope(const relations_grid & surface_relationships, size_t f
 
 } // namespace
 
-std::vector<block> build_blocks_for(const element & e, equality_context * c) {
+std::vector<block> build_blocks_for(
+	const element & e,
+	equality_context * c, 
+	double max_block_thickness) 
+{
 	std::vector<block> res;
 
 	std::vector<oriented_area> faces = e.faces(c);
@@ -51,7 +62,10 @@ std::vector<block> build_blocks_for(const element & e, equality_context * c) {
 		return res;
 	}
 
-	relations_grid surface_relationships = build_relations_grid(faces, c);
+	relations_grid surface_relationships = surface_pair::build_relations_grid(
+		faces,
+		c, 
+		max_block_thickness);
 
 	if (is_right_cuboid(surface_relationships, faces.size(), e, std::back_inserter(res)) ||
 		is_hexahedral_prismatoid(surface_relationships, faces.size(), e, std::back_inserter(res)))
@@ -60,7 +74,13 @@ std::vector<block> build_blocks_for(const element & e, equality_context * c) {
 	}
 	else {
 		report_progress("element requires an envelope calculation. ");
-		blocks_from_envelope(surface_relationships, faces.size(), e, c, std::back_inserter(res));
+		blocks_from_envelope(
+			surface_relationships, 
+			faces.size(), 
+			e, 
+			max_block_thickness,
+			c, 
+			std::back_inserter(res));
 	}
 
 	return res;
@@ -68,15 +88,25 @@ std::vector<block> build_blocks_for(const element & e, equality_context * c) {
 
 } // namespace impl
 
-std::vector<block> build_blocks(const std::vector<element> & elements, equality_context * c) {
+std::vector<block> build_blocks(
+	const std::vector<element> & elements,
+	equality_context * c, 
+	double max_block_thickness)
+{
 	std::vector<block> res;
 	report_progress(boost::format("Building blocks for %u elements.\n") % elements.size());
-	boost::for_each(elements, [&res, c](const element & e) {
+	boost::for_each(elements, [=, &res](const element & e) {
 		bool stack_overflow = false;
 		try {
 			int block_count = 0;
 			report_progress(boost::format("Building blocks for element %s ") % e.source_id().c_str());
-			boost::transform(impl::build_blocks_for(e, c), std::back_inserter(res), [&block_count](const block & b) -> block { ++block_count; return b; });
+			boost::transform(
+				impl::build_blocks_for(e, c, max_block_thickness), 
+				std::back_inserter(res), 
+				[&block_count](const block & b) -> block { 
+					++block_count; 
+					return b; 
+				});
 			report_progress(boost::format("%i blocks created.\n") % block_count);
 		}
 		catch (stack_overflow_exception &) {

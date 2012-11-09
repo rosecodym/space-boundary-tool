@@ -6,6 +6,19 @@ namespace blocking {
 
 namespace impl {
 
+surface_pair::surface_pair(
+	const oriented_area & base, 
+	const oriented_area & other, 
+	equality_context * context_3d,
+	double thickness_cutoff)
+	: m_base(&base), 
+	  m_other(&other), 
+	  m_c3d(context_3d), 
+	  m_thickness_cutoff(thickness_cutoff),
+	  m_rotation(dihedral_angle(
+		base.parallel_plane_through_origin(), 
+		other.parallel_plane_through_origin())) { }
+
 bool surface_pair::drape_hits_other_plane() const {
 	auto drape = base().drape();
 	auto target_plane = other().backing_plane();
@@ -54,17 +67,47 @@ double surface_pair::dihedral_angle(const plane_3 & from, const plane_3 & to) co
 }
 
 double surface_pair::relative_height_at(const point_2 & p) const {
-	// source: my notebook
+	// I've kind of forgotten how this works. It was supposed to find the
+	// height by first identifying the distance between the surfaces along a
+	// line through the origin and then modifying it based on the position of 
+	// p, but since it doesn't use the height of the base surface anywhere
+	// there's clearly a problem. What I think is happening is that since it's
+	// only ever used to compare heights for surfaces pairs with the same base
+	// the "missing base offset" never comes into play (since the error is
+	// constant across all comparisons).
+	auto dbl = [](const NT & n) { return CGAL::to_double(n); };
 	vector_3 base_vec = base().orientation().direction().to_vector();
 	vector_3 other_vec = other().orientation().direction().to_vector();
-	point_2 intr_point = other().parallel_plane_through_origin().to_2d(CGAL::ORIGIN + CGAL::cross_product(base_vec, other_vec));
-	double point_angle = atan2(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
-	double intr_angle = atan2(CGAL::to_double(intr_point.x()), CGAL::to_double(intr_point.y()));
-	double local_x_angle_scale = sin(CGAL::to_double(point_angle - intr_angle));
 
-	return
-		CGAL::to_double(other().height()) / cos(rotation) + // z component
-		CGAL::to_double((p - CGAL::ORIGIN).squared_length()) * tan(local_x_angle_scale * rotation); // xy component
+	point_2 intr_point = other().parallel_plane_through_origin().to_2d(CGAL::ORIGIN + CGAL::cross_product(base_vec, other_vec));
+	double point_angle = atan2(dbl(p.x()), dbl(p.y()));
+	double intr_angle = atan2(dbl(intr_point.x()), dbl(intr_point.y()));
+	double local_x_angle_scale = sin(dbl(point_angle - intr_angle));
+
+	double dist_at_ori = dbl(other().height()) / cos(m_rotation);
+	double p_dist_from_ori = dbl((p - CGAL::ORIGIN).squared_length());
+	double p_effect_factor = tan(local_x_angle_scale * m_rotation);
+
+	return dist_at_ori + p_dist_from_ori * p_effect_factor;
+}
+
+relations_grid surface_pair::build_relations_grid(
+	const std::vector<oriented_area> & faces,
+	equality_context * context_3d, 
+	double max_thickness_cutoff)
+{
+	relations_grid res(boost::extents[faces.size()][faces.size()]);
+	for (size_t i = 0; i < faces.size(); ++i) {
+		for (size_t j = i; j < faces.size(); ++j) {
+			res[i][j] = surface_pair(
+				faces[i], 
+				faces[j], 
+				context_3d, 
+				max_thickness_cutoff);
+			res[j][i] = res[i][j].opposite();
+		}
+	}
+	return res;
 }
 
 } // namespace impl

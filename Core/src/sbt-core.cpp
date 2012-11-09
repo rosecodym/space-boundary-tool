@@ -84,25 +84,25 @@ sbt_return_t calculate_space_boundaries(
 			g_opts.max_pair_distance_in_meters *
 			g_opts.length_units_per_meter;
 
-		std::vector<element> elements = 
-			load_elements(
-				element_infos, 
-				element_count, 
-				&ctxt, 
-				element_filter);
-		std::vector<space> spaces = 
-			load_spaces(
-				space_infos, 
-				space_count, 
-				&ctxt, 
-				space_filter);
-		std::vector<block> blocks = blocking::build_blocks(elements, &ctxt);
-		std::vector<blockstack> stacks = 
-			stacking::build_stacks(
-				blocks, 
-				spaces, 
-				height_cutoff, 
-				&ctxt);
+		std::vector<element> elements = load_elements(
+			element_infos, 
+			element_count, 
+			&ctxt, 
+			element_filter);
+		std::vector<space> spaces = load_spaces(
+			space_infos, 
+			space_count, 
+			&ctxt, 
+			space_filter);
+		std::vector<block> blocks = blocking::build_blocks(
+			elements,
+			&ctxt, 
+			height_cutoff);
+		std::vector<blockstack> stacks = stacking::build_stacks(
+			blocks, 
+			spaces, 
+			height_cutoff, 
+			&ctxt);
 
 		std::vector<std::unique_ptr<surface>> surfaces;
 		boost::for_each(stacks, [&surfaces](const blockstack & st) { 
@@ -113,11 +113,10 @@ sbt_return_t calculate_space_boundaries(
 
 		report_progress(
 			"Converting internal structures to interface structures");
-		retval = 
-			interface_conversion::convert_to_space_boundaries(
-				surfaces, 
-				space_boundaries, 
-				space_boundary_count);
+		retval = interface_conversion::convert_to_space_boundaries(
+			surfaces, 
+			space_boundaries, 
+			space_boundary_count);
 		report_progress("done.\n");
 	}
 	catch (sbt_exception & ex) {

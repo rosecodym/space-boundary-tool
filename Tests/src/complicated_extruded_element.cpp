@@ -117,14 +117,14 @@ TEST_F(ComplicatedExtrudedElement, FacesCorrect) {
 
 TEST_F(ComplicatedExtrudedElement, NotRightCuboid) {
 	auto faces = e->geometry().oriented_faces(&c);
-	auto rels = build_relations_grid(faces, &c);
+	auto rels = surface_pair::build_relations_grid(faces, &c);
 	std::vector<block> dummy;
 	EXPECT_FALSE(is_right_cuboid(rels, faces.size(), *e, std::back_inserter(dummy)));
 }
 
 TEST_F(ComplicatedExtrudedElement, NotHexahedralPrismatoid) {
 	auto faces = e->geometry().oriented_faces(&c);
-	auto rels = build_relations_grid(faces, &c);
+	auto rels = surface_pair::build_relations_grid(faces, &c);
 	std::vector<block> dummy;
 	EXPECT_FALSE(is_hexahedral_prismatoid(rels, faces.size(), *e, std::back_inserter(dummy)));
 }
@@ -153,7 +153,7 @@ TEST_F(ComplicatedExtrudedElement, OrientationCounts) {
 
 TEST_F(ComplicatedExtrudedElement, InitialDegenerateCheck) {
 	auto faces = e->geometry().oriented_faces(&c);
-	auto rels = build_relations_grid(faces, &c);
+	auto rels = surface_pair::build_relations_grid(faces, &c);
 	std::vector<block> dummy;
 	auto degenerate = scan_for_degenerate_halfblocks(rels, faces.size(), *e, std::back_inserter(dummy));
 	EXPECT_EQ(1, degenerate.size());
@@ -169,7 +169,7 @@ TEST_F(ComplicatedExtrudedElement, InitialDegenerateCheck) {
 
 TEST_F(ComplicatedExtrudedElement, InitialHalfblockCountCorrect) {
 	auto faces = e->geometry().oriented_faces(&c);
-	auto rels = build_relations_grid(faces, &c);
+	auto rels = surface_pair::build_relations_grid(faces, &c);
 	std::vector<block> dummy;
 
 	std::list<oriented_area> x_bottom;
