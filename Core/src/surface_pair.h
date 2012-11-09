@@ -21,6 +21,7 @@ private:
 	const oriented_area * m_other;
 	equality_context * m_c3d;
 
+	// A negative thickness cutoff signifies "infinite."
 	double m_thickness_cutoff;
 	double m_rotation;
 
@@ -55,6 +56,12 @@ private:
 		return *m_areas_match;
 	}
 
+	bool near_enough() const {
+		if (m_thickness_cutoff < 0.0) { return true; }
+		auto height_diff = other().height() - base().height();
+		return abs(CGAL::to_double(height_diff)) <= m_thickness_cutoff;
+	}
+
 	const oriented_area & get_projection_onto_base() const {
 		if (!m_projection_onto_base) {
 			m_projection_onto_base = m_base->project_onto_self(*m_other);
@@ -80,6 +87,7 @@ public:
 	// The default constructor is present because these are used in
 	// multiarrays.
 	surface_pair() { }
+
 	// A negative thickness_cutoff signifies "infinite."
 	surface_pair(
 		const oriented_area & base, 

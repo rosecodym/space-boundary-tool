@@ -34,10 +34,13 @@ bool surface_pair::contributes_to_envelope() const {
 		!is_self() &&
 		!are_perpendicular() &&
 		(!are_parallel() || // if they're parallel...
-			(opposite_senses() && other_is_above_base() && areas_intersect())) &&
+			(opposite_senses() && 
+			 other_is_above_base() && 
+			 near_enough() &&
+			 areas_intersect())) &&
 		(are_parallel() || // if they're not parallel...
 			(other_in_correct_halfspace() &&
-			drape_hits_other_plane()));
+			 drape_hits_other_plane()));
 }
 
 double surface_pair::dihedral_angle(const plane_3 & from, const plane_3 & to) const {

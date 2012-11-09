@@ -21,9 +21,12 @@ void halfblocks_for_base(
 
 	const auto & row = surf_rels[indices()[base_index][array_range()]];
 
-	if (boost::count_if(row, [](const surface_pair & pair) {
-		return pair.contributes_to_envelope();
-	}) == 1)
+	size_t contributing_pairs = boost::count_if(
+		row,
+		[](const surface_pair & pair) {
+			return pair.contributes_to_envelope();
+		});
+	if (contributing_pairs == 0 || contributing_pairs == 1)
 	{
 		*oi++ = row[0].base();
 		return;
