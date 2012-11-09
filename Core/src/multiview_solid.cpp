@@ -220,6 +220,24 @@ void multiview_solid::subtract(const multiview_solid & other, equality_context *
 	}
 }
 
+bool multiview_solid::share_plane_opposite(
+	const multiview_solid & a,
+	const multiview_solid & b,
+	equality_context * c)
+{
+	auto a_faces = a.oriented_faces(c);
+	auto b_faces = b.oriented_faces(c);
+	for (auto p = a_faces.begin(); p != a_faces.end(); ++p) {
+		if (boost::find_if(b_faces, [c, p](const oriented_area & f) {
+			return oriented_area::share_plane_opposite(*p, f, *c);
+		}) != b_faces.end())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 bool multiview_solid::is_nef_representable() const {
 	struct visitor : public boost::static_visitor<bool> {
 		bool operator () (const oriented_area_groups & /*oriented_areas*/) const { return false; } // yeah, maybe, but it shouldn't happen and it's hard

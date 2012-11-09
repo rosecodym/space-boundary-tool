@@ -85,6 +85,15 @@ public:
 	static bool are_parallel(const oriented_area & a, const oriented_area & b) { return orientation::are_parallel(*a.o, *b.o); }
 	static bool are_perpendicular(const oriented_area & a, const oriented_area & b, double eps = 0.0) { return orientation::are_perpendicular(*a.o, *b.o, eps); }
 	static bool areas_match(const oriented_area & a, const oriented_area & b) { return a.a == b.a; }
+	static bool share_plane_opposite(
+		const oriented_area & a,
+		const oriented_area & b,
+		const equality_context & c)
+	{ 
+		return 
+			orientation::are_parallel(a.orientation(), b.orientation()) &&
+			c.are_equal(a.height(),  b.height());
+	}
 	static bool same_height(const oriented_area & a, const oriented_area & b) { return a.p == b.p; }
 	static boost::optional<NT> could_form_block(const oriented_area & a, const oriented_area & b);
 };

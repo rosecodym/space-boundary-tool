@@ -39,6 +39,11 @@ public:
 	std::vector<oriented_area> oriented_faces(equality_context * c) const;
 
 	void subtract(const multiview_solid & other, equality_context * c);
+
+	static bool share_plane_opposite(
+		const multiview_solid & a,
+		const multiview_solid & b,
+		equality_context * c);
 };
 
 } // namespace solid_geometry

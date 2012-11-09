@@ -54,7 +54,16 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 
 			if (need_wall_column_check) {
 				boost::for_each(columns, [w, &performed_any_subtractions, c](const element_box & col) {
-					if (CGAL::do_overlap(w->bbox(), col.bbox())) {
+					// The share_plane_opposite check will yield false negatives in
+					// extremely pathological cases (if two objects share an
+					// opposite face but intersect elsewhere) but I'm not worried
+					// about that.
+					if (CGAL::do_overlap(w->bbox(), col.bbox()) &&
+						!element::share_plane_opposite(
+							*w->handle(), 
+							*col.handle(),
+							c))
+					{
 						w->handle()->subtract_geometry_of(*col.handle(), c);
 						report_progress(".");
 						performed_any_subtractions = true;
@@ -73,7 +82,18 @@ std::vector<element> load_elements(element_info ** infos, size_t count, equality
 			bool performed_any_subtractions = false;
 
 			boost::for_each(slabs, [col, &performed_any_subtractions, c](const element_box & s) {
-				if (CGAL::do_overlap(col->bbox(), s.handle()->bounding_box())) {
+				// The share_plane_opposite check will yield false negatives in
+				// extremely pathological cases (if two objects share an
+				// opposite face but intersect elsewhere) but I'm not worried
+				// about that.
+				if (CGAL::do_overlap(
+						col->bbox(), 
+						s.handle()->bounding_box()) &&
+					!element::share_plane_opposite(
+						*col->handle(),
+						*s.handle(),
+						c))
+				{
 					col->handle()->subtract_geometry_of(*s.handle(), c);
 					report_progress(".");
 					performed_any_subtractions = true;

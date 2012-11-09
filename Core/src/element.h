@@ -59,6 +59,17 @@ public:
 		m_geometry.subtract(other.m_geometry, c); 
 	}
 
+	static bool share_plane_opposite(
+		const element & a, 
+		const element & b,
+		equality_context * c)
+	{
+		return multiview_solid::share_plane_opposite(
+			a.geometry(),
+			b.geometry(),
+			c);
+	}
+
 	template <typename OutputIterator>
 	static void explode_to_single_volumes(element && src, equality_context * c, OutputIterator oi) {
 		reporting::report_progress(boost::format("Checking element %s for multiple volumes: ") % src.source_id().c_str());
