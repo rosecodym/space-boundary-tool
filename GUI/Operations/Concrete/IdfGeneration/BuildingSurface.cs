@@ -50,6 +50,7 @@ namespace GUI.Operations
             public string Name { get { return sbtInfo.Guid; } }
             public string ZoneName { get { return zoneName; } }
             public string ConstructionName { get { return constructionName; } }
+            public BuildingSurface Opposite { get; set; }
             public SurfaceType Type
             {
                 get
@@ -83,8 +84,8 @@ namespace GUI.Operations
                         return OtherSideConditionType.Outdoors;
                     }
                     else if (
-                        sbtInfo.Opposite != null &&
-                        sbtInfo.Opposite.BoundedSpace != sbtInfo.BoundedSpace)
+                        Opposite != null &&
+                        Opposite.ZoneName != this.ZoneName)
                     {
                         return OtherSideConditionType.Surface;
                     }
@@ -92,6 +93,13 @@ namespace GUI.Operations
                     {
                         return OtherSideConditionType.Adiabatic;
                     }
+                }
+            }
+            public string OtherSideObject
+            {
+                get
+                {
+                    return Opposite == null ? String.Empty : Opposite.Name;
                 }
             }
 
@@ -103,20 +111,6 @@ namespace GUI.Operations
                     if (sbtInfo.Element != null)
                     {
                         return sbtInfo.Element.Guid;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-            }
-            public string OtherSideName
-            {
-                get
-                {
-                    if (sbtInfo.Opposite != null)
-                    {
-                        return sbtInfo.Opposite.Guid;
                     }
                     else
                     {

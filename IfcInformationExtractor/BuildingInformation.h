@@ -2,6 +2,7 @@
 
 #include "Element.h"
 #include "Space.h"
+#include "Zone.h"
 
 using namespace System;
 using namespace System::Collections::Generic;

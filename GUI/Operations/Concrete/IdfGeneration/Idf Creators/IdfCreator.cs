@@ -51,7 +51,7 @@ namespace GUI.Operations
             public abstract void AddRunPeriod(int startMonth, int startDay, int endMonth, int endDay);
             public abstract void AddShading(Shading shading);
             public abstract void AddTimestep(int timestep);
-            public abstract void AddZone(string name, string sourceGuid);
+            public abstract void AddZone(string name);
         }
     }
 }

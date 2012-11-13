@@ -94,8 +94,8 @@ namespace GUI.Operations
                     if (surf.OtherSideCondition == 
                         BuildingSurface.OtherSideConditionType.Surface)
                     {
-                        obj.Fields["Outside Boundary Condition Object"].Value = 
-                            surf.OtherSideName;
+                        obj.Fields["Outside Boundary Condition Object"].Value =
+                            surf.OtherSideObject;
                     }
 
                     Func<Point, Point, int> vertexOrderCmp;
@@ -274,11 +274,10 @@ namespace GUI.Operations
                 idf.CreateObject("Timestep").Fields["Number of Timesteps per Hour"].Value = timestep;
             }
 
-            public override void AddZone(string name, string sourceGuid)
+            public override void AddZone(string name)
             {
                 IdfObject obj = idf.CreateObject("Zone");
                 obj.Fields["Name"].Value = name;
-                obj.AddComment("! space GUID is " + sourceGuid);
             }
         }
     }

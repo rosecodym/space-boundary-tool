@@ -96,11 +96,9 @@ namespace GUI.Operations
                             ReportProgress(
                                 msg + Environment.NewLine,
                                 ProgressEvent.ProgressEventType.Warning));
-                IDictionary<string, string> zoneNamesByGuid =
-                    GatherZoneNamesByGuid(
-                        FindUsedSpaces(
-                            p.SbtBuilding.SpaceBoundaries,
-                            p.IfcBuilding.SpacesByGuid));
+                var zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(
+                    p.SbtBuilding.SpaceBoundaries,
+                    p.IfcBuilding.SpacesByGuid));
                 Func<int, IfcConstruction> materialIdToModelConstruction =
                     id =>
                     {
@@ -119,8 +117,9 @@ namespace GUI.Operations
                 IDictionary<string, BuildingSurface> surfacesByGuid =
                     new Dictionary<string, BuildingSurface>();
                 var allSbs = p.SbtBuilding.SpaceBoundaries;
-                foreach (Sbt.CoreTypes.SpaceBoundary sb in allSbs.Where(
-                     sb => sb.IsVirtual || !sb.Element.IsFenestration))
+                var physicalNonFen = allSbs.Where(
+                    sb => sb.IsVirtual || !sb.Element.IsFenestration);
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in physicalNonFen)
                 {
                     if (sb.Level == 2)
                     {
@@ -150,33 +149,39 @@ namespace GUI.Operations
                             zoneNamesByGuid[sb.BoundedSpace.Guid]);
                     }
                 }
-                List<FenestrationSurface> fenestrations =
-                    new List<FenestrationSurface>();
-                foreach (Sbt.CoreTypes.SpaceBoundary sb in allSbs)
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in physicalNonFen)
                 {
-                    // all fenestration sbs *should* have a containing 
-                    // boundary, but this doesn't always happen
-                    if (!sb.IsVirtual &&
-                        sb.Element.IsFenestration &&
-                        sb.ContainingBoundary != null)
+                    if (sb.Opposite != null)
                     {
-                        List<IfcConstruction> constructions =
-                            new List<IfcConstruction>();
-                        List<double> thicknesses = new List<double>();
-                        foreach (SbtLayer layer in sb.MaterialLayers)
-                        {
-                            constructions.Add(
-                                p.MaterialIDToModelConstruction(layer.Id));
-                            thicknesses.Add(layer.Thickness);
-                        }
-                        fenestrations.Add(
-                            new FenestrationSurface(
-                                sb,
-                                surfacesByGuid[sb.ContainingBoundary.Guid],
-                                cmanager.ConstructionNameForLayers(
-                                    constructions,
-                                    thicknesses)));
+                        var match = surfacesByGuid[sb.Guid];
+                        var opp = surfacesByGuid[sb.Opposite.Guid];
+                        match.Opposite = opp;
                     }
+                }
+                var fenestrations = new List<FenestrationSurface>();
+                // all fenestration sbs *should* have a containing 
+                // boundary, but this doesn't always happen
+                var fens = allSbs.Where(sb =>
+                    !sb.IsVirtual &&
+                    sb.Element.IsFenestration &&
+                    sb.ContainingBoundary != null);
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in fens)
+                {
+                    List<IfcConstruction> constructions =
+                        new List<IfcConstruction>();
+                    List<double> thicknesses = new List<double>();
+                    foreach (SbtLayer layer in sb.MaterialLayers)
+                    {
+                        constructions.Add(
+                            p.MaterialIDToModelConstruction(layer.Id));
+                        thicknesses.Add(layer.Thickness);
+                    }
+                    fenestrations.Add(new FenestrationSurface(
+                        sb,
+                        surfacesByGuid[sb.ContainingBoundary.Guid],
+                        cmanager.ConstructionNameForLayers(
+                            constructions,
+                            thicknesses)));
                 }
                 IDictionary<string, Solid> elementGeometriesByGuid =
                     new Dictionary<string, Solid>();
@@ -235,9 +240,9 @@ namespace GUI.Operations
                     p.StartDay,
                     p.EndMonth,
                     p.EndDay);
-                foreach (KeyValuePair<string, string> zone in zoneNamesByGuid)
+                foreach (string zoneName in zoneNamesByGuid.Values.Distinct())
                 {
-                    creator.AddZone(zone.Value, zone.Key);
+                    creator.AddZone(zoneName);
                 }
                 foreach (BuildingSurface surf in surfacesByGuid.Values)
                 {
@@ -272,43 +277,65 @@ namespace GUI.Operations
             return new List<IfcSpace>(usedGuids.Select(guid => spaces[guid]));
         }
 
-        static private IDictionary<string, string> GatherZoneNamesByGuid(ICollection<IfcSpace> usedSpaces)
+        static private IDictionary<string, string> GatherZoneNamesByGuid(
+            ICollection<IfcSpace> usedSpaces)
         {
             IDictionary<string, string> res = new Dictionary<string, string>();
 
-            bool allLongNamesPresent = !usedSpaces.Any(s => String.IsNullOrWhiteSpace(s.LongName));
+            Func<string, bool> empty = s => String.IsNullOrWhiteSpace(s);
+
+            foreach (IfcSpace s in usedSpaces.Where(s => s.Zones.Count != 0))
+            {
+                var z = s.Zones.First();
+                res[s.Guid] = empty(z.Name) ? z.Guid : z.Name;
+            }
+
+            var unassigned =
+                new List<IfcSpace>(usedSpaces.Where(s => s.Zones.Count == 0));
+
+            bool allLongNamesPresent = !unassigned.Any(s => empty(s.LongName));
             if (allLongNamesPresent)
             {
-                if (usedSpaces.Select(s => s.LongName).Distinct().Count() == usedSpaces.Count)
+                var asLongNames = unassigned.Select(s => s.LongName);
+                if (asLongNames.Distinct().Count() == unassigned.Count)
                 {
-                    foreach (IfcSpace s in usedSpaces) { res[s.Guid] = s.LongName; }
+                    foreach (IfcSpace s in unassigned)
+                    { 
+                        res[s.Guid] = s.LongName; 
+                    }
                     return res;
                 }
             }
 
-            bool allNamesPresent = !usedSpaces.Any(s => String.IsNullOrWhiteSpace(s.Name));
+            bool allNamesPresent = !unassigned.Any(s => empty(s.Name));
             if (allNamesPresent)
             {
-                if (usedSpaces.Select(s => s.Name).Distinct().Count() == usedSpaces.Count)
+                var asNames = unassigned.Select(s => s.Name);
+                if (asNames.Distinct().Count() == unassigned.Count)
                 {
-                    foreach (IfcSpace s in usedSpaces) { res[s.Guid] = s.Name; }
+                    foreach (IfcSpace s in unassigned)
+                    { 
+                        res[s.Guid] = s.Name; 
+                    }
                 }
             }
 
             if (allNamesPresent && allLongNamesPresent)
             {
-                // all names and long names present but not independently unique
-                var combined = usedSpaces.Select(s => String.Format("{0} {1}", s.LongName, s.Name));
-                if (combined.Distinct().Count() == usedSpaces.Count)
+                Func<IfcSpace, string> combinedName = s =>
+                    String.Format("{0} {1}", s.LongName, s.Name);
+                var combined = unassigned.Select(combinedName);
+                if (combined.Distinct().Count() == unassigned.Count)
                 {
-                    foreach (IfcSpace s in usedSpaces) { res[s.Guid] = String.Format("{0} {1}", s.LongName, s.Name); }
+                    foreach (IfcSpace s in unassigned) {
+                        res[s.Guid] = combinedName(s); 
+                    }
                     return res;
                 }
             }
 
-            // fall back to guids
             // TODO: check for case-sensitivity collisions here (ugh revit)
-            foreach (IfcSpace s in usedSpaces) { res[s.Guid] = s.Guid; }
+            foreach (IfcSpace s in unassigned) { res[s.Guid] = s.Guid; }
             return res;
         }
 
