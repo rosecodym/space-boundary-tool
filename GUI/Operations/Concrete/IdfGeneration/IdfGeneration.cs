@@ -117,9 +117,18 @@ namespace GUI.Operations
                 IDictionary<string, BuildingSurface> surfacesByGuid =
                     new Dictionary<string, BuildingSurface>();
                 var allSbs = p.SbtBuilding.SpaceBoundaries;
-                var physicalNonFen = allSbs.Where(
-                    sb => sb.IsVirtual || !sb.Element.IsFenestration);
-                foreach (Sbt.CoreTypes.SpaceBoundary sb in physicalNonFen)
+                var nonFen = allSbs.Where(sb =>
+                {
+                    if (!sb.IsVirtual) { return !sb.Element.IsFenestration; }
+                    else
+                    {
+                        // E+ (7.1) doesn't like intrazone virtual boundaries.
+                        return
+                            zoneNamesByGuid[sb.BoundedSpace.Guid] !=
+                            zoneNamesByGuid[sb.Opposite.BoundedSpace.Guid];
+                    }
+                });
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in nonFen)
                 {
                     if (sb.Level == 2)
                     {
@@ -149,7 +158,7 @@ namespace GUI.Operations
                             zoneNamesByGuid[sb.BoundedSpace.Guid]);
                     }
                 }
-                foreach (Sbt.CoreTypes.SpaceBoundary sb in physicalNonFen)
+                foreach (Sbt.CoreTypes.SpaceBoundary sb in nonFen)
                 {
                     if (sb.Opposite != null)
                     {
