@@ -43,11 +43,14 @@ namespace GUI.Operations
         {
             get
             {
+                Func<Problem, bool> isError =
+                    p => p.Type == Problem.ProblemType.Error;
                 return
+                    problems.Any(isError) ? OperationStatus.Errors :
+                    problems.Any() ? OperationStatus.Warnings :
                     InProgress ? OperationStatus.InProgress :
                     !hasRunEver ? OperationStatus.BeforeStart :
-                    problems.Count == 0 ? OperationStatus.OK :
-                    problems.Any(p => p.Type == Problem.ProblemType.Error) ? OperationStatus.Errors : OperationStatus.Warnings;
+                    OperationStatus.OK;
             }
         }
         public ObservableCollection<Problem> Problems { get { return problems; } }
