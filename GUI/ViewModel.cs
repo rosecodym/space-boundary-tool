@@ -468,7 +468,15 @@ namespace GUI
 
         internal void UpdateGlobalStatus()
         {
-            updateStatusDisplay(new[] { sbCalculation.Status, materialLibraryLoad.Status, buildingLoad.Status, idfGeneration.Status }.Max());
+            updateStatusDisplay(
+                new[] 
+                { 
+                    sbCalculation.Status, 
+                    materialLibraryLoad.Status, 
+                    buildingLoad.Status, 
+                    idfGeneration.Status 
+                }.Max());
+            Updated(String.Empty);
         }
 
         private void EstablishConstructionUsage()
