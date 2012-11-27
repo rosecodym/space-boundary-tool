@@ -63,7 +63,6 @@ namespace GUI
             set
             {
                 sbtBuilding = value;
-                EstablishConstructionUsage();
                 Updated("CurrentSbtBuilding");
             }
         }
@@ -76,7 +75,6 @@ namespace GUI
                 ifcBuilding = value;
                 IfcConstructionMappingSources = ifcBuilding != null ? new ObservableCollection<IfcConstructionMappingSource>(ifcBuilding.ConstructionMappingSources) : null;
                 PerformAutomaticMaterialMapping();
-                EstablishConstructionUsage();
                 Updated("CurrentIfcBuilding");
             }
         }
@@ -477,34 +475,6 @@ namespace GUI
                     idfGeneration.Status 
                 }.Max());
             Updated(String.Empty);
-        }
-
-        private void EstablishConstructionUsage()
-        {
-            if (CurrentIfcBuilding != null && CurrentSbtBuilding != null && CurrentIfcBuilding.Filename == CurrentSbtBuilding.IfcFilename)
-            {
-                foreach (IfcConstructionMappingSource src in CurrentIfcBuilding.ConstructionMappingSources)
-                {
-                    src.SetUnused();
-                }
-                foreach (Sbt.CoreTypes.SpaceBoundary sb in CurrentSbtBuilding.SpaceBoundaries)
-                {
-                    if (!sb.IsVirtual)
-                    {
-                        if (sb.Level == 2)
-                        {
-                            foreach (IfcConstruction c in sb.MaterialLayers.Select(layer => SbtMaterialIDToModelConstruction(layer.Id)))
-                            {
-                                c.SetComponentUsages(ConstructionManagement.ModelConstructions.ModelConstructionUsage.Layer);
-                            }
-                        }
-                        else
-                        {
-                            SbtMaterialIDToModelConstruction(sb.Element.MaterialId).SetComponentUsages(ConstructionManagement.ModelConstructions.ModelConstructionUsage.Surface);
-                        }
-                    }
-                }
-            }
         }
 
         private void PerformAutomaticMaterialMapping()
