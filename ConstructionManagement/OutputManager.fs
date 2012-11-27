@@ -131,7 +131,7 @@ type OutputManager (warnDelegate : Action<string>) =
             | _ -> "INVALID MAPPING (OPAQUE TO NON-OPAQUE)"
         | ModelConstruction.Window(_) -> 
             "COULDN'T BUILD CONSTRUCTION (THIRD-LEVEL WINDOW SURFACE)"
-        | ModelConstruction.Composite(_, layers) ->
+        | ModelConstruction.LayerSet(_, layers) ->
             let firstLayer = fst layers.[0]
             // Assumption: symmetrical.
             match firstLayer.MappingTarget with

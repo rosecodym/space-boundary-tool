@@ -11,7 +11,11 @@ let (|Empty|SimpleOnly|MappedWindow|SingleComposite|UnmappedWindow|MixedSingleAn
         match src.MappingTarget with
         | LibraryEntry.Composite(name, layers) -> MappedWindow(name, layers)
         | _ -> failwith "invalid window entry load"
-    | [Composite(name, srcs)] -> SingleComposite(name, srcs |> List.map (fun (src, thickness) -> (src.MappingTarget, thickness)))
+    | [LayerSet(name, srcs)] -> 
+        let getTarget = 
+            fun (src:ModelMappingSource, thickness) -> 
+                (src.MappingTarget, thickness)
+        SingleComposite(name, srcs |> List.map getTarget)
     | _ ->
         let mapped = 
             modelConstructions 

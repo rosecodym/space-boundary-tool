@@ -43,11 +43,27 @@ ModelConstruction ^ createConstructionForLayerSet(const cppw::Instance & inst, S
 	}
 	cppw::Select name = inst.get("LayerSetName");
 	if (name.is_set()) {
-		return constructions->GetModelConstructionComposite(gcnew String(((cppw::String)name).data()), names, thicknesses);
+		return constructions->GetModelConstructionLayerSet(gcnew String(((cppw::String)name).data()), names, thicknesses);
 	}
 	else {
-		return constructions->GetModelConstructionComposite(nullptr, names, thicknesses);
+		return constructions->GetModelConstructionLayerSet(nullptr, names, thicknesses);
 	}
+}
+
+ModelConstruction ^ createConstructionForList(
+	const cppw::Instance & inst,
+	ModelConstructionCollection ^ constructions)
+{
+	cppw::List mats = inst.get("Materials");
+	List<String ^> ^ names = gcnew List<String ^>();
+	for (mats.move_first(); mats.move_next(); ) {
+		cppw::Instance mat = mats.get_();
+		cppw::String name = mat.get("Name");
+		names->Add(gcnew String(name.data()));
+	}
+	String ^ summary = String::Join(", ", names);
+	String ^ desc = "Material list: " + summary;
+	return constructions->GetModelConstructionSingleOpaque(desc);
 }
 
 ModelConstruction ^ createConstruction(const cppw::Instance & inst, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
@@ -61,7 +77,7 @@ ModelConstruction ^ createConstruction(const cppw::Instance & inst, String ^ ele
 		return createConstructionForLayerSet((cppw::Instance)inst.get("ForLayerSet"), elementGuid, constructions);
 	}
 	else if (inst.is_kind_of("IfcMaterialList")) {
-		return constructions->GetModelConstructionSingleOpaque("(construction for material list)");
+		return createConstructionForList(inst, constructions);
 	}
 	else {
 		return constructions->GetModelConstructionSingleOpaque("(construction for unknown material representation)");
