@@ -32,17 +32,17 @@ type OutputManager (warnDelegate : Action<string>) =
                         newC.IdfName)
             | true, None, None ->
                 warn (sprintf
-                        "An unnamed construction (id %i) has an outside air\
+                        "An unnamed construction (id %i) has an outside air \
                          layer."
                         (newC.GetHashCode()))
             | true, None, Some(dname) when dname.Length <= 100 ->
                 warn (sprintf
-                        "Auto-generated construction '%s' has an outside air\
+                        "Auto-generated construction '%s' has an outside air \
                          layer."
                         dname)
             | true, None, Some(dname) when dname.Length > 100 ->
                 warn (sprintf
-                        "An unnamed construction (id %i) has an outside air\
+                        "An unnamed construction (id %i) has an outside air \
                          layer."
                         (newC.GetHashCode()))
             | true, Some(hname), _ when hname.Length <= 100 ->
