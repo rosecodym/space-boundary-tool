@@ -3,7 +3,7 @@
 open System
 open System.Collections.Generic
 
-type ModelConstructionCollection () =
+type ModelConstructionCollection (metersPerLengthUnit) =
     let currentModelMappingSources = Dictionary<string, ModelMappingSource>()
 
     member this.MappingSources = currentModelMappingSources.Values :> ICollection<ModelMappingSource>
@@ -37,7 +37,8 @@ type ModelConstructionCollection () =
                         currentModelMappingSources.[name] <- !exists
                 !exists)
             |> List.ofSeq
-        let layers = List.zip mappables (List.ofSeq thicknesses)
+        let thicknessesInMeters = Seq.map ((*) metersPerLengthUnit) thicknesses
+        let layers = List.zip mappables (List.ofSeq thicknessesInMeters)
         if compositeName <> Unchecked.defaultof<string>
             then LayerSet(Some(compositeName), layers)
             else LayerSet(None, layers)
