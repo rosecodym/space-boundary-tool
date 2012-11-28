@@ -268,7 +268,19 @@ namespace GUI.Operations
                 }
                 foreach (IdfMaterial m in cmanager.AllOutputLayers)
                 {
-                    creator.AddMaterial(m);
+                    try
+                    {
+                        creator.AddMaterial(m);
+                    }
+                    catch (Exception) {
+                        ReportProgress(
+                            String.Format(
+                                "Material layer {0} could not be added to " +
+                                "the IDF. Please report this SBT bug." +
+                                Environment.NewLine,
+                                m.Name),
+                            ProgressEvent.ProgressEventType.Warning);
+                    }
                 }
                 creator.WriteToFile(p.OutputFilename);
                 ReportProgress("IDF written.\n");
