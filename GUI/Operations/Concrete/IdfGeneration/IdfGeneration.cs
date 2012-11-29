@@ -99,21 +99,6 @@ namespace GUI.Operations
                 var zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(
                     p.SbtBuilding.SpaceBoundaries,
                     p.IfcBuilding.SpacesByGuid));
-                Func<int, IfcConstruction> materialIdToModelConstruction =
-                    id =>
-                    {
-                        if (id > p.SbtBuilding.Elements.Count) { return null; }
-                        string elementGuid =
-                            p.SbtBuilding.Elements[id - 1].Guid;
-                        IfcElement ifcElement;
-                        if (!p.IfcBuilding.ElementsByGuid.TryGetValue(
-                            elementGuid,
-                            out ifcElement))
-                        {
-                            return null;
-                        }
-                        return ifcElement.AssociatedConstruction;
-                    };
                 IDictionary<string, BuildingSurface> surfacesByGuid =
                     new Dictionary<string, BuildingSurface>();
                 var allSbs = p.SbtBuilding.SpaceBoundaries;
