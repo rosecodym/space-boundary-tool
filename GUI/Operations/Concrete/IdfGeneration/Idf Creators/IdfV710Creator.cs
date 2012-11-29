@@ -191,7 +191,7 @@ namespace GUI.Operations
             public override void AddConstruction(Construction c)
             {
                 LibIdf.Idf.IdfObject obj = idf.CreateObject("Construction");
-                obj.Fields["Name"].Value = c.IdfName;
+                obj.Fields["Name"].Value = c.Name;
                 // All constructions *should* have layers, but let's make sure
                 // that a bad one doesn't bring down IDF generation entirely.
                 if (c.LayerNames.Count > 0)
