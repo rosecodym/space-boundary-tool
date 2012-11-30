@@ -53,6 +53,9 @@ type OutputManager (warnDelegate : Action<string>) =
         | LibraryEntry.Opaque(props), Some(t) -> retrieveOpaqueLayer props t
         | LibraryEntry.Opaque(props), None -> retrieveOpaqueLayer props (float props.Thickness)
 
+    let retrievePartialComposite name origLayers depth : OutputConstruction =
+        raise (NotImplementedException("Cannot yet take partial composites."))
+
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
     member this.AllOutputConstructions = constructions :> IEnumerable<OutputConstruction>
 
@@ -69,16 +72,33 @@ type OutputManager (warnDelegate : Action<string>) =
             let outputLayers = List.map2 retrieveCopy ts infos
             (retrieveConstruction outputLayers None).Name
         | SingleComposite(name, layers) ->
-            // If the thicknesses don't match: too bad.
-            let outputLayers = 
-                layers |> 
-                List.map (fun (entry, thickness) -> 
-                    retrieveCopy (Some(thickness)) entry)
-            (retrieveConstruction outputLayers name).Name
-        | UnmappedWindow -> "WINDOW WITH UNMAPPED CONSTRUCTION"
-        | MixedSingleAndComposite -> 
-            "UNSUPPORTED MAPPING (MIXED SINGLE MATERIALS AND COMPOSITES)"
-        | Unknown -> "UNSUPPORTED MAPPING (UNKNOWN)"
+            let origThickness = List.sumBy snd layers
+            let requestedThickness = Seq.head thicknesses
+            let resultThickness =
+                let diff = origThickness - requestedThickness
+                if abs diff <= 0.001 then origThickness
+                elif diff > 0.001 then requestedThickness
+                else
+                    warn (sprintf
+                            "An element's assigned composite (%s) in the IFC \
+                             model was thinner than the element itself. The \
+                             IDF construction has been made thinner."
+                             (defaultArg name "unnamed"))
+                    origThickness
+            warn (sprintf
+                    "There was an attempt create a construction from a part \
+                     of a composite (%s). This is not yet supported. The \
+                     construction has been named 'PARTIAL COMPOSITE' in the \
+                     IDF. You will have to create this construction manually."
+                     (defaultArg name "unnamed"))
+            "PARTIAL COMPOSITE"
+            //(retrievePartialComposite name layers resultThickness).Name
+        | _ ->
+            warn "An element configuration was too complicated to have its \
+                  construction automatically generated. It has been assigned \
+                  the construction name 'UNMAPPED'. You will have to create \
+                  this construction manually."
+            "UNMAPPED"
 
     member this.ConstructionNameForSurface(c:ModelConstruction) = 
         match c with
