@@ -177,27 +177,29 @@ namespace GUI.Operations
                             constructions,
                             thicknesses)));
                 }
-                IDictionary<string, Solid> elementGeometriesByGuid =
-                    new Dictionary<string, Solid>();
+                var elementGeometries = new Dictionary<string, Solid>();
                 foreach (SbtElement element in p.SbtBuilding.Elements)
                 {
-                    elementGeometriesByGuid[element.Guid] = element.Geometry;
+                    elementGeometries[element.Guid] = element.Geometry;
                 }
 
-                List<BuildingSurface> wallBoundaries =
-                    new List<BuildingSurface>(
-                        surfacesByGuid.Values.Where(surf =>
-                            surf.HasElementType(SbtElementType.Wall)));
+                Func<BuildingSurface, bool> isWall = surf =>
+                    surf.HasElementType(SbtElementType.Wall);
+                var wallFilter = surfacesByGuid.Values.Where(isWall);
+                var wallBoundaries = new List<BuildingSurface>(wallFilter);
+
                 List<Shading> shadings = new List<Shading>();
                 foreach (IfcElement e in p.IfcBuilding.ElementsByGuid.Values)
                 {
-                    if (e.IsShading)
+                    // elementGeometries might not have e because it was 
+                    // filtered.
+                    if (e.IsShading && elementGeometries.ContainsKey(e.Guid))
                     {
                         try
                         {
                             shadings.Add(new Shading(
                                 e.Guid,
-                                elementGeometriesByGuid[e.Guid],
+                                elementGeometries[e.Guid],
                                 wallBoundaries));
                         }
                         catch (Shading.ShadingConstructionFailedException ex)
