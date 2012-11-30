@@ -152,6 +152,15 @@ void scale_space_boundaries(space_boundary ** sbs, size_t count, const unit_scal
 	}
 }
 
+void scale_shadings(
+	std::vector<element_info *> * shadings,
+	const unit_scaler & scaler)
+{
+	for (auto p = shadings->begin(); p != shadings->end(); ++p) {
+		scale_solid(&(*p)->geometry, scaler);
+	}
+}
+
 std::function<bool(const char *)> create_guid_filter(char ** first, size_t count) {
 	std::set<std::string> ok_elements;
 	if (first != nullptr && count != 0) {
@@ -298,6 +307,7 @@ ifcadapter_return_t load_and_run_from(
 					scale_elements(*elements, *element_count, scaler);
 					scale_spaces(*spaces, *space_count, scaler);
 					scale_space_boundaries(*sbs, *total_sb_count, scaler);
+					scale_shadings(&shadings, scaler);
 					res = IFCADAPT_OK;
 				}
 			}
