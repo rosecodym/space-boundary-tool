@@ -183,7 +183,7 @@ ifcadapter_return_t add_to_ifc_file(
 	try {
 		g_opts = opts;
 		number_collection<K> ctxt(EPS_MAGIC / 20);
-		sprintf(buf, "Processing file %s", input_filename);
+		sprintf(buf, "Processing file %s.\n", input_filename);
 		opts.notify_func(buf);
 		edm_wrapper edm;
 		cppw::Open_model model = edm.load_ifc_file(input_filename);
@@ -273,7 +273,7 @@ ifcadapter_return_t load_and_run_from(
 	try {
 		g_opts = opts;
 		number_collection<K> ctxt(EPS_MAGIC / 20);
-		sprintf(buf, "Processing file %s", input_filename);
+		sprintf(buf, "Processing file %s.\n", input_filename);
 		opts.notify_func(buf);
 		edm_wrapper edm;
 		cppw::Open_model model = edm.load_ifc_file(input_filename);
