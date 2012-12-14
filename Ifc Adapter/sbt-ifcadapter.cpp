@@ -23,79 +23,6 @@ void clear_sbs(cppw::Open_model * model) {
 	}
 }
 
-void generate_sb_summary(sb_counts * counts, space_boundary ** sbs, size_t sb_count) {
-	if (counts == NULL) {
-		return;
-	}
-
-	std::map<std::string, size_t> spaces;
-	for (size_t i = 0; i < sb_count; ++i) {
-		if (!sbs[i]->lies_on_outside) {
-			spaces[sbs[i]->bounded_space->id] = 0;
-		}
-	}
-
-	counts->bounded_space_count = spaces.size() + 1;
-	counts->space_guids = (char (*)[SPACE_ID_MAX_LEN])malloc(sizeof(char[SPACE_ID_MAX_LEN]) * counts->bounded_space_count);
-
-	strcpy(counts->space_guids[0], "Total");
-
-	size_t i = 1; 
-	std::for_each(spaces.begin(), spaces.end(), [&i, &counts](std::pair<const std::string, size_t> & sp) {
-		strcpy(counts->space_guids[i], sp.first.c_str());
-		sp.second = i;
-		++i;
-	});
-
-	size_t counts_arr_size = sizeof(int) * counts->bounded_space_count;
-	counts->level_2_physical_external = (int *)malloc(counts_arr_size);
-	memset(counts->level_2_physical_external, 0, counts_arr_size);
-	counts->level_2_physical_internal = (int *)malloc(counts_arr_size);
-	memset(counts->level_2_physical_internal, 0, counts_arr_size);
-	counts->level_3_external = (int *)malloc(counts_arr_size);
-	memset(counts->level_3_external, 0, counts_arr_size);
-	counts->level_3_internal = (int *)malloc(counts_arr_size);
-	memset(counts->level_3_internal, 0, counts_arr_size);
-	counts->level_4 = (int *)malloc(counts_arr_size);
-	memset(counts->level_4, 0, counts_arr_size);
-	counts->level_5 = (int *)malloc(counts_arr_size);
-	memset(counts->level_5, 0, counts_arr_size);
-	counts->virt = (int *)malloc(counts_arr_size);
-	memset(counts->virt, 0, counts_arr_size);
-
-	for (size_t i = 0; i < sb_count; ++i) {
-		if (!sbs[i]->lies_on_outside) {
-			size_t sp_ix = spaces[sbs[i]->bounded_space->id];
-			if (sbs[i]->is_virtual) {
-				++counts->virt[0];
-				++counts->virt[sp_ix];
-			}
-			else if (sbs[i]->level == 2) {
-				if (!sbs[i]->opposite) {
-					++counts->level_2_physical_external[0];
-					++counts->level_2_physical_external[sp_ix];
-				}
-				else {
-					++counts->level_2_physical_internal[0];
-					++counts->level_2_physical_internal[sp_ix];
-				}
-			}
-			else if (sbs[i]->level == 3) {
-				++counts->level_3_internal[0];
-				++counts->level_3_internal[sp_ix];
-			}
-			else if (sbs[i]->level == 4) {
-				++counts->level_4[0];
-				++counts->level_4[sp_ix];
-			}
-			else if (sbs[i]->level == 5) {
-				++counts->level_5[0];
-				++counts->level_5[sp_ix];
-			}
-		}
-	}
-}
-
 void scale_point(point * p, const unit_scaler & scaler) {
 	p->x = scaler.length_in(p->x);
 	p->y = scaler.length_in(p->y);
@@ -278,17 +205,6 @@ ifcadapter_return_t execute(
 		notify(fmt("edm error: %s\n") % e.message.data());
 		return IFCADAPT_EDM_ERROR;
 	}
-}
-
-void free_sb_counts(sb_counts counts) {
-	free(counts.space_guids);
-	free(counts.level_2_physical_external);
-	free(counts.level_2_physical_internal);
-	free(counts.level_3_external);
-	free(counts.level_3_internal);
-	free(counts.level_4);
-	free(counts.level_5);
-	free(counts.virt);
 }
 
 void release_elements(element_info ** elements, size_t count) {

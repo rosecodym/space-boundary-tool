@@ -28,18 +28,6 @@ BEGINENUM(ifcadapter_return_t)
 	IFCADAPT_UNKNOWN
 END(ifcadapter_return_t)
 
-BEGINSTRUCT(sb_counts)
-	size_t bounded_space_count;
-	char (*space_guids)[SPACE_ID_MAX_LEN]; // points to a dynamically-allocated array of char[]s
-	int * level_2_physical_internal;
-	int * level_2_physical_external;
-	int * level_3_internal;
-	int * level_3_external;
-	int * level_4;
-	int * level_5;
-	int * virt;
-END(sb_counts)
-
 #ifdef SBT_IFC_EXPORTS
 #define DLLINEX dllexport
 #else
@@ -62,7 +50,6 @@ __declspec(DLLINEX) ifcadapter_return_t execute(
 __declspec(DLLINEX) void release_elements(element_info ** elements, size_t count);
 __declspec(DLLINEX) void release_spaces(space_info ** spaces, size_t count);
 
-__declspec(DLLINEX) void free_sb_counts(sb_counts counts);
 #undef DLLINEX
 
 #undef BEGINSTRUCT
