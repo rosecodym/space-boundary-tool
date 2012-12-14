@@ -24,6 +24,7 @@ BEGINENUM(ifcadapter_return_t)
 	IFCADAPT_OK = 0,
 	IFCADAPT_EDM_ERROR = 1,
 	IFCADAPT_TOO_COMPLICATED = 2,
+	IFCADAPT_INVALID_ARGS = 3,
 	IFCADAPT_UNKNOWN
 END(ifcadapter_return_t)
 
@@ -44,17 +45,19 @@ END(sb_counts)
 #else
 #define DLLINEX dllimport
 #endif
-__declspec(DLLINEX) ifcadapter_return_t add_to_ifc_file(const char * input_filename, const char * output_filename, sb_calculation_options options, sb_counts * counts);
-__declspec(DLLINEX) ifcadapter_return_t load_and_run_from(
+__declspec(DLLINEX) ifcadapter_return_t execute(
 	const char * input_filename,
-	const char * output_filename, // NULL if you don't want to write back
+	const char * output_filename, // NULL for no write-back
 	sb_calculation_options opts,
-	element_info *** elements,
 	size_t * element_count,
-	space_info *** spaces,
+	element_info *** elements,
+	double ** composite_layer_dxs,
+	double ** composite_layer_dys,
+	double ** composite_layer_dzs,
 	size_t * space_count,
-	space_boundary *** space_boundaries,
-	size_t * total_sb_count);
+	space_info *** spaces,
+	size_t * sb_count,
+	space_boundary *** sbs);
 
 __declspec(DLLINEX) void release_elements(element_info ** elements, size_t count);
 __declspec(DLLINEX) void release_spaces(space_info ** spaces, size_t count);

@@ -13,6 +13,7 @@
 #include <cstdio>
 
 #include <boost/range/algorithm.hpp>
+#include <boost/format.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Extended_cartesian.h>

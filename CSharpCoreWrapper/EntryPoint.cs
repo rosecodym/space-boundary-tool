@@ -36,17 +36,20 @@ namespace Sbt
             out IntPtr spaceBoundaries,
             SBCalculationOptions opts);
 
-        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "load_and_run_from")]
+        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "execute")]
         private static extern IfcAdapterResult LoadAndRunFrom(
             string inputFilename,
             string outputFilename,
             SBCalculationOptions opts,
-            out IntPtr elements,
             out uint elementCount,
-            out IntPtr spaces,
+            out IntPtr elements,
+            out IntPtr compositeLayerDXsUnused,
+            out IntPtr compositeLayerDYsUnused,
+            out IntPtr compositeLayerDZsUnused,
             out uint spaceCount,
-            out IntPtr spaceBoundaries,
-            out uint sbCount);
+            out IntPtr spaces,
+            out uint sbCount,
+            out IntPtr spaceBoundaries);
 
         [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "release_elements")]
         private static extern void FreeElements(IntPtr elements, uint count);
@@ -208,7 +211,23 @@ namespace Sbt
             IntPtr nativeSpaces;
             IntPtr nativeSbs;
 
-            IfcAdapterResult res = LoadAndRunFrom(inputFilename, outputFilename, opts, out nativeElements, out elementCount, out nativeSpaces, out spaceCount, out nativeSbs, out spaceBoundaryCount);
+            IntPtr unused1;
+            IntPtr unused2;
+            IntPtr unused3;
+
+            IfcAdapterResult res = LoadAndRunFrom(
+                inputFilename, 
+                outputFilename,
+                opts,
+                out elementCount,
+                out nativeElements,
+                out unused1,
+                out unused2,
+                out unused3,
+                out spaceCount,
+                out nativeSpaces,
+                out spaceBoundaryCount, 
+                out nativeSbs);
 
             if (res == IfcAdapterResult.EdmError)
             {
@@ -218,9 +237,10 @@ namespace Sbt
             {
                 throw new Exception("Geometry too complicated! Try simplifying the geometry around where the error occurred.\n");
             }
-            else if (res == IfcAdapterResult.Unknown) {
+            else if (res != IfcAdapterResult.Ok)
+            {
                 throw new Exception("Unknown error during processing.\n");
-                }
+            }
 
             elements = new List<CoreTypes.ElementInfo>();
             for (uint i = 0; i < elementCount; ++i)

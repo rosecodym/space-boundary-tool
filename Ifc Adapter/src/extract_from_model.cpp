@@ -2,8 +2,7 @@
 
 #include "add_element.h"
 #include "ifc-to-solid.h"
-
-class unit_scaler;
+#include "unit_scaler.h"
 
 namespace {
 
@@ -116,19 +115,19 @@ ifcadapter_return_t extract_from_model(
 	element_info *** elements, 
 	size_t * space_count,
 	space_info *** spaces,
-	void (*msg_func)(char *),
-	const unit_scaler & scaler,
+	void (*notify)(char *),
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
 	std::vector<element_info *> * shadings)
 {
+	auto scaler = unit_scaler::identity_scaler;
 	char buf[256];
-	*element_count = get_elements(model, elements, msg_func, scaler, element_filter, c, shadings);
+	*element_count = get_elements(model, elements, notify, scaler, element_filter, c, shadings);
 	sprintf(buf, "Got %u building elements.\n", *element_count);
-	msg_func(buf);
-	*space_count = get_spaces(model, spaces, msg_func, scaler, space_filter, c);
+	notify(buf);
+	*space_count = get_spaces(model, spaces, notify, scaler, space_filter, c);
 	sprintf(buf, "Got %u building spaces.\n", *space_count);
-	msg_func(buf);
+	notify(buf);
 	return IFCADAPT_OK;
 }

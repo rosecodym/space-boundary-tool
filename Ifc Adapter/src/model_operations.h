@@ -12,8 +12,7 @@ ifcadapter_return_t extract_from_model(
 	element_info *** elements, 
 	size_t * space_count,
 	space_info *** spaces,
-	void (*msg_func)(char *),
-	const unit_scaler & scaler,
+	void (*notify)(char *),
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
@@ -24,5 +23,4 @@ ifcadapter_return_t add_to_model(
 	size_t sb_count,
 	space_boundary ** space_boundaries,
 	void (*msg_func)(char *),
-	const unit_scaler & scaler,
 	number_collection<K> * c);

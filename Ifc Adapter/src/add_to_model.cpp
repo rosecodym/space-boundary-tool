@@ -216,9 +216,10 @@ ifcadapter_return_t add_to_model(
 	size_t sb_count, 
 	space_boundary ** sbs,
 	void (*msg_func)(char *),
-	const unit_scaler & scaler,
 	number_collection<K> * c) 
 {
+	unit_scaler scaler = unit_scaler::identity_scaler;
+
 	msg_func("Adding space boundaries to model");
 	cppw::Instance ownerhistory = create_owner_history(&model);
 

@@ -171,163 +171,111 @@ std::function<bool(const char *)> create_guid_filter(char ** first, size_t count
 	};
 }
 
-} // namespace
-
-ifcadapter_return_t add_to_ifc_file(
-	const char * input_filename, 
-	const char * output_filename, 
-	sb_calculation_options opts, 
-	sb_counts * counts) 
-{
-	char buf[256];
-	try {
-		g_opts = opts;
-		number_collection<K> ctxt(EPS_MAGIC / 20);
-		sprintf(buf, "Processing file %s.\n", input_filename);
-		opts.notify_func(buf);
-		edm_wrapper edm;
-		cppw::Open_model model = edm.load_ifc_file(input_filename);
-		opts.notify_func("File loaded.\n");
-		element_info ** elements;
-		space_boundary ** sbs;
-		space_info ** loaded_spaces;
-		size_t element_count;
-		size_t sb_count;
-		size_t loaded_space_count;
-		ifcadapter_return_t res = extract_from_model(
-			model, 
-			&element_count, 
-			&elements, 
-			&loaded_space_count, 
-			&loaded_spaces, 
-			opts.notify_func, 
-			unit_scaler::identity_scaler, 
-			create_guid_filter(opts.element_filter, opts.element_filter_count),
-			create_guid_filter(opts.space_filter, opts.space_filter_count),
-			&ctxt,
-			nullptr);
-		opts.length_units_per_meter = get_length_units_per_meter(model);
-		if (res == IFCADAPT_OK) {
-			sbt_return_t generate_res = 
-				calculate_space_boundaries(
-					element_count, 
-					elements, 
-					loaded_space_count, 
-					loaded_spaces, 
-					&sb_count, 
-					&sbs, 
-					opts);
-			if (generate_res == SBT_OK) {
-				generate_sb_summary(counts, sbs, sb_count);
-				sprintf(buf, "Generated count summary.\n");
-				opts.notify_func(buf);
-				clear_sbs(&model);
-				// add_to_model figures out the right spaces by re-extracting 
-				// them based on guids
-				if (add_to_model(
-						model, 
-						sb_count, 
-						sbs, 
-						opts.notify_func, 
-						unit_scaler::identity_scaler, 
-						&ctxt) == IFCADAPT_OK)
-				{
-					sprintf(buf, "Writing model to %s...", output_filename);
-					opts.notify_func(buf);
-					edm.write_ifc_file(output_filename);
-					opts.notify_func("done.\n");
-					res = IFCADAPT_OK;
-				}
-				release_space_boundaries(sbs, sb_count);
-			}
-			else if (generate_res == SBT_TOO_COMPLICATED) {
-				res = IFCADAPT_TOO_COMPLICATED;
-			}
-			else {
-				res = IFCADAPT_UNKNOWN;
-			}
-			release_list(elements, element_count);
-			release_list(loaded_spaces, loaded_space_count);
-		}
-		return res;
-	}
-	catch (cppw::Error & e) {
-		sprintf(buf, "edm error: %s\n", e.message.data());
-		opts.error_func(buf);
-		return IFCADAPT_EDM_ERROR;
-	}
+void notify(const boost::format & fmt) {
+	g_opts.notify_func(const_cast<char *>(fmt.str().c_str()));
 }
 
-ifcadapter_return_t load_and_run_from(
+void notify(char * msg) {
+	g_opts.notify_func(msg);
+}
+
+} // namespace
+
+ifcadapter_return_t execute(
 	const char * input_filename,
-	const char * output_filename, // NULL if you don't want to write back
+	const char * output_filename, // NULL for no write-back
 	sb_calculation_options opts,
-	element_info *** elements,
 	size_t * element_count,
-	space_info *** spaces,
+	element_info *** elements,
+	double ** composite_layer_dxs,
+	double ** composite_layer_dys,
+	double ** composite_layer_dzs,
 	size_t * space_count,
-	space_boundary *** sbs,
-	size_t * total_sb_count)
+	space_info *** spaces,
+	size_t * sb_count,
+	space_boundary *** sbs)
 {
-	char buf[256];
+	typedef boost::format fmt;
 	try {
 		g_opts = opts;
-		number_collection<K> ctxt(EPS_MAGIC / 20);
-		sprintf(buf, "Processing file %s.\n", input_filename);
-		opts.notify_func(buf);
+		*element_count = *space_count = *sb_count = 0;
+		*elements = nullptr;
+		*spaces = nullptr;
+		*sbs = nullptr;
+		if (!input_filename) { return IFCADAPT_INVALID_ARGS; }
+		number_collection<K> ctxt(EPS_MAGIC / 20); // magic divided by magic
+		notify(fmt("Processing file %s.\n") % input_filename);
 		edm_wrapper edm;
 		cppw::Open_model model = edm.load_ifc_file(input_filename);
-		opts.notify_func("File loaded.\n");
-		unit_scaler scaler(model);
 		std::vector<element_info *> shadings;
+		// The length-unit information is stored redundantly because it's due
+		// for a refactoring. This is why globals are bad, folks (I don't want
+		// to just take stuff out because I don't know what's touching g_opts).
+		opts.length_units_per_meter = get_length_units_per_meter(model);
+		unit_scaler scaler(model);
 		ifcadapter_return_t res = extract_from_model(
-			model, 
-			element_count, 
-			elements, 
-			space_count, 
-			spaces, 
-			opts.notify_func, 
-			unit_scaler::identity_scaler, 
+			model,
+			element_count,
+			elements,
+			space_count,
+			spaces,
+			g_opts.notify_func,
 			create_guid_filter(opts.element_filter, opts.element_filter_count),
 			create_guid_filter(opts.space_filter, opts.space_filter_count),
 			&ctxt,
 			&shadings);
-		opts.length_units_per_meter = get_length_units_per_meter(model);
-		if (res == IFCADAPT_OK) {
-			sbt_return_t generate_res = calculate_space_boundaries(*element_count, *elements, *space_count, *spaces, total_sb_count, sbs, opts);
-			if (generate_res == SBT_OK && output_filename != nullptr) {
-				// add_to_model figures out the right spaces by re-extracting them based on guids
+		if (res != IFCADAPT_OK) { return res; }
+		sbt_return_t generate_res = 
+			calculate_space_boundaries(
+				*element_count, 
+				*elements, 
+				*space_count, 
+				*spaces, 
+				sb_count, 
+				sbs, 
+				opts);
+		if (generate_res == SBT_OK) {
+			if (output_filename != nullptr) {
 				clear_sbs(&model);
-				opts.notify_func("Existing space boundaries removed from model.\n");
-				if (add_to_model(model, *total_sb_count, *sbs, opts.notify_func, /*scaler*/unit_scaler::identity_scaler, &ctxt) == IFCADAPT_OK) {
-					sprintf(buf, "Writing model to %s...", output_filename);
-					opts.notify_func(buf);
+				// add_to_model figures out the right spaces by re-extracting 
+				// them based on guids.
+				res = add_to_model(
+						model, 
+						*sb_count, 
+						*sbs, 
+						opts.notify_func, 
+						&ctxt);
+				if (res == IFCADAPT_OK)
+				{
+					notify(fmt("Writing model to %s...") % output_filename);
 					edm.write_ifc_file(output_filename);
-					opts.notify_func("done.\n");
-					scale_elements(*elements, *element_count, scaler);
-					scale_spaces(*spaces, *space_count, scaler);
-					scale_space_boundaries(*sbs, *total_sb_count, scaler);
-					scale_shadings(&shadings, scaler);
-					res = IFCADAPT_OK;
+					notify("done.\n");
 				}
 			}
-			else if (generate_res == SBT_TOO_COMPLICATED) {
-				res = IFCADAPT_TOO_COMPLICATED;
+			scale_elements(*elements, *element_count, scaler);
+			scale_spaces(*spaces, *space_count, scaler);
+			scale_space_boundaries(*sbs, *sb_count, scaler);
+			scale_shadings(&shadings, scaler);
+
+			auto total_e_count = *element_count + shadings.size();
+			auto total_e_size = sizeof(element_info *) * total_e_count;
+			*elements = (element_info **)realloc(*elements, total_e_size);
+			for (size_t i = 0; i < shadings.size(); ++i) {
+				(*elements)[*element_count + i] = shadings[i];
 			}
-			else {
-				res = generate_res == SBT_OK ? IFCADAPT_OK : IFCADAPT_UNKNOWN;
-			}
+			*element_count = *element_count + shadings.size();
+
+			return IFCADAPT_OK;
 		}
-		*elements = (element_info **)realloc(*elements, sizeof(element_info *) * (*element_count + shadings.size()));
-		for (size_t i = 0; i < shadings.size(); ++i) {
-			(*elements)[*element_count + i] = shadings[i];
+		else if (generate_res == SBT_TOO_COMPLICATED) {
+			return IFCADAPT_TOO_COMPLICATED;
 		}
-		*element_count = *element_count + shadings.size();
-		return res;
+		else {
+			return IFCADAPT_UNKNOWN;
+		}
 	}
 	catch (cppw::Error & e) {
-		sprintf(buf, "edm error: %s\n", e.message.data());
-		opts.error_func(buf);
+		notify(fmt("edm error: %s\n") % e.message.data());
 		return IFCADAPT_EDM_ERROR;
 	}
 }
