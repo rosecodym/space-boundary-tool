@@ -54,6 +54,13 @@ public:
 	virtual const char * condition() const throw() { return "invalid face"; }
 };
 
+class parallel_ext_exception : public bad_geometry_exception {
+public:
+	virtual const char * condition() const throw() { 
+		return "extruded area solid with extrusion direction parallel to base";
+	}
+};
+
 // This isn't a bad_geometry_exception because it indicates an inconsistent
 // program state, not bad geometry.
 class unknown_geometry_rep_exception : public sbt_exception { };

@@ -29,8 +29,19 @@ bbox_3 nef_bounding_box(const nef_polyhedron_3 & nef) {
 	return *res;
 }
 
-extrusion_information get_extrusion_information(const extruded_area_solid & e, equality_context * c) {
-	return std::make_tuple(simple_face(e.area, c), geometry_common::normalize(c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz)).to_vector()) * e.extrusion_depth);
+extrusion_information get_extrusion_information(
+	const extruded_area_solid & e, 
+	equality_context * c) 
+{
+	using geometry_common::normalize;
+	simple_face area(e.area, c);
+	auto snapped_dir = c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz));
+	auto ext = normalize(snapped_dir.vector()) * e.extrusion_depth;
+	auto area_normal = area.orthogonal_direction().vector();
+	if (c->are_effectively_perpendicular(area_normal, ext)) {
+		throw parallel_ext_exception();
+	}
+	return std::make_tuple(area, ext);
 }
 
 std::vector<oriented_area> to_oriented_face_group(const nef_polyhedron_3 & nef, nef_volume_handle v, equality_context * c) {
