@@ -1,7 +1,6 @@
 #include "precompiled.h"
 
 #include "add_element.h"
-#include "ifc-to-solid.h"
 #include "internal_geometry.h"
 #include "unit_scaler.h"
 
