@@ -2,6 +2,7 @@
 
 #include "add_element.h"
 #include "ifc-to-solid.h"
+#include "internal_geometry.h"
 #include "unit_scaler.h"
 
 namespace {
@@ -93,15 +94,33 @@ size_t get_spaces(cppw::Open_model & model, space_info *** spaces, void (*msg_fu
 	*spaces = create_list<space_info>(count);
 		
 	for (size_t i = 0; i < count; ++i) {
-		strncpy((*spaces)[i]->id, ((cppw::String)ss.get(i).get("GlobalId")).data(), SPACE_ID_MAX_LEN);
-		if (space_filter((*spaces)[i]->id)) {
+		try {
+			strncpy((*spaces)[i]->id, ((cppw::String)ss.get(i).get("GlobalId")).data(), SPACE_ID_MAX_LEN);
+			if (space_filter((*spaces)[i]->id)) {
+				char buf[256];
+				sprintf(buf, "Extracting space %s...", (*spaces)[i]->id);
+				msg_func(buf);
+				auto geometry = internal_geometry::get_local_geometry(
+					ss.get(i),
+					s,
+					c);
+				auto globalizer = internal_geometry::get_globalizer(
+					ss.get(i),
+					s,
+					c);
+				geometry->transform(globalizer);
+				(*spaces)[i]->geometry = geometry->to_interface_solid();
+				msg_func("done.\n");
+			}
+		}
+		catch (internal_geometry::bad_rep_exception & ex) {
 			char buf[256];
-			sprintf(buf, "Extracting space %s...", (*spaces)[i]->id);
+			sprintf(
+				buf, 
+				"Warning: could not load this space (%s). It will be skipped."
+				"\n",
+				ex.what());
 			msg_func(buf);
-			exact_solid sld;
-			ifc_to_solid(&sld, (cppw::Instance)ss.get(i), s, c);
-			sld.populate_inexact_version(&(*spaces)[i]->geometry);
-			msg_func("done.\n");
 		}
 	}
 	return count;
