@@ -29,6 +29,7 @@
     <ClInclude Include="src\reassign_bounded_spaces.h" />
     <ClInclude Include="src\release.h" />
     <ClInclude Include="src\sbt-ifcadapter.h" />
+    <ClInclude Include="src\internal_geometry.h" />
     <ClInclude Include="src\unit_scaler.h" />
     <ClInclude Include="src\util.h" />
     <ClInclude Include="src\wrapped_nef_operations.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="src\ifc-to-solid.cpp" />
     <ClCompile Include="src\ifc-to-cgal.cpp" />
     <ClCompile Include="src\ifc-to-face.cpp" />
+    <ClCompile Include="src\internal_geometry.cpp" />
     <ClCompile Include="src\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

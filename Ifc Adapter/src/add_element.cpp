@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "ifc-to-solid.h"
+#include "internal_geometry.h"
 #include "sbt-ifcadapter.h"
 #include "add_element.h"
 
@@ -31,28 +32,37 @@ void add_element(std::vector<element_info *> * infos, element_type type, const c
 	info->type = type;
 	info->material = material_id;
 
-	exact_solid s;
-	int got_geometry = -1;
-
+	boost::optional<cppw::Instance> effective_instance = inst;
 	if (type == WINDOW || type == DOOR) {
-		auto related_opening = get_related_opening(inst);
-		if (related_opening) {
-			got_geometry = ifc_to_solid(&s, *related_opening, scaler, c);
-		}
-		else {
-			msg_func("Warning: door or window element does not have a related opening.\n");
+		effective_instance = get_related_opening(inst);
+		if (!effective_instance) {
+			msg_func(
+				"Warning: door or window element does not have a related "
+				"opening. This element will be skipped.\n");
+			return;
 		}
 	}
-	else {
-		got_geometry = ifc_to_solid(&s, inst, scaler, c);
-	}
-
-	if (got_geometry == 0) {
-		s.populate_inexact_version(&info->geometry);
+	
+	try {
+		auto geometry = internal_geometry::get_local_geometry(
+			*effective_instance,
+			scaler,
+			c);
+		auto globalizer = internal_geometry::get_globalizer(
+			*effective_instance,
+			scaler,
+			c);
+		geometry->transform(globalizer);
+		info->geometry = geometry->to_interface_solid();
 		infos->push_back(info);
 		msg_func("done\n");
 	}
-	else {
-		msg_func("This element will be skipped.\n");
+	catch (internal_geometry::bad_rep_exception & ex) {
+		sprintf(
+			buf, 
+			"Warning: could not load this element (%s). It will be "
+			"skipped.\n",
+			ex.what());
+		msg_func(buf);
 	}
 }

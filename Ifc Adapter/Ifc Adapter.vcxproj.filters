@@ -16,6 +16,9 @@
     <Filter Include="resources">
       <UniqueIdentifier>{77f6a870-5000-4e6b-872a-facdc95511df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="new geometry">
+      <UniqueIdentifier>{a79e9cca-afd1-45f0-9dbd-53ce1c800131}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\precompiled.h">
@@ -81,6 +84,9 @@
     <ClInclude Include="src\release.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="src\internal_geometry.h">
+      <Filter>new geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\precompiled.cpp">
@@ -136,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="src\release.cpp">
       <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\internal_geometry.cpp">
+      <Filter>new geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

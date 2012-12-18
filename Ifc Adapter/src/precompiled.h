@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <numeric>
+#include <exception>
 #include <cassert>
 #include <cstdio>
 
