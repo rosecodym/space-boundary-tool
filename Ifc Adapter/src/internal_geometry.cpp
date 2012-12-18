@@ -3,6 +3,7 @@
 #include "internal_geometry.h"
 
 #include "cgal-typedefs.h"
+#include "geometry_common.h"
 #include "number_collection.h"
 #include "unit_scaler.h"
 #include "wrapped_nef_operations.h"
@@ -13,10 +14,6 @@ namespace {
 
 bool are_perpendicular(const direction_3 & a, const direction_3 & b) {
 	return CGAL::is_zero(a.vector() * b.vector());
-}
-	
-vector_3 normalize(const vector_3 & v) {
-	return v / sqrt(v.squared_length());
 }
 
 length_scaler build_scale_function(const unit_scaler & us) {
