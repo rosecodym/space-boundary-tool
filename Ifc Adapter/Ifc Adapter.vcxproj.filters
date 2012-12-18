@@ -16,8 +16,8 @@
     <Filter Include="resources">
       <UniqueIdentifier>{77f6a870-5000-4e6b-872a-facdc95511df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="new geometry">
-      <UniqueIdentifier>{a79e9cca-afd1-45f0-9dbd-53ce1c800131}</UniqueIdentifier>
+    <Filter Include="legacy">
+      <UniqueIdentifier>{e4238f25-e010-4339-8772-4d64cc11c373}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,12 +48,6 @@
     <ClInclude Include="src\reassign_bounded_spaces.h">
       <Filter>operations</Filter>
     </ClInclude>
-    <ClInclude Include="src\ifc-to-face.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ifc-to-cgal.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\number_collection.h">
       <Filter>geometry</Filter>
     </ClInclude>
@@ -61,15 +55,6 @@
       <Filter>resources</Filter>
     </ClInclude>
     <ClInclude Include="src\geometry_common.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ifc-to-solid.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="src\wrapped_nef_operations.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="src\exact_surrogates.h">
       <Filter>geometry</Filter>
     </ClInclude>
     <ClInclude Include="src\unit_scaler.h">
@@ -84,8 +69,20 @@
     <ClInclude Include="src\release.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="src\wrapped_nef_operations.h">
+      <Filter>legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ifc-to-face.h">
+      <Filter>legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ifc-to-cgal.h">
+      <Filter>legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exact_surrogates.h">
+      <Filter>legacy</Filter>
+    </ClInclude>
     <ClInclude Include="src\internal_geometry.h">
-      <Filter>new geometry</Filter>
+      <Filter>geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -116,22 +113,7 @@
     <ClCompile Include="src\reassign_bounded_spaces.cpp">
       <Filter>operations</Filter>
     </ClCompile>
-    <ClCompile Include="src\ifc-to-cgal.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ifc-to-face.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
     <ClCompile Include="src\geometry_common.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ifc-to-solid.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wrapped_nef_operations.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\exact_surrogates.cpp">
       <Filter>geometry</Filter>
     </ClCompile>
     <ClCompile Include="src\unit_scaler.cpp">
@@ -143,8 +125,20 @@
     <ClCompile Include="src\release.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="src\wrapped_nef_operations.cpp">
+      <Filter>legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ifc-to-face.cpp">
+      <Filter>legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ifc-to-cgal.cpp">
+      <Filter>legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\exact_surrogates.cpp">
+      <Filter>legacy</Filter>
+    </ClCompile>
     <ClCompile Include="src\internal_geometry.cpp">
-      <Filter>new geometry</Filter>
+      <Filter>geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

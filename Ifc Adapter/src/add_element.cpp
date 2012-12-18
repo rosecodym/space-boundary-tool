@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "ifc-to-solid.h"
 #include "internal_geometry.h"
 #include "sbt-ifcadapter.h"
 #include "add_element.h"
