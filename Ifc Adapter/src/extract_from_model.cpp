@@ -7,9 +7,9 @@
 namespace {
 
 template <typename T>
-T ** create_list(size_t size) {
-	T ** res = (T **)malloc(sizeof(T *) * size);
-	for (size_t i = 0; i < size; ++i) {
+T ** create_list(size_t count) {
+	T ** res = (T **)malloc(sizeof(T *) * count);
+	for (size_t i = 0; i < count; ++i) {
 		res[i] = (T *)calloc(1, sizeof(T));
 	}
 	return res;
@@ -39,6 +39,9 @@ bool is_shading(const cppw::Instance & inst) {
 size_t get_elements(
 	cppw::Open_model & model, 
 	element_info *** elements, 
+	double ** composite_layer_dxs,
+	double ** composite_layer_dys,
+	double ** composite_layer_dzs,
 	void (*msg_func)(char *), 
 	const unit_scaler & s, 
 	const std::function<bool(const char *)> & passes_filter, 
@@ -46,8 +49,9 @@ size_t get_elements(
 	std::vector<element_info *> * shadings)
 {
 	std::vector<element_info *> infos;
+	std::vector<direction_3> composite_dirs;
 
-	int next_material_id = 1;
+	int next_element_id = 1;
 
 	auto building_elements = model.get_set_of("IfcBuildingElement", cppw::include_subtypes);
 	for (building_elements.move_first(); building_elements.move_next(); ) {
@@ -63,10 +67,18 @@ size_t get_elements(
 		std::string guid(((cppw::String)elem.get("GlobalId")).data());
 		if (type != UNKNOWN && passes_filter(guid.c_str())) {
 			if (!is_shading(elem)) {
-				add_element(&infos, type, elem, msg_func, s, next_material_id++, c);
+				add_element(
+					&infos, 
+					&composite_dirs,
+					type, 
+					elem, 
+					msg_func, 
+					s, 
+					next_element_id++, 
+					c);
 			}
 			else if (shadings != nullptr) {
-				add_element(shadings, type, elem, msg_func, s, -1, c);
+				add_element(shadings, nullptr, type, elem, msg_func, s, -1, c);
 			}
 		}
 	}
@@ -75,10 +87,16 @@ size_t get_elements(
 	sprintf(buf, "Creating list for %u elements.\n", infos.size());
 	msg_func(buf);
 	*elements = create_list<element_info>(infos.size());
+	*composite_layer_dxs = (double *)calloc(infos.size(), sizeof(double));
+	*composite_layer_dys = (double *)calloc(infos.size(), sizeof(double));
+	*composite_layer_dzs = (double *)calloc(infos.size(), sizeof(double));
 	msg_func("Element list created.\n");
 
 	for (size_t i = 0; i < infos.size(); ++i) {
 		(*elements)[i] = infos[i];
+		(*composite_layer_dxs)[i] = CGAL::to_double(composite_dirs[i].dx());
+		(*composite_layer_dys)[i] = CGAL::to_double(composite_dirs[i].dy());
+		(*composite_layer_dzs)[i] = CGAL::to_double(composite_dirs[i].dz());
 	}
 
 	msg_func("All elements added to list.\n");
@@ -131,6 +149,9 @@ ifcadapter_return_t extract_from_model(
 	cppw::Open_model & model, 
 	size_t * element_count, 
 	element_info *** elements, 
+	double ** composite_layer_dxs,
+	double ** composite_layer_dys,
+	double ** composite_layer_dzs,
 	size_t * space_count,
 	space_info *** spaces,
 	void (*notify)(char *),
@@ -141,7 +162,17 @@ ifcadapter_return_t extract_from_model(
 {
 	auto scaler = unit_scaler::identity_scaler;
 	char buf[256];
-	*element_count = get_elements(model, elements, notify, scaler, element_filter, c, shadings);
+	*element_count = get_elements(
+		model, 
+		elements, 
+		composite_layer_dxs,
+		composite_layer_dys,
+		composite_layer_dzs,
+		notify, 
+		scaler, 
+		element_filter, 
+		c, 
+		shadings);
 	sprintf(buf, "Got %u building elements.\n", *element_count);
 	notify(buf);
 	*space_count = get_spaces(model, spaces, notify, scaler, space_filter, c);

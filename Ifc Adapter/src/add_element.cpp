@@ -1,8 +1,10 @@
 #include "precompiled.h"
 
+#include "add_element.h"
+
+#include "cgal-typedefs.h"
 #include "internal_geometry.h"
 #include "sbt-ifcadapter.h"
-#include "add_element.h"
 
 namespace {
 
@@ -16,9 +18,41 @@ boost::optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_i
 	}
 }
 
+boost::optional<direction_3> get_composite_dir(const cppw::Instance & inst) {
+	if (!inst.is_kind_of("IfcWindow")) {
+		cppw::Set relAssociates = inst.get("HasAssociations");
+		for (relAssociates.move_first(); relAssociates.move_next(); ) {
+			cppw::Instance rel = relAssociates.get_();
+			if (rel.is_kind_of("IfcRelAssociatesMaterial")) {
+				cppw::Instance relatingMat = rel.get("RelatingMaterial");
+				if (relatingMat.is_kind_of("IfcMaterialLayerSetUsage")) {
+					cppw::String dir = relatingMat.get("LayerSetDirection");
+					cppw::String sense = relatingMat.get("DirectionSense");
+					direction_3 res =
+						dir == "AXIS1" ? direction_3(1, 0, 0) :
+						dir == "AXIS2" ? direction_3(0, 1, 0) :
+										 direction_3(0, 0, 1);
+					if (sense == "NEGATIVE") { res = -res; }
+					return res;
+				}
+			}
+		}
+	}
+	return boost::optional<direction_3>();
+}
+
 } // namespace
 
-void add_element(std::vector<element_info *> * infos, element_type type, const cppw::Instance & inst, void (*msg_func)(char *), const unit_scaler & scaler, int material_id, number_collection<K> * c) {
+void add_element(
+	std::vector<element_info *> * infos, 
+	std::vector<direction_3> * composite_dirs,
+	element_type type, 
+	const cppw::Instance & inst, 
+	void (*msg_func)(char *), 
+	const unit_scaler & scaler, 
+	int material_id, 
+	number_collection<K> * c) 
+{
 	char buf[256];
 
 	sprintf(buf, "Extracting element %s...", ((cppw::String)inst.get("GlobalId")).data());
@@ -54,6 +88,15 @@ void add_element(std::vector<element_info *> * infos, element_type type, const c
 		geometry->transform(globalizer);
 		info->geometry = geometry->to_interface_solid();
 		infos->push_back(info);
+		if (composite_dirs) {
+			auto composite_dir = get_composite_dir(inst);
+			if (composite_dir) {
+				composite_dirs->push_back(globalizer(*composite_dir));
+			}
+			else {
+				composite_dirs->push_back(direction_3());
+			}
+		}
 		msg_func("done\n");
 	}
 	catch (internal_geometry::bad_rep_exception & ex) {
