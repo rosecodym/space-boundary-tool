@@ -18,7 +18,12 @@ boost::optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_i
 	}
 }
 
-boost::optional<direction_3> get_composite_dir(const cppw::Instance & inst) {
+boost::optional<direction_3> get_composite_dir(
+	const cppw::Instance & inst,
+	const direction_3 & axis1,
+	const direction_3 & axis2,
+	const direction_3 & axis3) 
+{
 	if (!inst.is_kind_of("IfcWindow")) {
 		cppw::Set relAssociates = inst.get("HasAssociations");
 		for (relAssociates.move_first(); relAssociates.move_next(); ) {
@@ -29,9 +34,9 @@ boost::optional<direction_3> get_composite_dir(const cppw::Instance & inst) {
 					cppw::String dir = relatingMat.get("LayerSetDirection");
 					cppw::String sense = relatingMat.get("DirectionSense");
 					direction_3 res =
-						dir == "AXIS1" ? direction_3(1, 0, 0) :
-						dir == "AXIS2" ? direction_3(0, 1, 0) :
-										 direction_3(0, 0, 1);
+						dir == "AXIS1" ? axis1 :
+						dir == "AXIS2" ? axis2 :
+										 axis3;
 					if (sense == "NEGATIVE") { res = -res; }
 					return res;
 				}
@@ -89,9 +94,18 @@ void add_element(
 		info->geometry = geometry->to_interface_solid();
 		infos->push_back(info);
 		if (composite_dirs) {
-			auto composite_dir = get_composite_dir(inst);
-			if (composite_dir) {
-				composite_dirs->push_back(globalizer(*composite_dir));
+			if (geometry->axis1()) {
+				auto composite_dir = get_composite_dir(
+					inst,
+					*geometry->axis1(),
+					*geometry->axis2(),
+					*geometry->axis3());
+				if (composite_dir) {
+					composite_dirs->push_back(*composite_dir);
+				}
+				else {
+					composite_dirs->push_back(direction_3());
+				}
 			}
 			else {
 				composite_dirs->push_back(direction_3());
