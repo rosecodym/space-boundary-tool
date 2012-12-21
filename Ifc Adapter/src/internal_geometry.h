@@ -33,10 +33,30 @@ public:
 
 class solid {
 protected:
-	boost::optional<direction_3> axis_;
+	boost::optional<std::tuple<direction_3, direction_3>> axes_;
 public:
-	const boost::optional<direction_3> & get_axis() const { return axis_; }
-	void set_axis(const boost::optional<direction_3> & a) { axis_ = a; }
+	boost::optional<direction_3> axis1() const {
+		if (axes_) { return std::get<0>(*axes_); }
+		else { return boost::optional<direction_3>(); }
+	}
+	boost::optional<direction_3> axis2() const {
+		if (axes_) { return std::get<1>(*axes_); }
+		else { return boost::optional<direction_3>(); }
+	}
+	boost::optional<direction_3> axis3() const {
+		if (axes_) {
+			direction_3 a1 = std::get<0>(*axes_);
+			direction_3 a2 = std::get<1>(*axes_);
+			auto cross = CGAL::cross_product(a1.to_vector(), a2.to_vector());
+			return cross.direction();
+		}
+		else { return boost::optional<direction_3>(); }
+	}
+	void set_axes(
+		const boost::optional<std::tuple<direction_3, direction_3>> & a)
+	{
+		axes_ = a;
+	}
 
 	virtual void transform(const transformation_3 & t) = 0;
 	virtual interface_solid to_interface_solid() const = 0;

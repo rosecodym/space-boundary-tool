@@ -324,7 +324,9 @@ brep::brep(const exact_brep & b) {
 
 void brep::transform(const transformation_3 & t) {
 	boost::for_each(faces, [&t](face & f) { f.transform(t); });
-	if (axis_) { axis_ = axis_->transform(t); }
+	if (axes_) { 
+		axes_ = std::make_tuple(axis1()->transform(t), axis2()->transform(t));
+	}
 }
 
 interface_solid brep::to_interface_solid() const {
@@ -368,7 +370,9 @@ void ext::transform(const transformation_3 & t) {
 	assert(!are_perpendicular(area.normal(), dir));
 	area.transform(t);
 	dir = dir.transform(t);
-	if (axis_) { axis_ = axis_->transform(t); }
+	if (axes_) { 
+		axes_ = std::make_tuple(axis1()->transform(t), axis2()->transform(t));
+	}
 	assert(!are_perpendicular(area.normal(), dir));
 }
 
@@ -438,7 +442,7 @@ transformation_3 get_globalizer(
 	}
 }
 
-boost::optional<direction_3> get_axis(
+boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 	const cppw::Instance & inst,
 	number_collection<K> * c)
 {
@@ -446,31 +450,29 @@ boost::optional<direction_3> get_axis(
 		cppw::List pts = inst.get("Points");
 		if (pts.count() != 2) {
 			throw bad_rep_exception(
-				"axis definition with more than two "
-				"points");
+				"axis definition without exactly two points");
 		}
 		cppw::Instance p1(pts.get_(0));
 		cppw::List coords = p1.get("Coordinates");
-		cppw::Integer dim = inst.get("Dim");
 		double p1x = coords.get_(0);
 		double p1y = coords.get_(1);
-		double p1z = dim == 3 ? coords.get_(3) : 0.0;
 		cppw::Instance p2(pts.get_(1));
 		coords = cppw::List(p2.get("Coordinates"));
-		dim = inst.get("Dim");
 		double p2x = coords.get_(0);
 		double p2y = coords.get_(1);
-		double p2z = dim == 3 ? coords.get_(3) : 0.0;
-		return c->request_direction(p2x - p1x, p2y - p1y, p2z - p1z);
+		direction_3 a1 = c->request_direction(p2x - p1x, p2y - p1y, 0.0);
+		vector_3 a3(0, 0, 1);
+		direction_3 a2 = CGAL::cross_product(a3, a1.to_vector()).direction();
+		return std::make_tuple(a1, a2);
 	}
-	return boost::optional<direction_3>();
+	return boost::optional<std::tuple<direction_3, direction_3>>();
 }
 
-boost::optional<direction_3> get_axis(
+boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 	const cppw::Select & sel,
 	number_collection<K> * c)
 {
-	return get_axis(cppw::Instance(sel), c);
+	return get_axes(cppw::Instance(sel), c);
 }
 
 std::unique_ptr<solid> get_local_geometry(
@@ -492,7 +494,7 @@ std::unique_ptr<solid> get_local_geometry(
 	else if (inst.is_instance_of("IfcProductDefinitionShape")) {
 		cppw::List reps = inst.get("Representations");
 		std::unique_ptr<solid> geometry;
-		boost::optional<direction_3> axis;
+		boost::optional<std::tuple<direction_3, direction_3>> axes;
 		for (reps.move_first(); reps.move_next(); ) {
 			cppw::Instance this_rep = reps.get_();
 			if (this_rep.get("RepresentationIdentifier") == "Body") {
@@ -501,11 +503,11 @@ std::unique_ptr<solid> get_local_geometry(
 			}
 			else if (this_rep.get("RepresentationIdentifier") == "Axis") {
 				cppw::Set rep_items = this_rep.get("Items");
-				axis = get_axis(rep_items.get_(0), c);
+				axes = get_axes(rep_items.get_(0), c);
 			}
 		}
 		if (geometry) {
-			geometry->set_axis(axis);
+			geometry->set_axes(axes);
 			return geometry;
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
