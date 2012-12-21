@@ -324,6 +324,7 @@ brep::brep(const exact_brep & b) {
 
 void brep::transform(const transformation_3 & t) {
 	boost::for_each(faces, [&t](face & f) { f.transform(t); });
+	if (axis_) { axis_ = axis_->transform(t); }
 }
 
 interface_solid brep::to_interface_solid() const {
@@ -367,6 +368,7 @@ void ext::transform(const transformation_3 & t) {
 	assert(!are_perpendicular(area.normal(), dir));
 	area.transform(t);
 	dir = dir.transform(t);
+	if (axis_) { axis_ = axis_->transform(t); }
 	assert(!are_perpendicular(area.normal(), dir));
 }
 
@@ -416,10 +418,7 @@ transformation_3 get_globalizer(
 		return transformation_3();
 	}
 	else if (inst.is_instance_of("IfcExtrudedAreaSolid")) {
-		return build_transformation(
-			inst.get("Position"), 
-			build_scale_function(scaler), 
-			c);
+		return transformation_3();
 	}
 	else if (inst.is_instance_of("IfcMappedItem")) {
 		cppw::Instance ms = inst.get("MappingSource");
@@ -437,6 +436,41 @@ transformation_3 get_globalizer(
 	else {
 		throw bad_rep_exception("unknown or unsupported geometry definition");
 	}
+}
+
+boost::optional<direction_3> get_axis(
+	const cppw::Instance & inst,
+	number_collection<K> * c)
+{
+	if (inst.is_instance_of("IfcPolyline")) {
+		cppw::List pts = inst.get("Points");
+		if (pts.count() != 2) {
+			throw bad_rep_exception(
+				"axis definition with more than two "
+				"points");
+		}
+		cppw::Instance p1(pts.get_(0));
+		cppw::List coords = p1.get("Coordinates");
+		cppw::Integer dim = inst.get("Dim");
+		double p1x = coords.get_(0);
+		double p1y = coords.get_(1);
+		double p1z = dim == 3 ? coords.get_(3) : 0.0;
+		cppw::Instance p2(pts.get_(1));
+		coords = cppw::List(p2.get("Coordinates"));
+		dim = inst.get("Dim");
+		double p2x = coords.get_(0);
+		double p2y = coords.get_(1);
+		double p2z = dim == 3 ? coords.get_(3) : 0.0;
+		return c->request_direction(p2x - p1x, p2y - p1y, p2z - p1z);
+	}
+	return boost::optional<direction_3>();
+}
+
+boost::optional<direction_3> get_axis(
+	const cppw::Select & sel,
+	number_collection<K> * c)
+{
+	return get_axis(cppw::Instance(sel), c);
 }
 
 std::unique_ptr<solid> get_local_geometry(
@@ -457,12 +491,22 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (inst.is_instance_of("IfcProductDefinitionShape")) {
 		cppw::List reps = inst.get("Representations");
+		std::unique_ptr<solid> geometry;
+		boost::optional<direction_3> axis;
 		for (reps.move_first(); reps.move_next(); ) {
 			cppw::Instance this_rep = reps.get_();
 			if (this_rep.get("RepresentationIdentifier") == "Body") {
 				cppw::Set rep_items = this_rep.get("Items");
-				return get_local_geometry(rep_items.get_(0), scaler, c);
+				geometry = get_local_geometry(rep_items.get_(0), scaler, c);
 			}
+			else if (this_rep.get("RepresentationIdentifier") == "Axis") {
+				cppw::Set rep_items = this_rep.get("Items");
+				axis = get_axis(rep_items.get_(0), c);
+			}
+		}
+		if (geometry) {
+			geometry->set_axis(axis);
+			return geometry;
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
 	}
@@ -473,7 +517,9 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (inst.is_instance_of("IfcExtrudedAreaSolid")) {
 		auto sf = build_scale_function(scaler);
-		return std::unique_ptr<ext>(new ext(inst, sf, c));
+		auto res = std::unique_ptr<ext>(new ext(inst, sf, c));
+		res->transform(build_transformation(inst.get("Position"), sf, c));
+		return std::move(res);
 	}
 	else if (inst.is_instance_of("IfcMappedItem")) {
 		cppw::Instance mapping_source = inst.get("MappingSource");

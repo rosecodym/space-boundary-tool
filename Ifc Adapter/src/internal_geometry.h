@@ -32,7 +32,12 @@ public:
 };
 
 class solid {
+protected:
+	boost::optional<direction_3> axis_;
 public:
+	const boost::optional<direction_3> & get_axis() const { return axis_; }
+	void set_axis(const boost::optional<direction_3> & a) { axis_ = a; }
+
 	virtual void transform(const transformation_3 & t) = 0;
 	virtual interface_solid to_interface_solid() const = 0;
 	
