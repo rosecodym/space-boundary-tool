@@ -19,6 +19,8 @@ using IfcSpace = IfcInformationExtractor.Space;
 
 using LibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
+using Normal = System.Tuple<double, double, double>;
+
 namespace GUI.Operations
 {
     partial class IdfGeneration : Operation<IdfGeneration.Parameters, object> // no return
@@ -76,6 +78,7 @@ namespace GUI.Operations
             p.SbtBuilding = vm.CurrentSbtBuilding;
             p.IfcBuilding = vm.CurrentIfcBuilding;
             p.MaterialIDToModelConstruction = vm.SbtMaterialIDToModelConstruction;
+            p.MaterialIDToCompositeDir = vm.SbtMaterialIDToCompositeNormal;
             p.GetIdd = () => vm.Idds.GetIddFor((EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite, msg => ReportProgress(msg + Environment.NewLine));
             p.AttachDebugger = vm.AttachDebuggerPriorToIdfGeneration;
             return p;
@@ -117,19 +120,23 @@ namespace GUI.Operations
                 {
                     if (sb.Level == 2)
                     {
-                        List<IfcConstruction> constructions =
-                            new List<IfcConstruction>();
-                        List<double> thicknesses = new List<double>();
+                        var constructions = new List<IfcConstruction>();
+                        var thicknesses = new List<double>();
+                        var dirs = new List<Normal>();
                         foreach (SbtLayer layer in sb.MaterialLayers)
                         {
-                            constructions.Add(
-                                p.MaterialIDToModelConstruction(layer.Id));
+                            var mc = p.MaterialIDToModelConstruction(layer.Id);
+                            var norm = p.MaterialIDToCompositeDir(layer.Id);
+                            constructions.Add(mc);
                             thicknesses.Add(layer.Thickness);
+                            dirs.Add(norm);
                         }
                         surfacesByGuid[sb.Guid] = new BuildingSurface(
                             sb,
                             cmanager.ConstructionNameForLayers(
+                                sb.Normal,
                                 constructions,
+                                dirs,
                                 thicknesses),
                             zoneNamesByGuid[sb.BoundedSpace.Guid]);
                     }
@@ -161,20 +168,24 @@ namespace GUI.Operations
                     sb.ContainingBoundary != null);
                 foreach (Sbt.CoreTypes.SpaceBoundary sb in fens)
                 {
-                    List<IfcConstruction> constructions =
-                        new List<IfcConstruction>();
-                    List<double> thicknesses = new List<double>();
+                    var constructions = new List<IfcConstruction>();
+                    var thicknesses = new List<double>();
+                    var dirs = new List<Normal>();
                     foreach (SbtLayer layer in sb.MaterialLayers)
                     {
-                        constructions.Add(
-                            p.MaterialIDToModelConstruction(layer.Id));
+                        var c = p.MaterialIDToModelConstruction(layer.Id);
+                        var norm = p.MaterialIDToCompositeDir(layer.Id);
+                        constructions.Add(c);
                         thicknesses.Add(layer.Thickness);
+                        dirs.Add(norm);
                     }
                     fenestrations.Add(new FenestrationSurface(
                         sb,
                         surfacesByGuid[sb.ContainingBoundary.Guid],
                         cmanager.ConstructionNameForLayers(
+                            sb.Normal,
                             constructions,
+                            dirs,
                             thicknesses)));
                 }
                 var elementGeometries = new Dictionary<string, Solid>();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using ModelConstruction = ConstructionManagement.ModelConstructions.ModelConstruction;
+using Normal = System.Tuple<double, double, double>;
 
 namespace GUI.Operations
 {
@@ -45,6 +46,7 @@ namespace GUI.Operations
             public SbtBuildingInformation SbtBuilding { get; set; }
             public IfcInformationExtractor.BuildingInformation IfcBuilding { get; set; }
             public Func<int, ModelConstruction> MaterialIDToModelConstruction { get; set; }
+            public Func<int, Normal> MaterialIDToCompositeDir { get; set; }
             public EnergyPlusVersion EPVersion { get; set; }
             public Func<LibIdf.Idd.Idd> GetIdd { get; set; }
             public bool AttachDebugger { get; set; }

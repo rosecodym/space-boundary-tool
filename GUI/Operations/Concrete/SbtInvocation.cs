@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+using Normal = System.Tuple<double, double, double>;
+
 namespace GUI.Operations
 {
     class SbtInvocation : Operation<SbtInvocation.Parameters, SbtBuildingInformation>
@@ -53,6 +55,7 @@ namespace GUI.Operations
                 try
                 {
                     IList<Sbt.CoreTypes.ElementInfo> elements;
+                    IList<Tuple<double, double, double>> compositeDirs;
                     ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
                     ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
                     var startTime = System.DateTime.Now;
@@ -60,6 +63,7 @@ namespace GUI.Operations
                         p.InputFilename,
                         p.OutputFilename,
                         out elements,
+                        out compositeDirs,
                         out spaces,
                         out spaceBoundaries,
                         p.Flags,
@@ -75,6 +79,7 @@ namespace GUI.Operations
                     resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
                     resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
                     resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
+                    resultingBuilding.CompositeDirections = compositeDirs;
                     return resultingBuilding;
                 }
                 catch (Exception ex)

@@ -13,6 +13,8 @@ using IfcElement = IfcInformationExtractor.Element;
 
 using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
+using Normal = System.Tuple<double, double, double>;
+
 namespace GUI
 {
     class ViewModel : INotifyPropertyChanged
@@ -462,6 +464,11 @@ namespace GUI
             IfcElement ifcElement;
             if (!CurrentIfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
             return ifcElement.AssociatedConstruction;
+        }
+
+        internal Normal SbtMaterialIDToCompositeNormal(int id)
+        {
+            return CurrentSbtBuilding.CompositeDirections[id - 1];
         }
 
         internal void UpdateGlobalStatus()

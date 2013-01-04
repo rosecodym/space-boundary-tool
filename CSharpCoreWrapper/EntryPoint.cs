@@ -151,6 +151,7 @@ namespace Sbt
             string inputFilename,
             string outputFilename,
             out IList<CoreTypes.ElementInfo> elements,
+            out IList<Tuple<double, double, double>> compositeDirs,
             out ICollection<CoreTypes.SpaceInfo> spaces,
             out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
             SbtFlags flags = SbtFlags.None,
@@ -211,9 +212,9 @@ namespace Sbt
             IntPtr nativeSpaces;
             IntPtr nativeSbs;
 
-            IntPtr unused1;
-            IntPtr unused2;
-            IntPtr unused3;
+            IntPtr compositeDxsPtr;
+            IntPtr compositeDysPtr;
+            IntPtr compositeDzsPtr;
 
             IfcAdapterResult res = LoadAndRunFrom(
                 inputFilename, 
@@ -221,9 +222,9 @@ namespace Sbt
                 opts,
                 out elementCount,
                 out nativeElements,
-                out unused1,
-                out unused2,
-                out unused3,
+                out compositeDxsPtr,
+                out compositeDysPtr,
+                out compositeDzsPtr,
                 out spaceCount,
                 out nativeSpaces,
                 out spaceBoundaryCount, 
@@ -243,11 +244,29 @@ namespace Sbt
             }
 
             elements = new List<CoreTypes.ElementInfo>();
+            compositeDirs = new List<Tuple<double, double, double>>();
+            var compositeDxs = new double[elementCount];
+            var compositeDys = new double[elementCount];
+            var compositeDzs = new double[elementCount];
+            Marshal.Copy(compositeDxsPtr, compositeDxs, 0, (int)elementCount);
+            Marshal.Copy(compositeDysPtr, compositeDys, 0, (int)elementCount);
+            Marshal.Copy(compositeDzsPtr, compositeDzs, 0, (int)elementCount);
             for (uint i = 0; i < elementCount; ++i)
             {
                 IntPtr e = Marshal.ReadIntPtr(nativeElements, Marshal.SizeOf(typeof(IntPtr)) * (int)i);
                 NativeCoreTypes.ElementInfo native = (NativeCoreTypes.ElementInfo)Marshal.PtrToStructure(e, typeof(NativeCoreTypes.ElementInfo));
                 elements.Add(new CoreTypes.ElementInfo(native));
+                if (native.type == NativeCoreTypes.ElementType.Slab)
+                {
+                    compositeDirs.Add(Tuple.Create(0.0, 0.0, 1.0));
+                }
+                else
+                {
+                    var cdx = compositeDxs[i];
+                    var cdy = compositeDys[i];
+                    var cdz = compositeDzs[i];
+                    compositeDirs.Add(Tuple.Create(cdx, cdy, cdz));
+                }
             }
 
             spaces = new List<CoreTypes.SpaceInfo>();
