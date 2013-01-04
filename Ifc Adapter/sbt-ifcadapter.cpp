@@ -189,9 +189,19 @@ ifcadapter_return_t execute(
 
 			auto total_e_count = *element_count + shadings.size();
 			auto total_e_size = sizeof(element_info *) * total_e_count;
+			auto total_cdir_size = sizeof(double) * total_e_count;
 			*elements = (element_info **)realloc(*elements, total_e_size);
+			*composite_layer_dxs = 
+				(double *)realloc(*composite_layer_dxs, total_cdir_size);
+			*composite_layer_dys = 
+				(double *)realloc(*composite_layer_dys, total_cdir_size);
+			*composite_layer_dzs = 
+				(double *)realloc(*composite_layer_dzs, total_cdir_size);
 			for (size_t i = 0; i < shadings.size(); ++i) {
 				(*elements)[*element_count + i] = shadings[i];
+				(*composite_layer_dxs)[*element_count + i] = 0;
+				(*composite_layer_dys)[*element_count + i] = 0;
+				(*composite_layer_dzs)[*element_count + i] = 0;
 			}
 			*element_count = *element_count + shadings.size();
 
