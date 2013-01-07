@@ -3,10 +3,66 @@
 open System
 open System.Collections.Generic
 
+[<AbstractClass>]
+type OutputConstructionBase () =
+    abstract Name : string with get
+
+[<AbstractClass>]
+type ProblemConstruction (msg) =
+    inherit OutputConstructionBase ()
+    member this.Message = msg
+
+type UnorientedComposite () =
+    inherit ProblemConstruction(
+        "There was an attempt to generate a composite from an un-oriented \
+         material layer set. This can happen if the original layer set was \
+         improperly defined as a material list. The construction has been \
+         named 'UNORIENTED COMPOSITE' in the IDF. You will have to create \
+         this construction manually.")
+    override this.Name = "UNORIENTED COMPOSITE"
+
+type UnalignedComposite () =
+    inherit ProblemConstruction(
+        "A surface's assigned material layers were not parallel to its \
+         normal. The construction has been named 'UNALIGNED COMPOSITE' in the \
+         IDF. You will have to create this construction manually.")
+    override this.Name = "UNALIGNED COMPOSITE"
+
+type UnknownProblemComposite () =
+    inherit ProblemConstruction(
+        "There was an unkown problem automatically generating a construction. \
+         It has been assigned the construction name 'UNMAPPED'. You will have \
+         to create this construction manually.")
+    override this.Name = "UNMAPPED"
+
+type BadMappingConstruction () =
+    inherit ProblemConstruction(
+        "There was an attempt to automatically generate a composite for a \
+         missing or invalid mapping target. It has been assigned the \
+         construction name 'BAD MAPPING'. You will have to create this 
+         construction manually.")
+    override this.Name = "BAD MAPPING"
+
+type LibraryComposite () =
+    inherit ProblemConstruction(
+        "There was an attempt to automatically generate an opaque \
+         construction from a composite library entry. This is not yet \
+         supported. The construction has been named 'COMPOSITE LIBRARY \
+         ENTRY'. You will have to create this construction manually.")
+    override this.Name = "COMPOSITE LIBRARY ENTRY"
+
+type AdiabaticWindowConstruction () =
+    inherit ProblemConstruction(
+        "There was an attempt to generate an adiabatic surface construction \
+         for a window library composite. The construction has been named 'BAD \
+         WINDOW TARGET'. You will have to create this construction manually.")
+    override this.Name = "BAD WINDOW TARGET"
+
 type OutputConstruction (layers:OutputLayer list,
                          humanReadableName:string option,
-                         warn:string -> unit,
                          ?maxNameLength: int) =
+    inherit OutputConstructionBase()
+
     let layerNames = 
         layers 
         |> Seq.map (fun layer -> if layer <> Unchecked.defaultof<OutputLayer> then layer.Name else "UNMAPPED MATERIAL")
@@ -33,25 +89,26 @@ type OutputConstruction (layers:OutputLayer list,
         | Some(hname), [layerName] when layerName.Length <= maxNL -> layerName
         | Some(hname), _ -> idName
 
-    do
-        match humanReadableName with
-        | Some(hname) when hname.Length > maxNL ->
-            warn (sprintf
+    override this.Name = name
+    member this.LayerNames = List<string>(layerNames)
+    member this.Identifier = identifier
+    member this.Warnings =
+        let tooLong =
+            match humanReadableName with
+            | Some(hname) when hname.Length > maxNL ->
+                Some(sprintf
                     "The name of construction '%s' is too long. It will be \
                      named '%s' in the IDF."
                      hname
                      name)
-        | _ -> ()
-        if match layers, List.rev layers with
-            | outside :: rest, _ when outside.IsAirLayer -> true
-            | _, outside :: rest when outside.IsAirLayer -> true
-            | _ -> false
-        then
-            warn (sprintf "Construction '%s' has an outside air layer" name)
-
-    member this.Name = name
-    member this.LayerNames = List<string>(layerNames)
-    member this.Identifier = identifier
+            | _ -> None
+        let outsideAir =
+            if 
+                layers.Head.IsAirLayer ||
+                (List.rev layers).Head.IsAirLayer then
+                Some(sprintf "Construction '%s' has an outside air layer" name)
+            else None
+        Array.choose id [|tooLong; outsideAir|]
 
     override this.Equals(obj:Object) =
         match obj with

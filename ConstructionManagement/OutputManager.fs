@@ -79,33 +79,30 @@ type OutputManager (warnDelegate : Action<string>) =
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
     member this.AllOutputConstructions = constructions :> IEnumerable<OutputConstruction>
 
-    member this.ConstructionNameForLayers(surfaceNormal,
-                                          constructions, 
-                                          normals, 
-                                          thicknesses) =
+    member this.ConstructionForLayers(surfaceNormal,
+                                      constructions, 
+                                      normals, 
+                                      thicknesses) : OutputConstructionBase =
+        let emitProblemConstruction (c: ProblemConstruction) =
+            warn c.Message
+            c :> OutputConstructionBase
         let cnorms = normals |> Seq.map (function
             | 0.0, 0.0, 0.0 -> None
             | n -> Some(n))
         match List.ofSeq constructions with
         | Empty -> 
             let layer = retrieveLayer (OutputLayerInfraredTransparent())
-            (retrieveConstruction ([layer]) None).Name
+            upcast retrieveConstruction ([layer]) None
         | MappedWindow(name, libraryLayers) -> 
-            (cloneLibraryComposite (Some(name)) libraryLayers).Name
+            upcast cloneLibraryComposite (Some(name)) libraryLayers 
         | SimpleOnly(infos) -> 
             let ts = thicknesses |> Seq.map (fun t -> Some(t)) |> List.ofSeq
             let outputLayers = List.map2 retrieveCopy ts infos
-            (retrieveConstruction outputLayers None).Name
+            upcast retrieveConstruction outputLayers None
         | SingleComposite(name, layers) ->
             let compositeNorm = Seq.head cnorms
             if compositeNorm.IsNone then
-                warn "There was an attempt to generate a composite from an \
-                      un-oriented material layer set. This can happen if the \
-                      original layer set was improperly defined as a material \
-                      list. The construction has been named 'UNORIENTED \
-                      COMPOSITE' in the IDF. You will have to create this \
-                      construction manually."
-                "UNORIENTED COMPOSITE" else
+                emitProblemConstruction (UnorientedComposite()) else
             let dotproduct (ax, ay, az) (bx, by, bz) =
                 ax * bx + ay * by + az * bz
             let magSq (d: float * float * float) = dotproduct d d
@@ -115,12 +112,7 @@ type OutputManager (warnDelegate : Action<string>) =
                 let rhs = (magnitude a) * (magnitude b)
                 abs(lhs - rhs) < 0.001  || abs(lhs + rhs) < 0.001 // magic eps
             if not (areParallel surfaceNormal compositeNorm.Value) then
-                warn
-                    "A surface's assigned material layers were not parallel \
-                     to its normal. The construction has been named \
-                     'UNALIGNED COMPOSITE' in the IDF. You will have to \
-                     create this construction manually."
-                "UNALIGNED COMPOSITE" else
+                emitProblemConstruction (UnalignedComposite()) else
             let areAntiparallel a b =
                 let ax, ay, az = a
                 let bx, by, bz = b
@@ -129,37 +121,37 @@ type OutputManager (warnDelegate : Action<string>) =
             let reversed = areAntiparallel surfaceNormal compositeNorm.Value
             let reqThickness = Seq.head thicknesses
             let c = retrievePartialComposite name layers reqThickness reversed
-            c.Name
+            upcast c
         | _ ->
-            warn "An element configuration was too complicated to have its \
-                  construction automatically generated. It has been assigned \
-                  the construction name 'UNMAPPED'. You will have to create \
-                  this construction manually."
-            "UNMAPPED"
+            emitProblemConstruction (UnknownProblemComposite())
 
-    member this.ConstructionNameForSurface(c:ModelConstruction) = 
+    member this.ConstructionForSurface (c: ModelConstruction) = 
+        let emitProblemConstruction (c: ProblemConstruction) =
+            warn c.Message
+            c :> OutputConstructionBase
         match c with
         | ModelConstruction.SingleOpaque(src) ->
             match src.MappingTarget with
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> 
-                "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
+                emitProblemConstruction (BadMappingConstruction())
             | LibraryEntry.Opaque(entry) -> 
                 let surfaceLayer = retrieveOpaqueSurface entry
-                (retrieveConstruction [surfaceLayer] None).Name
+                upcast retrieveConstruction [surfaceLayer] None
             | LibraryEntry.Composite(_) -> 
-                "INVALID MAPPING (SURFACE FOR COMPOSITE LIBRARY ENTRY)"
-            | _ -> "INVALID MAPPING (OPAQUE TO NON-OPAQUE)"
+                emitProblemConstruction (LibraryComposite())
+            | _ -> emitProblemConstruction (BadMappingConstruction())
         | ModelConstruction.Window(_) -> 
-            "COULDN'T BUILD CONSTRUCTION (THIRD-LEVEL WINDOW SURFACE)"
+            emitProblemConstruction (AdiabaticWindowConstruction())
         | ModelConstruction.LayerSet(_, layers) ->
             let firstLayer = fst layers.[0]
             // Assumption: symmetrical.
             match firstLayer.MappingTarget with
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> 
-                "MISSING MAPPING FOR THIRD-LEVEL SURFACE"
+                emitProblemConstruction (BadMappingConstruction())
             | LibraryEntry.Opaque(entry) -> 
                 let surfaceLayer = retrieveOpaqueSurface entry
-                (retrieveConstruction [surfaceLayer] None).Name
+                upcast retrieveConstruction [surfaceLayer] None
             | entry -> 
-                (retrieveConstruction [retrieveCopy None entry] None).Name
-            | _ -> "BAD MAPPING FOR THIRD-LEVEL SURFACE"
+                let res = retrieveConstruction [retrieveCopy None entry] None
+                upcast res
+            | _ -> emitProblemConstruction (BadMappingConstruction())

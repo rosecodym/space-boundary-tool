@@ -6,6 +6,7 @@ using System.Text;
 using Sbt.CoreTypes;
 using Vector3 = GUI.SbtExtensions.Vector3;
 using Plane3 = GUI.SbtExtensions.Plane3;
+using Construction = ConstructionManagement.OutputConstructionBase;
 
 namespace GUI.Operations
 {
@@ -32,24 +33,24 @@ namespace GUI.Operations
             readonly SpaceBoundary sbtInfo;
             readonly Polyloop geometry;
             readonly Plane3 plane;
-            readonly string constructionName;
+            readonly Construction construction;
             readonly string zoneName;
 
             public BuildingSurface(
-                SpaceBoundary sb, 
-                string constructionName, 
+                SpaceBoundary sb,
+                Construction construction, 
                 string zoneName)
             {
                 this.sbtInfo = sb;
                 this.geometry = sbtInfo.Geometry.Cleaned(0.01);
                 this.plane = sb.Plane();
-                this.constructionName = constructionName;
+                this.construction = construction;
                 this.zoneName = zoneName;
             }
 
             public string Name { get { return sbtInfo.Guid; } }
             public string ZoneName { get { return zoneName; } }
-            public string ConstructionName { get { return constructionName; } }
+            public Construction Construction { get { return construction; } }
             public BuildingSurface Opposite { get; set; }
             public SurfaceType Type
             {

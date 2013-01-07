@@ -5,6 +5,8 @@ using System.Text;
 
 using Sbt.CoreTypes;
 
+using Construction = ConstructionManagement.OutputConstructionBase;
+
 namespace GUI.Operations
 {
     partial class IdfGeneration
@@ -21,18 +23,21 @@ namespace GUI.Operations
 
             readonly SpaceBoundary sbtInfo;
             readonly BuildingSurface containingSurface;
-            readonly string constructionName;
+            readonly Construction construction;
 
-            public FenestrationSurface(SpaceBoundary sbtInfo, BuildingSurface containingSurface, string constructionName)
+            public FenestrationSurface(
+                SpaceBoundary sbtInfo, 
+                BuildingSurface containingSurface, 
+                Construction construction)
             {
                 this.sbtInfo = sbtInfo;
                 this.containingSurface = containingSurface;
-                this.constructionName = constructionName;
+                this.construction = construction;
             }
 
             public string Name { get { return sbtInfo.Guid; } }
             public FenestrationType Type { get { return sbtInfo.Element.Type == ElementType.Window ? FenestrationType.Window : FenestrationType.Door; } }
-            public string ConstructionName { get { return constructionName; } }
+            public Construction Construction { get { return construction; } }
             public BuildingSurface ContainingSurface { get { return containingSurface; } }
             public string OtherSideName { get { return sbtInfo.Opposite != null ? sbtInfo.Opposite.Guid : null; } }
             public Polyloop Geometry { get { return PullVerticesTowardCenter(sbtInfo.Geometry).Cleaned(0.01); } }

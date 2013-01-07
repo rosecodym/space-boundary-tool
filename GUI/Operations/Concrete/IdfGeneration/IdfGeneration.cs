@@ -133,7 +133,7 @@ namespace GUI.Operations
                         }
                         surfacesByGuid[sb.Guid] = new BuildingSurface(
                             sb,
-                            cmanager.ConstructionNameForLayers(
+                            cmanager.ConstructionForLayers(
                                 sb.Normal,
                                 constructions,
                                 dirs,
@@ -144,7 +144,7 @@ namespace GUI.Operations
                     {
                         surfacesByGuid[sb.Guid] = new BuildingSurface(
                             sb,
-                            cmanager.ConstructionNameForSurface(
+                            cmanager.ConstructionForSurface(
                                 p.MaterialIDToModelConstruction(
                                     sb.Element.MaterialId)),
                             zoneNamesByGuid[sb.BoundedSpace.Guid]);
@@ -182,7 +182,7 @@ namespace GUI.Operations
                     fenestrations.Add(new FenestrationSurface(
                         sb,
                         surfacesByGuid[sb.ContainingBoundary.Guid],
-                        cmanager.ConstructionNameForLayers(
+                        cmanager.ConstructionForLayers(
                             sb.Normal,
                             constructions,
                             dirs,

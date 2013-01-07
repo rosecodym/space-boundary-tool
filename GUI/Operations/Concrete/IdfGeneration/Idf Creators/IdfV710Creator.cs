@@ -148,7 +148,7 @@ namespace GUI.Operations
                     }
 
                     obj.Fields["Construction Name"].Value = 
-                        surf.ConstructionName;
+                        surf.Construction.Name;
 
                     if (!surf.IsVirtual) { 
                         obj.AddComment(
@@ -213,7 +213,7 @@ namespace GUI.Operations
 
                     obj.Fields["Name"].Value = fenestration.Name;
                     obj.Fields["Surface Type"].Value = fenestration.Type.ToString();
-                    obj.Fields["Construction Name"].Value = fenestration.ConstructionName;
+                    obj.Fields["Construction Name"].Value = fenestration.Construction.Name;
                     obj.Fields["Building Surface Name"].Value = fenestration.ContainingSurface.Name;
                     obj.Fields["Outside Boundary Condition Object"].Value = fenestration.OtherSideName;
                     foreach (var pair in VertexOrderRotatedGeometry(fenestration.Geometry, ComparePointsForUpperLeftness).Select((point, index) => new { Point = point, Index = index }))
