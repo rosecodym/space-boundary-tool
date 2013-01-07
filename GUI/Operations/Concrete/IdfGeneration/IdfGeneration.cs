@@ -228,6 +228,7 @@ namespace GUI.Operations
                         p.EPVersion,
                         idd,
                         msg => ReportProgress(msg));
+                cmanager.IdentifyConstructionVariants();
                 creator.AddConstantContents();
                 creator.AddLocation(
                     p.LocationName,

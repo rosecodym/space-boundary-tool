@@ -10,6 +10,7 @@ open OutputPatterns
 type OutputManager (warnDelegate : Action<string>) =
     let mutable layers = Set.empty
     let mutable constructions = Set.empty
+    let mutable variantTable: Map<string, int> = Map.empty
 
     let warn =
         let warnings = ref Set.empty
@@ -19,8 +20,10 @@ type OutputManager (warnDelegate : Action<string>) =
                 warnings := Set.add w !warnings
 
     let retrieveConstruction materials humanReadableName =
-        let newC = OutputConstruction(materials, humanReadableName, warn)
-        constructions <- constructions.Add(newC)
+        let getVariant = fun ident -> Map.tryFind ident variantTable
+        let newC = OutputConstruction(materials, humanReadableName, getVariant)
+        Seq.iter warn newC.Warnings
+        constructions <- Set.add newC constructions
         newC
 
     let retrieveLayer (layer:OutputLayer) =
@@ -77,7 +80,8 @@ type OutputManager (warnDelegate : Action<string>) =
         retrieveConstruction outputLayers origName
 
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
-    member this.AllOutputConstructions = constructions :> IEnumerable<OutputConstruction>
+    member this.AllOutputConstructions =
+        constructions :> IEnumerable<OutputConstruction>
 
     member this.ConstructionForLayers(surfaceNormal,
                                       constructions, 
@@ -155,3 +159,12 @@ type OutputManager (warnDelegate : Action<string>) =
                 let res = retrieveConstruction [retrieveCopy None entry] None
                 upcast res
             | _ -> emitProblemConstruction (BadMappingConstruction())
+
+    member this.IdentifyConstructionVariants () =
+        variantTable <-
+            constructions |>
+            Seq.groupBy (fun c -> c.InvariantName) |>
+            Seq.map snd |>
+            Seq.filter (Seq.length >> (<>) 1) |>
+            Seq.collect (Seq.mapi (fun v c -> c.Identifier, v)) |>
+            Map.ofSeq

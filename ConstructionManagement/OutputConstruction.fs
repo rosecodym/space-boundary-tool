@@ -60,6 +60,7 @@ type AdiabaticWindowConstruction () =
 
 type OutputConstruction (layers:OutputLayer list,
                          humanReadableName:string option,
+                         variantLookup,
                          ?maxNameLength: int) =
     inherit OutputConstructionBase()
 
@@ -89,7 +90,11 @@ type OutputConstruction (layers:OutputLayer list,
         | Some(hname), [layerName] when layerName.Length <= maxNL -> layerName
         | Some(hname), _ -> idName
 
-    override this.Name = name
+    override this.Name =
+        match variantLookup(this.Identifier) with
+        | Some(v) -> sprintf "%s (variant %i)" name (v + 1)
+        | None -> name
+    member this.InvariantName = name
     member this.LayerNames = List<string>(layerNames)
     member this.Identifier = identifier
     member this.Warnings =
