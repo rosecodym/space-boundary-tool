@@ -24,7 +24,7 @@ TEST(Stacking, DoConnect) {
 		simple_point(0, 387, 0));
 
 	space_info * s_info = create_space("space", create_ext(0, 0, 1, 300, f));
-	element_info * e_info = create_element("element", SLAB, 1, create_ext(0, 0, 1, 300, f));
+	element_info * e_info = create_element("element", WALL, 1, create_ext(0, 0, 1, 300, f));
 
 	space dummy_space(s_info, &c);
 	element dummy_element(e_info, &c);

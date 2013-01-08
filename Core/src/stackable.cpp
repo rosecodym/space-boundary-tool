@@ -79,6 +79,14 @@ boost::optional<stackable_connection> stackable_connection::do_connect(stackable
 		}
 		boost::optional<stackable_connection> operator () (const block * b, space_face * f) const { return (*this)(f, b); }
 		boost::optional<stackable_connection> operator () (const block * b1, const block * b2) const {
+			// This check might "incorrectly" filter out some adjacency cases,
+			// but E+ won't be smart enough to understanding the resulting file
+			// anyway.
+			if ((b1->material_layer().layer_element().type() == SLAB) || 
+				(b2->material_layer().layer_element().type() == SLAB))
+			{
+				return boost::optional<stackable_connection>();
+			}
 			auto b1_heights = b1->heights();
 			auto b2_heights = b2->heights();
 			boost::optional<double> matching_height;
