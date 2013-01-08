@@ -97,7 +97,11 @@ multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 			// since we don't even have a way to *verify* normals, this is fatal
 			throw brep_with_voids_exception();
 		}
-		geometry = simple_faces_to_nef(std::move(all_faces));
+		auto nef = simple_faces_to_nef(std::move(all_faces));
+		if (nef.is_empty()) {
+			throw bad_brep_exception();
+		}
+		geometry = nef;
 	}
 	else if (s.rep_type == REP_EXT) {
 		geometry = get_extrusion_information(s.rep.as_ext, c);

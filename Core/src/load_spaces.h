@@ -8,20 +8,34 @@
 #include "space.h"
 
 inline std::vector<space> load_spaces(space_info ** infos, size_t space_count, equality_context * c, const guid_filter & filter) {
+	using namespace reporting;
+	typedef boost::format fmt;
+
 	std::vector<space> res;
 	for (size_t i = 0; i < space_count; ++i) {
 		try {
 			if (filter(infos[i]->id)) {
-				reporting::report_progress(boost::format("Loading space %s...") % infos[i]->id);
+				report_progress(fmt("Loading space %s...") % infos[i]->id);
 				res.push_back(space(infos[i], c));
-				reporting::report_progress("done.\n");
+				report_progress("done.\n");
 			}
 		}
 		catch (unsupported_geometry_exception & ex) {
-			reporting::report_warning(boost::format("Space %s has unsupported geometry (%s). It will be ignored.\n") % infos[i]->id % ex.condition());
+			auto msg = fmt(
+				"Space %s has unsupported geometry (%s). It will "
+				"be ignored.\n");
+			report_warning(msg % infos[i]->id % ex.condition());
 		}
 		catch (unknown_geometry_rep_exception & /*ex*/) {
-			reporting::report_warning(boost::format("Element %s has an unknown internal geometry represetnation type. It will be ignored. Please report this SBT bug.\n") % infos[i]->id);
+			auto msg = fmt(
+				"Space %s has an unknown internal geometry representation "
+				"type. It will be ignored. Please report this SBT bug.\n");
+			report_warning(msg % infos[i]->id);
+		}
+		catch (bad_geometry_exception & ex) {
+			auto msg = 
+				fmt("Space %s has bad geometry (%s). It will be ignored.\n");
+			reporting::report_warning(msg % infos[i]->id % ex.condition());
 		}
 	}
 	return res;

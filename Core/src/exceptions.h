@@ -46,7 +46,9 @@ public:
 
 class bad_brep_exception : public bad_geometry_exception {
 public:
-	virtual const char * condition() const throw() { return "bad b-rep"; }
+	virtual const char * condition() const throw() { 
+		return "unenclosed or too-detailed brep"; 
+	}
 };
 
 class invalid_face_exception : public bad_geometry_exception {
