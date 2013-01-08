@@ -412,11 +412,19 @@ transformation_3 get_globalizer(
 		for (reps.move_first(); reps.move_next(); ) {
 			cppw::Instance this_rep = reps.get_();
 			if (this_rep.get("RepresentationIdentifier") == "Body") {
-				cppw::Set rep_items = this_rep.get("Items");
-				return get_globalizer(rep_items.get_(0), scaler, c);
+				return get_globalizer(this_rep, scaler, c);
 			}
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
+	}
+	else if (inst.is_instance_of("IfcShapeRepresentation")) {
+		// This is NOT redundant with the IfcProductDefinitionShape case.
+		// IfcShapeRepresentations can live on their own (inside some mapping
+		// instances). Do NOT refactor it out!
+		if (inst.get("RepresentationIdentifier") == "Body") {
+			cppw::Set rep_items = inst.get("Items");
+			return get_globalizer(rep_items.get_(0), scaler, c);
+		}
 	}
 	else if (inst.is_instance_of("IfcFacetedBrep")) {
 		return transformation_3();
@@ -426,9 +434,10 @@ transformation_3 get_globalizer(
 	}
 	else if (inst.is_instance_of("IfcMappedItem")) {
 		cppw::Instance ms = inst.get("MappingSource");
+		auto sf = build_scale_function(scaler);
 		auto base = get_globalizer(ms.get("MappedRepresentation"), scaler, c);
-		auto from = get_globalizer(ms.get("MappingOrigin"), scaler, c);
-		auto to = get_globalizer(inst.get("MappingTarget"), scaler, c);
+		auto from = build_transformation(ms.get("MappingOrigin"), sf, c);
+		auto to = build_transformation(inst.get("MappingTarget"), sf, c);
 		return base * from * to;
 	}
 	else if (inst.is_instance_of("IfcBooleanClippingResult")) {
@@ -498,8 +507,7 @@ std::unique_ptr<solid> get_local_geometry(
 		for (reps.move_first(); reps.move_next(); ) {
 			cppw::Instance this_rep = reps.get_();
 			if (this_rep.get("RepresentationIdentifier") == "Body") {
-				cppw::Set rep_items = this_rep.get("Items");
-				geometry = get_local_geometry(rep_items.get_(0), scaler, c);
+				geometry = get_local_geometry(this_rep, scaler, c);
 			}
 			else if (this_rep.get("RepresentationIdentifier") == "Axis") {
 				cppw::Set rep_items = this_rep.get("Items");
@@ -511,6 +519,15 @@ std::unique_ptr<solid> get_local_geometry(
 			return geometry;
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
+	}
+	else if (inst.is_instance_of("IfcShapeRepresentation")) {
+		// This is NOT redundant with the IfcProductDefinitionShape case.
+		// IfcShapeRepresentations can live on their own (inside some mapping
+		// instances). Do NOT refactor it out!
+		if (inst.get("RepresentationIdentifier") == "Body") {
+			cppw::Set rep_items = inst.get("Items");
+			return get_local_geometry(rep_items.get_(0), scaler, c);
+		}
 	}
 	else if (inst.is_instance_of("IfcFacetedBrep")) {
 		cppw::Instance b = inst.get("Outer");
