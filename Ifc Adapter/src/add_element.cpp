@@ -54,6 +54,7 @@ void add_element(
 	element_type type, 
 	const cppw::Instance & inst, 
 	void (*msg_func)(char *), 
+	void (*warn_func)(char *),
 	const unit_scaler & scaler, 
 	int material_id, 
 	number_collection<K> * c) 
@@ -74,7 +75,7 @@ void add_element(
 	if (type == WINDOW || type == DOOR) {
 		effective_instance = get_related_opening(inst);
 		if (!effective_instance) {
-			msg_func(
+			warn_func(
 				"Warning: door or window element does not have a related "
 				"opening. This element will be skipped.\n");
 			return;
@@ -116,9 +117,9 @@ void add_element(
 	catch (internal_geometry::bad_rep_exception & ex) {
 		sprintf(
 			buf, 
-			"Warning: could not load this element (%s). It will be "
-			"skipped.\n",
+			"Element %s could not be loaded (%s). It will be skipped.\n",
+			info->id,
 			ex.what());
-		msg_func(buf);
+		warn_func(buf);
 	}
 }

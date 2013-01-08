@@ -14,6 +14,7 @@ void add_element(
 	element_type type, 
 	const cppw::Instance & inst, 
 	void (*msg_func)(char *), 
+	void (*warn_func)(char *),
 	const unit_scaler & s, 
 	int material_id, 
 	number_collection<K> * c);

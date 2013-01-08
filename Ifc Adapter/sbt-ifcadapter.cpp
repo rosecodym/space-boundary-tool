@@ -150,6 +150,7 @@ ifcadapter_return_t execute(
 			space_count,
 			spaces,
 			g_opts.notify_func,
+			g_opts.warn_func,
 			create_guid_filter(opts.element_filter, opts.element_filter_count),
 			create_guid_filter(opts.space_filter, opts.space_filter_count),
 			&ctxt,

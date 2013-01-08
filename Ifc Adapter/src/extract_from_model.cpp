@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "model_operations.h"
+
 #include "add_element.h"
 #include "internal_geometry.h"
 #include "unit_scaler.h"
@@ -43,6 +45,7 @@ size_t get_elements(
 	double ** composite_layer_dys,
 	double ** composite_layer_dzs,
 	void (*msg_func)(char *), 
+	void (*warn_func)(char *),
 	const unit_scaler & s, 
 	const std::function<bool(const char *)> & passes_filter, 
 	number_collection<K> * c,
@@ -73,12 +76,22 @@ size_t get_elements(
 					type, 
 					elem, 
 					msg_func, 
+					warn_func,
 					s, 
 					next_element_id++, 
 					c);
 			}
 			else if (shadings != nullptr) {
-				add_element(shadings, nullptr, type, elem, msg_func, s, -1, c);
+				add_element(
+					shadings, 
+					nullptr, 
+					type, 
+					elem, 
+					msg_func, 
+					warn_func, 
+					s, 
+					-1, 
+					c);
 			}
 		}
 	}
@@ -155,6 +168,7 @@ ifcadapter_return_t extract_from_model(
 	size_t * space_count,
 	space_info *** spaces,
 	void (*notify)(char *),
+	void (*warn)(char *),
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
@@ -169,6 +183,7 @@ ifcadapter_return_t extract_from_model(
 		composite_layer_dys,
 		composite_layer_dzs,
 		notify, 
+		warn,
 		scaler, 
 		element_filter, 
 		c, 

@@ -16,6 +16,7 @@ ifcadapter_return_t extract_from_model(
 	size_t * space_count,
 	space_info *** spaces,
 	void (*notify)(char *),
+	void (*warn)(char *),
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
