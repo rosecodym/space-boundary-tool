@@ -25,6 +25,7 @@ public:
 	double thickness() const;
 	boost::optional<space_face *> as_space_face() const;
 	const block * as_block() const { return boost::get<const block *>(m_data); }
+	std::string identifier() const;
 	const data_t & data() const { return m_data; }
 };
 

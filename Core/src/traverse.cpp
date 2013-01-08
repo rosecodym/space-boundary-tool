@@ -100,9 +100,10 @@ void traverse(
 	}
 	if (stack_overflow) {
 		_resetstkoflw();
-		reporting::report_warning(
-			"Some geometry is too complicated. Some space boundaries may be "
-			"missing.\n");
+		auto id = g[curr_sequence->last()].identifier();
+		reporting::report_warning(boost::format(
+			"Some geometry is too complicated (near object %s). Some space "
+			"boundaries may be missing.\n") % id);
 	}
 }
 

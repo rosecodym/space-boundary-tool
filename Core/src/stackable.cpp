@@ -1,9 +1,11 @@
 #include "precompiled.h"
 
+#include "stackable.h"
+
 #include "area.h"
 #include "equality_context.h"
-
-#include "stackable.h"
+#include "space.h"
+#include "space_face.h"
 
 namespace stacking {
 
@@ -14,6 +16,18 @@ double stackable::thickness() const {
 		double operator () (space_face *) const { return 0; }
 		double operator () (const block * b) const { 
 			return b->heights().second ? abs(CGAL::to_double(b->heights().first) - CGAL::to_double(*b->heights().second)) : 0;
+		}
+	};
+	return boost::apply_visitor(v(), m_data);
+}
+
+std::string stackable::identifier() const {
+	struct v : public boost::static_visitor<std::string> {
+		const std::string & operator () (space_face * sf) const {
+			return sf->bounded_space()->global_id();
+		}
+		const std::string & operator () (const block * b) const {
+			return b->material_layer().layer_element().source_id();
 		}
 	};
 	return boost::apply_visitor(v(), m_data);
