@@ -204,7 +204,7 @@ namespace Sbt
                 }
             }
 
-            uint elementCount;
+            uint eCount;
             uint spaceCount;
             uint spaceBoundaryCount;
 
@@ -220,7 +220,7 @@ namespace Sbt
                 inputFilename, 
                 outputFilename,
                 opts,
-                out elementCount,
+                out eCount,
                 out nativeElements,
                 out compositeDxsPtr,
                 out compositeDysPtr,
@@ -245,27 +245,30 @@ namespace Sbt
 
             elements = new List<CoreTypes.ElementInfo>();
             compositeDirs = new List<Tuple<double, double, double>>();
-            var compositeDxs = new double[elementCount];
-            var compositeDys = new double[elementCount];
-            var compositeDzs = new double[elementCount];
-            Marshal.Copy(compositeDxsPtr, compositeDxs, 0, (int)elementCount);
-            Marshal.Copy(compositeDysPtr, compositeDys, 0, (int)elementCount);
-            Marshal.Copy(compositeDzsPtr, compositeDzs, 0, (int)elementCount);
-            for (uint i = 0; i < elementCount; ++i)
+            if (eCount > 0)
             {
-                IntPtr e = Marshal.ReadIntPtr(nativeElements, Marshal.SizeOf(typeof(IntPtr)) * (int)i);
-                NativeCoreTypes.ElementInfo native = (NativeCoreTypes.ElementInfo)Marshal.PtrToStructure(e, typeof(NativeCoreTypes.ElementInfo));
-                elements.Add(new CoreTypes.ElementInfo(native));
-                if (native.type == NativeCoreTypes.ElementType.Slab)
+                var compositeDxs = new double[eCount];
+                var compositeDys = new double[eCount];
+                var compositeDzs = new double[eCount];
+                Marshal.Copy(compositeDxsPtr, compositeDxs, 0, (int)eCount);
+                Marshal.Copy(compositeDysPtr, compositeDys, 0, (int)eCount);
+                Marshal.Copy(compositeDzsPtr, compositeDzs, 0, (int)eCount);
+                for (uint i = 0; i < eCount; ++i)
                 {
-                    compositeDirs.Add(Tuple.Create(0.0, 0.0, 1.0));
-                }
-                else
-                {
-                    var cdx = compositeDxs[i];
-                    var cdy = compositeDys[i];
-                    var cdz = compositeDzs[i];
-                    compositeDirs.Add(Tuple.Create(cdx, cdy, cdz));
+                    IntPtr e = Marshal.ReadIntPtr(nativeElements, Marshal.SizeOf(typeof(IntPtr)) * (int)i);
+                    NativeCoreTypes.ElementInfo native = (NativeCoreTypes.ElementInfo)Marshal.PtrToStructure(e, typeof(NativeCoreTypes.ElementInfo));
+                    elements.Add(new CoreTypes.ElementInfo(native));
+                    if (native.type == NativeCoreTypes.ElementType.Slab)
+                    {
+                        compositeDirs.Add(Tuple.Create(0.0, 0.0, 1.0));
+                    }
+                    else
+                    {
+                        var cdx = compositeDxs[i];
+                        var cdy = compositeDys[i];
+                        var cdz = compositeDzs[i];
+                        compositeDirs.Add(Tuple.Create(cdx, cdy, cdz));
+                    }
                 }
             }
 
@@ -290,7 +293,7 @@ namespace Sbt
             CoreTypes.SpaceBoundary.LinkSpaces(spaceBoundaries, spaces);
             CoreTypes.SpaceBoundary.LinkElements(spaceBoundaries, elements);
 
-            FreeElements(nativeElements, elementCount);
+            FreeElements(nativeElements, eCount);
             FreeSpaces(nativeSpaces, spaceCount);
             FreeSpaceBoundaries(nativeSbs, spaceBoundaryCount);
         }
