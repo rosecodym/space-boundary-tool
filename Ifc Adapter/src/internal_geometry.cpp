@@ -168,6 +168,13 @@ std::vector<point_3> build_polyloop(
 		}) == res.end());
 		return res;
 	}
+	else if (inst.is_kind_of("IfcFaceBound")) {
+		auto res = build_polyloop(inst.get("Bound"), scale, c);
+		if (!inst.get("Orientation")) { 
+			boost::reverse(res); 
+		}
+		return res;
+	}
 	else {
 		throw bad_rep_exception("unsupported representation for a polyloop");
 	}
@@ -417,14 +424,15 @@ transformation_3 get_globalizer(
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
 	}
-	else if (inst.is_instance_of("IfcShapeRepresentation")) {
+	else if (
+		inst.is_instance_of("IfcShapeRepresentation") &&
+		inst.get("RepresentationIdentifier") == "Body")
+	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		if (inst.get("RepresentationIdentifier") == "Body") {
-			cppw::Set rep_items = inst.get("Items");
-			return get_globalizer(rep_items.get_(0), scaler, c);
-		}
+		cppw::Set rep_items = inst.get("Items");
+		return get_globalizer(rep_items.get_(0), scaler, c);
 	}
 	else if (inst.is_instance_of("IfcFacetedBrep")) {
 		return transformation_3();
@@ -520,14 +528,15 @@ std::unique_ptr<solid> get_local_geometry(
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
 	}
-	else if (inst.is_instance_of("IfcShapeRepresentation")) {
+	else if (
+		inst.is_instance_of("IfcShapeRepresentation") &&
+		inst.get("RepresentationIdentifier") == "Body")
+	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		if (inst.get("RepresentationIdentifier") == "Body") {
-			cppw::Set rep_items = inst.get("Items");
-			return get_local_geometry(rep_items.get_(0), scaler, c);
-		}
+		cppw::Set rep_items = inst.get("Items");
+		return get_local_geometry(rep_items.get_(0), scaler, c);
 	}
 	else if (inst.is_instance_of("IfcFacetedBrep")) {
 		cppw::Instance b = inst.get("Outer");
@@ -556,7 +565,9 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (inst.is_instance_of("IfcFaceBasedSurfaceModel")) {
 		cppw::Set face_set = inst.get("FbsmFaces");
-		return get_local_geometry(face_set.get_(0), scaler, c);
+		cppw::Instance shell = face_set.get_(0);
+		auto sf = build_scale_function(scaler);
+		return std::unique_ptr<brep>(new brep(shell, sf, c));
 	}
 	else {
 		throw bad_rep_exception("unknown or unsupported geometry definition");
