@@ -7,8 +7,8 @@ open System.IO
 open System.Text.RegularExpressions
 
 let major = 1
-let minor = 4
-let revision = 7
+let minor = 5
+let revision = 0
 
 let shortString = sprintf "%i.%i.%i" major minor revision
 let fullString = sprintf "%i.%i.%i.0" major minor revision
