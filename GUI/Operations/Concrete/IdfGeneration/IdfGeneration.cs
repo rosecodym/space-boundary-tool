@@ -142,12 +142,16 @@ namespace GUI.Operations
                     }
                     else
                     {
-                        surfacesByGuid[sb.Guid] = new BuildingSurface(
-                            sb,
-                            cmanager.ConstructionForSurface(
-                                p.MaterialIDToModelConstruction(
-                                    sb.Element.MaterialId)),
-                            zoneNamesByGuid[sb.BoundedSpace.Guid]);
+                        int mID = sb.Element.MaterialId;
+                        var modelC = p.MaterialIDToModelConstruction(mID);
+                        var modelCNorm = p.MaterialIDToCompositeDir(mID);
+                        var c = cmanager.ConstructionForSurface(
+                            sb.Normal,
+                            modelCNorm,
+                            modelC);
+                        var zoneName = zoneNamesByGuid[sb.BoundedSpace.Guid];
+                        var surf = new BuildingSurface(sb, c, zoneName);
+                        surfacesByGuid[sb.Guid] = surf;
                     }
                 }
                 foreach (Sbt.CoreTypes.SpaceBoundary sb in nonFen)

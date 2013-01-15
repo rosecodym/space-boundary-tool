@@ -79,6 +79,22 @@ type OutputManager (warnDelegate : Action<string>) =
             List.map (fun (e, t) -> retrieveCopy (Some(t)) e)
         retrieveConstruction outputLayers origName
 
+    let getThickestLayer layers = Seq.maxBy snd layers |> fst
+
+    let dotproduct (ax, ay, az) (bx, by, bz) =
+        ax * bx + ay * by + az * bz
+    let magSq (d: float * float * float) = dotproduct d d
+    let magnitude d = sqrt (magSq d)
+    let areParallel a b = 
+        let lhs = dotproduct a b 
+        let rhs = (magnitude a) * (magnitude b)
+        abs(lhs - rhs) < 0.001  || abs(lhs + rhs) < 0.001 // magic eps
+    let areAntiparallel a b =
+        let ax, ay, az = a
+        let bx, by, bz = b
+        let sum = ax + bx, ay + by, az + bz
+        magSq sum < magSq a + magSq b
+
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
     member this.AllOutputConstructions =
         constructions :> IEnumerable<OutputConstruction>
@@ -104,32 +120,23 @@ type OutputManager (warnDelegate : Action<string>) =
             let outputLayers = List.map2 retrieveCopy ts infos
             upcast retrieveConstruction outputLayers None
         | SingleComposite(name, layers) ->
+            let reqThickness = Seq.head thicknesses
             let compositeNorm = Seq.head cnorms
             if compositeNorm.IsNone then
                 emitProblemConstruction (UnorientedComposite()) else
-            let dotproduct (ax, ay, az) (bx, by, bz) =
-                ax * bx + ay * by + az * bz
-            let magSq (d: float * float * float) = dotproduct d d
-            let magnitude d = sqrt (magSq d)
-            let areParallel a b = 
-                let lhs = dotproduct a b 
-                let rhs = (magnitude a) * (magnitude b)
-                abs(lhs - rhs) < 0.001  || abs(lhs + rhs) < 0.001 // magic eps
             if not (areParallel surfaceNormal compositeNorm.Value) then
-                emitProblemConstruction (UnalignedComposite()) else
-            let areAntiparallel a b =
-                let ax, ay, az = a
-                let bx, by, bz = b
-                let sum = ax + bx, ay + by, az + bz
-                magSq sum < magSq a + magSq b
+                let thickest = getThickestLayer layers
+                let layer = retrieveCopy (Some(reqThickness)) thickest
+                upcast retrieveConstruction [layer] None else
             let reversed = areAntiparallel surfaceNormal compositeNorm.Value
-            let reqThickness = Seq.head thicknesses
             let c = retrievePartialComposite name layers reqThickness reversed
             upcast c
         | _ ->
             emitProblemConstruction (UnknownProblemComposite())
 
-    member this.ConstructionForSurface (c: ModelConstruction) = 
+    member this.ConstructionForSurface (surfaceNormal,
+                                        constructionNormal,
+                                        c) : OutputConstructionBase = 
         let emitProblemConstruction (c: ProblemConstruction) =
             warn c.Message
             c :> OutputConstructionBase
@@ -147,16 +154,22 @@ type OutputManager (warnDelegate : Action<string>) =
         | ModelConstruction.Window(_) -> 
             emitProblemConstruction (AdiabaticWindowConstruction())
         | ModelConstruction.LayerSet(_, layers) ->
-            let firstLayer = fst layers.[0]
-            // Assumption: symmetrical.
-            match firstLayer.MappingTarget with
-            | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> 
+            let relevantLayer =
+                if not (areParallel surfaceNormal constructionNormal) then
+                    getThickestLayer layers
+                else if areAntiparallel surfaceNormal constructionNormal then
+                    layers |> List.rev |> Seq.head |> fst
+                else
+                    layers.Head |> fst
+            match relevantLayer.MappingTarget with
+            | noMap when noMap = Unchecked.defaultof<LibraryEntry> ->
                 emitProblemConstruction (BadMappingConstruction())
-            | LibraryEntry.Opaque(entry) -> 
+            | LibraryEntry.Opaque(entry) ->
                 let surfaceLayer = retrieveOpaqueSurface entry
                 upcast retrieveConstruction [surfaceLayer] None
-            | entry -> 
-                let res = retrieveConstruction [retrieveCopy None entry] None
+            | e ->
+                // I don't know what this case is for.
+                let res = retrieveConstruction [retrieveCopy None e] None
                 upcast res
             | _ -> emitProblemConstruction (BadMappingConstruction())
 

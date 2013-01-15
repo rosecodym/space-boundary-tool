@@ -21,13 +21,6 @@ type UnorientedComposite () =
          this construction manually.")
     override this.Name = "UNORIENTED COMPOSITE"
 
-type UnalignedComposite () =
-    inherit ProblemConstruction(
-        "A surface's assigned material layers were not parallel to its \
-         normal. The construction has been named 'UNALIGNED COMPOSITE' in the \
-         IDF. You will have to create this construction manually.")
-    override this.Name = "UNALIGNED COMPOSITE"
-
 type UnknownProblemComposite () =
     inherit ProblemConstruction(
         "There was an unkown problem automatically generating a construction. \
