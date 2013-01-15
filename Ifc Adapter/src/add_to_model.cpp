@@ -220,10 +220,11 @@ ifcadapter_return_t add_to_model(
 {
 	unit_scaler scaler = unit_scaler::identity_scaler;
 
-	msg_func("Adding space boundaries to model");
+	msg_func("Preparing to add space boundaries to the model.\n");
 	cppw::Instance ownerhistory = create_owner_history(&model);
 
 	create_necessary_virtual_elements(&model, sbs, sb_count, ownerhistory);
+	msg_func("Created virtual elements.\n");
 
 	std::map<std::string, int> element_map; // we have to use indices because Instances aren't default-constructable
 	auto es = model.get_set_of("IfcElement", cppw::include_subtypes);
@@ -232,13 +233,16 @@ ifcadapter_return_t add_to_model(
 			element_map[((cppw::String)es.get(i).get("GlobalId")).data()] = i;
 		}
 	}
+	msg_func("Created element map.\n");
 
 	std::map<std::string, int> space_map;
 	auto ss = model.get_set_of("IfcSpace");
 	for (int i = 0; i < ss.count(); ++i) {
 		space_map[((cppw::String)ss.get(i).get("GlobalId")).data()] = i;
 	}
-
+	msg_func("Created space map.\n");
+	
+	msg_func("Adding space boundaries to model");
 	int added_count = 0;
 	for (size_t i = 0; i < sb_count; ++i) {
 		if (!sbs[i]->lies_on_outside) {
