@@ -130,6 +130,10 @@ std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
 }
 
 nef_polyhedron_3 simple_faces_to_nef(std::vector<simple_face> && all_faces) {
+	// There will be no reported problems if at least one of the face groups is 
+	// "good". Whether this is a bug or feature I leave as an exercise to the
+	// reader - remember that "Hey it kind of works!" is kind of the status quo
+	// in this domain.
 	auto as_groups = to_volume_groups(std::move(all_faces));
 	nef_polyhedron_3 res;
 	boost::for_each(as_groups, [&res](const std::vector<simple_face> & group) {
@@ -142,7 +146,18 @@ nef_polyhedron_3 volume_group_to_nef(const std::vector<simple_face> & group) {
 	polyhedron_3 poly;
 	poly_builder b(group);
 	poly.delegate(b);
-	return nef_polyhedron_3(poly).interior();
+	if (!poly.is_closed()) {
+		// Why not throw an exception here? Well, currently, this only ever
+		// happens with a bad brep, so presumably a bad_brep_exception would do
+		// the job nicely. Unfortunately I can't really guarantee this will
+		// happen in the future - this function could later be used in some 
+		// other case. So we're going to treat an empty return as an error code
+		// and let upstream handle it.
+		return nef_polyhedron_3::EMPTY;
+	}
+	else {
+		return nef_polyhedron_3(poly).interior();
+	}
 }
 
 } // namespace impl
