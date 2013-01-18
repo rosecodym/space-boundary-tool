@@ -72,6 +72,8 @@ public:
 
 	oriented_area project_onto_self(const oriented_area & other) const;
 
+	bool contains(const oriented_area & other, double height_eps) const;
+
 	template <typename OutputIterator>
 	void to_pieces(OutputIterator oi) const {
 		boost::transform(a.to_simple_convex_pieces(), oi, [this](const polygon_2 & piece) {

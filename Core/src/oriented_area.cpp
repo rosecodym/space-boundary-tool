@@ -1,12 +1,12 @@
 #include "precompiled.h"
 
+#include "oriented_area.h"
+
 #include "area.h"
 #include "equality_context.h"
 #include "flatten.h"
 #include "orientation.h"
 #include "simple_face.h"
-
-#include "oriented_area.h"
 
 using namespace boost::adaptors;
 
@@ -164,6 +164,17 @@ oriented_area oriented_area::project_onto_self(const oriented_area & other) cons
 	}
 
 	return oriented_area(o, area(all_loops), p, all_loops.front().is_clockwise_oriented());
+}
+
+bool oriented_area::contains(
+	const oriented_area & other, 
+	double height_eps) const 
+{
+	return
+		sense() == other.sense() &&
+		o == other.o &&
+		equality_context::are_equal(height(), other.height(), height_eps) &&
+		area_2d() >= other.area_2d();
 }
 
 boost::optional<NT> oriented_area::could_form_block(const oriented_area & a, const oriented_area & b) {
