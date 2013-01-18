@@ -93,29 +93,29 @@ std::vector<blockstack> build_stacks(
 
 	typedef std::pair<const orientation * const, std::vector<space_face>> or;
 	std::vector<blockstack> res;
-	boost::for_each(space_faces, [&, height_cutoff, height_eps](or & o_info) {
-		std::string ostring = o_info.first->to_string();
-		reporting::report_progress(
-			fmt("Building fenestration stacks along %s.\n") % ostring);
-		process_group(
-			&o_info.second, 
-			fen_blks[o_info.first], 
-			o_info.first, 
-			height_cutoff, 
-			height_eps, 
-			std::back_inserter(res));
-		reporting::report_progress("Built stacks.\n");
-	});
-	reporting::report_progress("Resetting space faces");
-	boost::for_each(space_faces, [](or & o_info) {
-		boost::for_each(
-			o_info.second, 
-			[](impl::space_face & f) { 
-				f.reset_area_to_original(); 
-				reporting::report_progress(".");
-			});
-	});
-	reporting::report_progress("done.\n");
+	//boost::for_each(space_faces, [&, height_cutoff, height_eps](or & o_info) {
+	//	std::string ostring = o_info.first->to_string();
+	//	reporting::report_progress(
+	//		fmt("Building fenestration stacks along %s.\n") % ostring);
+	//	process_group(
+	//		&o_info.second, 
+	//		fen_blks[o_info.first], 
+	//		o_info.first, 
+	//		height_cutoff, 
+	//		height_eps, 
+	//		std::back_inserter(res));
+	//	reporting::report_progress("Built stacks.\n");
+	//});
+	//reporting::report_progress("Resetting space faces");
+	//boost::for_each(space_faces, [](or & o_info) {
+	//	boost::for_each(
+	//		o_info.second, 
+	//		[](impl::space_face & f) { 
+	//			f.reset_area_to_original(); 
+	//			reporting::report_progress(".");
+	//		});
+	//});
+	//reporting::report_progress("done.\n");
 	boost::for_each(space_faces, [&, height_cutoff, height_eps](or & o_info) {
 		std::string ostring = o_info.first->to_string().c_str();
 		reporting::report_progress(
