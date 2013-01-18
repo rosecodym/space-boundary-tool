@@ -280,4 +280,17 @@ TEST(MultiviewSolid, SimplifiedToOpenBrep) {
 	EXPECT_THROW(multiview_solid mvs(s, &c);, bad_brep_exception);
 }
 
+TEST(MultiviewSolid, TooShallowExtrusion) {
+	equality_context c(0.01);
+
+	solid s = create_ext(0, 0, 1, 0.003, create_face(5,
+		simple_point(0, 0, 0),
+		simple_point(393.70079, 0, 0),
+		simple_point(393.70079, 387.79528, 0),
+		simple_point(0, 387.79528, 0),
+		simple_point(0, 0, 0)));
+
+	EXPECT_THROW(multiview_solid ms(s, &c);, shallow_extrusion_exception);
+}
+
 } // namespace

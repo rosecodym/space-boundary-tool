@@ -34,10 +34,15 @@ extrusion_information get_extrusion_information(
 	equality_context * c) 
 {
 	using geometry_common::normalize;
+	if (c->is_zero(e.extrusion_depth)) {
+		throw shallow_extrusion_exception();
+	}
 	simple_face area(e.area, c);
 	auto snapped_dir = c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz));
 	auto ext = normalize(snapped_dir.vector()) * e.extrusion_depth;
 	auto area_normal = area.orthogonal_direction().vector();
+	assert(!CGAL::is_zero(area_normal.squared_length()));
+	assert(!CGAL::is_zero(ext.squared_length()));
 	if (c->are_effectively_perpendicular(area_normal, ext)) {
 		throw parallel_ext_exception();
 	}

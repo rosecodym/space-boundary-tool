@@ -63,6 +63,13 @@ public:
 	}
 };
 
+class shallow_extrusion_exception : public bad_geometry_exception {
+public:
+	virtual const char * condition() const throw() {
+		return "extruded area solid with too-shallow extrusion";
+	}
+};
+
 // This isn't a bad_geometry_exception because it indicates an inconsistent
 // program state, not bad geometry.
 class unknown_geometry_rep_exception : public sbt_exception { };
