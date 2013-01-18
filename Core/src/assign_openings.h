@@ -73,3 +73,5 @@ void assign_openings(
 		std::back_inserter(*surfaces));
 	reporting::report_progress("done.\n");
 }
+
+}
