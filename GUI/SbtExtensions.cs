@@ -105,7 +105,10 @@ namespace GUI
                 x /= count;
                 y /= count;
                 z /= count;
-                d = -x * a + -y * b + -z * c;
+                a = ZeroClamp(a);
+                b = ZeroClamp(b);
+                c = ZeroClamp(c);
+                d = ZeroClamp(-x * a + -y * b + -z * c);
             }
 
             public double SignedDistanceFrom(Point p)
@@ -114,6 +117,11 @@ namespace GUI
                 return
                     (a * p.X + b * p.Y + c * p.Z + d) /
                     Math.Sqrt(a * a + b * b + c * c);
+            }
+
+            private static double ZeroClamp(double d, double eps = 0.01)
+            {
+                return Math.Abs(d) < eps ? 0.0 : d;
             }
         }
 
