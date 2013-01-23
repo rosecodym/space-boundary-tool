@@ -10,8 +10,15 @@
 
 namespace {
 
-bool is_external(space_boundary * sb) {
-	return sb->opposite == nullptr && sb->level == 2;
+bool is_virtual(const space_boundary & b) {
+	return b.is_virtual != 0;
+}
+
+int get_level(const space_boundary & b) {
+	return
+		b.is_external								 ? 2 :
+		b.opposite == nullptr						 ? 3 :
+		b.bounded_space == b.opposite->bounded_space ? 4 : 2;
 }
 
 cppw::Application_instance create_point(cppw::Open_model & model, const point_2 & p, const unit_scaler & scaler) {
@@ -144,19 +151,21 @@ cppw::Application_instance create_sb(
 
 	cppw::Application_instance inst = model.create("IfcRelSpaceBoundary");
 
+	int level = get_level(*sb);
+
 	inst.put("GlobalId", sb->global_id);
 	inst.put("OwnerHistory", ownerhistory);
 	inst.put("Name", (
-		sb->level == 3 ? "3rdLevel" :
-		sb->level == 4 ? "4thLevel" :
-		sb->level == 5 ? "5thLevel" : "2ndLevel"));
-	if (sb->level == 2 || sb->level == 3 || sb->level == 4 || sb->level == 5) {
-		inst.put("Description", sb->level == 2 ? "2a" : "2b");
+		level == 3 ? "3rdLevel" :
+		level == 4 ? "4thLevel" :
+		level == 5 ? "5thLevel" : "2ndLevel"));
+	if (level == 2 || level == 3 || level == 4 || level == 5) {
+		inst.put("Description", level == 2 ? "2a" : "2b");
 	}
 	inst.put("RelatingSpace", space);
 	inst.put("RelatedBuildingElement", element);
-	inst.put("PhysicalOrVirtualBoundary", sb->is_virtual ? "VIRTUAL" : "PHYSICAL");
-	inst.put("InternalOrExternalBoundary", is_external(sb) ? "EXTERNAL" : "INTERNAL");
+	inst.put("PhysicalOrVirtualBoundary", is_virtual(*sb) ? "VIRTUAL" : "PHYSICAL");
+	inst.put("InternalOrExternalBoundary", sb->is_external ? "EXTERNAL" : "INTERNAL");
 	inst.put("ConnectionGeometry", create_geometry(model, space_placement, sb, scaler));
 	return inst;
 }
@@ -191,7 +200,7 @@ cppw::Application_instance create_owner_history(cppw::Open_model * model) {
 void create_necessary_virtual_elements(cppw::Open_model * model, space_boundary ** sbs, int sb_count, const cppw::Instance & ownerhistory) {
 	std::map<space_boundary *, space_boundary *> virtuals;
 	for (int i = 0; i < sb_count; ++i) {
-		if (sbs[i]->is_virtual) {
+		if (is_virtual(*sbs[i])) {
 			auto itr = virtuals.find(sbs[i]->opposite);
 			if (itr == virtuals.end()) {
 				virtuals[sbs[i]] = sbs[i]->opposite;
@@ -245,20 +254,18 @@ ifcadapter_return_t add_to_model(
 	msg_func("Adding space boundaries to model");
 	int added_count = 0;
 	for (size_t i = 0; i < sb_count; ++i) {
-		if (!sbs[i]->lies_on_outside) {
-			try {
-				create_sb(model, ownerhistory, ss.get(space_map[sbs[i]->bounded_space->id]), es.get(element_map[sbs[i]->element_id]), sbs[i], scaler, c);
-				++added_count;
-				msg_func(".");
-			}
-			catch (...) {
-				char buf[128];
-				sprintf(buf, "Failed to add space boundary %s/%s/%s to the model.\n",
-					sbs[i]->global_id,
-					sbs[i]->element_id,
-					sbs[i]->bounded_space->id);
-				fprintf(stderr, buf);
-			}
+		try {
+			create_sb(model, ownerhistory, ss.get(space_map[sbs[i]->bounded_space->id]), es.get(element_map[sbs[i]->element_id]), sbs[i], scaler, c);
+			++added_count;
+			msg_func(".");
+		}
+		catch (...) {
+			char buf[128];
+			sprintf(buf, "Failed to add space boundary %s/%s/%s to the model.\n",
+				sbs[i]->global_id,
+				sbs[i]->element_id,
+				sbs[i]->bounded_space->id);
+			fprintf(stderr, buf);
 		}
 	}
 	msg_func("done.\n");

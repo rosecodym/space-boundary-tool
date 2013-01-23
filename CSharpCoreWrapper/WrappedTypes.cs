@@ -569,25 +569,28 @@ namespace Sbt.CoreTypes
         public ElementInfo Element { get; private set; }
         public Polyloop Geometry { get; private set; }
         public Tuple<double, double, double> Normal { get; private set; }
-        public int Level { get; private set; }
         public SpaceInfo BoundedSpace { get; private set; }
         public SpaceBoundary Opposite { get; private set; }
         public SpaceBoundary ContainingBoundary { get; private set; }
         public bool LiesOnOutside { get; private set; }
         public bool IsVirtual { get; private set; }
-        public bool IsExternal
-        {
-            get
-            {
-                return Opposite == null && Level == 2;
-            }
-        }
+        public bool IsExternal { get; private set; }
         private List<MaterialLayer> materialLayers;
         public IList<MaterialLayer> MaterialLayers
         {
             get
             {
                 return materialLayers.AsReadOnly();
+            }
+        }
+        public int Level
+        {
+            get
+            {
+                return
+                    IsExternal ? 2 :
+                    Opposite == null ? 3 :
+                    BoundedSpace == Opposite.BoundedSpace ? 4 : 2;
             }
         }
 
@@ -602,8 +605,7 @@ namespace Sbt.CoreTypes
             elementGuid = fromNative.elementId;
             Geometry = new Polyloop(fromNative.geometry);
             Normal = Tuple.Create(fromNative.normalX, fromNative.normalY, fromNative.normalZ);
-            Level = fromNative.level;
-            LiesOnOutside = fromNative.liesOnOutside != 0;
+            IsExternal = fromNative.isExternal != 0;
             IsVirtual = fromNative.isVirtual != 0;
             int[] materialIds = new int[fromNative.materialLayerCount];
             double[] thicknesses = new double[fromNative.materialLayerCount];

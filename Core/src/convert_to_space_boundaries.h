@@ -76,19 +76,6 @@ sbt_return_t convert_to_space_boundaries(const SurfaceRange & surfaces, space_bo
 				}
 			});
 
-		// set levels
-		boost::for_each(surfaces, [&boundaries](const surface_ptr & surf) {
-			auto matching_structure = boundaries.find(surf->guid());
-			if (matching_structure != boundaries.end()) {
-				matching_structure->second->level =
-					surf->is_virtual() ?					2 :
-					surf->is_fenestration() ?				2 :
-					surf->is_external() ?					2 :
-					surf->shares_space_with_other_side() ?	4 :
-					surf->has_other_side() ?				2 : 5;
-			}
-		});
-
 		(*sbs) = (space_boundary **)malloc(sizeof(space_boundary *) * boundaries.size());
 		if (!*sbs) { throw failed_malloc_exception(); }
 		boost::copy(values(boundaries), *sbs);

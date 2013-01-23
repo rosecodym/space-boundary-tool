@@ -95,7 +95,7 @@ space_boundary * create_unlinked_space_boundary(const surface & s) {
 		}
 
 		newsb->bounded_space = s.bounded_space().original_info();
-		newsb->lies_on_outside = false;
+		newsb->is_external = s.is_external();
 		newsb->is_virtual = s.is_virtual();
 	}
 	catch (stack_overflow_exception &) {

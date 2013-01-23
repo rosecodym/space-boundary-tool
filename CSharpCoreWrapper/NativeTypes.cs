@@ -170,22 +170,20 @@ namespace Sbt.NativeCoreTypes
         [FieldOffset(280)]
         internal double normalZ;
         [FieldOffset(288)]
-        internal int level;
+        internal int isExternal;
         [FieldOffset(292)]
-        internal IntPtr spaceInfo;
-        [FieldOffset(296)]
-        internal IntPtr opposite;
-        [FieldOffset(300)]
-        internal IntPtr parent;
-        [FieldOffset(304)]
-        internal int liesOnOutside;
-        [FieldOffset(308)]
         internal int isVirtual;
-        [FieldOffset(312)]
+        [FieldOffset(296)]
+        internal IntPtr spaceInfo;
+        [FieldOffset(300)]
+        internal IntPtr opposite;
+        [FieldOffset(304)]
+        internal IntPtr parent;
+        [FieldOffset(308)]
         internal uint materialLayerCount;
-        [FieldOffset(316)]
+        [FieldOffset(312)]
         internal IntPtr layers;
-        [FieldOffset(320)]
+        [FieldOffset(316)]
         internal IntPtr thicknesses;
     }
 }
