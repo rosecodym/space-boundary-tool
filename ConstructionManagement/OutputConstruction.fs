@@ -32,7 +32,7 @@ type BadMappingConstruction () =
     inherit ProblemConstruction(
         "There was an attempt to automatically generate a composite for a \
          missing or invalid mapping target. It has been assigned the \
-         construction name 'BAD MAPPING'. You will have to create this 
+         construction name 'BAD MAPPING'. You will have to create this \
          construction manually.")
     override this.Name = "BAD MAPPING"
 
