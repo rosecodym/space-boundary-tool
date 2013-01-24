@@ -174,4 +174,9 @@ std::vector<polygon_with_holes_2> area::to_pwhs() const {
 	}
 }
 
+NT area::regular_area() const {
+	if (use_nef) { return nef_rep.outer_regular_area(); }
+	else { return geometry_common::regular_area(simple_rep); }
+}
+
 } // namespace geometry_2d

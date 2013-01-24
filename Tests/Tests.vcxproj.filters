@@ -132,6 +132,9 @@
     <ClCompile Include="..\Core\src\solid_geometry_util.cpp">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\Core\src\stringification.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">

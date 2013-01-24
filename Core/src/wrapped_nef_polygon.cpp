@@ -143,6 +143,14 @@ std::vector<polygon_with_holes_2> wrapped_nef_polygon::to_pwhs() const {
 	return res;
 }
 
+NT wrapped_nef_polygon::outer_regular_area() const {
+	NT res = 0.0;
+	boost::for_each(get_faces(), [&res](const face & f) {
+		res += f.outer_regular_area();
+	});
+	return res;
+}
+
 void wrapped_nef_polygon::clear() {
 	wrapped->clear();
 	m_is_axis_aligned = true;

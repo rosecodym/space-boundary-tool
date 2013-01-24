@@ -47,4 +47,6 @@ NT smallest_squared_distance(PointIter begin, PointIter end) {
 	return distance;
 }
 
+NT regular_area(const polygon_2 & poly);
+
 } // namespace geometry_common
