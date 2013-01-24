@@ -46,6 +46,8 @@ public:
 	void clear();
 
 	bool is_valid(double eps) const { return use_nef ? nef_rep.is_valid(eps) : geometry_common::is_valid(simple_rep, eps); }
+
+	std::string to_string() const;
 	
 	area & operator *= (const area & other);
 	area & operator -= (const area & other);

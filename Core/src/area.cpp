@@ -1,9 +1,10 @@
 #include "precompiled.h"
 
+#include "area.h"
+
 #include "equality_context.h"
 #include "geometry_common.h"
-
-#include "area.h"
+#include "stringification.h"
 
 namespace geometry_2d {
 
@@ -78,6 +79,11 @@ bool area::any_points_satisfy_predicate(const std::function<bool(point_2)> & pre
 	else {
 		return nef_rep.any_points_satisfy_predicate(pred);
 	}
+}
+
+std::string area::to_string() const {
+	if (use_nef) { return nef_rep.to_string(); }
+	else { return reporting::to_string(simple_rep); }
 }
 
 area & area::operator *= (const area & other) {

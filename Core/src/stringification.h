@@ -2,6 +2,8 @@
 
 #include "precompiled.h"
 
+#include "area.h"
+
 namespace reporting {
 
 std::string to_string(const point_2 & p);
@@ -17,5 +19,6 @@ std::string to_string(const StringifiableRange & points) {
 }
 
 std::string to_string(const polygon_2 & poly);
+inline std::string to_string(const area & a) { return a.to_string(); }
 
 } // namespace reporting
