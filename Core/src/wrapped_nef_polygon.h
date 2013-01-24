@@ -76,6 +76,7 @@ public:
 	std::string							to_string() const;
 	std::vector<polygon_with_holes_2>	to_pwhs() const;
 	size_t								vertex_count() const { return wrapped ? util::vertex_count(*wrapped) : 0; }
+	NT									outer_regular_area() const;
 
 	void								clear();
 

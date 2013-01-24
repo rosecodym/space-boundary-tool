@@ -36,13 +36,22 @@ std::map<const orientation *, std::vector<const block *>> get_blocks_by_orientat
 
 template <typename SpaceFaceRange, typename BlockRange, typename OutputIterator>
 void process_group(SpaceFaceRange * space_faces, const BlockRange & blocks, const orientation * o, double height_cutoff, double height_eps, OutputIterator oi) {
+	using namespace boost::adaptors;
 	stacking_graph g = create_stacking_graph(space_faces, blocks, height_eps);
-	auto all_vertices = boost::vertices(g);
 	size_t ticks_per_dot = space_faces->size() / 80;
 	size_t curr_ticks = 0;
+	std::multimap<NT, stacking_vertex> space_face_vertices;
+	auto all_vertices = boost::vertices(g);
+	for (auto v = all_vertices.first; v != all_vertices.second; ++v) {
+		auto sf = g[*v].as_space_face();
+		if (sf) { 
+			double reg_area = CGAL::to_double((*sf)->starting_regular_area());
+			space_face_vertices.insert(std::make_pair(reg_area, *v));
+		}
+	}
 	reporting::report_progress("Traversing");
 	boost::for_each(
-		boost::make_iterator_range(all_vertices.first, all_vertices.second) | boost::adaptors::filtered([&g](stacking_vertex v) { return g[v].as_space_face(); }),
+		values(space_face_vertices) | reversed, 
 		[&g, o, height_cutoff, height_eps, &oi, &curr_ticks, ticks_per_dot](stacking_vertex starting_face) { 
 			begin_traversal(g, starting_face, o, height_cutoff, height_eps, oi);
 			if (++curr_ticks > ticks_per_dot) {
