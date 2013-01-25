@@ -110,7 +110,7 @@ type OutputManager (warnDelegate : Action<string>) =
             | 0.0, 0.0, 0.0 -> None
             | n -> Some(n))
         match List.ofSeq constructions with
-        | Empty -> 
+        | Empty | SingleAirSpace -> 
             let layer = retrieveLayer (OutputLayerInfraredTransparent())
             upcast retrieveConstruction ([layer]) None
         | MappedWindow(name, libraryLayers) -> 
@@ -145,6 +145,9 @@ type OutputManager (warnDelegate : Action<string>) =
             match src.MappingTarget with
             | noMapping when noMapping = Unchecked.defaultof<LibraryEntry> -> 
                 emitProblemConstruction (BadMappingConstruction())
+            | LibraryEntry.AirGap(_) ->
+                let layer = retrieveLayer (OutputLayerInfraredTransparent())
+                upcast retrieveConstruction ([layer]) None
             | LibraryEntry.Opaque(entry) -> 
                 let surfaceLayer = retrieveOpaqueSurface entry
                 upcast retrieveConstruction [surfaceLayer] None

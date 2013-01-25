@@ -15,6 +15,13 @@ let (|MappedWindow|_|) = function
         | _ -> failwith "impossible! invalid window entry load"
     | _ -> None
 
+let (|SingleAirSpace|_|) = function
+    | [SingleOpaque(src)] ->
+        match src.MappingTarget with
+        | AirGap(_) -> Some(())
+        | _ -> None
+    | _ -> None
+
 let (|SingleComposite|_|) = function
     | [LayerSet(name, srcs)] ->
         let sources, thicknesses = List.unzip srcs
