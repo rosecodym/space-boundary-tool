@@ -60,7 +60,7 @@ type OutputConstruction (layers:OutputLayer list,
     let mangledHName = 
         match humanReadableName with
         | None -> None
-        | Some(hname) -> Some(hname.Replace(",", "| ").Replace("!", "_"))
+        | Some(hname) -> Some(hname.Replace(",", " |").Replace("!", "_"))
 
     let layerNames = 
         layers 
