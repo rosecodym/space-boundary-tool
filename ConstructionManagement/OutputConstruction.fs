@@ -57,12 +57,17 @@ type OutputConstruction (layers:OutputLayer list,
                          ?maxNameLength: int) =
     inherit OutputConstructionBase()
 
+    let mangledHName = 
+        match humanReadableName with
+        | None -> None
+        | Some(hname) -> Some(hname.Replace(",", "| ").Replace("!", "_"))
+
     let layerNames = 
         layers 
         |> Seq.map (fun layer -> if layer <> Unchecked.defaultof<OutputLayer> then layer.Name else "UNMAPPED MATERIAL")
         |> Seq.toArray
     let identifier = 
-        match humanReadableName with
+        match mangledHName with
         | Some(name) -> sprintf "%s!%s" name (String.concat "!" layerNames) // "!" is the separator because it can't appear in E+ names
         | None -> sprintf "!%s" (String.concat "!" layerNames)
 
@@ -72,7 +77,7 @@ type OutputConstruction (layers:OutputLayer list,
     let maxNL = defaultArg maxNameLength 100
 
     let name =
-        match humanReadableName, layerNames with
+        match mangledHName, layerNames with
         | _, [] ->
             failwith 
                 "There was an attempt to generate a construction with no \
@@ -92,12 +97,12 @@ type OutputConstruction (layers:OutputLayer list,
     member this.Identifier = identifier
     member this.Warnings =
         let tooLong =
-            match humanReadableName with
+            match mangledHName with
             | Some(hname) when hname.Length > maxNL ->
                 Some(sprintf
                     "The name of construction '%s' is too long. It will be \
                      named '%s' in the IDF."
-                     hname
+                     humanReadableName.Value
                      name)
             | _ -> None
         let outsideAir =
