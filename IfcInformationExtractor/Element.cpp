@@ -84,7 +84,11 @@ ModelConstruction ^ createConstruction(const cppw::Instance & inst, String ^ ele
 	}
 }
 
-ModelConstruction ^ createConstructionForWindow(const cppw::Instance & element, String ^ /*elementGuid*/, ModelConstructionCollection ^ constructions) {
+ModelConstruction ^ constructionForWindow(
+	const cppw::Instance & element, 
+	String ^ /*elementGuid*/, 
+	ModelConstructionCollection ^ constructions) 
+{
 	cppw::Set defined_by = element.get("IsDefinedBy");
 	for (defined_by.move_first(); defined_by.move_next(); ) {
 		cppw::Instance d = defined_by.get_();
@@ -106,10 +110,18 @@ ModelConstruction ^ createConstructionForWindow(const cppw::Instance & element, 
 			}
 		}
 	}
-	return constructions->GetModelConstructionWindow("(undefined window construction)");
+	return constructions->GetModelConstructionWindow("(Generic Window)");
 }
 
-ModelConstruction ^ createConstructionForCommon(const cppw::Instance & element, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
+ModelConstruction ^ constructionForDoor(ModelConstructionCollection ^ cs) {
+	return cs->GetModelConstructionSingleOpaque("(Generic Door)");
+}
+
+ModelConstruction ^ constructionForCommon(
+	const cppw::Instance & element, 
+	String ^ elementGuid, 
+	ModelConstructionCollection ^ constructions) 
+{
 	cppw::Set relAssociates = element.get("HasAssociations");
 	for (relAssociates.move_first(); relAssociates.move_next(); ) {
 		cppw::Instance rel = relAssociates.get_();
@@ -122,10 +134,13 @@ ModelConstruction ^ createConstructionForCommon(const cppw::Instance & element, 
 
 ModelConstruction ^ createConstructionFor(const cppw::Instance & buildingElement, String ^ elementGuid, ModelConstructionCollection ^ constructions) {
 	if (buildingElement.is_kind_of("IfcWindow")) {
-		return createConstructionForWindow(buildingElement, elementGuid, constructions);
+		return constructionForWindow(buildingElement, elementGuid, constructions);
+	}
+	else if (buildingElement.is_kind_of("IfcDoor")) {
+		return constructionForDoor(constructions);
 	}
 	else {
-		return createConstructionForCommon(buildingElement, elementGuid, constructions);
+		return constructionForCommon(buildingElement, elementGuid, constructions);
 	}
 }
 
