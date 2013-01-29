@@ -57,6 +57,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4A0B40987D0F410C98913D3F4E7183E7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_531C661FED394C5DB2BE0935C055FCD9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -81,6 +87,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7679B89A3693414092027A5CFCF7652C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7B5E727557FF4CCA90AFEC4E5D8AF71B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7FDEBF7B4F894937AE29E4A840C73F2E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -94,6 +112,12 @@
         "Entry"
         {
         "MsmKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A16A5448CA2E4B40A6397D4E641FDD4F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -302,6 +326,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4A0B40987D0F410C98913D3F4E7183E7"
+            {
+            "SourcePath" = "8:..\\GUI\\bin\\Release\\CGAL_Core-vc100-mt-4.1.dll"
+            "TargetName" = "8:CGAL_Core-vc100-mt-4.1.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_531C661FED394C5DB2BE0935C055FCD9"
             {
             "SourcePath" = "8:..\\GUI\\bin\\Release\\edmikit500.dll"
@@ -362,10 +406,70 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7679B89A3693414092027A5CFCF7652C"
+            {
+            "SourcePath" = "8:..\\GUI\\bin\\Release\\CGAL-vc100-mt-4.1.dll"
+            "TargetName" = "8:CGAL-vc100-mt-4.1.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7B5E727557FF4CCA90AFEC4E5D8AF71B"
+            {
+            "SourcePath" = "8:..\\GUI\\bin\\Release\\libgmp-10.dll"
+            "TargetName" = "8:libgmp-10.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9FC2D387250749E68DBD6F50A1CEF1B8"
             {
             "SourcePath" = "8:..\\GUI\\bin\\Release\\iconv.dll"
             "TargetName" = "8:iconv.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A16A5448CA2E4B40A6397D4E641FDD4F"
+            {
+            "SourcePath" = "8:..\\GUI\\bin\\Release\\boost_thread-vc100-mt-1_47.dll"
+            "TargetName" = "8:boost_thread-vc100-mt-1_47.dll"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
             "Condition" = "8:"

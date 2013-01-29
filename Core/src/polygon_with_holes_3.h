@@ -37,34 +37,16 @@ public:
 	const std::vector<point_3> & outer() const { return m_outer; }
 
 	polygon_with_holes_3 transform(const transformation_3 & t) const { 
-		return polygon_with_holes_3(
-			transform_loop(m_outer, t),
-			m_holes | boost::adaptors::transformed([&t](const std::vector<point_3> & hole) { return transform_loop(hole, t); }));
+		std::vector<std::vector<point_3>> new_holes;
+		for (auto h = m_holes.begin(); h != m_holes.end(); ++h) {
+			new_holes.push_back(transform_loop(*h, t));
+		}
+		return polygon_with_holes_3(transform_loop(m_outer, t), new_holes);
 	}
 
-	polygon_with_holes_2 project_flat() const {
-		return polygon_with_holes_2(
-			m_outer | boost::adaptors::transformed([](const point_3 & p) { return point_2(p.x(), p.y()); }),
-			m_holes | boost::adaptors::transformed([](const std::vector<point_3> & hole) -> std::vector<point_2> {
-				std::vector<point_2> res;
-				boost::transform(hole, std::back_inserter(res), [](const point_3 & p) { return point_2(p.x(), p.y()); });
-				return res;
-			}));
-	}
+	polygon_with_holes_2 project_flat() const;
 
-	std::string to_string() const {
-		auto loop_to_string = [](const std::vector<point_3> & loop) -> std::string {
-			std::stringstream ss;
-			boost::for_each(loop, [&ss](const point_3 & p) { ss << "(" << CGAL::to_double(p.x()) << ", " << CGAL::to_double(p.y()) << ", " << CGAL::to_double(p.z()) << ")\n"; });
-			return ss.str();
-		};
-		std::stringstream ss;
-		ss << "Outer:\n" << loop_to_string(outer());
-		boost::for_each(m_holes, [&ss, &loop_to_string](const std::vector<point_3> & hole) {
-			ss << "Hole:\n" << loop_to_string(hole);
-		});
-		return ss.str();
-	}
+	std::string to_string() const;
 
 	friend bool operator == (const polygon_with_holes_3 & a, const polygon_with_holes_3 & b);
 };

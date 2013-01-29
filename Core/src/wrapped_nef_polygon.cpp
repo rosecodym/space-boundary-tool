@@ -134,12 +134,10 @@ std::vector<polygon_2> wrapped_nef_polygon::to_simple_convex_pieces() const {
 
 std::vector<polygon_with_holes_2> wrapped_nef_polygon::to_pwhs() const {
 	std::vector<polygon_with_holes_2> res;
-	boost::copy(
-		get_faces()
-		| boost::adaptors::transformed([](const face & f) { return f.to_pwh(); })
-		| boost::adaptors::filtered([](const boost::optional<polygon_with_holes_2> & pwh) { return pwh; })
-		| boost::adaptors::transformed([](const boost::optional<polygon_with_holes_2> & pwh) { return *pwh; }),
-		std::back_inserter(res));
+	boost::for_each(get_faces(), [&res](const face & f) {
+		auto pwh = f.to_pwh();
+		if (pwh) { res.push_back(*pwh); }
+	});
 	return res;
 }
 

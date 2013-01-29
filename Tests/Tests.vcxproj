@@ -102,6 +102,7 @@
     <ClCompile Include="..\Core\src\orientation.cpp" />
     <ClCompile Include="..\Core\src\oriented_area.cpp" />
     <ClCompile Include="..\Core\src\polygon_with_holes_2.cpp" />
+    <ClCompile Include="..\Core\src\polygon_with_holes_3.cpp" />
     <ClCompile Include="..\Core\src\simple_face.cpp" />
     <ClCompile Include="..\Core\src\solid_geometry_util.cpp" />
     <ClCompile Include="..\Core\src\stackable.cpp" />

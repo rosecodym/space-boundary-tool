@@ -46,9 +46,11 @@ public:
 	}
 
 	explicit wrapped_nef_polygon(const std::vector<std::vector<point_2>> & loops) {
-		*this = wrapped_nef_polygon(loops | boost::adaptors::transformed([](const std::vector<point_2> & loop) { 
-			return polygon_2(loop.begin(), loop.end()); 
-		}));
+		std::vector<polygon_2> polys;
+		for (auto loop = loops.begin(); loop != loops.end(); ++loop) {
+			polys.push_back(polygon_2(loop->begin(), loop->end()));
+		}
+		*this = wrapped_nef_polygon(polys);
 	}
 
 	wrapped_nef_polygon & operator = (const wrapped_nef_polygon & src) { 

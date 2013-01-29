@@ -51,9 +51,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CGAL_NO_AUTOLINK_GMP;CGAL_NO_AUTOLINK_MPFR;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;C:\Program Files %28x86%29\CGAL\include;C:\Program Files %28x86%29\boost\boost_1_47\</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
       <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
@@ -79,9 +79,9 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CGAL_NO_AUTOLINK_GMP;CGAL_NO_AUTOLINK_MPFR;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Algorithmic Solutions\LEDA-6.3-free-win32-msc10-std-multithread\incl;C:\Program Files (x86)\boost\boost_1_47\;C:\Program Files %28x86%29\CGAL\include;C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Cody\Documents\Software Libraries\CGAL\auxiliary\gmp\include;C:\Program Files %28x86%29\CGAL\include;C:\Program Files %28x86%29\boost\boost_1_47\</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
       <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
@@ -176,6 +176,7 @@
     <ClCompile Include="src\orientation.cpp" />
     <ClCompile Include="src\oriented_area.cpp" />
     <ClCompile Include="src\polygon_with_holes_2.cpp" />
+    <ClCompile Include="src\polygon_with_holes_3.cpp" />
     <ClCompile Include="src\simple_face.cpp" />
     <ClCompile Include="src\one_dimensional_equality_context.cpp" />
     <ClCompile Include="src\precompiled.cpp">

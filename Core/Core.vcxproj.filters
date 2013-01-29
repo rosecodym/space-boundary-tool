@@ -278,5 +278,8 @@
     <ClCompile Include="src\solid_geometry_util.cpp">
       <Filter>geometry\solid_geometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\polygon_with_holes_3.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

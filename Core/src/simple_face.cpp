@@ -78,9 +78,15 @@ simple_face & simple_face::operator = (simple_face && src) {
 }
 
 simple_face simple_face::reversed() const {
+	typedef std::vector<point_3> loop;
+	std::vector<loop> inners;
+	boost::transform(
+		m_inners, 
+		std::back_inserter(inners),
+		[](const loop & inner) { return loop(inner.rbegin(), inner.rend()); });
 	return simple_face(
 		m_outer | boost::adaptors::reversed,
-		m_inners | boost::adaptors::transformed([](const std::vector<point_3> & inner) { return std::vector<point_3>(inner.rbegin(), inner.rend()); }),
+		inners,
 		m_plane.opposite(),
 		m_average_point);
 }

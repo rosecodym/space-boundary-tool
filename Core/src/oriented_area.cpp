@@ -145,7 +145,12 @@ std::vector<polygon_with_holes_3> oriented_area::to_3d(bool flatten_numbers) con
 		boost::transform(pwhs, pwhs.begin(), [](const polygon_with_holes_2 & pwh) { return geometry_common::flatten(pwh); });
 	}
 	for (auto pwh = pwhs.begin(); pwh != pwhs.end(); ++pwh) {
-		res.push_back(polygon_with_holes_3(to_3d(pwh->outer()), pwh->holes() | transformed([this](const polygon_2 & hole) { return to_3d(hole); })));
+		std::vector<std::vector<point_3>> holes;
+		boost::transform(
+			pwh->holes(), 
+			std::back_inserter(holes), 
+			[this](const polygon_2 & hole) { return to_3d(hole); });
+		res.push_back(polygon_with_holes_3(to_3d(pwh->outer()), holes));
 	}
 	return res;
 }

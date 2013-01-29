@@ -1,11 +1,11 @@
 #pragma once
 
-#define CGAL_NO_AUTOLINK_GMP
-#define CGAL_NO_AUTOLINK_MPFR
-#define BOOST_RESULT_OF_USE_DECLTYPE
+// Do NOT enable this, CGAL 4.1 (nef polyhedra specifically) breaks if you do.
+//#define BOOST_RESULT_OF_USE_DECLTYPE
 
+// All MSVC warnings. Arguably these shouldn't be in source but this way I can
+// notate what they actually do.
 #pragma warning (disable:4018) // signed/unsigned mismatch
-#pragma warning (disable:4127) // conditional expression is constant - for printing macros
 #pragma warning (disable:4512) // assignment operator could not be generated
 
 #pragma warning (push,1)
