@@ -41,7 +41,7 @@ std::tuple<plane_3, point_3> calculate_plane_and_average_point(const loop & l) {
 		y += curr.y();
 		z += curr.z();
 	}
-	vector_3 avg_vec(x / l.size(), y / l.size(), z / l.size());
+	vector_3 avg_vec(x / int(l.size()), y / int(l.size()), z / int(l.size()));
 	return std::make_tuple(plane_3(a, b, c, -avg_vec * vector_3(a, b, c)), CGAL::ORIGIN + avg_vec);
 }
 

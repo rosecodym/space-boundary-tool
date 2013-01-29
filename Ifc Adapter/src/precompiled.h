@@ -1,6 +1,12 @@
 #pragma once
 
+#define CGAL_USE_LEDA
+#define CGAL_LEDA_VERSION 630
+#define LEDA_DLL
+
 #pragma warning (push,1)
+#pragma warning (disable:4005) // macro redefinition
+#pragma warning (disable:4293) // shift count negative or too big
 #pragma warning (disable:4701) // potentially uninitialized local
 #pragma warning (disable:4702) // unreachable code
 #pragma warning (disable:4756) // overflow in constant arithmetic
@@ -18,8 +24,8 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Extended_cartesian.h>
-#include <CGAL/CORE_Expr.h>
-#include <CGAL/CORE_BigRat.h>
+#include <CGAL/leda_real.h>
+#include <CGAL/leda_rational.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>

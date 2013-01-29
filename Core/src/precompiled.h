@@ -3,12 +3,17 @@
 // Do NOT enable this, CGAL 4.1 (nef polyhedra specifically) breaks if you do.
 //#define BOOST_RESULT_OF_USE_DECLTYPE
 
+#define CGAL_USE_LEDA
+#define CGAL_LEDA_VERSION 630
+#define LEDA_DLL
+
 // All MSVC warnings. Arguably these shouldn't be in source but this way I can
 // notate what they actually do.
 #pragma warning (disable:4018) // signed/unsigned mismatch
 #pragma warning (disable:4512) // assignment operator could not be generated
 
 #pragma warning (push,1)
+#pragma warning (disable:4293) // shift count negative or too big
 #pragma warning (disable:4701) // potential use of uninitialized variable
 #pragma warning (disable:4702) // unreachable code
 #pragma warning (disable:4756) // overflow in constant arithmetic
@@ -38,6 +43,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
+#include <CGAL/leda_real.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Extended_cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -47,7 +53,6 @@
 #include <CGAL/enum.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/envelope_3.h>
-#include <CGAL/CORE_Expr.h>
 #include <CGAL/Interval_skip_list.h>
 #include <CGAL/Interval_skip_list_interval.h>
 #include <CGAL/Nef_polyhedron_2.h>
@@ -56,7 +61,7 @@
 
 #define EPS_MAGIC 0.01
 
-typedef CORE::Expr						NT;
+typedef leda_real						NT;
 
 typedef CGAL::Cartesian<NT>				K;
 typedef CGAL::Point_2<K>				point_2;

@@ -12,7 +12,7 @@ extern sb_calculation_options g_opts;
 
 namespace {
 
-typedef CGAL::Extended_cartesian<CORE::BigRat>	eK;
+typedef CGAL::Extended_cartesian<leda_rational>	eK;
 typedef eK::Point_3								extended_point_3;
 typedef eK::Plane_3								extended_plane_3;
 typedef CGAL::Nef_polyhedron_3<eK>				nef_polyhedron_3;

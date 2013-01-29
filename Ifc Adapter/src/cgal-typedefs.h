@@ -2,7 +2,7 @@
 
 #include "precompiled.h"
 
-typedef CGAL::Simple_cartesian<CORE::Expr>		K;
+typedef CGAL::Simple_cartesian<leda_real>		K;
 typedef K::FT									NT;
 typedef CGAL::Point_2<K>						point_2;
 typedef CGAL::Point_3<K>						point_3;
