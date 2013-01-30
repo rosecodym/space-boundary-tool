@@ -116,44 +116,49 @@ size_t get_elements(
 	return infos.size();
 }
 
-size_t get_spaces(cppw::Open_model & model, space_info *** spaces, void (*msg_func)(char *), const unit_scaler & s, const std::function<bool(const char *)> & space_filter, number_collection<K> * c) {
+size_t get_spaces(
+	cppw::Open_model & model, 
+	space_info *** spaces, 
+	void (*msg_func)(char *), 
+	void (*warn_func)(char *),
+	const unit_scaler & s, 
+	const std::function<bool(const char *)> & space_filter, 
+	number_collection<K> * c)
+{
+	using internal_geometry::get_local_geometry;
+	using internal_geometry::get_globalizer;
+	typedef boost::format fmt;
 		
 	auto ss = model.get_set_of("IfcSpace");
-	size_t count = (size_t)ss.count();
+	std::vector<space_info> space_vector;
 
-	*spaces = create_list<space_info>(count);
-		
-	for (size_t i = 0; i < count; ++i) {
+	for (ss.move_first(); ss.move_next(); ) {
+		std::string id(((cppw::String)ss.get().get("GlobalId")).data());
 		try {
-			strncpy((*spaces)[i]->id, ((cppw::String)ss.get(i).get("GlobalId")).data(), SPACE_ID_MAX_LEN);
-			if (space_filter((*spaces)[i]->id)) {
-				char buf[256];
-				sprintf(buf, "Extracting space %s...", (*spaces)[i]->id);
-				msg_func(buf);
-				auto geometry = internal_geometry::get_local_geometry(
-					ss.get(i),
-					s,
-					c);
-				auto globalizer = internal_geometry::get_globalizer(
-					ss.get(i),
-					s,
-					c);
+			if (space_filter(id.c_str())) {
+				fmt m("Extracting space %s...");
+				msg_func(const_cast<char *>((m % id).str().c_str()));
+				auto geometry = get_local_geometry(ss.get(), s, c);
+				auto globalizer = get_globalizer(ss.get(), s, c);
 				geometry->transform(globalizer);
-				(*spaces)[i]->geometry = geometry->to_interface_solid();
+				space_info this_space;
+				strncpy(this_space.id, id.c_str(), SPACE_ID_MAX_LEN);
+				this_space.geometry = geometry->to_interface_solid();
+				space_vector.push_back(this_space);
 				msg_func("done.\n");
 			}
 		}
 		catch (internal_geometry::bad_rep_exception & ex) {
-			char buf[256];
-			sprintf(
-				buf, 
-				"Warning: could not load this space (%s). It will be skipped."
-				"\n",
-				ex.what());
-			msg_func(buf);
+			fmt m("Space %s could not be loaded (%s). It will be skipped.\n");
+			warn_func(const_cast<char *>((m % id % ex.what()).str().c_str()));
 		}
 	}
-	return count;
+
+	*spaces = create_list<space_info>(space_vector.size());
+	for (size_t i = 0; i < space_vector.size(); ++i) {
+		*(*spaces)[i] = space_vector[i];
+	}
+	return space_vector.size();
 }
 
 } // namespace
@@ -190,7 +195,8 @@ ifcadapter_return_t extract_from_model(
 		shadings);
 	sprintf(buf, "Got %u building elements.\n", *element_count);
 	notify(buf);
-	*space_count = get_spaces(model, spaces, notify, scaler, space_filter, c);
+	*space_count = 
+		get_spaces(model, spaces, notify, warn, scaler, space_filter, c);
 	sprintf(buf, "Got %u building spaces.\n", *space_count);
 	notify(buf);
 	return IFCADAPT_OK;
