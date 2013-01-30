@@ -127,7 +127,8 @@ std::vector<point_3> build_polyloop(
 		cppw::List components = inst.get("Segments");
 		if (components.size() != 1) {
 			throw bad_rep_exception(
-				"composite curve without exactly one segment");
+				"composite curves without exactly one segment are "
+				"unsupported");
 		}
 		return build_polyloop(components.get_(0), scale, c);
 	}
@@ -174,6 +175,10 @@ std::vector<point_3> build_polyloop(
 			boost::reverse(res); 
 		}
 		return res;
+	}
+	else if (inst.is_kind_of("IfcCircleProfileDef")) {
+		throw bad_rep_exception(
+			"curved geometry definitions are not supported.");
 	}
 	else {
 		throw bad_rep_exception("unsupported representation for a polyloop");
