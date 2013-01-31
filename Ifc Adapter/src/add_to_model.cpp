@@ -20,7 +20,11 @@ int get_level(const space_boundary & b) {
 		b.bounded_space == b.opposite->bounded_space ? 4 : 2;
 }
 
-cppw::Application_instance create_point(cppw::Open_model & model, const point_2 & p, const unit_scaler & scaler) {
+cppw::Application_instance create_point(
+	cppw::Open_model & model, 
+	const ipoint_2 & p, 
+	const unit_scaler & scaler) 
+{
 	cppw::Application_instance point = model.create("IfcCartesianPoint");
 	cppw::List coords(point.create_aggregate("Coordinates"));
 	coords.add(scaler.length_out(CGAL::to_double(p.x())));
@@ -28,7 +32,11 @@ cppw::Application_instance create_point(cppw::Open_model & model, const point_2 
 	return point;
 }
 
-cppw::Application_instance create_point(cppw::Open_model & model, const point_3 & p, const unit_scaler & scaler) {
+cppw::Application_instance create_point(
+	cppw::Open_model & model, 
+	const ipoint_3 & p, 
+	const unit_scaler & scaler) 
+{
 	cppw::Application_instance point = model.create("IfcCartesianPoint");
 	cppw::List coords(point.create_aggregate("Coordinates"));
 	coords.add(scaler.length_out(CGAL::to_double(p.x())));
@@ -37,7 +45,10 @@ cppw::Application_instance create_point(cppw::Open_model & model, const point_3 
 	return point;
 }
 
-cppw::Application_instance create_direction(cppw::Open_model & model, const direction_3 & d) {
+cppw::Application_instance create_direction(
+	cppw::Open_model & model, 
+	const idirection_3 & d) 
+{
 	cppw::Application_instance direction = model.create("IfcDirection");
 	cppw::List ratios(direction.create_aggregate("DirectionRatios"));
 	ratios.add(CGAL::to_double(d.dx()));
@@ -46,26 +57,33 @@ cppw::Application_instance create_direction(cppw::Open_model & model, const dire
 	return direction;
 }
 
-cppw::Application_instance create_a2p3d(cppw::Open_model & model, const transformation_3 & space_placement, space_boundary * sb, std::vector<point_2> * points_2d, const unit_scaler & scaler) {
-	direction_3 ortho_dir = plane_3(
-		from_c_point(sb->geometry.vertices[0]),
-		from_c_point(sb->geometry.vertices[1]),
-		from_c_point(sb->geometry.vertices[2])).orthogonal_direction();
+cppw::Application_instance create_a2p3d(
+	cppw::Open_model & model, 
+	const itransformation_3 & space_placement, 
+	space_boundary * sb, 
+	std::vector<ipoint_2> * points_2d, 
+	const unit_scaler & scaler) 
+{
+	auto ortho_dir = iplane_3(
+		from_c_point<iK>(sb->geometry.vertices[0]),
+		from_c_point<iK>(sb->geometry.vertices[1]),
+		from_c_point<iK>(sb->geometry.vertices[2])).orthogonal_direction();
 
-	transformation_3 flatten = build_flatten(ortho_dir);
+	auto flatten = build_flatten(ortho_dir);
 
 	double z = 0.0;
 	bool set_z = false;
 	for (size_t i = 0; i < sb->geometry.vertex_count; ++i) {
-		point_3 p3flat = from_c_point(sb->geometry.vertices[i]).transform(flatten);
-		points_2d->push_back(point_2(p3flat.x(), p3flat.y()));
+		point p = sb->geometry.vertices[i];
+		auto p3flat = from_c_point<iK>(p).transform(flatten);
+		points_2d->push_back(ipoint_2(p3flat.x(), p3flat.y()));
 		if (!set_z) {
 			z = CGAL::to_double(p3flat.z());
 			set_z = true;
 		}
 	}
 
-	polygon_2 as_poly(points_2d->begin(), points_2d->end());
+	ipolygon_2 as_poly(points_2d->begin(), points_2d->end());
 	if ((CGAL::orientation(as_poly[0], as_poly[1], as_poly[2]) == CGAL::RIGHT_TURN) != as_poly.is_clockwise_oriented())
 	{
 		// i'm sure there's a more elegant way to do this
@@ -74,8 +92,9 @@ cppw::Application_instance create_a2p3d(cppw::Open_model & model, const transfor
 		points_2d->clear();
 		set_z = false;
 		for (size_t i = 0; i < sb->geometry.vertex_count; ++i) {
-			point_3 p3flat = from_c_point(sb->geometry.vertices[i]).transform(flatten);
-			points_2d->push_back(point_2(p3flat.x(), p3flat.y()));
+			point p = sb->geometry.vertices[i];
+			auto p3flat = from_c_point<iK>(p).transform(flatten);
+			points_2d->push_back(ipoint_2(p3flat.x(), p3flat.y()));
 			if (!set_z) {
 				z = CGAL::to_double(p3flat.z());
 				set_z = true;
@@ -83,21 +102,37 @@ cppw::Application_instance create_a2p3d(cppw::Open_model & model, const transfor
 		}
 	}
 
-	// this next part is necessary because GST actually cares about the plane normal
-	// normally, -zhat never occurs, so we have to do some tweaking for floors
-	if (ortho_dir == direction_3(0, 0, -1)) {
-		flatten = flatten * transformation_3(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0);
+	// This code makes sure that if the ortho_dir is -zhat then it will
+	// actually be written that way. That was the original idea, anyway - I
+	// don't know if this fix is still needed but I'm not going to touch it
+	// until I do.
+	if (ortho_dir == idirection_3(0, 0, -1)) {
+		itransformation_3 flip(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, -1, 0,
+			0);
+		flatten = flatten * flip;
 		z *= -1;
 		for (auto p = points_2d->begin(); p != points_2d->end(); ++p) {
-			*p = p->transform(transformation_2(1, 0, 0, 0, -1, 0));
+			*p = p->transform(itransformation_2(1, 0, 0, 0, -1, 0));
 		}
 	}
 
-	transformation_3 unflatten = flatten.inverse();
+	auto unflatten = flatten.inverse();
 
-	point_3 origin = point_3(0, 0, z).transform(unflatten).transform(space_placement.inverse());
-	direction_3 z_axis = direction_3(0, 0, 1).transform(unflatten).transform(space_placement.inverse());
-	direction_3 refdir = direction_3(1, 0, 0).transform(unflatten).transform(space_placement.inverse());
+	ipoint_3 origin = 
+		ipoint_3(0, 0, z)
+		.transform(unflatten)
+		.transform(space_placement.inverse());
+	idirection_3 z_axis = 
+		idirection_3(0, 0, 1)
+		.transform(unflatten)
+		.transform(space_placement.inverse());
+	idirection_3 refdir = 
+		idirection_3(1, 0, 0)
+		.transform(unflatten)
+		.transform(space_placement.inverse());
 
 	cppw::Application_instance a2p3d = model.create("IfcAxis2Placement3D");
 	a2p3d.put("Location", create_point(model, origin, scaler));
@@ -107,13 +142,23 @@ cppw::Application_instance create_a2p3d(cppw::Open_model & model, const transfor
 	return a2p3d;
 }
 
-cppw::Application_instance create_plane(cppw::Open_model & model, const transformation_3 & space_placement, space_boundary * sb, std::vector<point_2> * points_2d, const unit_scaler & scaler) {
+cppw::Application_instance create_plane(
+	cppw::Open_model & model, 
+	const itransformation_3 & space_placement, 
+	space_boundary * sb, 
+	std::vector<ipoint_2> * points_2d, 
+	const unit_scaler & scaler) 
+{
 	cppw::Application_instance plane = model.create("IfcPlane");
 	plane.put("Position", create_a2p3d(model, space_placement, sb, points_2d, scaler));
 	return plane;
 }
 
-cppw::Application_instance create_curve(cppw::Open_model & model, const std::vector<point_2> & points, const unit_scaler & scaler) {
+cppw::Application_instance create_curve(
+	cppw::Open_model & model, 
+	const std::vector<ipoint_2> & points, 
+	const unit_scaler & scaler) 
+{
 	cppw::Application_instance curve = model.create("IfcPolyline");
 	cppw::List pts = curve.create_aggregate("Points");
 	for (auto p = points.begin(); p != points.end(); ++p) {
@@ -122,15 +167,25 @@ cppw::Application_instance create_curve(cppw::Open_model & model, const std::vec
 	return curve;
 }
 
-cppw::Application_instance create_boundary(cppw::Open_model & model, const transformation_3 & space_placement, space_boundary * sb, const unit_scaler & scaler) {
+cppw::Application_instance create_boundary(
+	cppw::Open_model & model, 
+	const itransformation_3 & space_placement, 
+	space_boundary * sb, 
+	const unit_scaler & scaler) 
+{
 	cppw::Application_instance boundary = model.create("IfcCurveBoundedPlane");
-	std::vector<point_2> points_2d;
+	std::vector<ipoint_2> points_2d;
 	boundary.put("BasisSurface", create_plane(model, space_placement, sb, &points_2d, scaler));
 	boundary.put("OuterBoundary", create_curve(model, points_2d, scaler));
 	return boundary;
 }
 
-cppw::Application_instance create_geometry(cppw::Open_model & model, const transformation_3 & space_placement, space_boundary * sb, const unit_scaler & scaler) {
+cppw::Application_instance create_geometry(
+	cppw::Open_model & model, 
+	const itransformation_3 & space_placement, 
+	space_boundary * sb, 
+	const unit_scaler & scaler) 
+{
 	cppw::Application_instance geometry = model.create("IfcConnectionSurfaceGeometry");
 	geometry.put("SurfaceOnRelatingElement", create_boundary(model, space_placement, sb, scaler));
 	return geometry;
@@ -143,10 +198,11 @@ cppw::Application_instance create_sb(
 	const cppw::Instance & element,
 	space_boundary * sb,
 	const unit_scaler & scaler,
-	number_collection<K> * c)
+	number_collection<iK> * c)
 {
 
-	transformation_3 space_placement = build_transformation(space.get("ObjectPlacement"), scaler, c);
+	auto space_placement = 
+		build_transformation(space.get("ObjectPlacement"), scaler, c);
 
 	cppw::Application_instance inst = model.create("IfcRelSpaceBoundary");
 
@@ -224,7 +280,7 @@ ifcadapter_return_t add_to_model(
 	size_t sb_count, 
 	space_boundary ** sbs,
 	void (*msg_func)(char *),
-	number_collection<K> * c) 
+	number_collection<iK> * c) 
 {
 	unit_scaler scaler = unit_scaler::identity_scaler;
 

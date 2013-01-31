@@ -131,6 +131,7 @@ ifcadapter_return_t execute(
 		*sbs = nullptr;
 		if (!input_filename) { return IFCADAPT_INVALID_ARGS; }
 		number_collection<K> ctxt(EPS_MAGIC / 20); // magic divided by magic
+		number_collection<iK> output_ctxt(EPS_MAGIC);
 		notify(fmt("Processing file %s.\n") % input_filename);
 		edm_wrapper edm;
 		cppw::Open_model model = edm.load_ifc_file(input_filename);
@@ -175,7 +176,7 @@ ifcadapter_return_t execute(
 						*sb_count, 
 						*sbs, 
 						opts.notify_func, 
-						&ctxt);
+						&output_ctxt);
 				if (res == IFCADAPT_OK)
 				{
 					notify(fmt("Writing model to %s...") % output_filename);

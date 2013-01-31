@@ -27,4 +27,4 @@ ifcadapter_return_t add_to_model(
 	size_t sb_count,
 	space_boundary ** space_boundaries,
 	void (*msg_func)(char *),
-	number_collection<K> * c);
+	number_collection<iK> * c);
