@@ -43,6 +43,7 @@ public:
 	std::vector<polygon_with_holes_2>	to_pwhs() const;
 	size_t								vertex_count() const { return use_nef ? nef_rep.vertex_count() : simple_rep.size(); }
 	NT									regular_area() const;
+	area								snap(equality_context * c) const;
 
 	void clear();
 

@@ -149,6 +149,29 @@ NT wrapped_nef_polygon::outer_regular_area() const {
 	return res;
 }
 
+wrapped_nef_polygon wrapped_nef_polygon::update_all(
+	const std::function<point_2(point_2)> & update) const
+{
+	auto update_poly = [&update](const polygon_2 & poly) -> polygon_2 {
+		polygon_2 res;
+		for (auto p = poly.vertices_begin(); p != poly.vertices_end(); ++p) {
+			res.push_back(update(*p));
+		}
+		return res;
+	};
+	std::vector<polygon_2> loops;
+	boost::for_each(get_faces(), [&loops, &update_poly](const face & f) {
+		auto pwh = f.to_pwh();
+		if (pwh) {
+			boost::transform(
+				pwh->all_polygons(), 
+				std::back_inserter(loops), 
+				update_poly);
+		}
+	});
+	return wrapped_nef_polygon(loops);
+}
+
 void wrapped_nef_polygon::clear() {
 	wrapped->clear();
 	m_is_axis_aligned = true;

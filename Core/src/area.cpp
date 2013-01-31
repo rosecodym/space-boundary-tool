@@ -179,4 +179,13 @@ NT area::regular_area() const {
 	else { return geometry_common::regular_area(simple_rep); }
 }
 
+area area::snap(equality_context * c) const {
+	if (use_nef) {
+		return area(nef_rep.update_all([c](const point_2 & p) {
+			return c->snap(p);
+		}));
+	}
+	else { return area(c->snap(simple_rep)); }
+}
+
 } // namespace geometry_2d
