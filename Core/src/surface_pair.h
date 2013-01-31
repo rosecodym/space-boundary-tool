@@ -6,7 +6,6 @@
 #include "element.h"
 #include "equality_context.h"
 #include "oriented_area.h"
-#include "report.h"
 
 namespace blocking {
 
@@ -156,11 +155,9 @@ public:
 	public:
 		template <typename OutputIterator>
 		OutputIterator operator () (const Surface_3 & pair, bool /*is_lower*/, OutputIterator oi) const {
-			reporting::report_progress("entered Make_xy_monotone_3\n");
 			if (pair.contributes_to_envelope()) {
 				*oi++ = pair;
 			}
-			reporting::report_progress("exiting Make_xy_monotone_3\n");
 			return oi;
 		}
 	};
@@ -169,7 +166,6 @@ public:
 	public:
 		template <typename OutputIterator>
 		OutputIterator operator () (const Xy_monotone_surface_3 & pair, OutputIterator oi) const {
-			reporting::report_progress("entered Construct_projected_boundary_2\n");
 			if (!pair.are_perpendicular()) {
 				polygon_2 projection = pair.projected_other_area();
 				
@@ -188,7 +184,6 @@ public:
 					return CGAL::make_object(std::make_pair(curve, position ? CGAL::ON_POSITIVE_SIDE : CGAL::ON_NEGATIVE_SIDE));
 				});
 			}
-			reporting::report_progress("exiting Construct_projected_boundary_2\n");
 			return oi;
 		}
 	};
@@ -204,14 +199,11 @@ public:
 	class Compare_z_at_xy_3 {
 	public:
 		CGAL::Comparison_result operator () (const point_2 & point, const Xy_monotone_surface_3 & s1, const Xy_monotone_surface_3 & s2) const {
-			reporting::report_progress("entered Compare_z_at_xy_3 (point)\n");
 			double d1 = s1.relative_height_at(point);
 			double d2 = s2.relative_height_at(point);
-			reporting::report_progress("exiting Compare_z_at_xy_3 (point)\n");
 			return s1.base().sense() ? CGAL::compare(d2, d1) : CGAL::compare(d1, d2);
 		}
 		CGAL::Comparison_result operator () (const x_monotone_curve_2 & curve, const Xy_monotone_surface_3 & s1, const Xy_monotone_surface_3 & s2) const {
-			reporting::report_progress("entered Compare_z_at_xy_3 (curve)\n");
 			CGAL::Comparison_result res = (*this)(curve.left(), s1, s2);
 			if (res == CGAL::EQUAL) {
 				res = (*this)(curve.right(), s1, s2);
@@ -219,7 +211,6 @@ public:
 					res = (*this)(K().construct_midpoint_2_object()(curve.left(), curve.right()), s1, s2);
 				}
 			}
-			reporting::report_progress("exiting Compare_z_at_xy_3 (curve)\n");
 			return res;
 		}
 	};
@@ -230,7 +221,6 @@ public:
 
 		// I just straight up stole this from the triangle code
 		CGAL::Comparison_result operator() (const X_monotone_curve_2 & curve, const Xy_monotone_surface_3 & surf1, const Xy_monotone_surface_3 & surf2) const {
-			reporting::report_progress("entered Compare_z_at_xy_above_3\n");
 
 			if (oriented_area::are_parallel(surf1.other(), surf2.other()) && oriented_area::same_height(surf1.other(), surf2.other())) {
 				return CGAL::EQUAL;
@@ -265,7 +255,6 @@ public:
 
 			CGAL::Sign s2 = CGAL::sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
 			
-			reporting::report_progress("exiting Compare_z_at_xy_above_3\n");
 			return s1 * s2;
 		}
 	};
