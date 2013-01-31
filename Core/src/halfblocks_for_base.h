@@ -31,7 +31,12 @@ void halfblocks_for_base(
 		*oi++ = row[0].base();
 		return;
 	}
-	
+
+	equality_context flat_ctxt(result_ctxt->height_epsilon());
+	boost::for_each(row, [&flat_ctxt](const surface_pair & pair) {
+		pair.set_2d_context(&flat_ctxt);
+	});
+
 	typedef CGAL::Envelope_diagram_2<Surface_pair_envelope_traits> env_diag;
 	env_diag diag;
 	CGAL::lower_envelope_3(row.begin(), row.end(), diag);

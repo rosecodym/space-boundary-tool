@@ -19,6 +19,54 @@ surface_pair::surface_pair(
 		base.parallel_plane_through_origin(), 
 		other.parallel_plane_through_origin())) { }
 
+const oriented_area & surface_pair::get_projection_onto_base() const {
+	if (!m_projection_onto_base) {
+		m_projection_onto_base = m_base->project_onto_self(*m_other);
+		if (m_c2d) {
+			m_projection_onto_base = oriented_area(
+				&m_projection_onto_base->orientation(),
+				m_projection_onto_base->height(),
+				m_projection_onto_base->area_2d().snap(m_c2d),
+				m_projection_onto_base->sense());
+		}
+	}
+	return *m_projection_onto_base;
+}
+
+const oriented_area & surface_pair::get_base_minus_other_projected() const {
+	if (!m_base_minus_other) {
+		if (m_c2d) {
+			oriented_area snapped_base(
+				&m_base->orientation(),
+				m_base->height(),
+				m_base->area_2d().snap(m_c2d),
+				m_base->sense());
+			m_base_minus_other = snapped_base - get_projection_onto_base();
+		}
+		else {
+			m_base_minus_other = *m_base - get_projection_onto_base();
+		}
+	}
+	return *m_base_minus_other;
+}
+
+const oriented_area & surface_pair::get_base_intr_other_projected() const {
+	if (!m_base_intr_other) {
+		if (m_c2d) {
+			oriented_area snapped_base(
+				&m_base->orientation(),
+				m_base->height(),
+				m_base->area_2d().snap(m_c2d),
+				m_base->sense());
+			m_base_intr_other = snapped_base * get_projection_onto_base();
+		}
+		else {
+			m_base_intr_other = *m_base * get_projection_onto_base();
+		}
+	}
+	return *m_base_intr_other;
+}
+
 bool surface_pair::drape_hits_other_plane() const {
 	auto drape = base().drape();
 	auto target_plane = other().backing_plane();

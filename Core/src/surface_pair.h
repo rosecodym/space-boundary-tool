@@ -6,6 +6,7 @@
 #include "element.h"
 #include "equality_context.h"
 #include "oriented_area.h"
+#include "report.h"
 
 namespace blocking {
 
@@ -19,6 +20,7 @@ class surface_pair {
 private:
 	const oriented_area * m_base;
 	const oriented_area * m_other;
+	mutable equality_context * m_c2d;
 	equality_context * m_c3d;
 
 	// A negative thickness cutoff signifies "infinite."
@@ -40,6 +42,7 @@ private:
 		boost::optional<bool> areas_match)
 		: m_base(base),
 		  m_other(other),
+		  m_c2d(nullptr),
 		  m_c3d(context_3d),
 		  m_thickness_cutoff(thickness_cutoff),
 		  m_areas_match(areas_match)
@@ -62,26 +65,9 @@ private:
 		return abs(CGAL::to_double(height_diff)) <= m_thickness_cutoff;
 	}
 
-	const oriented_area & get_projection_onto_base() const {
-		if (!m_projection_onto_base) {
-			m_projection_onto_base = m_base->project_onto_self(*m_other);
-		}
-		return *m_projection_onto_base;
-	}
-
-	const oriented_area & get_base_minus_other_projected() const {
-		if (!m_base_minus_other) {
-			m_base_minus_other = *m_base - get_projection_onto_base();
-		}
-		return *m_base_minus_other;
-	}
-
-	const oriented_area & get_base_intr_other_projected() const {
-		if (!m_base_intr_other) {
-			m_base_intr_other = *m_base * get_projection_onto_base();
-		}
-		return *m_base_intr_other;
-	}
+	const oriented_area & get_projection_onto_base() const;
+	const oriented_area & get_base_minus_other_projected() const;
+	const oriented_area & get_base_intr_other_projected() const;
 
 public:
 	// The default constructor is present because these are used in
@@ -144,6 +130,13 @@ public:
 
 	double relative_height_at(const point_2 & p) const;
 
+	void set_2d_context(equality_context * c) const { 
+		m_c2d = c; 
+		m_projection_onto_base.reset();
+		m_base_minus_other.reset();
+		m_base_intr_other.reset();
+	}
+
 	// A negative thickness_cutoff signifies "infinite."
 	static relations_grid build_relations_grid(
 		const std::vector<oriented_area> & faces,
@@ -163,9 +156,11 @@ public:
 	public:
 		template <typename OutputIterator>
 		OutputIterator operator () (const Surface_3 & pair, bool /*is_lower*/, OutputIterator oi) const {
+			reporting::report_progress("entered Make_xy_monotone_3\n");
 			if (pair.contributes_to_envelope()) {
 				*oi++ = pair;
 			}
+			reporting::report_progress("exiting Make_xy_monotone_3\n");
 			return oi;
 		}
 	};
@@ -174,6 +169,7 @@ public:
 	public:
 		template <typename OutputIterator>
 		OutputIterator operator () (const Xy_monotone_surface_3 & pair, OutputIterator oi) const {
+			reporting::report_progress("entered Construct_projected_boundary_2\n");
 			if (!pair.are_perpendicular()) {
 				polygon_2 projection = pair.projected_other_area();
 				
@@ -192,6 +188,7 @@ public:
 					return CGAL::make_object(std::make_pair(curve, position ? CGAL::ON_POSITIVE_SIDE : CGAL::ON_NEGATIVE_SIDE));
 				});
 			}
+			reporting::report_progress("exiting Construct_projected_boundary_2\n");
 			return oi;
 		}
 	};
@@ -207,11 +204,14 @@ public:
 	class Compare_z_at_xy_3 {
 	public:
 		CGAL::Comparison_result operator () (const point_2 & point, const Xy_monotone_surface_3 & s1, const Xy_monotone_surface_3 & s2) const {
+			reporting::report_progress("entered Compare_z_at_xy_3 (point)\n");
 			double d1 = s1.relative_height_at(point);
 			double d2 = s2.relative_height_at(point);
+			reporting::report_progress("exiting Compare_z_at_xy_3 (point)\n");
 			return s1.base().sense() ? CGAL::compare(d2, d1) : CGAL::compare(d1, d2);
 		}
 		CGAL::Comparison_result operator () (const x_monotone_curve_2 & curve, const Xy_monotone_surface_3 & s1, const Xy_monotone_surface_3 & s2) const {
+			reporting::report_progress("entered Compare_z_at_xy_3 (curve)\n");
 			CGAL::Comparison_result res = (*this)(curve.left(), s1, s2);
 			if (res == CGAL::EQUAL) {
 				res = (*this)(curve.right(), s1, s2);
@@ -219,6 +219,7 @@ public:
 					res = (*this)(K().construct_midpoint_2_object()(curve.left(), curve.right()), s1, s2);
 				}
 			}
+			reporting::report_progress("exiting Compare_z_at_xy_3 (curve)\n");
 			return res;
 		}
 	};
@@ -229,6 +230,7 @@ public:
 
 		// I just straight up stole this from the triangle code
 		CGAL::Comparison_result operator() (const X_monotone_curve_2 & curve, const Xy_monotone_surface_3 & surf1, const Xy_monotone_surface_3 & surf2) const {
+			reporting::report_progress("entered Compare_z_at_xy_above_3\n");
 
 			if (oriented_area::are_parallel(surf1.other(), surf2.other()) && oriented_area::same_height(surf1.other(), surf2.other())) {
 				return CGAL::EQUAL;
@@ -263,6 +265,7 @@ public:
 
 			CGAL::Sign s2 = CGAL::sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
 			
+			reporting::report_progress("exiting Compare_z_at_xy_above_3\n");
 			return s1 * s2;
 		}
 	};
