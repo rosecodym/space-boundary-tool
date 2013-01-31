@@ -259,12 +259,9 @@ ifcadapter_return_t add_to_model(
 			msg_func(".");
 		}
 		catch (...) {
-			char buf[128];
-			sprintf(buf, "Failed to add space boundary %s/%s/%s to the model.\n",
-				sbs[i]->global_id,
-				sbs[i]->element_id,
-				sbs[i]->bounded_space->id);
-			fprintf(stderr, buf);
+			// There used to be some error handling code here that was
+			// literally worse than nothing so I'm taking it out as a quick
+			// stopgap.
 		}
 	}
 	msg_func("done.\n");
