@@ -24,9 +24,6 @@
     <ClInclude Include="src\precompiled.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="src\cgal-typedefs.h">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="src\sbt-ifcadapter.h">
       <Filter>main</Filter>
     </ClInclude>
@@ -75,13 +72,13 @@
     <ClInclude Include="src\ifc-to-face.h">
       <Filter>legacy</Filter>
     </ClInclude>
-    <ClInclude Include="src\ifc-to-cgal.h">
-      <Filter>legacy</Filter>
-    </ClInclude>
     <ClInclude Include="src\exact_surrogates.h">
       <Filter>legacy</Filter>
     </ClInclude>
     <ClInclude Include="src\internal_geometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ifc-to-cgal.h">
       <Filter>geometry</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,9 +110,6 @@
     <ClCompile Include="src\reassign_bounded_spaces.cpp">
       <Filter>operations</Filter>
     </ClCompile>
-    <ClCompile Include="src\geometry_common.cpp">
-      <Filter>geometry</Filter>
-    </ClCompile>
     <ClCompile Include="src\unit_scaler.cpp">
       <Filter>main</Filter>
     </ClCompile>
@@ -129,9 +123,6 @@
       <Filter>legacy</Filter>
     </ClCompile>
     <ClCompile Include="src\ifc-to-face.cpp">
-      <Filter>legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ifc-to-cgal.cpp">
       <Filter>legacy</Filter>
     </ClCompile>
     <ClCompile Include="src\exact_surrogates.cpp">

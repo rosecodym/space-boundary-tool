@@ -2,8 +2,6 @@
 
 #include "precompiled.h"
 
-#include "cgal-typedefs.h"
-
 #include "one_dimensional_equality_context.h"
 
 template <typename K>

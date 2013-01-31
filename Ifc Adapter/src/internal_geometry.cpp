@@ -2,7 +2,6 @@
 
 #include "internal_geometry.h"
 
-#include "cgal-typedefs.h"
 #include "geometry_common.h"
 #include "number_collection.h"
 #include "unit_scaler.h"

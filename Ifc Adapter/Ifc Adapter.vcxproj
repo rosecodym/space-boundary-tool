@@ -13,7 +13,6 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\add_element.h" />
-    <ClInclude Include="src\cgal-typedefs.h" />
     <ClInclude Include="src\CreateGuid_64.h" />
     <ClInclude Include="src\edm_wrapper.h" />
     <ClInclude Include="src\exact_surrogates.h" />
@@ -48,9 +47,7 @@
     <ClCompile Include="src\edm_wrapper.cpp" />
     <ClCompile Include="src\exact_surrogates.cpp" />
     <ClCompile Include="src\extract_from_model.cpp" />
-    <ClCompile Include="src\geometry_common.cpp" />
     <ClCompile Include="src\get_length_units_per_meter.cpp" />
-    <ClCompile Include="src\ifc-to-cgal.cpp" />
     <ClCompile Include="src\ifc-to-face.cpp" />
     <ClCompile Include="src\internal_geometry.cpp" />
     <ClCompile Include="src\precompiled.cpp">

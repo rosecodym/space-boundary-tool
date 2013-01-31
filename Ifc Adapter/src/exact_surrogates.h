@@ -2,7 +2,6 @@
 
 #include "precompiled.h"
 
-#include "cgal-typedefs.h"
 #include "sbt-ifcadapter.h"
 
 struct exact_point {

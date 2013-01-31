@@ -2,7 +2,6 @@
 
 #include "add_element.h"
 
-#include "cgal-typedefs.h"
 #include "internal_geometry.h"
 #include "sbt-ifcadapter.h"
 
