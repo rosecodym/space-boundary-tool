@@ -47,9 +47,7 @@
     <ClCompile Include="src\edm_wrapper.cpp" />
     <ClCompile Include="src\exact_surrogates.cpp" />
     <ClCompile Include="src\extract_from_model.cpp" />
-    <ClCompile Include="src\geometry_common.cpp" />
     <ClCompile Include="src\get_length_units_per_meter.cpp" />
-    <ClCompile Include="src\ifc-to-cgal.cpp" />
     <ClCompile Include="src\ifc-to-face.cpp" />
     <ClCompile Include="src\internal_geometry.cpp" />
     <ClCompile Include="src\precompiled.cpp">
