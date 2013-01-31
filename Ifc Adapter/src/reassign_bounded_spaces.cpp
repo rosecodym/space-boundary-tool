@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "cgal-typedefs.h"
 #include "geometry_common.h"
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"
@@ -28,7 +27,7 @@ namespace {
 					r_indices.push_back(std::vector<size_t>());
 					for (size_t j = 0; j < b.faces[i].outer_boundary.vertex_count; ++j) {
 						size_t index;
-						q_point_3 qp = qs.request_point(
+						point_3 qp = qs.request_point(
 							CGAL::to_double(b.faces[i].outer_boundary.vertices[j].x),
 							CGAL::to_double(b.faces[i].outer_boundary.vertices[j].y),
 							CGAL::to_double(b.faces[i].outer_boundary.vertices[j].z));
@@ -47,10 +46,10 @@ namespace {
 			}
 			else if (s.rep_type == REP_EXT) {
 				const extruded_area_solid & ext = s.rep.as_ext;
-				q_vector_3 ext_vec = qs.request_direction(ext.ext_dx, ext.ext_dy, ext.ext_dz).to_vector();
-				q_NT mag = qs.request_height(sqrt(CGAL::to_double(ext_vec.squared_length())));
+				vector_3 ext_vec = qs.request_direction(ext.ext_dx, ext.ext_dy, ext.ext_dz).to_vector();
+				NT mag = qs.request_height(sqrt(CGAL::to_double(ext_vec.squared_length())));
 				ext_vec = ext_vec / mag;
-				q_transformation_3 extrusion(CGAL::TRANSLATION, ext_vec * ext.extrusion_depth);
+				transformation_3 extrusion(CGAL::TRANSLATION, ext_vec * ext.extrusion_depth);
 				points.reserve(ext.area.outer_boundary.vertex_count * 2);
 				for (size_t i = 0; i < ext.area.outer_boundary.vertex_count; ++i) {
 					points.push_back(qs.request_point(
@@ -101,34 +100,34 @@ namespace {
 
 	class shell_explorer {
 		bool first;
-		const q_nef_polyhedron_3 & poly;
-		q_nef_polyhedron_3::Vertex_const_handle v_min;
+		const nef_polyhedron_3 & poly;
+		nef_polyhedron_3::Vertex_const_handle v_min;
 
 		public:
-		shell_explorer(const q_nef_polyhedron_3 & poly) : first(true), poly(poly) { }
+		shell_explorer(const nef_polyhedron_3 & poly) : first(true), poly(poly) { }
 
-		void visit(q_nef_polyhedron_3::Vertex_const_handle v) {
+		void visit(nef_polyhedron_3::Vertex_const_handle v) {
 			if (first || CGAL::lexicographically_xyz_smaller(v->point(),v_min->point())) {
 				v_min = v;
 				first=false;
 			}
 		}
 
-		void visit(q_nef_polyhedron_3::Halfedge_const_handle) { }
-		void visit(q_nef_polyhedron_3::Halffacet_const_handle) { }
-		void visit(q_nef_polyhedron_3::SHalfedge_const_handle) { }
-		void visit(q_nef_polyhedron_3::SHalfloop_const_handle) { }
-		void visit(q_nef_polyhedron_3::SFace_const_handle) { }
+		void visit(nef_polyhedron_3::Halfedge_const_handle) { }
+		void visit(nef_polyhedron_3::Halffacet_const_handle) { }
+		void visit(nef_polyhedron_3::SHalfedge_const_handle) { }
+		void visit(nef_polyhedron_3::SHalfloop_const_handle) { }
+		void visit(nef_polyhedron_3::SFace_const_handle) { }
 
-		q_nef_polyhedron_3::Vertex_const_handle & minimal_vertex() { return v_min; }
+		nef_polyhedron_3::Vertex_const_handle & minimal_vertex() { return v_min; }
 	};
 
 
-	q_nef_polyhedron_3 build_geometry(space_info * space, q_collection & qs) {
-		q_polyhedron_3 qpoly;
-		shell_builder<q_polyhedron_3::HDS, q_point_3> builder(space->geometry, qs);
+	nef_polyhedron_3 build_geometry(space_info * space, q_collection & qs) {
+		polyhedron_3 qpoly;
+		shell_builder<polyhedron_3::HDS, point_3> builder(space->geometry, qs);
 		qpoly.delegate(builder);
-		return q_nef_polyhedron_3(qpoly);
+		return nef_polyhedron_3(qpoly);
 	}
 
 	point_3 calculate_midpoint(const std::vector<point_3> & points) {
@@ -158,8 +157,8 @@ namespace {
 		return calculate_midpoint(midpoints);
 	}
 
-	q_point_3 convert_point(const point_3 & p) {
-		return q_point_3(CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z()));
+	point_3 convert_point(const point_3 & p) {
+		return point_3(CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z()));
 	}
 
 	// i fucking hate these
@@ -167,29 +166,29 @@ namespace {
 	// why is the interface completely unusable
 #pragma warning (push)
 #pragma warning (disable:4702) // unreachable code, because the only way i know how to get at the info i need is with these dumb macros
-	q_point_3 outside_point(const q_nef_polyhedron_3 & poly) {
+	point_3 outside_point(const nef_polyhedron_3 & poly) {
 		shell_explorer explorer(poly);
-		q_nef_polyhedron_3::Volume_const_iterator vit;
+		nef_polyhedron_3::Volume_const_iterator vit;
 		CGAL_forall_volumes(vit, poly) {
-			q_nef_polyhedron_3::Shell_entry_const_iterator sit;
+			nef_polyhedron_3::Shell_entry_const_iterator sit;
 			CGAL_forall_shells_of(sit, vit) {
-				poly.visit_shell_objects(q_nef_polyhedron_3::SFace_const_handle(sit), explorer);
-				q_point_3 min_point = explorer.minimal_vertex()->point();
-				return q_point_3(min_point.x() * 2, min_point.y() * 2, min_point.z() * 2);
+				poly.visit_shell_objects(nef_polyhedron_3::SFace_const_handle(sit), explorer);
+				point_3 min_point = explorer.minimal_vertex()->point();
+				return point_3(min_point.x() * 2, min_point.y() * 2, min_point.z() * 2);
 			}
 			break;
 		}
 		assert(false);
-		return q_point_3();
+		return point_3();
 	}
 #pragma warning (pop)
 
-	bool shell_contains(const q_nef_polyhedron_3 & shell, const q_point_3 & point) {
+	bool shell_contains(const nef_polyhedron_3 & shell, const point_3 & point) {
 		CGAL::Object_handle obj = shell.locate(point);
-		q_nef_polyhedron_3::Volume_const_handle point_vol;
+		nef_polyhedron_3::Volume_const_handle point_vol;
 		if (CGAL::assign(point_vol, obj)) {
 			obj = shell.locate(outside_point(shell));
-			q_nef_polyhedron_3::Volume_const_handle outside_vol;
+			nef_polyhedron_3::Volume_const_handle outside_vol;
 			if (CGAL::assign(outside_vol, obj)) {
 				return point_vol != outside_vol;
 			}
@@ -216,7 +215,7 @@ void reassign_bounded_spaces(
 
 	q_collection qs(0.0005);
 
-	std::vector<std::pair<q_nef_polyhedron_3, std::string>> loaded_space_geometry;
+	std::vector<std::pair<nef_polyhedron_3, std::string>> loaded_space_geometry;
 	for (size_t i = 0; i < loaded_space_count; ++i) {
 		loaded_space_geometry.push_back(std::make_pair(build_geometry(loaded_spaces[i], qs), loaded_spaces[i]->id));
 	}
@@ -237,7 +236,7 @@ void reassign_bounded_spaces(
 	}
 
 	for (auto p = calculated_spaces.begin(); p != calculated_spaces.end(); ++p) {
-		q_point_3 midpoint = convert_point(calculate_midpoint(p->second));
+		point_3 midpoint = convert_point(calculate_midpoint(p->second));
 		bool found_space_match = false;
 		for (auto q = loaded_space_geometry.begin(); q != loaded_space_geometry.end(); ++q) {
 			if (shell_contains(q->first, midpoint)) {

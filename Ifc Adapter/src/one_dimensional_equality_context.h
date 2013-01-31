@@ -2,8 +2,6 @@
 
 #include "precompiled.h"
 
-#include "cgal-typedefs.h"
-
 template <typename NT>
 class one_dimensional_equality_context {
 private:

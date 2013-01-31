@@ -2,7 +2,6 @@
 
 #include "precompiled.h"
 
-#include "cgal-typedefs.h"
 #include "exact_surrogates.h"
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"

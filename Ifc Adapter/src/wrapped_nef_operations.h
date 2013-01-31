@@ -2,7 +2,6 @@
 
 #include "precompiled.h"
 
-#include "cgal-typedefs.h"
 #include "number_collection.h"
 
 struct exact_solid;

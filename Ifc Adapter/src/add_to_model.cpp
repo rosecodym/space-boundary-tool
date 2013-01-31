@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-#include "cgal-typedefs.h"
 #include "CreateGuid_64.h"
 #include "geometry_common.h"
 #include "ifc-to-cgal.h"
