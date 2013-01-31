@@ -13,7 +13,7 @@ template <typename OutputIterator>
 void halfblocks_for_base(
 	const relations_grid & surf_rels, 
 	size_t base_index, 
-	equality_context * flat_ctxt, 
+	equality_context * result_ctxt, 
 	OutputIterator oi) 
 {
 	typedef relations_grid::index_range array_range;
@@ -44,7 +44,7 @@ void halfblocks_for_base(
 			auto ccb = p->outer_ccb();
 			auto end = ccb;
 			CGAL_For_all(ccb, end) {
-				this_poly.push_back(flat_ctxt->snap(ccb->target()->point()));
+				this_poly.push_back(result_ctxt->snap(ccb->target()->point()));
 			}
 			// for some reason the envelope calculation creates degenerate 
 			// faces sometimes
