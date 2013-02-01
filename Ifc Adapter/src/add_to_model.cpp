@@ -110,8 +110,7 @@ cppw::Application_instance create_a2p3d(
 		itransformation_3 flip(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
-			0, 0, -1, 0,
-			0);
+			0, 0, -1, 0);
 		flatten = flatten * flip;
 		z *= -1;
 		for (auto p = points_2d->begin(); p != points_2d->end(); ++p) {
