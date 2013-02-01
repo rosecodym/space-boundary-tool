@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "exceptions.h"
+#include "geometry_common.h"
 #include "poly_builder.h"
 #include "simple_face.h"
 
@@ -96,6 +97,41 @@ std::vector<std::vector<simple_face>> to_volume_groups(std::vector<simple_face> 
 	return res;
 }
 
+void merge_adjacent_faces(polyhedron_3 * poly) {
+	using geometry_common::calculate_plane_and_average_point;
+
+	for (auto f = poly->facets_begin(); f != poly->facets_end(); ++f) {
+		std::vector<point_3> points;
+		auto v = f->facet_begin();
+		auto end = v;
+		CGAL_For_all(v, end) {
+			points.push_back(v->vertex()->point());
+		}
+		f->plane() = std::get<0>(calculate_plane_and_average_point(points));
+	}
+
+find_redundant_edges:
+	for (auto f = poly->facets_begin(); f != poly->facets_end(); ++f) {
+		auto g = f->facet_begin();
+		auto end = g;
+		CGAL_For_all(g, end) {
+			if (!g->is_border_edge() &&
+				g->opposite()->facet()->plane() == f->plane()) {
+				poly->join_facet(g);
+				goto find_redundant_edges;
+			}
+		}
+	}
+
+find_holes:
+	for (auto h = poly->halfedges_begin(); h != poly->halfedges_end(); ++h) {
+		if (h->is_border()) {
+			poly->join_facet(h->opposite());
+			goto find_holes;
+		}
+	}
+}
+
 } // namespace
 
 nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_context * c) {
@@ -146,6 +182,7 @@ nef_polyhedron_3 volume_group_to_nef(const std::vector<simple_face> & group) {
 	polyhedron_3 poly;
 	poly_builder b(group);
 	poly.delegate(b);
+	merge_adjacent_faces(&poly);
 	if (!poly.is_closed()) {
 		// Why not throw an exception here? Well, currently, this only ever
 		// happens with a bad brep, so presumably a bad_brep_exception would do
