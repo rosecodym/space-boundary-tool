@@ -26,4 +26,30 @@ NT regular_area(const polygon_2 & poly) {
 	return res / 2;
 }
 
+std::tuple<plane_3, point_3> calculate_plane_and_average_point(
+	const std::vector<point_3> & loop) 
+{
+	// http://cs.haifa.ac.il/~gordon/plane.pdf
+	int pcount = int(loop.size());
+	NT a(0.0);
+	NT b(0.0);
+	NT c(0.0);
+	NT x(0.0);
+	NT y(0.0);
+	NT z(0.0);
+	for (size_t i = 0; i < pcount; ++i) {
+		const point_3 & curr = loop[i];
+		const point_3 & next = loop[(i+1) % pcount];
+		a += (curr.y() - next.y()) * (curr.z() + next.z());
+		b += (curr.z() - next.z()) * (curr.x() + next.x());
+		c += (curr.x() - next.x()) * (curr.y() + next.y());
+		x += curr.x();
+		y += curr.y();
+		z += curr.z();
+	}
+	vector_3 avg_vec(x / pcount, y / pcount, z / pcount);
+	NT d = -avg_vec * vector_3(a, b, c);
+	return std::make_tuple(plane_3(a, b, c, d), CGAL::ORIGIN + avg_vec);
+}
+
 } // namespace geometry_common

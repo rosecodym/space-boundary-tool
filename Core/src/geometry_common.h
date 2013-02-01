@@ -49,4 +49,7 @@ NT smallest_squared_distance(PointIter begin, PointIter end) {
 
 NT regular_area(const polygon_2 & poly);
 
+std::tuple<plane_3, point_3> calculate_plane_and_average_point(
+	const std::vector<point_3> & loop);
+
 } // namespace geometry_common

@@ -23,28 +23,6 @@ loop create_loop(const polyloop & p, equality_context * c) {
 	return res;
 }
 
-std::tuple<plane_3, point_3> calculate_plane_and_average_point(const loop & l) {
-	// http://cs.haifa.ac.il/~gordon/plane.pdf
-	NT a(0.0);
-	NT b(0.0);
-	NT c(0.0);
-	NT x(0.0);
-	NT y(0.0);
-	NT z(0.0);
-	for (size_t i = 0; i < l.size(); ++i) {
-		const point_3 & curr = l[i];
-		const point_3 & next = l[(i+1) % l.size()];
-		a += (curr.y() - next.y()) * (curr.z() + next.z());
-		b += (curr.z() - next.z()) * (curr.x() + next.x());
-		c += (curr.x() - next.x()) * (curr.y() + next.y());
-		x += curr.x();
-		y += curr.y();
-		z += curr.z();
-	}
-	vector_3 avg_vec(x / int(l.size()), y / int(l.size()), z / int(l.size()));
-	return std::make_tuple(plane_3(a, b, c, -avg_vec * vector_3(a, b, c)), CGAL::ORIGIN + avg_vec);
-}
-
 bool opposite_sense(const direction_3 & a, const direction_3 & b) {
 	vector_3 vec_a = a.to_vector();
 	vector_3 vec_b = b.to_vector();
@@ -54,13 +32,17 @@ bool opposite_sense(const direction_3 & a, const direction_3 & b) {
 } // namespace
 
 simple_face::simple_face(const face & f, equality_context * c) : m_outer(create_loop(f.outer_boundary, c)) {
+	using geometry_common::calculate_plane_and_average_point;
 	if (m_outer.size() < 3) {
 		throw invalid_face_exception();
 	}
-	std::tie(m_plane, m_average_point) = calculate_plane_and_average_point(m_outer);
+	std::tie(m_plane, m_average_point) = 
+		calculate_plane_and_average_point(m_outer);
 	std::transform(f.voids, f.voids + f.void_count, std::back_inserter(m_inners), [c, this](const polyloop & p) -> loop {
 		loop inner = create_loop(p, c);
-		if (opposite_sense(m_plane.orthogonal_direction(), std::get<0>(calculate_plane_and_average_point(inner)).orthogonal_direction())) {
+		auto inner_pl = std::get<0>(calculate_plane_and_average_point(inner));
+		auto inner_dir = inner_pl.orthogonal_direction();
+		if (opposite_sense(m_plane.orthogonal_direction(), inner_dir)) {
 			boost::reverse(inner);
 		}
 		return inner;
