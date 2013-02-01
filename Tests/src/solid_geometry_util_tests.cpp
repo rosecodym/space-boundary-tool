@@ -189,7 +189,7 @@ TEST(SolidGeometryUtil, ExtrusionToNefReversedBase) {
 	nef.visit_shell_objects(nef_sface_handle(marked_v->shells_begin()), checker);
 }
 
-TEST(SolidGeometryUtil, VolumeGroupToNef) {
+TEST(VolumeGroupToNef, OpenGroupsAreEmpty) {
 	equality_context c(0.01);
 
 	std::vector<simple_face> open_faces;
@@ -250,7 +250,48 @@ TEST(SolidGeometryUtil, VolumeGroupToNef) {
 			simple_point(1.5, 2.826055508613251, 10.6666666666)), &c));
 
 	nef_polyhedron_3 open_nef = volume_group_to_nef(open_faces);
-	EXPECT_EQ(1, open_nef.number_of_volumes());
+	EXPECT_TRUE(open_nef.is_empty());
+}
+
+TEST(VolumeGroupToNef, ArtificialFaceSplitsDoNotCauseEmptiness) {
+	// This tests a stunt that Revit's been pulling recently. Imagine a
+	// tetrahedral "tent" with one of the faces split like "flaps." If there's
+	// no corresponding vertex at the split on the "floor" face then CGAL will
+	// consider the resulting polyhedron open. (In addition, even when this
+	// splitting happens to work out space faces get all messed up.)
+
+	equality_context c(0.01);
+
+	std::vector<simple_face> faces;
+
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 1, 0),
+			simple_point(1, 0, 0)), &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 0, 1),
+			simple_point(0, 1, 0)), &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(0, 0, 1),
+			simple_point(1, 0, 0),
+			simple_point(0, 1, 0)), &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 0, 0),
+			simple_point(0, 0, 1)), &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(0, 0, 0),
+			simple_point(1, 0, 0),
+			simple_point(0, 0, 1)), &c));
+
+	nef_polyhedron_3 nef = volume_group_to_nef(std::move(faces));
+	EXPECT_FALSE(nef.is_empty());
 }
 
 } // namespace

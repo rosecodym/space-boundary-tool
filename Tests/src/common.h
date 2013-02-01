@@ -2,6 +2,8 @@
 
 #include "precompiled.h"
 
+#include <gtest/gtest.h>
+
 #include "polygon_with_holes_3.h"
 #include "sbt-core.h"
 

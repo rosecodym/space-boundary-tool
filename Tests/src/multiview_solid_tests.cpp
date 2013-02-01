@@ -1,8 +1,7 @@
 #include "precompiled.h"
 
-#include <gtest/gtest.h>
-
 #include "common.h"
+
 #include "element.h"
 #include "equality_context.h"
 #include "exceptions.h"
@@ -291,6 +290,40 @@ TEST(MultiviewSolid, TooShallowExtrusion) {
 		simple_point(0, 0, 0)));
 
 	EXPECT_THROW(multiview_solid ms(s, &c);, shallow_extrusion_exception);
+}
+
+TEST(MultiviewSolid, BrepsWithArtificialFaceSplitsSucceed) {
+	// This tests a stunt that Revit's been pulling recently. Imagine a
+	// tetrahedral "tent" with one of the faces split like "flaps." If there's
+	// no corresponding vertex at the split on the "floor" face then CGAL will
+	// consider the resulting polyhedron open. (In addition, even when this
+	// splitting happens to work out space faces get all messed up.)
+
+	equality_context c(0.01);
+
+	solid b = create_brep(5,
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 1, 0),
+			simple_point(1, 0, 0)),
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 0, 1),
+			simple_point(0, 1, 0)),
+		create_face(3,
+			simple_point(0, 0, 1),
+			simple_point(1, 0, 0),
+			simple_point(0, 1, 0)),
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 0, 0),
+			simple_point(0, 0, 1)),
+		create_face(3,
+			simple_point(0, 0, 0),
+			simple_point(1, 0, 0),
+			simple_point(0, 0, 1)));
+			
+	EXPECT_NO_THROW(multiview_solid mvs(b, &c););
 }
 
 } // namespace
