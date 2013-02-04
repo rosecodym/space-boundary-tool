@@ -4,6 +4,7 @@
 #include "geometry_common.h"
 #include "poly_builder.h"
 #include "simple_face.h"
+#include "stringification.h"
 
 #include "solid_geometry_util.h"
 
@@ -116,7 +117,8 @@ find_redundant_edges:
 		auto end = g;
 		CGAL_For_all(g, end) {
 			if (!g->is_border_edge() &&
-				g->opposite()->facet()->plane() == f->plane()) {
+				g->opposite()->facet()->plane() == f->plane())
+			{
 				poly->join_facet(g);
 				goto find_redundant_edges;
 			}
@@ -125,13 +127,13 @@ find_redundant_edges:
 
 	poly->keep_largest_connected_components(1);
 
+	// CGAL offers some hole removal facilities but I can't get them to work.
 find_holes:
 	for (auto h = poly->halfedges_begin(); h != poly->halfedges_end(); ++h) {
-		if (h->is_border()) {
-			// These are CGAL preconditions.
-			if (h->vertex_degree() < 3 || h->opposite()->vertex_degree() < 3) {
-				throw bad_brep_exception();
-			}
+		if (h->is_border() &&
+			h->vertex_degree() >= 3 &&
+			h->opposite()->vertex_degree() >= 3)
+		{
 			poly->join_facet(h->opposite());
 			goto find_holes;
 		}
