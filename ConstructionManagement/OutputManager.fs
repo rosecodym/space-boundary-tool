@@ -159,7 +159,12 @@ type OutputManager (warnDelegate : Action<string>) =
         | ModelConstruction.LayerSet(_, layers) ->
             let relevantLayer =
                 if not (areParallel surfaceNormal constructionNormal) then
-                    getThickestLayer layers
+                    layers
+                    |> Seq.filter (fun (src, _) ->
+                        match src.MappingTarget with
+                        | LibraryEntry.AirGap(_) -> false
+                        | _ -> true)
+                    |> getThickestLayer
                 else if areAntiparallel surfaceNormal constructionNormal then
                     layers |> List.rev |> Seq.head |> fst
                 else
