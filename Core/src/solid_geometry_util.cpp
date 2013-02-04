@@ -123,9 +123,15 @@ find_redundant_edges:
 		}
 	}
 
+	poly->keep_largest_connected_components(1);
+
 find_holes:
 	for (auto h = poly->halfedges_begin(); h != poly->halfedges_end(); ++h) {
 		if (h->is_border()) {
+			// These are CGAL preconditions.
+			if (h->vertex_degree() < 3 || h->opposite()->vertex_degree() < 3) {
+				throw bad_brep_exception();
+			}
 			poly->join_facet(h->opposite());
 			goto find_holes;
 		}
