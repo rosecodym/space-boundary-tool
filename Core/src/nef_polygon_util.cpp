@@ -1,6 +1,7 @@
 #include "precompiled.h"
 
 #include "cleanup_loop.h"
+#include "report.h"
 #include "sbt-core.h"
 
 #include "nef_polygon_util.h"
@@ -196,7 +197,16 @@ nef_polygon_2 create_nef_polygon(polygon_2 poly) {
 }
 
 void snap(nef_polygon_2 * from, const nef_polygon_2 & to) {
-	if (from->is_empty() || to.is_empty()) { return; }
+	// Snapping is super slow with lots of vertices so there's this somewhat
+	// arbitrary cutoff. Hopefully this doesn't burn me. (Obviously the correct
+	// solution is a better snapping algorithm but I need to get this one model
+	// working!)
+	if (from->is_empty() || 
+		to.is_empty() ||
+		vertex_count(to) > 8)
+	{ 
+		return; 
+	}
 
 	std::vector<point_2> all_points;
 	std::vector<eline_2> all_lines;
