@@ -28,7 +28,7 @@
         "Entry"
         {
         "MsmKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
-        "OwnerKey" = "8:_696E1D52A998DFD0900ABC39477BE881"
+        "OwnerKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -40,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_203BD8319200B97C1FDDAB353D4039BE"
-        "OwnerKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
+        "OwnerKey" = "8:_696E1D52A998DFD0900ABC39477BE881"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -111,18 +111,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_635B2CBC12C642B892A41D717EE2A049"
-        "OwnerKey" = "8:_45C977EBEB72431CA26FBA6628F22EDE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_635B2CBC12C642B892A41D717EE2A049"
-        "OwnerKey" = "8:_7FDEBF7B4F894937AE29E4A840C73F2E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_696E1D52A998DFD0900ABC39477BE881"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
@@ -178,25 +166,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_603184890994A476E3CA19B344A8E788"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F8C37552ED70350397259347881124A0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_696E1D52A998DFD0900ABC39477BE881"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
+        "OwnerKey" = "8:_3B93DE6B912AF8944A31A0BA0B6DD8C7"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -208,7 +178,25 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3B93DE6B912AF8944A31A0BA0B6DD8C7"
+        "OwnerKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_696E1D52A998DFD0900ABC39477BE881"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F8C37552ED70350397259347881124A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_603184890994A476E3CA19B344A8E788"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -353,11 +341,6 @@
             "AssemblyAsmDisplayName" = "8:FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_203BD8319200B97C1FDDAB353D4039BE"
-                    {
-                    "Name" = "8:FSharp.Core.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:FSharp.Core.dll"
             "TargetName" = "8:"
@@ -424,11 +407,6 @@
             "AssemblyAsmDisplayName" = "8:LibIdf, Version=1.7.2.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_32CFDC8CC4CB5B7BDA0AADB71801A806"
-                    {
-                    "Name" = "8:LibIdf.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:LibIdf.dll"
             "TargetName" = "8:"
@@ -455,11 +433,6 @@
             "AssemblyAsmDisplayName" = "8:FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_3B93DE6B912AF8944A31A0BA0B6DD8C7"
-                    {
-                    "Name" = "8:FSharp.PowerPack.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:FSharp.PowerPack.dll"
             "TargetName" = "8:"
@@ -526,11 +499,6 @@
             "AssemblyAsmDisplayName" = "8:IfcInformationExtractor, Version=1.5.1.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_603184890994A476E3CA19B344A8E788"
-                    {
-                    "Name" = "8:IfcInformationExtractor.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:IfcInformationExtractor.dll"
             "TargetName" = "8:"
@@ -577,11 +545,6 @@
             "AssemblyAsmDisplayName" = "8:ConstructionManagement, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_696E1D52A998DFD0900ABC39477BE881"
-                    {
-                    "Name" = "8:ConstructionManagement.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ConstructionManagement.dll"
             "TargetName" = "8:"
@@ -688,11 +651,6 @@
             "AssemblyAsmDisplayName" = "8:SBTWrapper, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_F8C37552ED70350397259347881124A0"
-                    {
-                    "Name" = "8:SBTWrapper.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:SBTWrapper.dll"
             "TargetName" = "8:"
@@ -768,15 +726,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
-        "ProductCode" = "8:{9FC22170-1825-46C1-B3CB-F280EEA790E2}"
-        "PackageCode" = "8:{61F6972E-DFC2-4F62-B94D-F8CF4D8202E6}"
+        "ProductCode" = "8:{5A174B53-6DCE-4A15-B35C-4160523C82C4}"
+        "PackageCode" = "8:{190BE4F8-16DC-48CE-ADC3-F479A3F0F6A8}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.5.1"
+        "ProductVersion" = "8:1.5.2"
         "Manufacturer" = "8:LBNL"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1299,26 +1257,12 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_635B2CBC12C642B892A41D717EE2A049"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:Microsoft_VC100_CRT_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
         }
         "ProjectOutput"
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_45C977EBEB72431CA26FBA6628F22EDE"
             {
-            "SourcePath" = "8:..\\Debug\\SBT-IFC.dll"
+            "SourcePath" = "8:..\\Release\\SBT-IFC.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1346,7 +1290,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7FDEBF7B4F894937AE29E4A840C73F2E"
             {
-            "SourcePath" = "8:..\\Debug\\SBT-Core.dll"
+            "SourcePath" = "8:..\\Release\\SBT-Core.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
@@ -1374,7 +1318,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A0B7928A50CB4C8197B788BDCD8095DE"
             {
-            "SourcePath" = "8:..\\GUI\\obj\\x86\\Debug\\SBT-GUI.exe"
+            "SourcePath" = "8:..\\GUI\\obj\\x86\\Release\\SBT-GUI.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
