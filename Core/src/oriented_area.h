@@ -81,8 +81,14 @@ public:
 		});
 	}
 
-	friend oriented_area operator - (const oriented_area & lhs, const oriented_area & rhs);
-	friend oriented_area operator * (const oriented_area & lhs, const oriented_area & rhs);
+	// These functions only return a value if the arguments' orientations,
+	// heights, and senses match.
+	friend boost::optional<oriented_area> operator - (
+		const oriented_area & lhs, 
+		const oriented_area & rhs);
+	friend boost::optional<oriented_area> operator * (
+		const oriented_area & lhs,
+		const oriented_area & rhs);
 
 	static bool are_parallel(const oriented_area & a, const oriented_area & b) { return orientation::are_parallel(*a.o, *b.o); }
 	static bool are_perpendicular(const oriented_area & a, const oriented_area & b, double eps = 0.0) { return orientation::are_perpendicular(*a.o, *b.o, eps); }
@@ -99,13 +105,3 @@ public:
 	static bool same_height(const oriented_area & a, const oriented_area & b) { return a.p == b.p; }
 	static boost::optional<NT> could_form_block(const oriented_area & a, const oriented_area & b);
 };
-
-inline oriented_area operator - (const oriented_area & lhs, const oriented_area & rhs) {
-	// precondition: orientations and reversedness match
-	return oriented_area(lhs.o, lhs.a - rhs.a, lhs.p, lhs.flipped);
-}
-
-inline oriented_area operator * (const oriented_area & lhs, const oriented_area & rhs) {
-	// precondition: orientations and reversedness match
-	return oriented_area(lhs.o, lhs.a * rhs.a, lhs.p, lhs.flipped);
-}

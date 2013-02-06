@@ -63,9 +63,6 @@
     <ClCompile Include="src\complicated_extruded_element.cpp">
       <Filter>old structure</Filter>
     </ClCompile>
-    <ClCompile Include="src\oriented_area_tests.cpp">
-      <Filter>old structure</Filter>
-    </ClCompile>
     <ClCompile Include="src\precompiled.cpp">
       <Filter>old structure</Filter>
     </ClCompile>
@@ -149,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="src\solid_geometry_util_tests.cpp">
       <Filter>tests\geometry\solid_geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oriented_area_tests.cpp">
+      <Filter>tests\geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

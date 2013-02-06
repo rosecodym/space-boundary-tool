@@ -182,6 +182,40 @@ bool oriented_area::contains(
 		area_2d() >= other.area_2d();
 }
 
+boost::optional<oriented_area> operator - (
+	const oriented_area & lhs,
+	const oriented_area & rhs)
+{
+	if (lhs.sense() != rhs.sense() || 
+		lhs.o != rhs.o || 
+		lhs.height() != rhs.height()) 
+	{
+		return boost::optional<oriented_area>();
+	}
+	else {
+		area diff = lhs.area_2d() - rhs.area_2d();
+		if (diff.is_empty()) { return boost::optional<oriented_area>(); }
+		else { return oriented_area(lhs, diff); }
+	}
+}
+
+boost::optional<oriented_area> operator * (
+	const oriented_area & lhs,
+	const oriented_area & rhs)
+{
+	if (lhs.sense() != rhs.sense() || 
+		lhs.o != rhs.o || 
+		lhs.height() != rhs.height()) 
+	{
+		return boost::optional<oriented_area>();
+	}
+	else {
+		area intr = lhs.area_2d() * rhs.area_2d();
+		if (intr.is_empty()) { return boost::optional<oriented_area>(); }
+		else { return oriented_area(lhs, intr); }
+	}
+}
+
 boost::optional<NT> oriented_area::could_form_block(const oriented_area & a, const oriented_area & b) {
 	if (a.sense() != b.sense() &&
 		a.o == b.o &&
