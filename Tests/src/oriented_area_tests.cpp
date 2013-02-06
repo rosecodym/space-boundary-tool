@@ -153,7 +153,6 @@ TEST(OrientedArea, CouldFormBlock) {
 	ASSERT_EQ(&a.orientation(), &b.orientation());
 	ASSERT_NE(a.height(), b.height());
 	ASSERT_TRUE(a.sense() == a.height() > b.height());
-	ASSERT_TRUE(oriented_area::areas_match(a, b));
 
 	EXPECT_TRUE(oriented_area::could_form_block(a, b));
 	EXPECT_TRUE(oriented_area::could_form_block(b, a));

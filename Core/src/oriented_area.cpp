@@ -221,7 +221,7 @@ boost::optional<NT> oriented_area::could_form_block(const oriented_area & a, con
 		a.o == b.o &&
 		a.height() != b.height() &&
 		(a.sense() == a.height() > b.height()) &&
-		areas_match(a, b))
+		a.area_2d() == b.area_2d())
 	{
 		return a.sense() ? a.height() - b.height() : b.height() - a.height();
 	}

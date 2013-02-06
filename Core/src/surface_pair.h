@@ -53,7 +53,7 @@ private:
 
 	bool areas_match() const {
 		if (!m_areas_match) {
-			m_areas_match = oriented_area::areas_match(*m_base, *m_other);
+			m_areas_match = m_base->area_2d() == m_other->area_2d();
 		}
 		return *m_areas_match;
 	}
