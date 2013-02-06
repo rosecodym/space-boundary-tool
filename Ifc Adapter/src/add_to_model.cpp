@@ -309,9 +309,20 @@ ifcadapter_return_t add_to_model(
 	int added_count = 0;
 	for (size_t i = 0; i < sb_count; ++i) {
 		try {
-			create_sb(model, ownerhistory, ss.get(space_map[sbs[i]->bounded_space->id]), es.get(element_map[sbs[i]->element_id]), sbs[i], scaler, c);
-			++added_count;
-			msg_func(".");
+			// Space boundaries with no geometry shouldn't exist but I don't
+			// want everything to crash if they do.
+			if (sbs[i]->geometry.vertex_count > 0) {
+				create_sb(
+					model, 
+					ownerhistory, 
+					ss.get(space_map[sbs[i]->bounded_space->id]), 
+					es.get(element_map[sbs[i]->element_id]), 
+					sbs[i], 
+					scaler, 
+					c);
+				++added_count;
+				msg_func(".");
+			}
 		}
 		catch (...) {
 			// There used to be some error handling code here that was
