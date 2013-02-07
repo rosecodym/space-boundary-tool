@@ -37,19 +37,9 @@ private:
 		const oriented_area * base, 
 		const oriented_area * other,
 		double thickness_cutoff,
+		equality_context * context_2d,
 		equality_context * context_3d,
-		boost::optional<bool> areas_match)
-		: m_base(base),
-		  m_other(other),
-		  m_c2d(nullptr),
-		  m_c3d(context_3d),
-		  m_thickness_cutoff(thickness_cutoff),
-		  m_areas_match(areas_match)
-	{ 
-		m_rotation = dihedral_angle(
-			base->parallel_plane_through_origin(), 
-			other->parallel_plane_through_origin());
-	}
+		boost::optional<bool> areas_match);
 
 	bool areas_match() const {
 		if (!m_areas_match) {
@@ -119,6 +109,7 @@ public:
 			m_other, 
 			m_base, 
 			m_thickness_cutoff, 
+			m_c2d,
 			m_c3d, 
 			m_areas_match); 
 	}
