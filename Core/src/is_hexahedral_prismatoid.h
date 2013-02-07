@@ -47,10 +47,24 @@ bool is_hexahedral_prismatoid(const relations_grid & surface_relationships, size
 					const surface_pair & rel = surface_relationships[i][j];
 					const surface_pair & other = surface_relationships[j][i];
 					if (!is_in_base_pair(j) && rel.are_parallel()) {
-						boost::optional<oriented_area> a;
-						if (!(a = rel.base_minus_other_projected())->area_2d().is_empty()) { *oi++ = block(*a, e); }
-						if (!(a = other.base_minus_other_projected())->area_2d().is_empty()) { *oi++ = block(*a, e); }
-						if (!(a = rel.base_intr_other_projected())->area_2d().is_empty()) { *oi++ = block(*a, other.base_intr_other_projected(), e); }
+						area a;
+						a = rel.base_minus_other_projected();
+						if (!a.is_empty()) {
+							*oi++ = block(rel.base_part_with_area(a), e);
+						}
+						a = other.base_minus_other_projected();
+						if (!a.is_empty()) {
+							*oi++ = block(other.base_part_with_area(a), e);
+						}
+						a = rel.base_intr_other_projected();
+						if (!a.is_empty()) {
+							area oth_intr = other.base_intr_other_projected();
+							oriented_area rel_part = 
+								rel.base_part_with_area(a);
+							oriented_area other_part = 
+								other.base_part_with_area(oth_intr);
+							*oi++ = block(rel_part, other_part, e);
+						}
 						handled[i] = handled[j] = true;
 						break;
 					}

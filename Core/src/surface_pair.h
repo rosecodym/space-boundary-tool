@@ -28,9 +28,9 @@ private:
 
 	// These fields memoize comparisons.
 	mutable boost::optional<bool> m_areas_match;
-	mutable boost::optional<oriented_area> m_projection_onto_base;
-	mutable boost::optional<oriented_area> m_base_minus_other;
-	mutable boost::optional<oriented_area> m_base_intr_other;
+	mutable boost::optional<area> m_projection_onto_base;
+	mutable boost::optional<area> m_base_minus_other;
+	mutable boost::optional<area> m_base_intr_other;
 
 	// This constructor is used to generate a surface pair opposite.
 	surface_pair(
@@ -54,9 +54,9 @@ private:
 		return abs(CGAL::to_double(height_diff)) <= m_thickness_cutoff;
 	}
 
-	const oriented_area & get_projection_onto_base() const;
-	const oriented_area & get_base_minus_other_projected() const;
-	const oriented_area & get_base_intr_other_projected() const;
+	const area & get_projection_onto_base() const;
+	const area & get_base_minus_other_projected() const;
+	const area & get_base_intr_other_projected() const;
 
 public:
 	// The default constructor is present because these are used in
@@ -91,17 +91,21 @@ public:
 		return oriented_area::are_perpendicular(*m_base, *m_other, EPS_MAGIC); 
 	}
 
-	const oriented_area & base_minus_other_projected() const {
+	const area & base_minus_other_projected() const {
 		return get_base_minus_other_projected();
 	}
 
-	const oriented_area & base_intr_other_projected() const {
+	const area & base_intr_other_projected() const {
 		return get_base_intr_other_projected();
 	}
 
 	polygon_2 projected_other_area() const {
-		auto outer = get_projection_onto_base().area_2d().outer_bound();
+		auto outer = get_projection_onto_base().outer_bound();
 		return outer ? *outer : polygon_2();
+	}
+
+	oriented_area base_part_with_area(const area & a) const {
+		return oriented_area(*m_base, a);
 	}
 
 	surface_pair opposite() const { 
