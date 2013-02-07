@@ -192,11 +192,7 @@ boost::optional<oriented_area> operator - (
 	{
 		return boost::optional<oriented_area>();
 	}
-	else {
-		area diff = lhs.area_2d() - rhs.area_2d();
-		if (diff.is_empty()) { return boost::optional<oriented_area>(); }
-		else { return oriented_area(lhs, diff); }
-	}
+	else { return oriented_area(lhs, lhs.area_2d() - rhs.area_2d()); }
 }
 
 boost::optional<oriented_area> operator * (
@@ -209,11 +205,7 @@ boost::optional<oriented_area> operator * (
 	{
 		return boost::optional<oriented_area>();
 	}
-	else {
-		area intr = lhs.area_2d() * rhs.area_2d();
-		if (intr.is_empty()) { return boost::optional<oriented_area>(); }
-		else { return oriented_area(lhs, intr); }
-	}
+	else { return oriented_area(lhs, lhs.area_2d() * rhs.area_2d()); }
 }
 
 boost::optional<NT> oriented_area::could_form_block(const oriented_area & a, const oriented_area & b) {

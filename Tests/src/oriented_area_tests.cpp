@@ -9,7 +9,7 @@
 
 namespace {
 
-TEST(OrientedAreaFreeIntersection, CoplanarNonIntersectingIsUnset) {
+TEST(OrientedAreaFreeIntersection, CoplanarNonIntersectingIsSetAndEmpty) {
 	equality_context c(0.01);
 	oriented_area a(simple_face(create_face(4,
 		simple_point(0, 0, 0),
@@ -21,7 +21,9 @@ TEST(OrientedAreaFreeIntersection, CoplanarNonIntersectingIsUnset) {
 		simple_point(5, 0, 0),
 		simple_point(5, 1, 0),
 		simple_point(4, 1, 0)), &c), &c);
-	EXPECT_FALSE(a * b);
+	auto intr = a * b;
+	ASSERT_TRUE(intr);
+	EXPECT_TRUE(intr->area_2d().is_empty());
 }
 
 // Legacy tests follow
