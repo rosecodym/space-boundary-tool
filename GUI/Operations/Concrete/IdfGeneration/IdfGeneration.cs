@@ -320,7 +320,7 @@ namespace GUI.Operations
             bool allLongNamesPresent = !unassigned.Any(s => empty(s.LongName));
             if (allLongNamesPresent)
             {
-                var asLongNames = unassigned.Select(s => s.LongName);
+                var asLongNames = unassigned.Select(s => s.LongName.ToUpper());
                 if (asLongNames.Distinct().Count() == unassigned.Count)
                 {
                     foreach (IfcSpace s in unassigned)
@@ -334,7 +334,7 @@ namespace GUI.Operations
             bool allNamesPresent = !unassigned.Any(s => empty(s.Name));
             if (allNamesPresent)
             {
-                var asNames = unassigned.Select(s => s.Name);
+                var asNames = unassigned.Select(s => s.Name.ToUpper());
                 if (asNames.Distinct().Count() == unassigned.Count)
                 {
                     foreach (IfcSpace s in unassigned)
@@ -347,7 +347,7 @@ namespace GUI.Operations
             if (allNamesPresent && allLongNamesPresent)
             {
                 Func<IfcSpace, string> combinedName = s =>
-                    String.Format("{0} {1}", s.LongName, s.Name);
+                    String.Format("{0} {1}", s.LongName, s.Name).ToUpper();
                 var combined = unassigned.Select(combinedName);
                 if (combined.Distinct().Count() == unassigned.Count)
                 {
@@ -358,7 +358,9 @@ namespace GUI.Operations
                 }
             }
 
-            // TODO: check for case-sensitivity collisions here (ugh revit)
+            // TODO: Check for case-sensitivity collisions. This is only a
+            // problem when there are GUIDs that vary only by case (thanks for
+            // that one, Revit.
             foreach (IfcSpace s in unassigned) { res[s.Guid] = s.Guid; }
             return res;
         }
