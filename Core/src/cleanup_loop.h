@@ -54,7 +54,21 @@ std::list<typename Loop::value_type> create_cleaned_loop(const Loop & loop, doub
 		else { steps_since_last_change = 0; }
 	}
 
-	return points.size() >= 3 ? points : std::list<point_t>();
+	if (points.size() < 3) { return std::list<point_t>(); }
+	else {
+		int flat_count = 0;
+		auto bbox = points.front().bbox();
+		for (auto p = points.begin(); p != points.end(); ++p) {
+			bbox = bbox + p->bbox();
+		}
+		int dim = bbox.dimension();
+		for (int i = 0; i < dim; ++i) {
+			if (equality_context::are_equal(bbox.min(i), bbox.max(i), eps)) {
+				++flat_count;
+			}
+		}
+		return flat_count <= dim - 2 ? points : std::list<point_t>();
+	}
 }
 
 } // namespace impl
