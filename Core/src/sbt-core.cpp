@@ -120,7 +120,8 @@ sbt_return_t calculate_space_boundaries(
 		retval = interface_conversion::convert_to_space_boundaries(
 			surfaces, 
 			space_boundaries, 
-			space_boundary_count);
+			space_boundary_count,
+			opts.length_units_per_meter * EPS_MAGIC);
 		report_progress("done.\n");
 	}
 	catch (sbt_exception & ex) {

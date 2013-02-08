@@ -34,7 +34,10 @@ void set_geometry(space_boundary * sb, const PointRange & geometry) {
 
 } // namespace
 
-space_boundary * create_unlinked_space_boundary(const surface & s) {
+space_boundary * create_unlinked_space_boundary(
+	const surface & s, 
+	double output_eps) 
+{
 	using namespace CGAL;
 	typedef boost::format fmt;
 
@@ -51,7 +54,10 @@ space_boundary * create_unlinked_space_boundary(const surface & s) {
 			ELEMENT_ID_MAX_LEN);
 
 		auto cleaned_geometry = s.geometry().to_3d(true).front().outer();
-		geometry_common::cleanup_loop(&cleaned_geometry, EPS_MAGIC);
+		if (!geometry_common::cleanup_loop(&cleaned_geometry, output_eps)) {
+			free(newsb);
+			return nullptr;
+		}
 
 		if (s.geometry().sense()) {
 			set_geometry(newsb, cleaned_geometry);

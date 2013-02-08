@@ -14,12 +14,18 @@ namespace interface_conversion {
 
 namespace impl {
 
-space_boundary * create_unlinked_space_boundary(const surface & surf);
+space_boundary * create_unlinked_space_boundary(
+	const surface & surf,
+	double output_eps);
 
 } // namespace impl
 
 template <typename SurfaceRange>
-sbt_return_t convert_to_space_boundaries(const SurfaceRange & surfaces, space_boundary *** sbs, size_t * sb_count) {
+sbt_return_t convert_to_space_boundaries(
+	const SurfaceRange & surfaces, space_boundary *** sbs, 
+	size_t * sb_count,
+	double output_eps) 
+{
 	typedef std::unique_ptr<surface> surface_ptr;
 	typedef std::pair<std::string, space_boundary *> interfc_entry;
 
@@ -40,7 +46,8 @@ sbt_return_t convert_to_space_boundaries(const SurfaceRange & surfaces, space_bo
 	try {
 		std::vector<space_boundary *> unlinked;
 		for (auto s = surfaces.begin(); s != surfaces.end(); ++s) {
-			auto unlinked = impl::create_unlinked_space_boundary(*s->get());
+			auto unlinked = 
+				impl::create_unlinked_space_boundary(*s->get(), output_eps);
 			if (unlinked != nullptr) {
 				boundaries[(*s)->guid()] = unlinked;
 			}
