@@ -9,6 +9,15 @@
 
 namespace opening_assignment {
 
+namespace impl {
+
+boost::optional<oriented_area> has_subarea(
+	const oriented_area & parent,
+	const oriented_area & child,
+	double height_eps);
+
+} // namespace impl
+
 template <typename SurfaceRange, typename OpeningBlocks>
 void assign_openings(
 	SurfaceRange * surfaces, 
@@ -42,10 +51,11 @@ void assign_openings(
 		opening_surfaces.push_back(block_group());
 
 		for (auto s = surfaces->begin(); s != surfaces->end(); ++s) {
-			auto intr = (*s)->geometry() * gm_a;
-			if (intr && !intr->area_2d().is_empty()) {
+			const oriented_area & sgeom = (*s)->geometry();
+			auto subarea = impl::has_subarea(sgeom, gm_a, height_eps);
+			if (subarea) {
 				auto surf = std::unique_ptr<surface>(new surface(
-					*intr,
+					*subarea,
 					e,
 					(*s)->bounded_space(),
 					layers,
@@ -53,10 +63,10 @@ void assign_openings(
 				surf->set_parent_maybe(s->get(), height_eps);
 				opening_surfaces.back().push_back(std::move(surf));
 			}
-			intr = (*s)->geometry() * gm_b;
-			if (intr && !intr->area_2d().is_empty()) {
+			subarea = impl::has_subarea(sgeom, gm_b, height_eps);
+			if (subarea) {
 				auto surf = std::unique_ptr<surface>(new surface(
-					*intr,
+					*subarea,
 					e,
 					(*s)->bounded_space(),
 					layers,

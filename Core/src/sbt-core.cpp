@@ -113,7 +113,10 @@ sbt_return_t calculate_space_boundaries(
 			blocks | boost::adaptors::filtered([](const block & b) { 
 				return b.is_fenestration(); 
 			});
-		opening_assignment::assign_openings(&surfaces, opening_blocks, EPS_MAGIC);
+		opening_assignment::assign_openings(
+			&surfaces, 
+			opening_blocks, 
+			g_opts.length_units_per_meter * EPS_MAGIC);
 
 		report_progress(
 			"Converting internal structures to interface structures");

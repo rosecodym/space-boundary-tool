@@ -281,5 +281,8 @@
     <ClCompile Include="src\polygon_with_holes_3.cpp">
       <Filter>geometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\assign_openings.cpp">
+      <Filter>operations\opening assignment</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

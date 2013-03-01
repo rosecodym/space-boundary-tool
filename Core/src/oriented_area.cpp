@@ -199,6 +199,12 @@ boost::optional<oriented_area> operator * (
 	const oriented_area & lhs,
 	const oriented_area & rhs)
 {
+#ifndef NDEBUG
+	double debug_lhs_height = CGAL::to_double(lhs.height());
+	double debug_rhs_height = CGAL::to_double(rhs.height());
+	debug_lhs_height = debug_lhs_height;
+	debug_rhs_height = debug_rhs_height;
+#endif DEBUG
 	if (lhs.sense() != rhs.sense() || 
 		lhs.o != rhs.o || 
 		lhs.height() != rhs.height()) 

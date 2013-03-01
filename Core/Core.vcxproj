@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\area.cpp" />
+    <ClCompile Include="src\assign_openings.cpp" />
     <ClCompile Include="src\build_blocks.cpp" />
     <ClCompile Include="src\c-test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
