@@ -42,6 +42,7 @@
 #include <boost/range/algorithm.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
+#include <boost/graph/lookup_edge.hpp>
 
 #include <CGAL/leda_real.h>
 #include <CGAL/Cartesian.h>
