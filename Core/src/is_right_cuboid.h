@@ -12,17 +12,23 @@ namespace blocking {
 namespace impl {
 
 template <typename BlockOutputIterator>
-bool is_right_cuboid(const relations_grid & surface_relationships, size_t face_count, const element & e, BlockOutputIterator oi) {
+bool is_right_cuboid(
+	const relations_grid & surf_rels, 
+	size_t face_count, 
+	const element & e, 
+	double max_distance,
+	BlockOutputIterator oi) 
+{
 	if (face_count == 6) {
 
 		typedef std::pair<boost::optional<size_t>, boost::optional<size_t>> block_entry;
 		enum check_result { MATCH, FAILURE, INDETERMINATE };
-		auto check_against_block_entry = [=, &surface_relationships](block_entry * entry, size_t ix) -> check_result {
+		auto check_against_block_entry = [=, &surf_rels](block_entry * entry, size_t ix) -> check_result {
 			if (!entry->first) { 
 				entry->first = ix;
 				return MATCH;
 			}
-			else if (surface_relationships[*entry->first][ix].is_orthogonal_translation()) {
+			else if (surf_rels[*entry->first][ix].is_orthogonal_translation()) {
 				if (!entry->second) {
 					entry->second = ix;
 					return MATCH;
@@ -47,9 +53,23 @@ bool is_right_cuboid(const relations_grid & surface_relationships, size_t face_c
 			if (res != MATCH) { return false; }
 		}
 
-		*oi++ = surface_relationships[*blocks[0].first][*blocks[0].second].to_block(e);
-		*oi++ = surface_relationships[*blocks[1].first][*blocks[1].second].to_block(e);
-		*oi++ = surface_relationships[*blocks[2].first][*blocks[2].second].to_block(e);
+		auto distance = [&](size_t ix) -> double {
+			auto & pair = surf_rels[*blocks[ix].first][*blocks[ix].second];
+			NT dist = abs(pair.base().height() - pair.other().height());
+			return CGAL::to_double(dist);
+		};
+
+		for (size_t i = 0; i < 3; ++i) {
+			size_t base_ix = *blocks[i].first;
+			size_t other_ix = *blocks[i].second;
+			if (distance(i) <= max_distance) {
+				*oi++ = surf_rels[base_ix][other_ix].to_block(e);
+			}
+			else {
+				*oi++ = surf_rels[base_ix][other_ix].to_halfblock(e);
+				*oi++ = surf_rels[other_ix][base_ix].to_halfblock(e);
+			}
+		}
 		
 		reporting::report_progress("element is a right cuboid. ");
 		return true;

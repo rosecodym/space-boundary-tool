@@ -12,13 +12,19 @@ namespace blocking {
 namespace impl {
 
 template <typename BlockOutputIterator>
-bool is_hexahedral_prismatoid(const relations_grid & surface_relationships, size_t face_count, const element & e, BlockOutputIterator oi) {
+bool is_hexahedral_prismatoid(
+	const relations_grid & surf_rels, 
+	size_t face_count, 
+	const element & e,
+	double max_distance, 
+	BlockOutputIterator oi) 
+{
 	if (face_count == 6) {
 
-		auto find_base_pair = [&surface_relationships, face_count](std::pair<size_t, size_t> * pair) -> bool {
+		auto find_base_pair = [&surf_rels, face_count](std::pair<size_t, size_t> * pair) -> bool {
 			for (size_t i = 0; i < face_count; ++i) {
 				for (size_t j = i + 1; j < face_count; ++j) {
-					if (surface_relationships[i][j].is_orthogonal_translation()) {
+					if (surf_rels[i][j].is_orthogonal_translation()) {
 						pair->first = i;
 						pair->second = j;
 						return true;
@@ -37,15 +43,25 @@ bool is_hexahedral_prismatoid(const relations_grid & surface_relationships, size
 
 		reporting::report_progress("element is a hexahedral prismatoid. ");
 
-		*oi++ = surface_relationships[base_pair.first][base_pair.second].to_block(e);
+		auto & bpair = surf_rels[base_pair.first][base_pair.second];
+		NT dist = abs(
+			CGAL::to_double(bpair.base().height()) - 
+			CGAL::to_double(bpair.other().height()));
+		if (CGAL::to_double(dist) <= max_distance) {
+			*oi++ = bpair.to_block(e);
+		}
+		else {
+			*oi++ = bpair.to_halfblock(e);
+			*oi++ = bpair.opposite().to_halfblock(e);
+		}
 		handled[base_pair.first] = handled[base_pair.second] = true;
 
 		auto is_in_base_pair = [base_pair](size_t face_ix) { return base_pair.first == face_ix || base_pair.second == face_ix; };
 		for (size_t i = 0; i < face_count; ++i) {
 			if (!is_in_base_pair(i)) {
 				for (size_t j = i + 1; j < face_count; ++j) {
-					const surface_pair & rel = surface_relationships[i][j];
-					const surface_pair & other = surface_relationships[j][i];
+					const surface_pair & rel = surf_rels[i][j];
+					const surface_pair & other = surf_rels[j][i];
 					if (!is_in_base_pair(j) && rel.are_parallel()) {
 						area a;
 						a = rel.base_minus_other_projected();
@@ -74,7 +90,7 @@ bool is_hexahedral_prismatoid(const relations_grid & surface_relationships, size
 
 		for (size_t i = 0; i < 6; ++i) {
 			if (!handled[i]) {
-				*oi++ = surface_relationships[i][i].to_halfblock(e);
+				*oi++ = surf_rels[i][i].to_halfblock(e);
 			}
 		}
 

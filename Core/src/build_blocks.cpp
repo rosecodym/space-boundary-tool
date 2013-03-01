@@ -67,8 +67,18 @@ std::vector<block> build_blocks_for(
 		c, 
 		max_block_thickness);
 
-	if (is_right_cuboid(surface_relationships, faces.size(), e, std::back_inserter(res)) ||
-		is_hexahedral_prismatoid(surface_relationships, faces.size(), e, std::back_inserter(res)))
+	if (is_right_cuboid(
+			surface_relationships, 
+			faces.size(), 
+			e, 
+			max_block_thickness, 
+			std::back_inserter(res)) ||
+		is_hexahedral_prismatoid(
+			surface_relationships, 
+			faces.size(), 
+			e, 
+			max_block_thickness,
+			std::back_inserter(res)))
 	{
 		return res;
 	}
