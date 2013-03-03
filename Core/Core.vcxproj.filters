@@ -28,9 +28,6 @@
     <Filter Include="operations\space loading">
       <UniqueIdentifier>{fada8317-382e-4dbc-86e8-a85662ea0bee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="operations\stacking">
-      <UniqueIdentifier>{01642fd4-70ca-4ed0-b867-6aeea62788b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="operations\opening assignment">
       <UniqueIdentifier>{70403e83-00e7-4636-8256-97ab8842638a}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,9 @@
     </Filter>
     <Filter Include="reporting">
       <UniqueIdentifier>{a0d94793-58df-4382-9721-d16cef32f412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\traversal">
+      <UniqueIdentifier>{642dd4f1-51e0-4cf4-a63d-6f1acd8ebe63}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,27 +132,6 @@
     <ClInclude Include="src\load_spaces.h">
       <Filter>operations\space loading</Filter>
     </ClInclude>
-    <ClInclude Include="src\stackable.h">
-      <Filter>operations\stacking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\space_face.h">
-      <Filter>operations\stacking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stacking_graph.h">
-      <Filter>operations\stacking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\traverse.h">
-      <Filter>operations\stacking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stacking_sequence.h">
-      <Filter>operations\stacking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\blockstack.h">
-      <Filter>types</Filter>
-    </ClInclude>
-    <ClInclude Include="src\build_stacks.h">
-      <Filter>operations\stacking</Filter>
-    </ClInclude>
     <ClInclude Include="src\surface.h">
       <Filter>types</Filter>
     </ClInclude>
@@ -191,6 +170,27 @@
     </ClInclude>
     <ClInclude Include="src\solid_geometry_util.h">
       <Filter>geometry\solid_geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\building_graph.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\space_face.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\extend_path.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\identify_transmission.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transmission_information.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vertex_wrapper.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bg_path.h">
+      <Filter>operations\traversal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -242,18 +242,6 @@
     <ClCompile Include="src\build_blocks.cpp">
       <Filter>operations\blocking</Filter>
     </ClCompile>
-    <ClCompile Include="src\stackable.cpp">
-      <Filter>operations\stacking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\traverse.cpp">
-      <Filter>operations\stacking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stacking_sequence.cpp">
-      <Filter>operations\stacking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stacking_graph.cpp">
-      <Filter>operations\stacking</Filter>
-    </ClCompile>
     <ClCompile Include="src\convert_to_space_boundaries.cpp">
       <Filter>operations\conversion to interface</Filter>
     </ClCompile>
@@ -280,6 +268,15 @@
     </ClCompile>
     <ClCompile Include="src\polygon_with_holes_3.cpp">
       <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\building_graph.cpp">
+      <Filter>operations\traversal</Filter>
+    </ClCompile>
+    <ClCompile Include="src\extend_path.cpp">
+      <Filter>operations\traversal</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vertex_wrapper.cpp">
+      <Filter>operations\traversal</Filter>
     </ClCompile>
     <ClCompile Include="src\assign_openings.cpp">
       <Filter>operations\opening assignment</Filter>

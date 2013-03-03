@@ -13,7 +13,7 @@ class element;
 class block {
 private:
 	const orientation * o;
-	area a;
+	geometry_2d::area a;
 	layer_information layer;
 	bool base_sense;
 
@@ -53,7 +53,7 @@ public:
 		return layer.has_both_sides() ? std::make_pair(layer.height_a(), boost::optional<NT>(layer.height_b())) : std::make_pair(layer.height_a(), boost::optional<NT>());
 	}
 	bool sense() const { return base_sense; }
-	const area & base_area() const { return a; }
+	const geometry_2d::area & base_area() const { return a; }
 	const orientation * block_orientation() const { return o; }
 	const layer_information & material_layer() const { return layer; }
 	bool is_fenestration() const { return layer.layer_element().is_fenestration(); }

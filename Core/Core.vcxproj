@@ -106,10 +106,12 @@
   <ItemGroup>
     <ClInclude Include="src\area.h" />
     <ClInclude Include="src\assign_openings.h" />
+    <ClInclude Include="src\bg_path.h" />
     <ClInclude Include="src\block.h" />
-    <ClInclude Include="src\blockstack.h" />
+    <ClInclude Include="src\building_graph.h" />
     <ClInclude Include="src\build_blocks.h" />
-    <ClInclude Include="src\build_stacks.h" />
+    <ClInclude Include="src\extend_path.h" />
+    <ClInclude Include="src\identify_transmission.h" />
     <ClInclude Include="src\report.h" />
     <ClInclude Include="src\stringification.h" />
     <ClInclude Include="src\cleanup_loop.h" />
@@ -144,24 +146,24 @@
     <ClInclude Include="src\solid_geometry_common.h" />
     <ClInclude Include="src\space.h" />
     <ClInclude Include="src\space_face.h" />
-    <ClInclude Include="src\stackable.h" />
-    <ClInclude Include="src\stacking_graph.h" />
-    <ClInclude Include="src\stacking_sequence.h" />
     <ClInclude Include="src\exceptions.h" />
     <ClInclude Include="src\surface.h" />
     <ClInclude Include="src\surface_pair.h" />
-    <ClInclude Include="src\traverse.h" />
+    <ClInclude Include="src\transmission_information.h" />
+    <ClInclude Include="src\vertex_wrapper.h" />
     <ClInclude Include="src\wrapped_nef_polygon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\area.cpp" />
     <ClCompile Include="src\assign_openings.cpp" />
+    <ClCompile Include="src\building_graph.cpp" />
     <ClCompile Include="src\build_blocks.cpp" />
     <ClCompile Include="src\c-test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\convert_to_space_boundaries.cpp" />
+    <ClCompile Include="src\extend_path.cpp" />
     <ClCompile Include="src\flatten.cpp" />
     <ClCompile Include="src\geometry_common.cpp" />
     <ClCompile Include="src\guid_filter.cpp" />
@@ -188,12 +190,9 @@
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
     </ClCompile>
     <ClCompile Include="src\solid_geometry_util.cpp" />
-    <ClCompile Include="src\stackable.cpp" />
-    <ClCompile Include="src\stacking_graph.cpp" />
-    <ClCompile Include="src\stacking_sequence.cpp" />
     <ClCompile Include="src\stringification.cpp" />
     <ClCompile Include="src\surface_pair.cpp" />
-    <ClCompile Include="src\traverse.cpp" />
+    <ClCompile Include="src\vertex_wrapper.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

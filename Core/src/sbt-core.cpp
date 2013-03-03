@@ -2,17 +2,18 @@
 
 #include "assign_openings.h"
 #include "build_blocks.h"
-#include "build_stacks.h"
 #include "convert_to_space_boundaries.h"
 #include "equality_context.h"
 #include "exceptions.h"
 #include "geometry_common.h"
 #include "guid_filter.h"
+#include "identify_transmission.h"
 #include "load_elements.h"
 #include "load_spaces.h"
 #include "report.h"
 #include "space.h"
 #include "surface.h"
+#include "transmission_information.h"
 
 #include "sbt-core.h"
 
@@ -98,15 +99,16 @@ sbt_return_t calculate_space_boundaries(
 			elements,
 			&ctxt, 
 			height_cutoff);
-		std::vector<blockstack> stacks = stacking::build_stacks(
-			blocks, 
-			spaces, 
-			height_cutoff, 
-			&ctxt);
+		std::vector<transmission_information> t_info = 
+			traversal::identify_transmission(
+				blocks, 
+				spaces, 
+				height_cutoff, 
+				&ctxt);
 
 		std::vector<std::unique_ptr<surface>> surfaces;
-		boost::for_each(stacks, [&surfaces](const blockstack & st) { 
-			st.to_surfaces(std::back_inserter(surfaces)); 
+		boost::for_each(t_info, [&](const transmission_information & ti) { 
+			ti.to_surfaces(std::back_inserter(surfaces)); 
 		});
 
 		auto opening_blocks = 
