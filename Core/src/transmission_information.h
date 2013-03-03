@@ -42,7 +42,9 @@ public:
 		  start_height_(start_height),
 		  end_height_(end_height),
 		  external_(external)
-	{ }
+	{ 
+		assert(layers_.size() > 0 || end_space != nullptr);
+	}
 
 	const area & common_area() const { return a_; }
 

@@ -31,7 +31,14 @@ public:
 	vertex_wrapper end_vertex() const { 
 		return vertex_wrapper(vertices_.back(), g_, c_);
 	}
-	double last_edge_h() const { return g_[edges_.back()].connection_h; }
+	boost::optional<double> last_edge_h() const { 
+		if (edges_.size() != 0) {
+			return g_[edges_.back()].connection_h; 
+		}
+		else {
+			return boost::optional<double>();
+		}
+	}
 	double total_thickness() const {
 		double tot = 0.0;
 		for (auto v = vertices_.begin(); v != vertices_.end(); ++v) {
