@@ -150,12 +150,12 @@ namespace GUI.Operations
                     obj.Fields["Construction Name"].Value = 
                         surf.Construction.Name;
 
-                    if (!surf.IsVirtual) { 
-                        obj.AddComment(
-                            "  ! IFC element GUID: " + surf.ElementGuid); 
+                    if (!surf.IsVirtual) {
+                        var comment = "IFC element GUID: " + surf.ElementGuid;
+                        obj.AddComment(comment);
                     }
                     obj.AddComment(String.Format(
-                        "  ! Normal: <{0}, {1}, {2}>", 
+                        "Normal: <{0}, {1}, {2}>", 
                         surf.Normal.X, 
                         surf.Normal.Y, 
                         surf.Normal.Z));
@@ -222,8 +222,13 @@ namespace GUI.Operations
                         obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Y, 3);
                         obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Z, 3);
                     }
-                    obj.AddComment("  ! IFC element GUID: " + fenestration.ElementGuid);
-                    obj.AddComment(String.Format("  ! Normal: <{0}, {1}, {2}>", fenestration.Normal.Item1, fenestration.Normal.Item2, fenestration.Normal.Item3));
+                    obj.AddComment(
+                        " IFC element GUID: " + fenestration.ElementGuid);
+                    obj.AddComment(String.Format(
+                        "Normal: <{0}, {1}, {2}>", 
+                        fenestration.Normal.Item1, 
+                        fenestration.Normal.Item2, 
+                        fenestration.Normal.Item3));
                 }
             }
 
