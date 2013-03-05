@@ -26,7 +26,11 @@ namespace GUI.Operations
 
             public void WriteToFile(string filename)
             {
-                idf.Write(filename, LibIdf.Base.IdfValidationChecks.None);
+                idf.Write(
+                    filename, 
+                    LibIdf.Base.IdfValidationChecks.None,
+                    CommentPosition.Below,
+                    suppressCommentCharacter: false);
             }
 
             public static IdfCreator Build(EnergyPlusVersion version, Idd idd, Action<string> notify)
