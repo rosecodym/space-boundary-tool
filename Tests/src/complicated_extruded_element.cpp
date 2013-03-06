@@ -115,20 +115,6 @@ TEST_F(ComplicatedExtrudedElement, FacesCorrect) {
 	EXPECT_EQ(0, unaccounted_for);
 }
 
-TEST_F(ComplicatedExtrudedElement, NotRightCuboid) {
-	auto faces = e->geometry().oriented_faces(&c);
-	auto rels = surface_pair::build_relations_grid(faces, &c);
-	std::vector<block> dummy;
-	EXPECT_FALSE(is_right_cuboid(rels, faces.size(), *e, std::back_inserter(dummy)));
-}
-
-TEST_F(ComplicatedExtrudedElement, NotHexahedralPrismatoid) {
-	auto faces = e->geometry().oriented_faces(&c);
-	auto rels = surface_pair::build_relations_grid(faces, &c);
-	std::vector<block> dummy;
-	EXPECT_FALSE(is_hexahedral_prismatoid(rels, faces.size(), *e, std::back_inserter(dummy)));
-}
-
 TEST_F(ComplicatedExtrudedElement, OrientationCounts) {
 	auto faces = e->geometry().oriented_faces(&c);
 	int x_count = 0;
