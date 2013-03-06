@@ -181,6 +181,26 @@ type OutputManager (warnDelegate : Action<string>) =
                 upcast res
             | _ -> emitProblemConstruction (BadMappingConstruction())
 
+    member this.PruneOutput (against: seq<OutputConstructionBase>) =
+        let newConstructions =
+            against |>
+            Seq.choose (function
+                        | :? OutputConstruction as c -> Some(c)
+                        | _ -> None) |>
+            Set.ofSeq
+        if not (Set.isSuperset constructions newConstructions) then
+            raise (ArgumentException("A construction OutputManager should \
+                                      only be pruned against constructions \
+                                      from that manager."))
+        constructions <- newConstructions
+        let newLayerNames =
+            newConstructions |>
+            Seq.collect (fun c -> c.LayerNames) |>
+            Set.ofSeq
+        layers <-
+            layers |>
+            Set.filter (fun layer -> newLayerNames.Contains(layer.Name))
+
     member this.IdentifyConstructionVariants () =
         variantTable <-
             constructions |>

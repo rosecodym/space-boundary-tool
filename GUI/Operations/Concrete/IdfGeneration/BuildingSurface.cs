@@ -52,6 +52,15 @@ namespace GUI.Operations
             public string ZoneName { get { return zoneName; } }
             public Construction Construction { get { return construction; } }
             public BuildingSurface Opposite { get; set; }
+            public bool IsAdiabaticVirtual
+            {
+                get
+                {
+                    return
+                        construction.IsVirtual &&
+                        OtherSideCondition == OtherSideConditionType.Adiabatic;
+                }
+            }
             public SurfaceType Type
             {
                 get

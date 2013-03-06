@@ -227,6 +227,10 @@ namespace GUI.Operations
                         }
                     }
                 }
+                var surfs = surfacesByGuid
+                    .Values
+                    .Where(surf => !surf.IsAdiabaticVirtual);
+                cmanager.PruneOutput(surfs.Select(s => s.Construction));
                 IdfCreator creator =
                     IdfCreator.Build(
                         p.EPVersion,
@@ -256,7 +260,7 @@ namespace GUI.Operations
                 {
                     creator.AddZone(zoneName);
                 }
-                foreach (BuildingSurface surf in surfacesByGuid.Values)
+                foreach (BuildingSurface surf in surfs)
                 {
                     creator.AddBuildingSurface(surf);
                 }

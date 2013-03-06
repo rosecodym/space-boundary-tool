@@ -6,6 +6,7 @@ open System.Collections.Generic
 [<AbstractClass>]
 type OutputConstructionBase () =
     abstract Name : string with get
+    abstract IsVirtual : bool with get
 
 [<AbstractClass>]
 type ProblemConstruction (msg) =
@@ -20,6 +21,7 @@ type UnorientedComposite () =
          named 'UNORIENTED COMPOSITE' in the IDF. You will have to create \
          this construction manually.")
     override this.Name = "UNORIENTED COMPOSITE"
+    override this.IsVirtual = false
 
 type UnknownProblemComposite () =
     inherit ProblemConstruction(
@@ -27,6 +29,7 @@ type UnknownProblemComposite () =
          It has been assigned the construction name 'UNMAPPED'. You will have \
          to create this construction manually.")
     override this.Name = "UNMAPPED"
+    override this.IsVirtual = false
 
 type BadMappingConstruction () =
     inherit ProblemConstruction(
@@ -35,6 +38,7 @@ type BadMappingConstruction () =
          construction name 'BAD MAPPING'. You will have to create this \
          construction manually.")
     override this.Name = "BAD MAPPING"
+    override this.IsVirtual = false
 
 type LibraryComposite () =
     inherit ProblemConstruction(
@@ -43,6 +47,7 @@ type LibraryComposite () =
          supported. The construction has been named 'COMPOSITE LIBRARY \
          ENTRY'. You will have to create this construction manually.")
     override this.Name = "COMPOSITE LIBRARY ENTRY"
+    override this.IsVirtual = false
 
 type AdiabaticWindowConstruction () =
     inherit ProblemConstruction(
@@ -50,6 +55,7 @@ type AdiabaticWindowConstruction () =
          for a window library composite. The construction has been named 'BAD \
          WINDOW TARGET'. You will have to create this construction manually.")
     override this.Name = "BAD WINDOW TARGET"
+    override this.IsVirtual = false
 
 type OutputConstruction (layers:OutputLayer list,
                          humanReadableName:string option,
@@ -92,6 +98,8 @@ type OutputConstruction (layers:OutputLayer list,
         match variantLookup(this.Identifier) with
         | Some(v) -> sprintf "%s (variant %i)" name (v + 1)
         | None -> name
+    override this.IsVirtual =
+        not (layers |> Seq.exists (fun layer -> not layer.IsIRTransparent))
     member this.InvariantName = name
     member this.LayerNames = List<string>(layerNames)
     member this.Identifier = identifier
