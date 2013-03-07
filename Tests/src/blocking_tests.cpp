@@ -382,52 +382,6 @@ TEST(Blocking, SinglePairLink) {
 	EXPECT_EQ(1, blocks.size());
 }
 
-TEST(Blocking, RightCuboid) {
-	equality_context c(0.01);
-
-	element_info * e = create_element("column", COLUMN, 1, create_ext(0, 0, 1, 4000, create_face(4,
-		simple_point(0, 0, 0),
-		simple_point(0, 255, 0),
-		simple_point(255, 255, 0),
-		simple_point(255, 0, 0))));
-
-	element col(e, &c);
-	std::vector<element> elements(1, col);
-
-	std::vector<std::shared_ptr<surface>> surfaces;
-	auto blocks = blocking::build_blocks(elements, &c);
-	EXPECT_EQ(3, blocks.size());
-}
-
-TEST(Blocking, Sense) {
-	equality_context c(0.01);
-
-	element_info * e_info = create_element("floor", SLAB, 1, create_ext(0, 0, 1, 7.8740157, create_face(5,
-		simple_point(0, 0, -7.8740157),
-		simple_point(0, -409.44882, -7.8740157),
-		simple_point(803.14961, -409.44882, -7.8740157),
-		simple_point(803.14961, 0, -7.8740157),
-		simple_point(0, 0, -7.8740157))));
-
-	std::vector<element> elements(1, element(e_info, &c));
-	auto blocks = blocking::build_blocks(elements, &c);
-
-	for (auto b = blocks.begin(); b != blocks.end(); ++b) {
-		if (b->block_orientation()->direction() == direction_3(0, 0, 1)) {
-			if (b->sense()) {
-				EXPECT_EQ(c.request_height(0.0), b->heights().first);
-				EXPECT_EQ(c.request_height(-7.8740157), *b->heights().second);
-			}
-			else {
-				EXPECT_EQ(c.request_height(-7.8740157), b->heights().first);
-				EXPECT_EQ(c.request_height(0.0), *b->heights().second);
-			}
-			return;
-		}
-	}
-	ADD_FAILURE() << "couldn't find a block orientation <0, 0, 1>";
-}
-
 } // namespace
 
 } // namespace impl
