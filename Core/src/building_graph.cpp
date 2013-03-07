@@ -43,7 +43,7 @@ std::string bg_vertex_data::identifier() const {
 			return sf->bounded_space()->global_id();
 		}
 		const std::string & operator () (const block * b) const {
-			return b->material_layer().layer_element().source_id();
+			return b->material_layer().layer_element().name();
 		}
 	};
 	return boost::apply_visitor(v(), data_);
