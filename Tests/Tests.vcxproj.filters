@@ -28,6 +28,12 @@
     <Filter Include="tests\geometry\solid_geometry">
       <UniqueIdentifier>{a4d0d0b0-5b61-4e51-b903-206eee0eed29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tests\operations">
+      <UniqueIdentifier>{98f7c298-9ee5-4878-a8f8-0689e89f5430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\operations\blocking">
+      <UniqueIdentifier>{ff229426-c84c-4ed6-ade9-8f5179700f90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\src\equality_context.cpp">
@@ -128,6 +134,12 @@
     </ClCompile>
     <ClCompile Include="src\oriented_area_tests.cpp">
       <Filter>tests\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\surface_pair_tests.cpp">
+      <Filter>old structure</Filter>
+    </ClCompile>
+    <ClCompile Include="src\is_hexahedral_prismatoid_tests.cpp">
+      <Filter>tests\operations\blocking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

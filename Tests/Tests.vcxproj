@@ -112,6 +112,7 @@
     <ClCompile Include="src\area_tests.cpp" />
     <ClCompile Include="src\blocking_tests.cpp" />
     <ClCompile Include="src\common.cpp" />
+    <ClCompile Include="src\is_hexahedral_prismatoid_tests.cpp" />
     <ClCompile Include="src\loop_cleanup_tests.cpp" />
     <ClCompile Include="src\library_assumptions.cpp" />
     <ClCompile Include="src\complicated_extruded_element.cpp" />

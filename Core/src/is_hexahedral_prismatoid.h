@@ -36,52 +36,59 @@ bool is_hexahedral_prismatoid(
 
 		std::vector<bool> handled(6, false);
 
-		std::pair<size_t, size_t> base_pair;
-		if (!find_base_pair(&base_pair)) {
+		std::pair<size_t, size_t> bpair;
+		if (!find_base_pair(&bpair)) {
 			return false;
 		}
 
 		reporting::report_progress("element is a hexahedral prismatoid. ");
 
-		auto & bpair = surf_rels[base_pair.first][base_pair.second];
-		NT dist = abs(
-			CGAL::to_double(bpair.base().height()) - 
-			CGAL::to_double(bpair.other().height()));
-		if (CGAL::to_double(dist) <= max_distance) {
-			*oi++ = bpair.to_block(e);
+		auto dist = [&surf_rels](size_t i, size_t j) -> double {
+			double a = CGAL::to_double(surf_rels[i][i].base().height());
+			double b = CGAL::to_double(surf_rels[j][j].base().height());
+			return abs(a - b);
+		};
+
+		if (dist(bpair.first, bpair.second) <= max_distance) {
+			*oi++ = surf_rels[bpair.first][bpair.second].to_block(e);
 		}
 		else {
-			*oi++ = bpair.to_halfblock(e);
-			*oi++ = bpair.opposite().to_halfblock(e);
+			*oi++ = surf_rels[bpair.first][bpair.second].to_halfblock(e);
+			*oi++ = surf_rels[bpair.second][bpair.first].to_halfblock(e);
 		}
-		handled[base_pair.first] = handled[base_pair.second] = true;
+		handled[bpair.first] = handled[bpair.second] = true;
 
-		auto is_in_base_pair = [base_pair](size_t face_ix) { return base_pair.first == face_ix || base_pair.second == face_ix; };
+		auto is_in_base_pair = [bpair](size_t face_ix) { 
+			return bpair.first == face_ix || bpair.second == face_ix; 
+		};
 		for (size_t i = 0; i < face_count; ++i) {
 			if (!is_in_base_pair(i)) {
 				for (size_t j = i + 1; j < face_count; ++j) {
 					const surface_pair & rel = surf_rels[i][j];
 					const surface_pair & other = surf_rels[j][i];
 					if (!is_in_base_pair(j) && rel.are_parallel()) {
-						area a;
-						a = rel.base_minus_other_projected();
-						if (!a.is_empty()) {
-							*oi++ = block(rel.base_part_with_area(a), e);
+						if (dist(i, j) <= max_distance) {
+							area a;
+							a = rel.base_minus_other_projected();
+							if (!a.is_empty()) {
+								*oi++ = block(rel.base_part_with_area(a), e);
+							}
+							a = other.base_minus_other_projected();
+							if (!a.is_empty()) {
+								*oi++ = block(other.base_part_with_area(a), e);
+							}
+							a = rel.base_intr_other_projected();
+							if (!a.is_empty()) {
+								area oth_intr = 
+									other.base_intr_other_projected();
+								oriented_area rel_part = 
+									rel.base_part_with_area(a);
+								oriented_area other_part = 
+									other.base_part_with_area(oth_intr);
+								*oi++ = block(rel_part, other_part, e);
+							}
+							handled[i] = handled[j] = true;
 						}
-						a = other.base_minus_other_projected();
-						if (!a.is_empty()) {
-							*oi++ = block(other.base_part_with_area(a), e);
-						}
-						a = rel.base_intr_other_projected();
-						if (!a.is_empty()) {
-							area oth_intr = other.base_intr_other_projected();
-							oriented_area rel_part = 
-								rel.base_part_with_area(a);
-							oriented_area other_part = 
-								other.base_part_with_area(oth_intr);
-							*oi++ = block(rel_part, other_part, e);
-						}
-						handled[i] = handled[j] = true;
 						break;
 					}
 				}
