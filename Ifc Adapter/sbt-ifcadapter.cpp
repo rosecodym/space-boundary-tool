@@ -109,8 +109,8 @@ void notify(char * msg) {
 } // namespace
 
 ifcadapter_return_t execute(
-	const char * input_filename,
-	const char * output_filename, // NULL for no write-back
+	char * input_filename,
+	char * output_filename, // NULL for no write-back
 	sb_calculation_options opts,
 	size_t * element_count,
 	element_info *** elements,

@@ -267,8 +267,8 @@ void create_necessary_virtual_elements(cppw::Open_model * model, space_boundary 
 		CreateCompressedGuidString(guidbuf, 127);
 		inst.put("GlobalId", guidbuf);
 		inst.put("OwnerHistory", ownerhistory);
-		strncpy(pair->first->element_id, guidbuf, ELEMENT_ID_MAX_LEN);
-		strncpy(pair->second->element_id, guidbuf, ELEMENT_ID_MAX_LEN);
+		strncpy(pair->first->element_name, guidbuf, ELEMENT_NAME_MAX_LEN);
+		strncpy(pair->second->element_name, guidbuf, ELEMENT_NAME_MAX_LEN);
 	}
 }
 
@@ -316,7 +316,7 @@ ifcadapter_return_t add_to_model(
 					model, 
 					ownerhistory, 
 					ss.get(space_map[sbs[i]->bounded_space->id]), 
-					es.get(element_map[sbs[i]->element_id]), 
+					es.get(element_map[sbs[i]->element_name]), 
 					sbs[i], 
 					scaler, 
 					c);

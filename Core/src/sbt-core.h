@@ -11,143 +11,133 @@
 extern "C" {
 #endif
 
-// defines and typedefs
+// Names and such use fixed-width fields, and these are the widths.
+#define SB_ID_MAX_LEN 127			// Space boundary IDs
+#define SPACE_ID_MAX_LEN 127		// Space IDs
+#define ELEMENT_NAME_MAX_LEN 127	// Element names
 
-#define SB_ID_MAX_LEN 127							// maximum length for space boundary ids
-#define SPACE_ID_MAX_LEN 127						// maximum length for space ids
-#define ELEMENT_ID_MAX_LEN 127						// maximum length for element ids
+typedef char sb_id_t[SB_ID_MAX_LEN + 1];
+typedef char space_id_t[SPACE_ID_MAX_LEN + 1];
 
-typedef char sb_id_t[SB_ID_MAX_LEN + 1];			// space boundary id type
-typedef char space_id_t[SPACE_ID_MAX_LEN + 1];		// space id type
-typedef char element_id_t[ELEMENT_ID_MAX_LEN + 1];	// element id type
-typedef int material_id_t;							// material id type. material ids are meaningless within the core;
-													// the client is responsible for making sense of them
+// The difference between an element name and an element ID is half historical
+// and half "names are descriptions for humans and IDs are descriptions for
+// computers." The name is only used in the SBT core when messages are emitted.
+// The ID is what ends up in the "layer list" returned by the core. This scheme
+// is kind of annoying because an element name is analogous to a space ID, and
+// an element ID is a completely different beast, but we're all going to live
+// with it for the moment.
+typedef char element_name_t[ELEMENT_NAME_MAX_LEN + 1];
+typedef int element_id_t;							
 
-#ifdef __cplusplus
-#define STRUCTTYPE(name) name
-#define BEGINSTRUCT(name) struct name {
-#define BEGINENUM(name) enum name {
-#define END(name) };
-#else
-#define STRUCTTYPE(name) struct name
-#define BEGINSTRUCT(name) typedef struct {
-#define BEGINENUM(name) typedef enum {
-#define END(name) } name;
-#endif
-
-// tag to indicate the representation of a solid
-BEGINENUM(solid_rep_type)
+// See the definition for solids below.
+enum solid_rep_type {
 	REP_NOTHING = 0,
 	REP_BREP,
 	REP_EXT
-END(solid_rep_type)
+};
 
-// the type of an element governs its interactions with other elements
-BEGINENUM(element_type)
-	WALL = 0,	// walls have slab and column volumes subtracted from their volume
-	SLAB,		// slabs subtract their volume from walls and columns
-	DOOR,		// doors will be embedded into walls
-	WINDOW,		// windows will be embedded into walls
-	COLUMN,		// columns subtract their volumes from walls
-	BEAM,		// currently unused
-	UNKNOWN		// currently unused
-END(element_type)
+// The type of an element governs its behavior within the core. The specific
+// behavior of each is a little too complicated for a header file comment, but
+// it is appropriate to say here that any element with the type UNKNOWN will
+// be ignored. (However, clients *shouldn't* rely on this behavior - use the
+// filters, described below, to intentionally ignore objects.)
+enum element_type {
+	WALL = 0,
+	SLAB,
+	DOOR,
+	WINDOW,
+	COLUMN,
+	BEAM,
+	UNKNOWN	
+};
 
-// this list to be expanded later
-BEGINENUM(sbt_return_t)
+enum sbt_return_t {
 	SBT_OK = 0,
 	SBT_TOO_COMPLICATED = 1,
 	SBT_FAILED_ALLOCATION = 2,
 	SBT_UNSUPPORTED = 3,
 	SBT_UNKNOWN = -1
-END(sbt_return_t)
+};
 
-// points
-BEGINSTRUCT(point)
+struct point {
 	double x;
 	double y;
 	double z;
-END(point)
+};
 
-// polyloops in 3-space
-BEGINSTRUCT(polyloop)
+struct polyloop {
 	size_t vertex_count;
-	point * vertices;
-END(polyloop)
+	struct point * vertices;
+};
 
-// faces (polyloop outer boundary with optional voids)
-BEGINSTRUCT(face)
-	polyloop outer_boundary;
+struct face {
+	struct polyloop outer_boundary;
 	size_t void_count;
-	polyloop * voids;
-END(face)
+	struct polyloop * voids;
+};
 
-// very primitive. order doesn't matter.
-// faces is a dynamically allocated array
-BEGINSTRUCT(brep)
+// Note: if a brep face has voids they will be ignored. (Unfortunately, there's
+// no way at present to communicate CSG solids to the core that can't be 
+// expressed using an extruded_area_solid.)
+struct brep {
 	size_t face_count;
-	face * faces;
-END(brep)
+	struct face * faces;
+};
 
-// less primitive.
-BEGINSTRUCT(extruded_area_solid)
+struct extruded_area_solid {
 	double ext_dx;
 	double ext_dy;
 	double ext_dz;
 	double extrusion_depth;
-	face area;
-END(extruded_area_solid)
+	struct face area;
+};
 
-// "supertype" for solid representation
-BEGINSTRUCT(solid)
-	solid_rep_type rep_type;
+struct solid {
+	enum solid_rep_type rep_type;
 	union {
-		brep as_brep;
-		extruded_area_solid as_ext;
+		struct brep as_brep;
+		struct extruded_area_solid as_ext;
 	} rep;
-END(solid)
+};
 
-// type for elements
-BEGINSTRUCT(element_info)
+struct element_info {
+	element_name_t name;
+	enum element_type type;
 	element_id_t id;
-	element_type type;
-	material_id_t material;
-	solid geometry;
-END(element_info)
+	struct solid geometry;
+};
 	
-// type for spaces
-BEGINSTRUCT(space_info)
+struct space_info {
 	space_id_t id;
-	solid geometry;
-END(space_info)
+	struct solid geometry;
+};
 
-// the belle of the ball
-BEGINSTRUCT(space_boundary)
+struct space_boundary {
 	sb_id_t global_id;
-	element_id_t element_id;
-	polyloop geometry;
+	element_name_t element_name;
+	struct polyloop geometry;
 	double normal_x;
 	double normal_y;
 	double normal_z;						
 	int is_external;
 	int is_virtual;
-	space_info * bounded_space;	
-	STRUCTTYPE(space_boundary) * opposite;	
-	STRUCTTYPE(space_boundary) * parent;
+	struct space_info * bounded_space;	
+	struct space_boundary * opposite;	
+	struct space_boundary * parent;
 	size_t material_layer_count;
-	material_id_t * layers;
+	element_id_t * layers;
 	double * thicknesses;
-END(space_boundary)
+};
 
-BEGINENUM(sbt_options_flags)
+enum sb_options_flags {
 	SBT_NONE = 0
-END(sbt_options_flags)
+};
 
-BEGINSTRUCT(sb_calculation_options)
+struct sb_calculation_options {
 	int flags;
 	double length_units_per_meter;
 	double max_pair_distance_in_meters;
-	int space_verification_timeout;
+	int unused;
 	char ** space_filter;
 	size_t space_filter_count;
 	char ** element_filter;
@@ -155,38 +145,31 @@ BEGINSTRUCT(sb_calculation_options)
 	void (*notify_func)(char *);
 	void (*warn_func)(char *);
 	void (*error_func)(char *);
-END(sb_calculation_options)
-
-// entry point prototype
+};
 
 #ifdef SBT_CORE_EXPORTS
-#define DLLINEX dllexport
+#define SBT_CORE_INTERFACE dllexport
 #else
-#define DLLINEX dllimport
+#define SBT_CORE_INTERFACE dllimport
 #endif
 
-__declspec(DLLINEX)
-sbt_return_t calculate_space_boundaries(
-	size_t element_count,					// (in)
-	element_info ** elements,				// (in) dynamically allocated array of pointers to elements
-	size_t space_count,						// (in)
-	space_info ** spaces,					// (in) dynamically allocated array of pointers to spaces
-	size_t * space_boundary_count,			// (out)
-	space_boundary *** space_boundaries,	// (out) dynamically allocated array of pointers to space boundaries
-	sb_calculation_options opts);
+__declspec(SBT_CORE_INTERFACE)
+enum sbt_return_t calculate_space_boundaries(
+	size_t element_count,						// in
+	struct element_info ** elements,			// in
+	size_t space_count,							// in
+	struct space_info ** spaces,				// in
+	size_t * space_boundary_count,				// out
+	struct space_boundary *** space_boundaries,	// out
+	struct sb_calculation_options opts);		// in
 
-__declspec(DLLINEX)
-void release_space_boundaries(space_boundary ** sbs, size_t count);
+__declspec(SBT_CORE_INTERFACE)
+void release_space_boundaries(struct space_boundary ** sbs, size_t count);
 
-__declspec(DLLINEX)
-sb_calculation_options create_default_options(void);
+__declspec(SBT_CORE_INTERFACE)
+struct sb_calculation_options create_default_options(void);
 
-#undef DLLINEX
-
-#undef BEGINSTRUCT
-#undef BEGINENUM
-#undef END
-#undef STRUCTTYPE
+#undef SBT_INTERFACE
 
 #ifdef __cplusplus
 }

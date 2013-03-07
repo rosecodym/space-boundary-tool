@@ -103,13 +103,15 @@ std::vector<block> build_blocks(
 	equality_context * c, 
 	double max_block_thickness)
 {
+	typedef boost::format fmt;
 	std::vector<block> res;
-	report_progress(boost::format("Building blocks for %u elements.\n") % elements.size());
+	report_progress(fmt(
+		"Building blocks for %u elements.\n") % elements.size());
 	boost::for_each(elements, [=, &res](const element & e) {
 		bool stack_overflow = false;
 		try {
 			int block_count = 0;
-			report_progress(boost::format("Building blocks for element %s ") % e.source_id().c_str());
+			report_progress(fmt("Building blocks for element %s ") % e.name());
 			boost::transform(
 				impl::build_blocks_for(e, c, max_block_thickness), 
 				std::back_inserter(res), 
@@ -117,7 +119,7 @@ std::vector<block> build_blocks(
 					++block_count; 
 					return b; 
 				});
-			report_progress(boost::format("%i blocks created.\n") % block_count);
+			report_progress(fmt("%i blocks created.\n") % block_count);
 		}
 		catch (stack_overflow_exception &) {
 			// use as little stack space as possible in this catch block because the stack is still busted
@@ -125,7 +127,10 @@ std::vector<block> build_blocks(
 		}
 		if (stack_overflow) {
 			_resetstkoflw();
-			report_warning(boost::format("The geometry for building element %s is too complicated. Space boundaries for this element will not be generated.\n") % e.source_id().c_str());
+			report_warning(fmt(
+				"The geometry for building element %s is too complicated. "
+				"Space boundaries for this element will not be generated.\n") 
+				% e.name());
 		}
 	});
 	return res;

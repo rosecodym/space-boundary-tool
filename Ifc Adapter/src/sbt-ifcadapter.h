@@ -3,60 +3,41 @@
 #include "../../Core/src/sbt-core.h"
 
 #ifdef __cplusplus
-#define BOOLTYPE bool
-#define STRUCTTYPE(name) name
-#define BEGINSTRUCT(name) struct name {
-#define BEGINENUM(name) enum name {
-#define END(name) };
-#else
-#define BOOLTYPE int
-#define STRUCTTYPE(name) struct name
-#define BEGINSTRUCT(name) typedef struct {
-#define BEGINENUM(name) typedef enum {
-#define END(name) } name;
-#endif
-
-#ifdef __cplusplus
 extern "C" {
 #endif
 
-BEGINENUM(ifcadapter_return_t)
+enum ifcadapter_return_t {
 	IFCADAPT_OK = 0,
 	IFCADAPT_EDM_ERROR = 1,
 	IFCADAPT_TOO_COMPLICATED = 2,
 	IFCADAPT_INVALID_ARGS = 3,
 	IFCADAPT_UNKNOWN
-END(ifcadapter_return_t)
+};
 
 #ifdef SBT_IFC_EXPORTS
-#define DLLINEX dllexport
+#define SBT_IFC_INTERFACE dllexport
 #else
-#define DLLINEX dllimport
+#define SBT_IFC_INTERFACE dllimport
 #endif
-__declspec(DLLINEX) ifcadapter_return_t execute(
-	const char * input_filename,
-	const char * output_filename, // NULL for no write-back
-	sb_calculation_options opts,
+__declspec(SBT_IFC_INTERFACE) enum ifcadapter_return_t execute(
+	char * input_filename,
+	char * output_filename, // NULL for no write-back
+	struct sb_calculation_options opts,
 	size_t * element_count,
-	element_info *** elements,
+	struct element_info *** elements,
 	double ** composite_layer_dxs,
 	double ** composite_layer_dys,
 	double ** composite_layer_dzs,
 	size_t * space_count,
-	space_info *** spaces,
+	struct space_info *** spaces,
 	size_t * sb_count,
-	space_boundary *** sbs);
+	struct space_boundary *** sbs);
 
-__declspec(DLLINEX) void release_elements(element_info ** elements, size_t count);
-__declspec(DLLINEX) void release_spaces(space_info ** spaces, size_t count);
+__declspec(SBT_IFC_INTERFACE) 
+void release_elements(struct element_info ** elements, size_t count);
 
-#undef DLLINEX
-
-#undef BEGINSTRUCT
-#undef BEGINENUM
-#undef END
-#undef BOOLTYPE
-#undef STRUCTTYPE
+__declspec(SBT_IFC_INTERFACE) 
+void release_spaces(struct space_info ** spaces, size_t count);
 
 #ifdef __cplusplus
 }

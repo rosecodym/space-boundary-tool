@@ -22,7 +22,7 @@ std::vector<element> load_elements(
 	std::vector<element> complex_elements;
 	for (size_t i = 0; i < count; ++i) {
 		try {
-			if (filter(infos[i]->id)) {
+			if (filter(infos[i]->name)) {
 				complex_elements.push_back(element(infos[i], c));
 			}
 		}
@@ -70,8 +70,7 @@ std::vector<element> load_elements(
 	if (need_wall_column_check) {
 		for (auto w = walls.begin(); w != walls.end(); ++w) {
 
-			report_progress(fmt(
-				"Resolving wall %s") % w->handle()->source_id().c_str());
+			report_progress(fmt("Resolving wall %s") % w->handle()->name());
 			bool performed_any_subtractions = false;
 
 			if (need_wall_column_check) {
@@ -106,7 +105,7 @@ std::vector<element> load_elements(
 		for (auto col = columns.begin(); col != columns.end(); ++col) {
 
 			report_progress(fmt(
-				"Resolving column %s") % col->handle()->source_id().c_str());
+				"Resolving column %s") % col->handle()->name());
 			bool performed_any_subtractions = false;
 
 			boost::for_each(slabs, [&, col, c](const element_box & s) {

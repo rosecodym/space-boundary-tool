@@ -66,9 +66,12 @@ void add_element(
 	element_info * info = (element_info *)malloc(sizeof(element_info));
 	info->geometry.rep_type = REP_NOTHING;
 
-	strncpy(info->id, ((cppw::String)inst.get("GlobalID")).data(), ELEMENT_ID_MAX_LEN);
+	strncpy(
+		info->name, 
+		((cppw::String)inst.get("GlobalID")).data(), 
+		ELEMENT_NAME_MAX_LEN);
 	info->type = type;
-	info->material = material_id;
+	info->id = material_id;
 
 	boost::optional<cppw::Instance> effective_instance = inst;
 	if (type == WINDOW || type == DOOR) {

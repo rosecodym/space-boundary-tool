@@ -49,9 +49,9 @@ space_boundary * create_unlinked_space_boundary(
 	try {
 		strncpy(newsb->global_id, s.guid().c_str(), SB_ID_MAX_LEN);
 		strncpy(
-			newsb->element_id, 
-			s.is_virtual() ? "" : s.bounded_element()->source_id().c_str(), 
-			ELEMENT_ID_MAX_LEN);
+			newsb->element_name, 
+			s.is_virtual() ? "" : s.bounded_element()->name().c_str(), 
+			ELEMENT_NAME_MAX_LEN);
 
 		auto cleaned_geometry = s.geometry().to_3d(true).front().outer();
 		if (!geometry_common::cleanup_loop(&cleaned_geometry, output_eps)) {
@@ -81,9 +81,9 @@ space_boundary * create_unlinked_space_boundary(
 	
 		newsb->material_layer_count = s.material_layers().size();
 		if (newsb->material_layer_count > 0) {
-			auto ids_sz = sizeof(material_id_t) * newsb->material_layer_count;
+			auto ids_sz = sizeof(element_id_t) * newsb->material_layer_count;
 			auto layers_sz = sizeof(double) * newsb->material_layer_count;
-			newsb->layers = (material_id_t *)malloc(ids_sz);
+			newsb->layers = (element_id_t *)malloc(ids_sz);
 			newsb->thicknesses = (double *)malloc(layers_sz);
 			if (!newsb->layers || !newsb->thicknesses) { 
 				throw failed_malloc_exception(); 
@@ -118,8 +118,8 @@ space_boundary * create_unlinked_space_boundary(
 					"connection geometry being too complicated. Try "
 					"simplifying the connection between space %s and space "
 					"%s.\n") %
-				s.bounded_space().global_id().c_str() %
-				s.other_side()->bounded_space().global_id().c_str());
+				s.bounded_space().global_id() %
+				s.other_side()->bounded_space().global_id());
 		}
 		else {
 			report_warning(
@@ -128,8 +128,8 @@ space_boundary * create_unlinked_space_boundary(
 					"connection geometry being too complicated. Try "
 					"simplifying the connection between space %s and element "
 					"%s.\n") %
-				s.bounded_space().global_id().c_str() %
-				s.bounded_element()->source_id().c_str());
+				s.bounded_space().global_id() %
+				s.bounded_element()->name());
 		} 
 		newsb = nullptr;
 	}

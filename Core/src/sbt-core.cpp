@@ -153,7 +153,6 @@ sb_calculation_options create_default_options() {
 	opts.flags = SBT_NONE;
 	opts.length_units_per_meter = 1.0;
 	opts.max_pair_distance_in_meters = 0.5;
-	opts.space_verification_timeout = 0;
 	opts.space_filter = nullptr;
 	opts.space_filter_count = 0;
 	opts.element_filter = nullptr;

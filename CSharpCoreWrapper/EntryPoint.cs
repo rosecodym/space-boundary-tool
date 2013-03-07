@@ -16,7 +16,7 @@ namespace Sbt
             internal SbtFlags flags;
             internal double lengthUnitsPerMeter;
             internal double maxPairDistanceInMeters;
-            internal int spaceVerificationTimeout;
+            internal int unused;
             internal IntPtr spaceFilter;
             internal uint spaceFilterCount;
             internal IntPtr elementFilter;
@@ -97,9 +97,9 @@ namespace Sbt
         {
             SBCalculationOptions opts;
             opts.flags = flags;
-            opts.spaceVerificationTimeout = 0; // no longer does anything
             opts.lengthUnitsPerMeter = lengthUnitsPerMeter;
             opts.maxPairDistanceInMeters = maxPairDistanceInMeters;
+            opts.unused = 0;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;
@@ -164,9 +164,9 @@ namespace Sbt
         {
             SBCalculationOptions opts;
             opts.flags = flags;
-            opts.spaceVerificationTimeout = 0; // no longer does anything
             opts.lengthUnitsPerMeter = 1.0;
             opts.maxPairDistanceInMeters = maxPairDistanceInMeters;
+            opts.unused = 0;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
             opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;

@@ -61,10 +61,15 @@ solid create_ext(double dx, double dy, double dz, double depth, face geometry) {
 	return res;
 }
 
-element_info * create_element(const char * name, element_type type, material_id_t mat, solid geometry) {
+element_info * create_element(
+	const char * name, 
+	element_type type, 
+	element_id_t mat, 
+	solid geometry) 
+{
 	element_info * res = (element_info *)malloc(sizeof(element_info));
-	strcpy(res->id, name);
-	res->material = mat;
+	strcpy(res->name, name);
+	res->id = mat;
 	res->type = type;
 	res->geometry = geometry;
 	return res;
