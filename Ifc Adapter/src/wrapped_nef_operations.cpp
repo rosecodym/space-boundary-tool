@@ -15,6 +15,7 @@ namespace {
 typedef CGAL::Extended_cartesian<leda_rational>	eK;
 typedef eK::Point_3								extended_point_3;
 typedef eK::Plane_3								extended_plane_3;
+typedef CGAL::Polyhedron_3<eK>					extended_polyhedron_3;
 typedef CGAL::Nef_polyhedron_3<eK>				nef_polyhedron_3;
 
 typedef number_collection<K> eqc;
@@ -53,31 +54,73 @@ extended_plane_3 create_extended_plane(const ray_3 & r, const point_3 & p, numbe
 
 nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, eqc * c, number_collection<eK> * ec) {
 	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
+		using boost::transform;
+		using std::back_inserter;
 		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
-		std::vector<point_3> base_points;
-		std::vector<point_3> extruded_points;
-		std::transform(base.outer_boundary.vertices.begin(), base.outer_boundary.vertices.end(), std::back_inserter(base_points), [c](const exact_point & p) {
-			return c->request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
+		const auto & bverts = base.outer_boundary.vertices;
+		std::vector<point_3> points;
+		transform(bverts, back_inserter(points), [c](const exact_point & p) {
+			return c->request_point(
+				CGAL::to_double(p.x),
+				CGAL::to_double(p.y),
+				CGAL::to_double(p.z));
 		});
-		vector_3 extrusion_vec = to_exact_direction((cppw::Instance)inst.get("ExtrudedDirection"), c).vector();
-		extrusion_vec = extrusion_vec / CGAL::sqrt(extrusion_vec.squared_length());
-		extrusion_vec = extrusion_vec * c->request_height((cppw::Real)inst.get("Depth"));
+		cppw::Instance ifc_dir = inst.get("ExtrudedDirection");
+		auto extrusion_vec = to_exact_direction(ifc_dir, c).to_vector();
+		extrusion_vec = extrusion_vec / sqrt(extrusion_vec.squared_length());
+		double depth = inst.get("Depth");
+		extrusion_vec = extrusion_vec * c->request_height(depth);
 		transformation_3 extrusion(CGAL::TRANSLATION, extrusion_vec);
-		std::transform(base_points.begin(), base_points.end(), std::back_inserter(extruded_points), [&extrusion](const point_3 & p) {
-			return p.transform(extrusion);
-		});
-		std::vector<extended_plane_3> planes;
-		planes.push_back(create_extended_plane(base_points[0], base_points[1], base_points[2], ec));
-		planes.push_back(create_extended_plane(extruded_points[2], extruded_points[1], extruded_points[0], ec));
-		size_t pc = base_points.size();
-		for (size_t i = pc; i < pc * 2; ++i) {
-			planes.push_back(create_extended_plane(base_points[i % pc], base_points[(i - 1) % pc], extruded_points[(i - 1) % pc], ec));
+		points.reserve(bverts.size() * 2);
+		transform(points, back_inserter(points), extrusion);
+		typedef std::deque<size_t> ixdq;
+		std::vector<ixdq> facets;
+		ixdq base_indices;
+		ixdq target_indices;
+		facets.resize(bverts.size());
+		for (size_t i = 0; i < bverts.size(); ++i) {
+			base_indices.push_back(i);
+			target_indices.push_back(i + bverts.size());
+			facets[i].push_back(target_indices[i]);
+			facets[i].push_back(base_indices[i]);
+			facets[(i + 1) % bverts.size()].push_front(target_indices[i]);
+			facets[(i + 1) % bverts.size()].push_front(base_indices[i]);
 		}
-		nef_polyhedron_3 result(planes.front().opposite());
-		std::for_each(planes.begin(), planes.end(), [&result](const extended_plane_3 & pl) {
-			result *= nef_polyhedron_3(pl.opposite());
-		});
-		return result;
+		facets.push_back(base_indices);
+		facets.push_back(ixdq(target_indices.rbegin(), target_indices.rend()));
+		typedef extended_polyhedron_3::HDS hds_t;
+		struct builder : public CGAL::Modifier_base<hds_t> {
+			std::vector<extended_point_3> pts_;
+			const std::vector<ixdq> & facets_;
+			builder(
+				const std::vector<point_3> & pts,
+				const std::vector<ixdq> & facets,
+				number_collection<eK> * ec)
+				: facets_(facets) 
+			{
+				for (auto p = pts.begin(); p != pts.end(); ++p) {
+					pts_.push_back(ec->request_point(
+						CGAL::to_double(p->x()),
+						CGAL::to_double(p->y()),
+						CGAL::to_double(p->z())));
+				}
+			}
+			void operator () (hds_t & hds) {
+				CGAL::Polyhedron_incremental_builder_3<hds_t> b(hds, true);
+				b.begin_surface(pts_.size(), facets_.size());
+				for (auto p = pts_.begin(); p != pts_.end(); ++p) {
+					b.add_vertex(*p);
+				}
+				for (auto f = facets_.begin(); f != facets_.end(); ++f) {
+					b.add_facet(f->begin(), f->end());
+				}
+				b.end_surface();
+			}
+		};
+		builder b(points, facets, ec);
+		extended_polyhedron_3 poly;
+		poly.delegate(b);
+		return nef_polyhedron_3(poly);
 	}
 	else if (inst.is_instance_of("IfcHalfspaceSolid") || inst.is_instance_of("IfcBoxedHalfSpace")) {
 		cppw::Instance base_surface = inst.get("BaseSurface");
