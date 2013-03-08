@@ -30,18 +30,18 @@ std::vector<element> load_elements(
 			report_warning(fmt(
 				"Element %s has unsupported geometry (%s). It will be "
 				"ignored.\n") 
-				% infos[i]->id % ex.condition());
+				% infos[i]->name % ex.condition());
 		}
 		catch (unknown_geometry_rep_exception & /*ex*/) {
 			report_warning(fmt(
 				"Element %s has an unknown internal geometry representation "
 				"type. It will be ignored. Please report this SBT bug.\n") 
-				% infos[i]->id);
+				% infos[i]->name);
 		}
 		catch (bad_geometry_exception & ex) {
 			report_warning(fmt(
 				"Element %s has bad geometry (%s). It will be ignored.\n")
-				% infos[i]->id % ex.condition());
+				% infos[i]->name % ex.condition());
 		}
 	}
 

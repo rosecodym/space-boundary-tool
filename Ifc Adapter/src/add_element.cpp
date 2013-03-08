@@ -120,7 +120,7 @@ void add_element(
 		sprintf(
 			buf, 
 			"Element %s could not be loaded (%s). It will be skipped.\n",
-			info->id,
+			info->name,
 			ex.what());
 		warn_func(buf);
 	}
