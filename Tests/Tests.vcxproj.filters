@@ -34,6 +34,9 @@
     <Filter Include="tests\operations\blocking">
       <UniqueIdentifier>{ff229426-c84c-4ed6-ade9-8f5179700f90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tests\operations\opening_assignment">
+      <UniqueIdentifier>{9abf6400-eee8-417a-941b-dd4addad37b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\src\equality_context.cpp">
@@ -140,6 +143,12 @@
     </ClCompile>
     <ClCompile Include="src\is_hexahedral_prismatoid_tests.cpp">
       <Filter>tests\operations\blocking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assign_opening_tests.cpp">
+      <Filter>tests\operations\opening_assignment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\assign_openings.cpp">
+      <Filter>Recompiled Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

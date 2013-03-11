@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\src\area.cpp" />
+    <ClCompile Include="..\Core\src\assign_openings.cpp" />
     <ClCompile Include="..\Core\src\build_blocks.cpp" />
     <ClCompile Include="..\Core\src\CreateGuid_64.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -110,6 +111,7 @@
     <ClCompile Include="..\Core\src\wrapped_nef_polygon.cpp" />
     <ClCompile Include="geometry_common_tests.cpp" />
     <ClCompile Include="src\area_tests.cpp" />
+    <ClCompile Include="src\assign_opening_tests.cpp" />
     <ClCompile Include="src\blocking_tests.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\is_hexahedral_prismatoid_tests.cpp" />
