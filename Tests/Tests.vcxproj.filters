@@ -87,14 +87,8 @@
     <ClCompile Include="src\wrapped_nef_polygon_tests.cpp">
       <Filter>old structure</Filter>
     </ClCompile>
-    <ClCompile Include="src\loop_cleanup_tests.cpp">
-      <Filter>old structure</Filter>
-    </ClCompile>
     <ClCompile Include="..\Core\src\build_blocks.cpp">
       <Filter>Recompiled Source</Filter>
-    </ClCompile>
-    <ClCompile Include="geometry_common_tests.cpp">
-      <Filter>old structure</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\geometry_common.cpp">
       <Filter>Recompiled Source</Filter>
@@ -149,6 +143,9 @@
     </ClCompile>
     <ClCompile Include="..\Core\src\assign_openings.cpp">
       <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cleanup_loop_tests.cpp">
+      <Filter>unit\geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

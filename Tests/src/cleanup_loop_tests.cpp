@@ -6,7 +6,24 @@
 
 namespace geometry_2d {
 
-TEST(LoopCleanup, TriplyDuplicatePointAtBeginningPolygon2) {
+namespace {
+
+TEST(CleanupLoop, ShortEdge) {
+	point_2 pts[] = {
+		point_2(27.443970, 8.339190),
+		point_2(28.769285, 8.339190),
+		point_2(28.769285, 8.844385),
+		point_2(28.769105, 8.844385),
+		point_2(28.665582, 8.744685),
+		point_2(28.665582, 8.844385),
+		point_2(27.443970, 8.844385)
+	};
+	polygon_2 poly(pts, pts + 7);
+	EXPECT_TRUE(geometry_common::cleanup_loop(&poly, 0.01));
+	EXPECT_EQ(6, poly.size());
+}
+
+TEST(CleanupLoop, TriplyDuplicatePointAtBeginningPolygon2) {
 	point_2 pts[] = {
 		point_2(4030.886788, 18109.240611),
 		point_2(4030.886788, 18109.240611),
@@ -24,7 +41,7 @@ TEST(LoopCleanup, TriplyDuplicatePointAtBeginningPolygon2) {
 	EXPECT_EQ(correct.container(), p.container());
 }
 
-TEST(LoopCleanup, ThreePointDuplicateBeginningPoint3) {
+TEST(CleanupLoop, ThreePointDuplicateBeginningPoint3) {
 	point_3 pts[] = {
 		point_3(3.723846, 11.736685, 9.385000),
 		point_3(3.723846, 11.736685, 9.385000),
@@ -34,7 +51,7 @@ TEST(LoopCleanup, ThreePointDuplicateBeginningPoint3) {
 	EXPECT_FALSE(geometry_common::cleanup_loop(&vec, 0.01));
 }
 
-TEST(LoopCleanup, ThreePointDuplicateEndPoint3) {
+TEST(CleanupLoop, ThreePointDuplicateEndPoint3) {
 	point_3 pts[] = {
 		point_3(3.723846, 13.682886, 9.385000),
 		point_3(3.736578, 13.695610, 9.385000),
@@ -44,7 +61,7 @@ TEST(LoopCleanup, ThreePointDuplicateEndPoint3) {
 	EXPECT_FALSE(geometry_common::cleanup_loop(&vec, 0.01));
 }
 
-TEST(LoopCleanup, DirectionChangePoint2) {
+TEST(CleanupLoop, DirectionChangePoint2) {
 	point_2 pts[] = {
 		point_2(-9.0, 205.650477),
 		point_2(-9.0, 205.983810),
@@ -57,7 +74,7 @@ TEST(LoopCleanup, DirectionChangePoint2) {
 	EXPECT_EQ(4, vec.size());
 }
 
-TEST(LoopCleanup, ComplexTwoPassesPoint2) {
+TEST(CleanupLoop, ComplexTwoPassesPoint2) {
 	point_2 pts[] = {
 		point_2(-9.000000, 205.650477),
 		point_2(-9.000000, 205.983810),
@@ -73,7 +90,7 @@ TEST(LoopCleanup, ComplexTwoPassesPoint2) {
 	EXPECT_EQ(4, vec.size());
 }
 
-TEST(LoopCleanup, AngledOutPoint2) {
+TEST(CleanupLoop, AngledOutPoint2) {
 	point_2 pts[] = {
 		point_2(0, 0),
 		point_2(3.8352921, 0),
@@ -91,7 +108,7 @@ TEST(LoopCleanup, AngledOutPoint2) {
 	EXPECT_EQ(4, vec.size());
 }
 
-TEST(LoopCleanup, DegenerateRectanglePoint3) {
+TEST(CleanupLoop, DegenerateRectanglePoint3) {
 	point_3 pts[] = {
 		point_3(0.003271982629936332, 1.251142620394262, 10.5),
 		point_3(0.003271982629936332, 1.251142620394262, 10.6666666666),
@@ -102,7 +119,7 @@ TEST(LoopCleanup, DegenerateRectanglePoint3) {
 	EXPECT_FALSE(geometry_common::cleanup_loop(&vec, 0.01));
 }
 
-TEST(LoopCleanup, SimpleCollinearPoint3) {
+TEST(CleanupLoop, SimpleCollinearPoint3) {
 	point_3 pts[] = {
 		point_3(6.8, 2.3, 10.5),
 		point_3(5.8, 2.3, 10.5),
@@ -115,7 +132,7 @@ TEST(LoopCleanup, SimpleCollinearPoint3) {
 	EXPECT_EQ(4, vec.size());
 }
 
-TEST(LoopCleanup, InitialCollinearPoint3) {
+TEST(CleanupLoop, InitialCollinearPoint3) {
 	ipoint_3 pts[] = {
 		ipoint_3(5.8, 2.3, 9),
 		ipoint_3(5.8, 2.0, 9),
@@ -128,5 +145,7 @@ TEST(LoopCleanup, InitialCollinearPoint3) {
 	ASSERT_TRUE(geometry_common::cleanup_loop(&vec, 0.01));
 	EXPECT_EQ(4, vec.size());
 }
+
+} // namespace
 
 } // namespace geometry_2d
