@@ -71,6 +71,28 @@ TEST(LibraryAssumptions, BBox2Construction) {
 	EXPECT_DOUBLE_EQ(10, res->ymax());
 }
 
+TEST(LibraryAssumptions, Bbox2DoOverlap) {
+	point_2 larger_pts[] = {
+		point_2(0, -300),
+		point_2(8250, -300),
+		point_2(8250, 0),
+		point_2(0, 0)
+	};
+	point_2 smaller_pts[] = {
+		point_2(0, -300),
+		point_2(4050, -300), 
+		point_2(4050, 0),
+		point_2(0, 0)
+	};
+	auto larger = larger_pts[0].bbox();
+	auto smaller = smaller_pts[0].bbox();
+	for (int i = 1; i < 4; ++i) {
+		larger = larger + larger_pts[i].bbox();
+		smaller = smaller + smaller_pts[i].bbox();
+	}
+	EXPECT_TRUE(CGAL::do_overlap(larger, smaller));
+}
+
 TEST(LibraryAssumptions, PointInHalfspace) {
 	plane_3 pl(point_3(0, 0, 0), direction_3(0, 0, 1));
 	EXPECT_TRUE(pl.has_on_positive_side(point_3(0, 0, 1)));
