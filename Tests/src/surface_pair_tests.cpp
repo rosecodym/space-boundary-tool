@@ -14,7 +14,7 @@ namespace impl {
 
 namespace {
 
-TEST(SurfacePair, StrictSubsetParallelRectangles) {
+TEST(SurfacePair, StrictSubsetParallel) {
 	equality_context c(0.01);
 
 	oriented_area larger(simple_face(create_face(4,

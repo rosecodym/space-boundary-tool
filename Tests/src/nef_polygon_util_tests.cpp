@@ -22,8 +22,7 @@ nef_polygon_2 create_naive_nef_polygon(const polygon_2 & poly) {
 		nef_polygon_2(extended.rbegin(), extended.rend(), nef_polygon_2::EXCLUDED);
 }
 
-TEST(NefPolygonUtil, Clean) {
-	// short edge
+TEST(NefPolygonUtilClean, ShortEdge) {
 	point_2 pts[] = {
 		point_2(27.443970, 8.339190),
 		point_2(28.769285, 8.339190),
