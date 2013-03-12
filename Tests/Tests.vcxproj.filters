@@ -12,30 +12,36 @@
     <Filter Include="Recompiled Source">
       <UniqueIdentifier>{b42e0c6f-c4d5-46d8-8cc1-2aebfb7c5714}</UniqueIdentifier>
     </Filter>
-    <Filter Include="old structure">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="tests">
-      <UniqueIdentifier>{5f4b17b7-a815-4ad1-9f7a-3c7146ffce83}</UniqueIdentifier>
-    </Filter>
     <Filter Include="common">
       <UniqueIdentifier>{ee30733a-9d73-4c1d-83b6-cf73dda0447f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tests\geometry">
+    <Filter Include="unit">
+      <UniqueIdentifier>{5f4b17b7-a815-4ad1-9f7a-3c7146ffce83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit\geometry">
       <UniqueIdentifier>{b37dfc27-352a-4078-a451-db9913ce0513}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tests\geometry\solid_geometry">
+    <Filter Include="unit\geometry\solid_geometry">
       <UniqueIdentifier>{a4d0d0b0-5b61-4e51-b903-206eee0eed29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tests\operations">
+    <Filter Include="unit\geometry\geometry_2d">
+      <UniqueIdentifier>{b7414bb2-5213-4592-931d-e999420892c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit\operations">
       <UniqueIdentifier>{98f7c298-9ee5-4878-a8f8-0689e89f5430}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tests\operations\blocking">
+    <Filter Include="unit\operations\blocking">
       <UniqueIdentifier>{ff229426-c84c-4ed6-ade9-8f5179700f90}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tests\operations\opening_assignment">
+    <Filter Include="unit\operations\opening_assignment">
       <UniqueIdentifier>{9abf6400-eee8-417a-941b-dd4addad37b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit\geometry\geometry_2d\nef_polygons">
+      <UniqueIdentifier>{df45178a-af26-4736-9348-051db57e1527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="integration">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,22 +76,13 @@
       <Filter>Recompiled Source</Filter>
     </ClCompile>
     <ClCompile Include="src\complicated_extruded_element.cpp">
-      <Filter>old structure</Filter>
-    </ClCompile>
-    <ClCompile Include="src\precompiled.cpp">
-      <Filter>old structure</Filter>
+      <Filter>integration</Filter>
     </ClCompile>
     <ClCompile Include="src\blocking_tests.cpp">
-      <Filter>old structure</Filter>
-    </ClCompile>
-    <ClCompile Include="src\area_tests.cpp">
-      <Filter>old structure</Filter>
+      <Filter>integration</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\surface_pair.cpp">
       <Filter>Recompiled Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wrapped_nef_polygon_tests.cpp">
-      <Filter>old structure</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\build_blocks.cpp">
       <Filter>Recompiled Source</Filter>
@@ -98,9 +95,6 @@
     </ClCompile>
     <ClCompile Include="..\Core\src\nef_polygon_util.cpp">
       <Filter>Recompiled Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\nef_polygon_util_tests.cpp">
-      <Filter>old structure</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\flatten.cpp">
       <Filter>Recompiled Source</Filter>
@@ -124,28 +118,40 @@
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="src\multiview_solid_tests.cpp">
-      <Filter>tests\geometry\solid_geometry</Filter>
+      <Filter>unit\geometry\solid_geometry</Filter>
     </ClCompile>
     <ClCompile Include="src\solid_geometry_util_tests.cpp">
-      <Filter>tests\geometry\solid_geometry</Filter>
+      <Filter>unit\geometry\solid_geometry</Filter>
     </ClCompile>
     <ClCompile Include="src\oriented_area_tests.cpp">
-      <Filter>tests\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\surface_pair_tests.cpp">
-      <Filter>old structure</Filter>
+      <Filter>unit\geometry</Filter>
     </ClCompile>
     <ClCompile Include="src\is_hexahedral_prismatoid_tests.cpp">
-      <Filter>tests\operations\blocking</Filter>
+      <Filter>unit\operations\blocking</Filter>
     </ClCompile>
     <ClCompile Include="src\assign_opening_tests.cpp">
-      <Filter>tests\operations\opening_assignment</Filter>
+      <Filter>unit\operations\opening_assignment</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\assign_openings.cpp">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\area_tests.cpp">
+      <Filter>unit\geometry\geometry_2d</Filter>
+    </ClCompile>
     <ClCompile Include="src\cleanup_loop_tests.cpp">
       <Filter>unit\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\precompiled.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nef_polygon_util_tests.cpp">
+      <Filter>unit\geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrapped_nef_polygon_tests.cpp">
+      <Filter>unit\geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\surface_pair_tests.cpp">
+      <Filter>unit\operations\blocking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
