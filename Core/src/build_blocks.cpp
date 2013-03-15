@@ -8,7 +8,6 @@
 #include "link_halfblocks.h"
 #include "oriented_area.h"
 #include "report.h"
-#include "scan_for_degenerate_halfblocks.h"
 #include "surface_pair.h"
 
 #include "build_blocks.h"
@@ -21,25 +20,54 @@ namespace impl {
 
 namespace {
 
-template <typename OutputIterator>
-void blocks_from_envelope(
-	const relations_grid & surface_relationships, 
-	size_t face_count, 
-	const element & e, 
-	double /*max_block_thickness*/,
-	equality_context * c, 
-	OutputIterator oi) 
+std::vector<surface_pair::envelope_contribution> gather_contributions(
+	const relations_grid & surf_rels, 
+	size_t face_count,
+	size_t base_index)
 {
-	auto degenerate_indices = scan_for_degenerate_halfblocks(surface_relationships, face_count, e, oi);
-
-	std::list<oriented_area> halfblocks;
+	std::vector<surface_pair::envelope_contribution> res;
 	for (size_t i = 0; i < face_count; ++i) {
-		if (degenerate_indices.find(i) == degenerate_indices.end()) {
-			halfblocks_for_base(surface_relationships, i, c, std::back_inserter(halfblocks));
+		auto c = surf_rels[base_index][i].contributes_to_envelope();
+		if (c != surface_pair::NONE) { res.push_back(c); }
+	}
+	return res;
+}
+
+template <typename FinalHalfblockOutputIterator>
+void general_case(
+	const relations_grid & surf_rels, 
+	size_t face_count,
+	const element & e, 
+	equality_context * c, 
+	FinalHalfblockOutputIterator oi)
+{
+	typedef relations_grid::index_range array_range;
+	typedef relations_grid::index_gen indices;
+	typedef surface_pair::envelope_contribution ec;
+
+	std::list<oriented_area> linkable;
+
+	for (size_t i = 0; i < face_count; ++i) {
+		auto contribs = gather_contributions(surf_rels, face_count, i);
+		auto parallel_count = boost::count_if(
+			contribs, 
+			[](ec contr) { return contr == surface_pair::PARALLEL; });
+		if (parallel_count >= 1) {
+			if (contribs.size() > 1) {
+				halfblocks_for_base(
+					surf_rels, 
+					i, 
+					c, 
+					std::back_inserter(linkable));
+			}
+			else {
+				linkable.push_back(surf_rels[i][i].base());
+			}
 		}
+		else { *oi++ = block(surf_rels[i][i].base(), e); }
 	}
 
-	link_halfblocks(std::move(halfblocks), e, oi);
+	link_halfblocks(std::move(linkable), e, oi);
 }
 
 } // namespace
@@ -84,11 +112,10 @@ std::vector<block> build_blocks_for(
 	}
 	else {
 		report_progress("element requires an envelope calculation. ");
-		blocks_from_envelope(
+		general_case(
 			surface_relationships, 
 			faces.size(), 
 			e, 
-			max_block_thickness,
 			c, 
 			std::back_inserter(res));
 	}

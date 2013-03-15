@@ -93,9 +93,6 @@
     <ClInclude Include="src\is_hexahedral_prismatoid.h">
       <Filter>operations\blocking</Filter>
     </ClInclude>
-    <ClInclude Include="src\scan_for_degenerate_halfblocks.h">
-      <Filter>operations\blocking</Filter>
-    </ClInclude>
     <ClInclude Include="src\halfblocks_for_base.h">
       <Filter>operations\blocking</Filter>
     </ClInclude>

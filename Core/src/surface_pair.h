@@ -16,6 +16,13 @@ class surface_pair;
 typedef boost::multi_array<surface_pair, 2> relations_grid;
 	
 class surface_pair {
+public:
+	enum envelope_contribution {
+		NONE = 0,
+		NONPARALLEL,
+		PARALLEL
+	};
+
 private:
 	const oriented_area * m_base;
 	const oriented_area * m_other;
@@ -31,6 +38,7 @@ private:
 	mutable boost::optional<area> m_projection_onto_base;
 	mutable boost::optional<area> m_base_minus_other;
 	mutable boost::optional<area> m_base_intr_other;
+	mutable boost::optional<envelope_contribution> m_env_contribution;
 
 	// This constructor is used to generate a surface pair opposite.
 	surface_pair(
@@ -85,7 +93,7 @@ public:
 			m_c3d); 
 	}
 	bool drape_hits_other_plane() const;
-	bool contributes_to_envelope() const;
+	envelope_contribution contributes_to_envelope() const;
 	
 	bool are_perpendicular() const { 
 		return oriented_area::are_perpendicular(*m_base, *m_other, EPS_MAGIC); 
