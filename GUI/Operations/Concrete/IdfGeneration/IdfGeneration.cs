@@ -230,7 +230,9 @@ namespace GUI.Operations
                 var surfs = surfacesByGuid
                     .Values
                     .Where(surf => !surf.IsAdiabaticVirtual);
-                cmanager.PruneOutput(surfs.Select(s => s.Construction));
+                var surfConstrs = surfs.Select(s => s.Construction);
+                var fenConstrs = fenestrations.Select(f => f.Construction);
+                cmanager.PruneOutput(surfConstrs.Concat(fenConstrs));
                 IdfCreator creator =
                     IdfCreator.Build(
                         p.EPVersion,
