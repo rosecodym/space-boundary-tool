@@ -199,7 +199,7 @@ wrapped_nef_polygon & wrapped_nef_polygon::operator ^= (const wrapped_nef_polygo
 		m_is_axis_aligned = false;
 	}
 	else {
-		*wrapped -= other.wrapped->interior();
+		*wrapped ^= other.wrapped->interior();
 	}
 	*wrapped = wrapped->interior();
 	return *this;
