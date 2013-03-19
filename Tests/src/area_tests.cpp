@@ -65,8 +65,9 @@ TEST(AreaConstructor, TwoFaces) {
 }
 
 TEST(AreaSubtraction, PointOnEdge) {
-	// Two quadrilaterals 
-	// One of the rect vertices is on a diagonal edge of the non-rect
+	// This is an angled quadrilateral "cutting into" a square through the
+	// square's upper-right corner. I understand that the numbers are obnoxious
+	// but if I make them simpler then the problem doesn't become apparent.
 	equality_context c(0.01);
 	point_2 rect_pts[] = {
 		point_2(27.443970, 8.339190),
