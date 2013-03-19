@@ -214,21 +214,23 @@ std::vector<multiview_solid> multiview_solid::as_single_volumes(equality_context
 }
 
 std::vector<oriented_area> multiview_solid::oriented_faces(equality_context * c) const {
-	struct convert_to_oriented_areas : public boost::static_visitor<geometry_representation> {
+	// Precondition: solid has one volume (two, including the outside).
+	struct v : public boost::static_visitor<oriented_area_groups> {
 		equality_context * c;
-		convert_to_oriented_areas(equality_context * c) : c(c) { }
-		geometry_representation operator () (const oriented_area_groups & oriented_areas) const { 
+		v(equality_context * c) : c(c) { }
+		oriented_area_groups operator () (const oriented_area_groups & oriented_areas) const { 
 			return oriented_areas;
 		}
-		geometry_representation operator () (const extrusion_information & ext) const {
+		oriented_area_groups operator () (const extrusion_information & ext) const {
 			return nef_to_oriented_area_groups(impl::extrusion_to_nef(ext, c), c);
 		}
-		geometry_representation operator () (const nef_polyhedron_3 & nef) const {
+		oriented_area_groups operator () (const nef_polyhedron_3 & nef) const {
 			return nef_to_oriented_area_groups(nef, c);
 		}
 	};
-	geometry = boost::apply_visitor(convert_to_oriented_areas(c), geometry);
-	oriented_area_groups groups = boost::get<oriented_area_groups>(geometry);
+	auto groups = boost::apply_visitor(v(c), geometry);
+	assert(groups.size() == 1);
+	geometry = groups;
 	return groups.front();
 }
 
