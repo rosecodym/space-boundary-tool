@@ -21,17 +21,6 @@ void halfblocks_for_base(
 
 	const auto & row = surf_rels[indices()[base_index][array_range()]];
 
-	size_t contributing_pairs = boost::count_if(
-		row,
-		[](const surface_pair & pair) {
-			return pair.contributes_to_envelope();
-		});
-	if (contributing_pairs == 0 || contributing_pairs == 1)
-	{
-		*oi++ = row[0].base();
-		return;
-	}
-
 	equality_context flat_ctxt(result_ctxt->height_epsilon());
 	boost::for_each(row, [&flat_ctxt](const surface_pair & pair) {
 		pair.set_2d_context(&flat_ctxt);

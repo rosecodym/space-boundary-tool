@@ -78,18 +78,32 @@ bool surface_pair::drape_hits_other_plane() const {
 	}) != drape.end();
 }
 
-bool surface_pair::contributes_to_envelope() const {
-	return
-		!is_self() &&
-		!are_perpendicular() &&
-		(!are_parallel() || // if they're parallel...
-			(opposite_senses() && 
-			 other_is_above_base() && 
-			 near_enough() &&
-			 areas_intersect())) &&
-		(are_parallel() || // if they're not parallel...
-			(other_in_correct_halfspace() &&
-			 drape_hits_other_plane()));
+surface_pair::envelope_contribution 
+surface_pair::contributes_to_envelope() const
+{
+	if (!m_env_contribution) {
+		if (is_self() || are_perpendicular()) { m_env_contribution = NONE; }
+		else if (
+			are_parallel() &&
+			opposite_senses() &&
+			other_is_above_base() &&
+			near_enough() &&
+			areas_intersect())
+		{
+			m_env_contribution = PARALLEL;
+		}
+		else if (
+			!are_parallel() &&
+			other_in_correct_halfspace() &&
+			drape_hits_other_plane())
+		{
+			m_env_contribution = NONPARALLEL;
+		}
+		else {
+			m_env_contribution = NONE;
+		}
+	}
+	return *m_env_contribution;
 }
 
 double surface_pair::dihedral_angle(const plane_3 & from, const plane_3 & to) const {

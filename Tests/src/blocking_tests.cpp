@@ -266,34 +266,6 @@ TEST(Blocking, ThreeStairsElement) {
 	EXPECT_EQ(7, blocks.size());
 }
 
-TEST(Blocking, NonparallelPairHalfblocksForSmallerBase) {
-	equality_context c(0.01);
-
-	std::vector<oriented_area> surfaces;
-
-	face f;
-
-	f = create_face(4,
-		simple_point(-8250, 2050, 0),
-		simple_point(-28000, 2050, 0),
-		simple_point(-28000, 2050, 300),
-		simple_point(-8250, 2050, 300));
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
-
-	f = create_face(4,
-		simple_point(17181.249, -8200, 300),
-		simple_point(11991.013, -29200, 300),
-		simple_point(11991.013, -29200, 0),
-		simple_point(17181.249, -8200, 0));
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
-
-	auto rels = surface_pair::build_relations_grid(surfaces, &c);
-
-	std::vector<oriented_area> halfblocks;
-	halfblocks_for_base(rels, 0, &c, std::back_inserter(halfblocks));
-	EXPECT_EQ(1, halfblocks.size());
-}
-
 TEST(Blocking, HalfblocksWithNonParallelOthers) {
 	equality_context c(0.01);
 	
