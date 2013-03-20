@@ -82,7 +82,9 @@ public:
 	wrapped_nef_polygon					update_all(const std::function<point_2(point_2)> & updater) const;
 
 	void								clear();
-
+	
+	wrapped_nef_polygon & operator += (const wrapped_nef_polygon & src);
+	wrapped_nef_polygon & operator *= (const wrapped_nef_polygon & src);
 	wrapped_nef_polygon & operator -= (const wrapped_nef_polygon & src);
 	wrapped_nef_polygon & operator ^= (const wrapped_nef_polygon & src);
 
@@ -94,9 +96,6 @@ public:
 	friend bool operator > (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend bool operator <= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 	friend bool operator >= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
-	friend wrapped_nef_polygon operator + (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
-	friend wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
-	friend wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs);
 };
 
 inline bool operator == (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
@@ -121,6 +120,27 @@ inline bool operator <= (const wrapped_nef_polygon & lhs, const wrapped_nef_poly
 
 inline bool operator >= (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
 	return *lhs.wrapped >= *rhs.wrapped;
+}
+
+inline wrapped_nef_polygon operator + (
+	wrapped_nef_polygon lhs,
+	const wrapped_nef_polygon & rhs)
+{
+	return lhs += rhs;
+}
+
+inline wrapped_nef_polygon operator * (
+	wrapped_nef_polygon lhs,
+	const wrapped_nef_polygon & rhs)
+{
+	return lhs *= rhs;
+}
+
+inline wrapped_nef_polygon operator - (
+	wrapped_nef_polygon lhs,
+	const wrapped_nef_polygon & rhs)
+{
+	return lhs -= rhs;
 }
 
 } // namespace nef_polygons

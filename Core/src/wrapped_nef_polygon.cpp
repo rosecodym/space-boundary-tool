@@ -177,11 +177,39 @@ void wrapped_nef_polygon::clear() {
 	m_is_axis_aligned = true;
 }
 
+wrapped_nef_polygon & wrapped_nef_polygon::operator += (const wrapped_nef_polygon & other) {
+	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
+		wrapped_nef_polygon other_snapped(other);
+		util::snap(&*other_snapped.wrapped, *wrapped);
+		*wrapped = util::clean(*wrapped + *other_snapped.wrapped);
+		m_is_axis_aligned = false;
+	}
+	else {
+		*wrapped += other.wrapped->interior();
+	}
+	*wrapped = wrapped->interior();
+	return *this;
+}
+
+wrapped_nef_polygon & wrapped_nef_polygon::operator *= (const wrapped_nef_polygon & other) {
+	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
+		wrapped_nef_polygon other_snapped(other);
+		util::snap(&*other_snapped.wrapped, *wrapped);
+		*wrapped = util::clean(*wrapped * *other_snapped.wrapped);
+		m_is_axis_aligned = false;
+	}
+	else {
+		*wrapped *= other.wrapped->interior();
+	}
+	*wrapped = wrapped->interior();
+	return *this;
+}
+
 wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygon & other) {
 	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
 		wrapped_nef_polygon other_snapped(other);
 		util::snap(&*other_snapped.wrapped, *wrapped);
-		*wrapped -= other_snapped.wrapped->interior();
+		*wrapped = util::clean(*wrapped - *other_snapped.wrapped);
 		m_is_axis_aligned = false;
 	}
 	else {
@@ -193,9 +221,11 @@ wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygo
 
 wrapped_nef_polygon & wrapped_nef_polygon::operator ^= (const wrapped_nef_polygon & other) {
 	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
+		nef_polygon_2 self_copy = *wrapped;
 		wrapped_nef_polygon other_snapped(other);
 		util::snap(&*other_snapped.wrapped, *wrapped);
-		*wrapped ^= other_snapped.wrapped->interior();
+		self_copy ^= *other_snapped.wrapped;
+		*wrapped = util::clean(self_copy);
 		m_is_axis_aligned = false;
 	}
 	else {
@@ -213,39 +243,6 @@ bool wrapped_nef_polygon::do_intersect(const wrapped_nef_polygon & lhs, const wr
 	}
 	else {
 		return !(lhs * rhs).is_empty();
-	}
-}
-
-wrapped_nef_polygon operator + (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
-	if (!lhs.m_is_axis_aligned || !rhs.m_is_axis_aligned) {
-		wrapped_nef_polygon r_snapped(rhs);
-		util::snap(&*r_snapped.wrapped, *lhs.wrapped);
-		return wrapped_nef_polygon((*lhs.wrapped + *r_snapped.wrapped).interior(), false);
-	}
-	else {
-		return wrapped_nef_polygon((*lhs.wrapped + *rhs.wrapped).interior(), true);
-	}
-}
-
-wrapped_nef_polygon operator - (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
-	if (!lhs.m_is_axis_aligned || !rhs.m_is_axis_aligned) {
-		wrapped_nef_polygon r_snapped(rhs);
-		util::snap(&*r_snapped.wrapped, *lhs.wrapped);
-		return wrapped_nef_polygon((*lhs.wrapped - *r_snapped.wrapped).interior(), false);
-	}
-	else {
-		return wrapped_nef_polygon((*lhs.wrapped - *rhs.wrapped).interior(), true);
-	}
-}
-
-wrapped_nef_polygon operator * (const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
-	if (!lhs.m_is_axis_aligned || !rhs.m_is_axis_aligned) {
-		wrapped_nef_polygon r_snapped(rhs);
-		util::snap(&*r_snapped.wrapped, *lhs.wrapped);
-		return wrapped_nef_polygon((*lhs.wrapped * *r_snapped.wrapped).interior(), false);
-	}
-	else {
-		return wrapped_nef_polygon((*lhs.wrapped * *rhs.wrapped).interior(), true);
 	}
 }
 
