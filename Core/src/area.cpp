@@ -104,7 +104,12 @@ area & area::operator -= (const area & other) {
 }
 
 area & area::operator *= (const area & other) {
-	if (is_empty() || other.is_empty()) { clear(); }
+	if (is_empty() || 
+		other.is_empty() || 
+		!CGAL::do_overlap(bbox(), other.bbox())) 
+	{ 
+		clear(); 
+	}
 	else {
 		promote_both(*this, other);
 		nef_rep *= other.nef_rep;
