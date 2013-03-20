@@ -182,4 +182,66 @@ TEST(LibraryAssumptions, PolyhedronAssembly) {
 	EXPECT_EQ(direction_3(0, 1, 0), f->plane().orthogonal_direction());
 }
 
+TEST(LibraryAssumptions, NefPolygonSubtraction) {
+	// This is an angled quadrilateral "cutting into" a square through the
+	// square's upper-right corner. I understand that the numbers are obnoxious
+	// but if I make them simpler then the problem doesn't become apparent.
+	// What's going to happen here is that the "cut" will actually be slightly
+	// "inside" the square, adding an extra vertex to the result.
+	espoint_2 rect_pts[] = {
+		espoint_2(7.0, 8.339190),
+		espoint_2(8.769285, 8.339190),
+		espoint_2(8.769285, 8.844385),
+		espoint_2(7.0, 8.844385)
+	};
+	espoint_2 nonrect_pts[] = {
+		espoint_2(8.665582, 8.744685),
+		espoint_2(8.883634, 8.954685),
+		espoint_2(8.883634, 11.0),
+		espoint_2(8.665582, 11.0)
+	};
+
+	nef_polygon_2 rect(rect_pts, rect_pts + 4);
+	nef_polygon_2 nonrect(nonrect_pts, nonrect_pts + 4);
+	
+	size_t v_count = 0;
+	nef_polygon_2 diff = rect - nonrect;
+	auto e = diff.explorer();
+	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
+		if (e.is_standard(v)) { ++v_count; }
+	}
+	EXPECT_EQ(7, v_count);
+}
+
+TEST(LibraryAssumptions, NefPolygonSubtractionUpdate) {
+	// This is an angled quadrilateral "cutting into" a square through the
+	// square's upper-right corner. I understand that the numbers are obnoxious
+	// but if I make them simpler then the problem doesn't become apparent.
+	// What's going to happen here is that the "cut" will actually be slightly
+	// "inside" the square, adding an extra vertex to the result.
+	espoint_2 rect_pts[] = {
+		espoint_2(7.0, 8.339190),
+		espoint_2(8.769285, 8.339190),
+		espoint_2(8.769285, 8.844385),
+		espoint_2(7.0, 8.844385)
+	};
+	espoint_2 nonrect_pts[] = {
+		espoint_2(8.665582, 8.744685),
+		espoint_2(8.883634, 8.954685),
+		espoint_2(8.883634, 11.0),
+		espoint_2(8.665582, 11.0)
+	};
+
+	nef_polygon_2 rect(rect_pts, rect_pts + 4);
+	nef_polygon_2 nonrect(nonrect_pts, nonrect_pts + 4);
+	
+	size_t v_count = 0;
+	rect -= nonrect;
+	auto e = rect.explorer();
+	for (auto v = e.vertices_begin(); v != e.vertices_end(); ++v) {
+		if (e.is_standard(v)) { ++v_count; }
+	}
+	EXPECT_EQ(7, v_count);
+}
+
 } // namespace

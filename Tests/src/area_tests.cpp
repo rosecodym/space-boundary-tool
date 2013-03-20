@@ -68,24 +68,18 @@ TEST(AreaSubtraction, PointOnEdge) {
 	// This is an angled quadrilateral "cutting into" a square through the
 	// square's upper-right corner. I understand that the numbers are obnoxious
 	// but if I make them simpler then the problem doesn't become apparent.
-	equality_context c(0.01);
 	point_2 rect_pts[] = {
-		point_2(27.443970, 8.339190),
-		point_2(28.769285, 8.339190),
-		point_2(28.769285, 8.844385),
-		point_2(27.443970, 8.844385)
+		point_2(7.0, 8.339190),
+		point_2(8.769285, 8.339190),
+		point_2(8.769285, 8.844385),
+		point_2(7.0, 8.844385)
 	};
 	point_2 nonrect_pts[] = {
-		point_2(28.665582, 8.744685),
-		point_2(28.883634, 8.954685),
-		point_2(28.883634, 11.736685),
-		point_2(28.665582, 11.736685)
+		point_2(8.665582, 8.744685),
+		point_2(8.883634, 8.954685),
+		point_2(8.883634, 11.0),
+		point_2(8.665582, 11.0)
 	};
-	for (size_t i = 0; i < 4; ++i) {
-		// This is in the test because the contextualization is relevant
-		c.snap(&rect_pts[i]);
-		c.snap(&nonrect_pts[i]);
-	}
 	area rect(polygon_2(rect_pts, rect_pts + 4));
 	area nonrect(polygon_2(nonrect_pts, nonrect_pts + 4));
 	area res = rect - nonrect;
