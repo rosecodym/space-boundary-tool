@@ -51,6 +51,7 @@ public:
 
 	std::string to_string() const;
 	
+	area & operator += (const area & other);
 	area & operator *= (const area & other);
 	area & operator -= (const area & other);
 	area & operator ^= (const area & other);
@@ -59,11 +60,11 @@ public:
 
 	friend bool operator == (const area & a, const area & b);
 	friend bool operator >= (const area & a, const area & b);
-
-	friend area operator + (const area & a, const area & b);
-	friend area operator - (const area & a, const area & b);
-	friend area operator * (const area & a, const area & b);
 };
+
+inline area operator + (area lhs, const area & rhs) { return lhs += rhs; }
+inline area operator * (area lhs, const area & rhs) { return lhs *= rhs; }
+inline area operator - (area lhs, const area & rhs) { return lhs -= rhs; }
 
 } // namespace geometry_2d
 

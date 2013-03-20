@@ -86,30 +86,35 @@ std::string area::to_string() const {
 	else { return reporting::to_string(simple_rep); }
 }
 
-area & area::operator *= (const area & other) {
-	*this = *this * other;
+area & area::operator += (const area & other) {
+	if (is_empty()) { *this = other; }
+	else if (!other.is_empty()) {
+		promote_both(*this, other);
+		nef_rep += other.nef_rep;
+	}
 	return *this;
 }
 
 area & area::operator -= (const area & other) {
-	if (is_empty() || other.is_empty()) { return *this; }
-	if (*this == other) {
-		clear();
-	}
-	else {
+	if (!is_empty() && !other.is_empty()) {
 		promote_both(*this, other);
 		nef_rep -= other.nef_rep;
 	}
 	return *this;
 }
 
-area & area::operator ^= (const area & other) {
-	if (other.is_empty()) { return *this; }
-	if (is_empty()) { return *this = other; }
-	if (*this == other) { 
-		clear(); 
-	}
+area & area::operator *= (const area & other) {
+	if (is_empty() || other.is_empty()) { clear(); }
 	else {
+		promote_both(*this, other);
+		nef_rep *= other.nef_rep;
+	}
+	return *this;
+}
+
+area & area::operator ^= (const area & other) {
+	if (is_empty()) { *this = other; }
+	else if (!other.is_empty()) {
 		promote_both(*this, other);
 		nef_rep ^= other.nef_rep;
 	}
@@ -135,28 +140,6 @@ bool operator >= (const area & a, const area & b) {
 	if (a.is_empty()) { return false; }
 	area::promote_both(a, b);
 	return a.nef_rep >= b.nef_rep;
-}
-
-area operator + (const area & a, const area & b) {
-	if (a.is_empty()) { return b; }
-	if (b.is_empty()) { return a; }
-	area::promote_both(a, b);
-	return area(a.nef_rep + b.nef_rep);
-}
-
-area operator - (const area & a, const area & b) {
-	if (a.is_empty()) { return area(); }
-	if (b.is_empty()) { return a; }
-	if (!a.use_nef && !b.use_nef && a.simple_rep == b.simple_rep) { return area(); }
-	area::promote_both(a, b);
-	return area(a.nef_rep - b.nef_rep);
-}
-
-area operator * (const area & a, const area & b) {
-	if (a.is_empty() || b.is_empty() || !CGAL::do_overlap(a.bbox(), b.bbox())) { return area(); }
-	if (!a.use_nef && !b.use_nef && a.simple_rep == b.simple_rep) { return a; }
-	area::promote_both(a, b);
-	return area(a.nef_rep * b.nef_rep);
 }
 
 void area::clear() {
