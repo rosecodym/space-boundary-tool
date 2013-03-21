@@ -64,6 +64,7 @@ namespace GUI.Operations
                 return null;
             }
             Parameters p = new Parameters();
+            p.EPVersion = (EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite;
             p.OutputFilename = vm.OutputIdfFilePath;
             p.LocationName = vm.BuildingLocation;
             p.TimeZone = vm.TimeZone;
