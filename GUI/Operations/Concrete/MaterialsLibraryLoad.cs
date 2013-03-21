@@ -36,12 +36,10 @@ namespace GUI.Operations
                 try
                 {
                     string versionGuess = Idf.GuessVersion(p.Path);
-                    EnergyPlusVersion ver =
-                        versionGuess == "7.1" ? EnergyPlusVersion.V710 : EnergyPlusVersion.V710;
-                    ReportProgress("Treating materials library as IDD version " + ver.ToString() + ".\n");
+                    var epv = IddManager.StringToVersion(versionGuess);
 
                     ReportProgress("Loading IDD...\n");
-                    Idd idd = p.Idds.GetIddFor(ver, msg => ReportProgress(msg + Environment.NewLine));
+                    Idd idd = p.Idds.GetIddFor(epv, msg => ReportProgress(msg + Environment.NewLine));
                     ReportProgress("IDD loaded. Loading IDF...\n");
                     Idf idf = new Idf(p.Path, idd);
                     ReportProgress("IDF loaded.\n");

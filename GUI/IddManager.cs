@@ -14,7 +14,8 @@ namespace GUI
 
         private Dictionary<EnergyPlusVersion, string> resources = new Dictionary<EnergyPlusVersion, string>()
         {
-            { EnergyPlusVersion.V710, Properties.Resources.V7_1_0_Energy_ }
+            { EnergyPlusVersion.V710, Properties.Resources.V7_1_0_Energy_ },
+            { EnergyPlusVersion.V720, Properties.Resources.V7_2_0_Energy_ }
         };
 
         public Idd GetIddFor(EnergyPlusVersion version, Action<string> warn)
@@ -35,6 +36,15 @@ namespace GUI
             }
             loaded[version] = new Idd(filename, warn);
             File.Delete(filename);
+        }
+
+        static public EnergyPlusVersion StringToVersion(
+            string str, 
+            EnergyPlusVersion def = EnergyPlusVersion.V720)
+        {
+            if (str == "7.1") { return EnergyPlusVersion.V710; }
+            else if (str == "7.2") { return EnergyPlusVersion.V720; }
+            else { return def; }
         }
     }
 }

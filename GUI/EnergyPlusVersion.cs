@@ -7,6 +7,7 @@ namespace GUI
 {
     enum EnergyPlusVersion
     {
-        V710
+        V710,
+        V720
     }
 }
