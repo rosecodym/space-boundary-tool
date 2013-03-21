@@ -6,6 +6,9 @@ open System.Collections.Generic
 open LibIdf.Base
 open LibIdf.Idf
 
+let valueMaybe (obj: IdfObject) name def =
+    if obj.HasField(name) then obj.Fields.[name].Value else def
+
 type LibraryEntryAirGap = {
     Name: FieldValue
     ThermalResistance: FieldValue
@@ -22,10 +25,13 @@ type LibraryEntryGas = {
     Thickness: FieldValue
     ConductivityCoefficientA: FieldValue
     ConductivityCoefficientB: FieldValue
+    ConductivityCoefficientC: FieldValue
     ViscosityCoefficientA: FieldValue
     ViscosityCoefficientB: FieldValue
+    ViscosityCoefficientC: FieldValue
     SpecificHeatCoefficientA: FieldValue
     SpecificHeatCoefficientB: FieldValue
+    SpecificHeatCoefficientC: FieldValue
     MolecularWeight: FieldValue
     }
     with
@@ -35,10 +41,16 @@ type LibraryEntryGas = {
             Thickness = obj.Fields.["Thickness"].Value
             ConductivityCoefficientA = obj.Fields.["Conductivity Coefficient A"].Value
             ConductivityCoefficientB = obj.Fields.["Conductivity Coefficient B"].Value
+            ConductivityCoefficientC = 
+                valueMaybe obj "Conductivity Coefficient C" (Real(0.0))
             ViscosityCoefficientA = obj.Fields.["Viscosity Coefficient A"].Value
             ViscosityCoefficientB = obj.Fields.["Viscosity Coefficient B"].Value
+            ViscosityCoefficientC = 
+                valueMaybe obj "Viscosity Coefficient C" (Real(0.0))
             SpecificHeatCoefficientA = obj.Fields.["Specific Heat Coefficient A"].Value
             SpecificHeatCoefficientB = obj.Fields.["Specific Heat Coefficient B"].Value
+            SpecificHeatCoefficientC = 
+                valueMaybe obj "Specific Heat Coefficient C" (Real(0.0))
             MolecularWeight = obj.Fields.["Molecular Weight"].Value
             }
 
