@@ -125,6 +125,7 @@
     <AppDesigner Include="Properties\" />
     <None Include="Resources\IFC2X3_final.exp" />
     <None Include="Resources\V7-1-0-Energy+.idd" />
+    <None Include="Resources\V7-2-0-Energy+.idd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConstructionManagement\ConstructionManagement.fsproj">
