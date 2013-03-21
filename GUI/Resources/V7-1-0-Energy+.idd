@@ -49737,7 +49737,7 @@ GroundHeatExchanger:Vertical,
         \type real
   N188, \field G-Function G Value 86
         \type real
-  N89, \field G-Function Ln(T/Ts) Value 87
+  N189, \field G-Function Ln(T/Ts) Value 87
         \type real
   N190, \field G-Function G Value 87
         \type real
@@ -60884,27 +60884,27 @@ Curve:QuadLinear,
        \required-field
        \type real
        \unitsBasedOnField A3
-  N9 , \field Minimum Value of y
+  N11 , \field Minimum Value of y
        \required-field
        \type real
        \unitsBasedOnField A4
-  N10, \field Maximum Value of y
+  N12, \field Maximum Value of y
        \required-field
        \type real
        \unitsBasedOnField A4
-  N11, \field Minimum Value of z
+  N13, \field Minimum Value of z
        \required-field
        \type real
        \unitsBasedOnField A5
-  N12, \field Maximum Value of z
+  N14, \field Maximum Value of z
        \required-field
        \type real
        \unitsBasedOnField A5
-  N12, \field Minimum Curve Output
+  N15, \field Minimum Curve Output
        \type real
        \note Specify the minimum value calculated by this curve object
        \unitsBasedOnField A4
-  N13, \field Maximum Curve Output
+  N16, \field Maximum Curve Output
        \type real
        \note Specify the maximum value calculated by this curve object
        \unitsBasedOnField A4
