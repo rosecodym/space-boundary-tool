@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV720Creator.cs" />
     <Compile Include="Operations\Infrastructure\Operation.cs" />
     <Compile Include="Operations\Infrastructure\ProgressEvent.cs" />
     <Compile Include="Operations\Concrete\BuildingLoad.cs" />

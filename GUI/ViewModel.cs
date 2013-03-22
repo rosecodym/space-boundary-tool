@@ -166,7 +166,11 @@ namespace GUI
         {
             get
             {
-                return new List<EnergyPlusVersion>(new EnergyPlusVersion[] { EnergyPlusVersion.V710 });
+                return new List<EnergyPlusVersion>(new EnergyPlusVersion[] 
+                { 
+                    EnergyPlusVersion.V710,
+                    EnergyPlusVersion.V720
+                });
             }
         }
 

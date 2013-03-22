@@ -39,6 +39,10 @@ namespace GUI.Operations
                 {
                     return new IdfV710Creator(new Idf(idd), notify);
                 }
+                else if (version == EnergyPlusVersion.V720)
+                {
+                    return new IdfV720Creator(new Idf(idd), notify);
+                }
                 else
                 {
                     throw new ArgumentException("Unsupported EnergyPlus version.\n");
