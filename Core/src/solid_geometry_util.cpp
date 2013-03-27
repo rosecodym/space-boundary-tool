@@ -150,6 +150,9 @@ nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_co
 	polyhedron_3 poly;
 	poly_builder builder(f.outer(), extrude, c);
 	poly.delegate(builder);
+	if (!poly.is_valid() || !poly.is_closed()) {
+		return nef_polyhedron_3();
+	}
 	nef_polyhedron_3 res(poly);
 	boost::for_each(f.inners(), [&res, &extrude, c](const std::vector<point_3> & inner) {
 		polyhedron_3 poly;
