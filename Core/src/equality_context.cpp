@@ -16,6 +16,9 @@ void equality_context::init_constants()
 	xs_3d.request(0.0); xs_3d.request(1.0);
 	ys_3d.request(0.0); ys_3d.request(1.0);
 	zs_3d.request(0.0); zs_3d.request(1.0);
+	snap(direction_3(1.0, 0.0, 0.0));
+	snap(direction_3(0.0, 1.0, 0.0));
+	snap(direction_3(0.0, 0.0, 1.0));
 	request_orientation(direction_3(1, 0, 0));
 	request_orientation(direction_3(0, 1, 0));
 	request_orientation(direction_3(0, 0, 1));
@@ -28,12 +31,7 @@ direction_3 equality_context::snap(const direction_3 & d) {
 			return d;
 		}
 		if (is_zero_squared(CGAL::cross_product(p->second, v).squared_length(), tolerance / 100)) {
-			CGAL::Sign signs_a[] = { CGAL::sign(d.dx()), CGAL::sign(d.dy()), CGAL::sign(d.dz()) };
-			CGAL::Sign signs_b[] = { CGAL::sign(p->first.dx()), CGAL::sign(p->first.dy()), CGAL::sign(p->first.dz()) };
-			if (signs_a[0] == signs_b[0] &&
-				signs_a[1] == signs_b[1] &&
-				signs_a[2] == signs_b[2])
-			{
+			if (geometry_common::share_sense(d, p->first)) {
 				return p->first;
 			}
 			else {
