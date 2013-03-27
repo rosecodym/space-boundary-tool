@@ -4,6 +4,9 @@
 
 #include "equality_context.h"
 
+#include "report.h"
+#include "stringification.h"
+
 namespace solid_geometry {
 
 namespace impl {
@@ -63,6 +66,18 @@ public:
 		b.end_surface();
 	}
 
+	std::string to_string() const {
+		std::stringstream ss;
+		ss << "Poly builder for:\n" << reporting::to_string(points);
+		for (size_t i = 0; i < indices.size(); ++i) {
+			ss << "Facet " << i << ":\n";
+			for (auto p = indices[i].begin(); p != indices[i].end(); ++p) {
+				auto pt_string = reporting::to_string(points[*p]);
+				ss << (boost::format("  [%u]\t%s\n") % *p % pt_string).str();
+			}
+		}
+		return ss.str();
+	}
 };
 
 } // namespace impl
