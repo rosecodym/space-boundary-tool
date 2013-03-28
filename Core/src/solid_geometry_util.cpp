@@ -194,7 +194,7 @@ nef_polyhedron_3 volume_group_to_nef(const std::vector<simple_face> & group) {
 	poly_builder b(group);
 	poly.delegate(b);
 	merge_adjacent_faces(&poly);
-	if (!poly.is_closed()) {
+	if (!poly.is_valid() || !poly.is_closed()) {
 		// Why not throw an exception here? Well, currently, this only ever
 		// happens with a bad brep, so presumably a bad_brep_exception would do
 		// the job nicely. Unfortunately I can't really guarantee this will
