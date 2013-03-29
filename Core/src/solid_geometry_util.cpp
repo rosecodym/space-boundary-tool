@@ -149,6 +149,7 @@ nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_co
 	transformation_3 extrude(CGAL::TRANSLATION, extrusion);
 	polyhedron_3 poly;
 	poly_builder builder(f.outer(), extrude, c);
+	assert(builder.all_faces_planar());
 	poly.delegate(builder);
 	if (!poly.is_valid() || !poly.is_closed()) {
 		return nef_polyhedron_3();

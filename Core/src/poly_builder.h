@@ -66,6 +66,20 @@ public:
 		b.end_surface();
 	}
 
+	bool all_faces_planar() const {
+		for (auto p = indices.begin(); p != indices.end(); ++p) {
+			auto & vertices = *p;
+			plane_3 pl(
+					points[vertices[0]], 
+					points[vertices[1]], 
+					points[vertices[2]]);
+			for (size_t i = 3; i < vertices.size(); ++i) {
+				if (!pl.has_on(points[vertices[i]])) { return false; }
+			}
+		}
+		return true;
+	}
+
 	std::string to_string() const {
 		std::stringstream ss;
 		ss << "Poly builder for:\n" << reporting::to_string(points);
