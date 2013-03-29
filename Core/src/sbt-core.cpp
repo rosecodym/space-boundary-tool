@@ -133,7 +133,7 @@ sbt_return_t calculate_space_boundaries(
 		retval = ex.code();
 	}
 
-	if (retval == SBT_TOO_COMPLICATED) {
+	if (retval == SBT_STACK_OVERFLOW) {
 		_resetstkoflw();
 	}
 

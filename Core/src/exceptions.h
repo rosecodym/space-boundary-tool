@@ -12,7 +12,7 @@ public:
 
 class stack_overflow_exception : public sbt_exception {
 public:
-	virtual sbt_return_t code() const { return SBT_TOO_COMPLICATED; }
+	virtual sbt_return_t code() const { return SBT_STACK_OVERFLOW; }
 	virtual const char * what() const throw() { return "Stack overflow."; }
 };
 

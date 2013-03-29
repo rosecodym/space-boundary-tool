@@ -77,7 +77,7 @@ namespace Sbt
         {
             Ok = 0,
             EdmError = 1,
-            TooComplicated = 2,
+            StackOverflow = 2,
             Unknown = -1
         }
 
@@ -234,9 +234,9 @@ namespace Sbt
             {
                 throw new Exception("There was a problem reading or writing an IFC file.\n");
             }
-            else if (res == IfcAdapterResult.TooComplicated)
+            else if (res == IfcAdapterResult.StackOverflow)
             {
-                throw new Exception("Geometry too complicated! Try simplifying the geometry around where the error occurred.\n");
+                throw new Exception("Stack overflow. Please report this SBT bug.\n");
             }
             else if (res != IfcAdapterResult.Ok)
             {

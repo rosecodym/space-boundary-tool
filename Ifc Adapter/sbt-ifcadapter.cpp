@@ -209,8 +209,8 @@ ifcadapter_return_t execute(
 
 			return IFCADAPT_OK;
 		}
-		else if (generate_res == SBT_TOO_COMPLICATED) {
-			return IFCADAPT_TOO_COMPLICATED;
+		else if (generate_res == SBT_STACK_OVERFLOW) {
+			return IFCADAPT_STACK_OVERFLOW;
 		}
 		else {
 			return IFCADAPT_UNKNOWN;

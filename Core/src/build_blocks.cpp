@@ -154,10 +154,8 @@ std::vector<block> build_blocks(
 		}
 		if (stack_overflow) {
 			_resetstkoflw();
-			report_warning(fmt(
-				"The geometry for building element %s is too complicated. "
-				"Space boundaries for this element will not be generated.\n") 
-				% e.name());
+			report_warning("Internal error: stack overflow. Please report this"
+				           "SBT bug.");
 		}
 	});
 	return res;

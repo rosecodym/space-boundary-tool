@@ -111,26 +111,8 @@ space_boundary * create_unlinked_space_boundary(
 
 	if (stack_overflowed) {
 		_resetstkoflw();
-		if (s.is_virtual()) {
-			report_warning(
-				fmt(
-					"A space boundary could not be generated due to "
-					"connection geometry being too complicated. Try "
-					"simplifying the connection between space %s and space "
-					"%s.\n") %
-				s.bounded_space().global_id() %
-				s.other_side()->bounded_space().global_id());
-		}
-		else {
-			report_warning(
-				fmt(
-					"A space boundary could not be generated due to "
-					"connection geometry being too complicated. Try "
-					"simplifying the connection between space %s and element "
-					"%s.\n") %
-				s.bounded_space().global_id() %
-				s.bounded_element()->name());
-		} 
+		report_warning("Internal error: stack overflow. Please report this SBT"
+			           "bug.");
 		newsb = nullptr;
 	}
 

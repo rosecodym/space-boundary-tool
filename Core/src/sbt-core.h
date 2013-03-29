@@ -53,7 +53,7 @@ enum element_type {
 
 enum sbt_return_t {
 	SBT_OK = 0,
-	SBT_TOO_COMPLICATED = 1,
+	SBT_STACK_OVERFLOW = 1,
 	SBT_FAILED_ALLOCATION = 2,
 	SBT_UNSUPPORTED = 3,
 	SBT_UNKNOWN = -1
