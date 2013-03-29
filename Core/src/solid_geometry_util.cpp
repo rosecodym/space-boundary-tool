@@ -145,6 +145,8 @@ find_holes:
 nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_context * c) {
 	const simple_face & f = std::get<0>(ext);
 	const vector_3 & extrusion = std::get<1>(ext);
+
+	assert(f.is_planar());
 	
 	transformation_3 extrude(CGAL::TRANSLATION, extrusion);
 	polyhedron_3 poly;

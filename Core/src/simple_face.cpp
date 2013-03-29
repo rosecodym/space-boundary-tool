@@ -59,6 +59,18 @@ simple_face & simple_face::operator = (simple_face && src) {
 	return *this;
 }
 
+bool simple_face::is_planar() const {
+	for (auto p = m_outer.begin(); p != m_outer.end(); ++p) {
+		if (!m_plane.has_on(*p)) { return false; }
+	}
+	for (auto hole = m_inners.begin(); hole != m_inners.end(); ++hole) {
+		for (auto p = hole->begin(); p != hole->end(); ++p) {
+			if (!m_plane.has_on(*p)) { return false; }
+		}
+	}
+	return true;
+}
+
 simple_face simple_face::reversed() const {
 	typedef std::vector<point_3> loop;
 	std::vector<loop> inners;

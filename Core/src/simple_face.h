@@ -34,6 +34,7 @@ public:
 	direction_3 orthogonal_direction() const { return m_plane.orthogonal_direction(); }
 	const plane_3 & plane() const { return m_plane; }
 	const point_3 & average_outer_point() const { return m_average_point; }
+	bool is_planar() const;
 
 	simple_face reversed() const;
 
