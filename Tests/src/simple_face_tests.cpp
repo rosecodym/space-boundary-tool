@@ -30,6 +30,17 @@ TEST(SimpleFaceXYTriangle, HasCorrectVertices) {
 	EXPECT_TRUE(has_point(0, 1, 0));
 }
 
+TEST(SimpleFaceFlatRectangle, HasCorrectAveragePoint) {
+	equality_context c(0.01);
+	simple_face f(create_face(4,
+		simple_point(0, 0, 300),
+		simple_point(10, 0, 300),
+		simple_point(10, 15, 300),
+		simple_point(0, 15, 300)), &c);
+
+	EXPECT_EQ(point_3(5, 7.5, 300), f.average_outer_point());
+}
+
 TEST(SimpleFaceNonAxisTriangle, HasCorrectVertices) {
 	equality_context c(0.01);
 	simple_face f(create_face(3,
