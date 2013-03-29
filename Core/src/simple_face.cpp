@@ -23,30 +23,36 @@ loop create_loop(const polyloop & p, equality_context * c) {
 	return res;
 }
 
-bool opposite_sense(const direction_3 & a, const direction_3 & b) {
-	vector_3 vec_a = a.to_vector();
-	vector_3 vec_b = b.to_vector();
-	return (vec_a + vec_b).squared_length() < vec_a.squared_length() + vec_b.squared_length();
-}
-
 } // namespace
 
-simple_face::simple_face(const face & f, equality_context * c) : m_outer(create_loop(f.outer_boundary, c)) {
+simple_face::simple_face(const face & f, equality_context * c) {
 	using geometry_common::calculate_plane_and_average_point;
-	if (m_outer.size() < 3) {
-		throw invalid_face_exception();
-	}
-	std::tie(m_plane, m_average_point) = 
-		calculate_plane_and_average_point(m_outer);
-	std::transform(f.voids, f.voids + f.void_count, std::back_inserter(m_inners), [c, this](const polyloop & p) -> loop {
-		loop inner = create_loop(p, c);
+	using geometry_common::share_sense;
+
+	auto raw_loop = create_loop(f.outer_boundary, c);
+	if (raw_loop.size() < 3) { throw invalid_face_exception(); }
+
+	plane_3 raw_pl;
+	std::tie(raw_pl, m_average_point) = 
+		calculate_plane_and_average_point(raw_loop);
+
+	auto snapped_dir = c->snap(raw_pl.orthogonal_direction());
+	m_plane = plane_3(m_average_point, snapped_dir);
+
+	auto project = [this](const point_3 & p) { return m_plane.projection(p); };
+
+	boost::transform(raw_loop, std::back_inserter(m_outer), project);
+
+	for (size_t i = 0; i < f.void_count; ++i) {
+		auto inner = create_loop(f.voids[i], c);
 		auto inner_pl = std::get<0>(calculate_plane_and_average_point(inner));
 		auto inner_dir = inner_pl.orthogonal_direction();
-		if (opposite_sense(m_plane.orthogonal_direction(), inner_dir)) {
+		if (!share_sense(m_plane.orthogonal_direction(), inner_dir)) {
 			boost::reverse(inner);
 		}
-		return inner;
-	});
+		m_inners.push_back(loop());
+		boost::transform(inner, std::back_inserter(m_inners.back()), project);
+	}
 }
 
 simple_face & simple_face::operator = (simple_face && src) {
