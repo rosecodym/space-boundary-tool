@@ -30,6 +30,7 @@ public:
 				indices.back().push_back(exists->second);
 			});
 		}
+		assert(all_faces_planar());
 	}
 
 	template <typename PointRange>
@@ -52,6 +53,7 @@ public:
 		}
 		indices.push_back(base_indices);
 		indices.push_back(std::deque<size_t>(target_indices.rbegin(), target_indices.rend()));
+		assert(all_faces_planar());
 	}
 	
 	void operator () (polyhedron_3::HDS & hds) {
