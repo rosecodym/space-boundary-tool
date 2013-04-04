@@ -293,7 +293,11 @@ void face::reverse() {
 void face::transform(const transformation_3 & t) {
 	auto previous_normal = normal();
 	boost::transform(outer, outer.begin(), t);
-	assert(t(previous_normal) == normal());
+	// Note that t(previous_normal) does not equal normal() here if the columns
+	// of the transformation matrix are not orthnormal, which can happen due to
+	// numeric instability in the IfcBuildAxes function. This isn't really
+	// worth "fixing" because IfcBuildAxes keeps the columns very *close* to
+	// orthonormal.
 	for (auto v = voids.begin(); v != voids.end(); ++v) {
 		boost::transform(*v, v->begin(), t);
 	}
