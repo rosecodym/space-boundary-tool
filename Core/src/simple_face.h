@@ -35,7 +35,7 @@ public:
 	const plane_3 & plane() const { return m_plane; }
 	const point_3 & average_outer_point() const { return m_average_point; }
 	bool is_planar() const;
-
+	std::string to_string() const;
 	simple_face reversed() const;
 
 	std::vector<segment_3> all_edges_voids_reversed() const;

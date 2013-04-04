@@ -4,6 +4,7 @@
 #include "equality_context.h"
 #include "exceptions.h"
 #include "sbt-core.h"
+#include "stringification.h"
 
 #include "simple_face.h"
 
@@ -75,6 +76,21 @@ bool simple_face::is_planar() const {
 		}
 	}
 	return true;
+}
+
+std::string simple_face::to_string() const {
+	std::stringstream ss;
+	ss << "Outer:\n";
+	for (auto p = m_outer.begin(); p != m_outer.end(); ++p) {
+		ss << reporting::to_string(*p) << std::endl;
+	}
+	for (auto hole = m_inners.begin(); hole != m_inners.end(); ++hole) {
+		ss << "Hole:\n";
+		for (auto p = hole->begin(); p != hole->end(); ++p) {
+			ss << reporting::to_string(*p) << std::endl;
+		}
+	}
+	return ss.str();
 }
 
 simple_face simple_face::reversed() const {
