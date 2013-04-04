@@ -93,6 +93,7 @@ std::vector<std::vector<simple_face>> to_volume_groups(std::vector<simple_face> 
 	std::vector<std::vector<simple_face>> res;
 	for (int i = 0; i < group_count; ++i) {
 		res.push_back(reconcile_orientations(all_faces, group_memberships, i, relationships));
+		assert(res.back().size() >= 3);
 	}
 
 	return res;
