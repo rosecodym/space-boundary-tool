@@ -24,7 +24,7 @@ private:
 	{ }
 
 public:
-	simple_face(const face & f, equality_context * c);
+	simple_face(const face & f, bool force_planar, equality_context * c);
 	simple_face(simple_face && src) { *this = std::move(src); }
 
 	simple_face & operator = (simple_face && src);

@@ -26,7 +26,12 @@ loop create_loop(const polyloop & p, equality_context * c) {
 
 } // namespace
 
-simple_face::simple_face(const face & f, equality_context * c) {
+simple_face::simple_face(
+	const face & f, 
+	bool force_planar, 
+	equality_context * c) 
+{
+	using boost::transform;
 	using geometry_common::calculate_plane_and_average_point;
 	using geometry_common::share_sense;
 
@@ -42,7 +47,12 @@ simple_face::simple_face(const face & f, equality_context * c) {
 
 	auto project = [this](const point_3 & p) { return m_plane.projection(p); };
 
-	boost::transform(raw_loop, std::back_inserter(m_outer), project);
+	if (force_planar) {
+		transform(raw_loop, std::back_inserter(m_outer), project);
+	}
+	else {
+		m_outer = raw_loop;
+	}
 
 	for (size_t i = 0; i < f.void_count; ++i) {
 		auto inner = create_loop(f.voids[i], c);
@@ -51,8 +61,13 @@ simple_face::simple_face(const face & f, equality_context * c) {
 		if (!share_sense(m_plane.orthogonal_direction(), inner_dir)) {
 			boost::reverse(inner);
 		}
-		m_inners.push_back(loop());
-		boost::transform(inner, std::back_inserter(m_inners.back()), project);
+		if (force_planar) {
+			m_inners.push_back(loop());
+			transform(inner, std::back_inserter(m_inners.back()), project);
+		}
+		else {
+			m_inners.push_back(inner);
+		}
 	}
 }
 

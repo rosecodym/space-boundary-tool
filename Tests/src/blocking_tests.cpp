@@ -30,7 +30,7 @@ TEST(Blocking, ParallelPairHalfblocks) {
 		simple_point(8250, 0, 300),
 		simple_point(0, 0, 300));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_FALSE(surfaces.back().sense()) << "(Near)";
 	ASSERT_EQ(0, surfaces.back().height()) << "(Near)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Near)";
@@ -41,7 +41,7 @@ TEST(Blocking, ParallelPairHalfblocks) {
 		simple_point(8250, 8250, 0),
 		simple_point(0, 8250, 0));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_TRUE(surfaces.back().sense()) << "(Far)";
 	ASSERT_EQ(8250, surfaces.back().height()) << "(Far)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Far)";
@@ -72,7 +72,7 @@ TEST(Blocking, TwoStairs) {
 		simple_point(8250, 0, 300),
 		simple_point(0, 0, 300));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_FALSE(surfaces.back().sense()) << "(Base)";
 	ASSERT_EQ(0, surfaces.back().height()) << "(Base)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Base)";
@@ -83,7 +83,7 @@ TEST(Blocking, TwoStairs) {
 		simple_point(4050, 8250, 0),
 		simple_point(0, 8250, 0));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_TRUE(surfaces.back().sense()) << "(Near)";
 	ASSERT_EQ(8250, surfaces.back().height()) << "(Near)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Near)";
@@ -94,7 +94,7 @@ TEST(Blocking, TwoStairs) {
 		simple_point(8250, 18195.109, 0),
 		simple_point(4050, 18195.109, 0));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_TRUE(surfaces.back().sense()) << "(Far)";
 	ASSERT_EQ(18195.109, surfaces.back().height()) << "(Far)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Far)";
@@ -190,7 +190,7 @@ TEST(Blocking, ThreeStairsHalfblocks) {
 		simple_point(8250, 0, 300),
 		simple_point(0, 0, 300));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_FALSE(surfaces.back().sense()) << "(Base)";
 	ASSERT_EQ(0, surfaces.back().height()) << "(Base)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Base)";
@@ -201,7 +201,7 @@ TEST(Blocking, ThreeStairsHalfblocks) {
 		simple_point(2105, 8250, 0),
 		simple_point(0, 8250, 0));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_TRUE(surfaces.back().sense()) << "(Near)";
 	ASSERT_EQ(8250, surfaces.back().height()) << "(Near)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Near)";
@@ -212,7 +212,7 @@ TEST(Blocking, ThreeStairsHalfblocks) {
 		simple_point(4050, 12120.109, 0),
 		simple_point(2105, 12120.109, 0));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_TRUE(surfaces.back().sense()) << "(Mid)";
 	ASSERT_EQ(12120.109, surfaces.back().height()) << "(Mid)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Mid)";
@@ -223,7 +223,7 @@ TEST(Blocking, ThreeStairsHalfblocks) {
 		simple_point(8250, 18195.109, 0),
 		simple_point(4050, 18195.109, 0));
 
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 	ASSERT_TRUE(surfaces.back().sense()) << "(Far)";
 	ASSERT_EQ(18195.109, surfaces.back().height()) << "(Far)";
 	ASSERT_EQ(direction_3(0, 1, 0), surfaces.back().orientation().direction()) << "(Far)";
@@ -278,21 +278,21 @@ TEST(Blocking, HalfblocksWithNonParallelOthers) {
 		simple_point(4050, 18195.109, 300),
 		simple_point(4050, 18195.109, 0),
 		simple_point(4050, 12120.109, 0));
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 
 	f = create_face(4,
 		simple_point(8200, 17181.249, 0),
 		simple_point(8200, 18195.109, 0),
 		simple_point(8200, 18195.109, 300),
 		simple_point(8200, 17181.249, 300));
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 
 	f = create_face(4,
 		simple_point(8200, 17181.249, 300),
 		simple_point(29200, 11991.913, 300),
 		simple_point(29200, 11991.913, 0),
 		simple_point(8200, 17181.249, 0));
-	surfaces.push_back(oriented_area(simple_face(f, &c), &c));
+	surfaces.push_back(oriented_area(simple_face(f, false, &c), &c));
 
 	auto rels = surface_pair::build_relations_grid(surfaces, &c);
 
@@ -327,14 +327,14 @@ TEST(Blocking, SinglePairLink) {
 		simple_point(4050, 18195.109, 300),
 		simple_point(4050, 18195.109, 0),
 		simple_point(4050, 12120.109, 0));
-	oriented_area a(simple_face(f, &c), &c);
+	oriented_area a(simple_face(f, false, &c), &c);
 
 	f = create_face(4,
 		simple_point(8200, 12120.109, 0),
 		simple_point(8200, 18195.109, 0),
 		simple_point(8200, 18195.109, 300),
 		simple_point(8200, 12120.109, 300));
-	oriented_area b(simple_face(f, &c), &c);
+	oriented_area b(simple_face(f, false, &c), &c);
 
 	ASSERT_TRUE(oriented_area::could_form_block(a, b));
 

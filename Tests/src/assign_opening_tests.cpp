@@ -25,7 +25,7 @@ TEST(PlaceOpeningBlock, Halfblock) {
 		simple_point(0, 0, 0),
 		simple_point(-5, 0, 0),
 		simple_point(-5, 1, 0),
-		simple_point(0, 1, 0)), &c), &c), e);
+		simple_point(0, 1, 0)), false, &c), &c), e);
 
 	std::vector<std::unique_ptr<surface>> surfaces;
 	auto res = place_opening_block(b, surfaces, 0.01);
@@ -44,34 +44,34 @@ TEST(PlaceOpeningBlock, MultispaceMatch) {
 			simple_point(-5, 0, 0),
 			simple_point(5, 0, 0),
 			simple_point(5, 0, 5),
-			simple_point(-5, 0, 5)), &c), &c),
+			simple_point(-5, 0, 5)), false, &c), &c),
 		oriented_area(simple_face(create_face(4,
 			simple_point(-5, 1, 0),
 			simple_point(-5, 1, 5),
 			simple_point(5, 1, 5),
-			simple_point(5, 1, 0)), &c), &c),
+			simple_point(5, 1, 0)), false, &c), &c),
 		e);
 
 	surface sface_1(oriented_area(simple_face(create_face(4,
 		simple_point(-10, 0, 0),
 		simple_point(-10, 0, 5),
 		simple_point(0, 0, 5),
-		simple_point(0, 0, 0)), &c), &c), e, s, dummy_layers, false);
+		simple_point(0, 0, 0)), false, &c), &c), e, s, dummy_layers, false);
 	surface sface_2(oriented_area(simple_face(create_face(4,
 		simple_point(0, 0, 0),
 		simple_point(0, 0, 5),
 		simple_point(10, 0, 5),
-		simple_point(10, 0, 0)), &c), &c), e, s, dummy_layers, false);
+		simple_point(10, 0, 0)), false, &c), &c), e, s, dummy_layers, false);
 	surface sface_3(oriented_area(simple_face(create_face(4,
 		simple_point(-10, 1, 5),
 		simple_point(-10, 1, 0),
 		simple_point(0, 1, 0),
-		simple_point(0, 1, 5)), &c), &c), e, s, dummy_layers, false);
+		simple_point(0, 1, 5)), false, &c), &c), e, s, dummy_layers, false);
 	surface sface_4(oriented_area(simple_face(create_face(4,
 		simple_point(0, 1, 0),
 		simple_point(10, 1, 0),
 		simple_point(10, 1, 5),
-		simple_point(0, 1, 5)), &c), &c), e, s, dummy_layers, false);
+		simple_point(0, 1, 5)), false, &c), &c), e, s, dummy_layers, false);
 
 	std::vector<std::unique_ptr<surface>> surfaces;
 	surfaces.push_back(std::unique_ptr<surface>(new surface(sface_1)));

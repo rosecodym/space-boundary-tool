@@ -15,12 +15,12 @@ TEST(OrientedAreaFreeIntersection, CoplanarNonIntersectingIsSetAndEmpty) {
 		simple_point(0, 0, 0),
 		simple_point(1, 0, 0),
 		simple_point(1, 1, 0),
-		simple_point(0, 1, 0)), &c), &c);
+		simple_point(0, 1, 0)), false, &c), &c);
 	oriented_area b(simple_face(create_face(4,
 		simple_point(4, 0, 0),
 		simple_point(5, 0, 0),
 		simple_point(5, 1, 0),
-		simple_point(4, 1, 0)), &c), &c);
+		simple_point(4, 1, 0)), false, &c), &c);
 	auto intr = a * b;
 	ASSERT_TRUE(intr);
 	EXPECT_TRUE(intr->area_2d().is_empty());
@@ -46,7 +46,7 @@ TEST(OrientedArea, SimpleFaceConstruction) {
 		simple_point(10, 0, 0),
 		simple_point(10, 15, 0),
 		simple_point(0, 15, 0));
-	simple_face(f, &c);
+	simple_face(f, false, &c);
 }
 
 TEST(OrientedArea, PositiveZAtZero) {
@@ -55,7 +55,7 @@ TEST(OrientedArea, PositiveZAtZero) {
 		simple_point(0, 0, 0),
 		simple_point(10, 0, 0),
 		simple_point(10, 15, 0),
-		simple_point(0, 15, 0)), &c), &c);
+		simple_point(0, 15, 0)), false, &c), &c);
 	EXPECT_EQ(direction_3(0, 0, 1), o.orientation().direction());
 	EXPECT_TRUE(o.sense());
 	EXPECT_EQ(0, o.height());
@@ -67,7 +67,7 @@ TEST(OrientedArea, PositiveZAboveZero) {
 		simple_point(0, 0, 300),
 		simple_point(10, 0, 300),
 		simple_point(10, 15, 300),
-		simple_point(0, 15, 300)), &c), &c);
+		simple_point(0, 15, 300)), false, &c), &c);
 	EXPECT_EQ(direction_3(0, 0, 1), o.orientation().direction());
 	EXPECT_TRUE(o.sense());
 	EXPECT_EQ(300, o.height());
@@ -79,7 +79,7 @@ TEST(OrientedArea, NegativeYAtZero) {
 		simple_point(0, 0, 0), 
 		simple_point(8250, 0, 0),
 		simple_point(8250, 0, 300),
-		simple_point(0, 0, 300)), &c), &c);
+		simple_point(0, 0, 300)), false, &c), &c);
 	EXPECT_FALSE(o.sense());
 	EXPECT_EQ(0, o.height());
 	EXPECT_EQ(direction_3(0, 1, 0), o.orientation().direction());
@@ -93,13 +93,13 @@ TEST(OrientedArea, ProjectionsIntersection) {
 		simple_point(0, 0, 0),
 		simple_point(8250, 0, 0),
 		simple_point(8250, 0, 300),
-		simple_point(0, 0, 300)), &c), &c);
+		simple_point(0, 0, 300)), false, &c), &c);
 
 	oriented_area smaller(simple_face(create_face(4,
 		simple_point(0, 8250, 300),
 		simple_point(4050, 8250, 300),
 		simple_point(4050, 8250, 0),
-		simple_point(0, 8250, 0)), &c), &c);
+		simple_point(0, 8250, 0)), false, &c), &c);
 
 	EXPECT_TRUE(area::do_intersect(larger.area_2d(), smaller.area_2d()));
 }
@@ -111,7 +111,7 @@ TEST(OrientedArea, BackingPlanePointPlacement) {
 		simple_point(8200, 18195.109, 300),
 		simple_point(8200, 17181.249, 300),
 		simple_point(8200, 17181.249, 0),
-		simple_point(8200, 18195.109, 0)), &c), &c);
+		simple_point(8200, 18195.109, 0)), false, &c), &c);
 
 	EXPECT_FALSE(o.backing_plane().opposite().has_on_positive_side(point_3(8200, 17181.249, 300)));
 	EXPECT_FALSE(o.backing_plane().opposite().has_on_positive_side(point_3(29200, 11911.013, 300)));
@@ -128,7 +128,7 @@ TEST(OrientedArea, To3d) {
 		simple_point(29200, 11911.013, 0),
 		simple_point(8200, 17181.249, 0));
 
-	oriented_area o(simple_face(f, &c), &c);
+	oriented_area o(simple_face(f, false, &c), &c);
 
 	polyloop * loop = &f.outer_boundary;
 
@@ -154,13 +154,13 @@ TEST(OrientedArea, CouldFormBlock) {
 		simple_point(4050, 12120.109, 300),
 		simple_point(4050, 18195.109, 300),
 		simple_point(4050, 18195.109, 0),
-		simple_point(4050, 12120.109, 0)), &c), &c);
+		simple_point(4050, 12120.109, 0)), false, &c), &c);
 
 	oriented_area b(simple_face(create_face(4,
 		simple_point(8200, 12120.109, 0),
 		simple_point(8200, 18195.109, 0),
 		simple_point(8200, 18195.109, 300),
-		simple_point(8200, 12120.109, 300)), &c), &c);
+		simple_point(8200, 12120.109, 300)), false, &c), &c);
 
 	ASSERT_NE(a.sense(), b.sense());
 	ASSERT_EQ(&a.orientation(), &b.orientation());
@@ -178,7 +178,7 @@ TEST(OrientedArea, ExplicitCreation) {
 		simple_point(4050, 12120, 300),
 		simple_point(4050, 18195, 300),
 		simple_point(8200, 18195, 300),
-		simple_point(8200, 12120, 300)), &c), &c);
+		simple_point(8200, 12120, 300)), false, &c), &c);
 
 	oriented_area copy(&oa.orientation(), oa.height(), oa.area_2d(), oa.sense());
 
@@ -195,13 +195,13 @@ TEST(OrientedArea, MultipleConvexNonAxisFacesToPieces) {
 		simple_point(0, 0, 0),
 		simple_point(1, 1, 0),
 		simple_point(1, 1, 10),
-		simple_point(0, 0, 10)), &c), &c);
+		simple_point(0, 0, 10)), false, &c), &c);
 
 	oriented_area face_2(simple_face(create_face(4,
 		simple_point(2, 2, 0),
 		simple_point(3, 3, 0),
 		simple_point(3, 3, 10), 
-		simple_point(2, 2, 10)), &c), &c);
+		simple_point(2, 2, 10)), false, &c), &c);
 
 	oriented_area both(face_1, face_1.area_2d() + face_2.area_2d());
 

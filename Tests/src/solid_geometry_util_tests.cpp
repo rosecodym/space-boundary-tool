@@ -50,7 +50,10 @@ TEST(SolidGeometryUtil, ExtrusionToNefSimple) {
 		simple_point(10, 2, 0),
 		simple_point(1, 2, 0));
 
-	nef_polyhedron_3 nef = extrusion_to_nef(std::make_tuple(simple_face(f, &c), vector_3(0, 0, 300)), &c);
+	nef_polyhedron_3 nef = 
+		extrusion_to_nef(std::make_tuple(
+			simple_face(f, false, &c), 
+			vector_3(0, 0, 300)), &c);
 
 	EXPECT_EQ(2, nef.number_of_volumes());
 
@@ -124,7 +127,10 @@ TEST(SolidGeometryUtil, ExtrusionToNefReversedBase) {
 		simple_point(10, 15, 0),
 		simple_point(1, 15, 0));
 
-	nef_polyhedron_3 nef = extrusion_to_nef(std::make_tuple(simple_face(f, &c), vector_3(0, 0, 300)), &c);
+	nef_polyhedron_3 nef = 
+		extrusion_to_nef(std::make_tuple(
+			simple_face(f, false, &c), 
+			vector_3(0, 0, 300)), &c);
 
 	EXPECT_EQ(2, nef.number_of_volumes());
 
@@ -204,27 +210,27 @@ TEST(VolumeGroupToNef, ArtificialFaceSplitsDoNotCauseEmptiness) {
 		create_face(3,
 			simple_point(-1, 0, 0),
 			simple_point(0, 1, 0),
-			simple_point(1, 0, 0)), &c));
+			simple_point(1, 0, 0)), false, &c));
 	faces.push_back(simple_face(
 		create_face(3,
 			simple_point(-1, 0, 0),
 			simple_point(0, 0, 1),
-			simple_point(0, 1, 0)), &c));
+			simple_point(0, 1, 0)), false, &c));
 	faces.push_back(simple_face(
 		create_face(3,
 			simple_point(0, 0, 1),
 			simple_point(1, 0, 0),
-			simple_point(0, 1, 0)), &c));
+			simple_point(0, 1, 0)), false, &c));
 	faces.push_back(simple_face(
 		create_face(3,
 			simple_point(-1, 0, 0),
 			simple_point(0, 0, 0),
-			simple_point(0, 0, 1)), &c));
+			simple_point(0, 0, 1)), false, &c));
 	faces.push_back(simple_face(
 		create_face(3,
 			simple_point(0, 0, 0),
 			simple_point(1, 0, 0),
-			simple_point(0, 0, 1)), &c));
+			simple_point(0, 0, 1)), false, &c));
 
 	nef_polyhedron_3 nef = volume_group_to_nef(std::move(faces));
 	EXPECT_FALSE(nef.is_empty());

@@ -170,7 +170,7 @@ std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
 	std::vector<simple_face> res;
 	for (size_t i = 0; i < b.face_count; ++i) {
 		try {
-			res.push_back(simple_face(b.faces[i], c));
+			res.push_back(simple_face(b.faces[i], false, c));
 		}
 		catch (invalid_face_exception & /*ex*/) {
 			throw bad_brep_exception();

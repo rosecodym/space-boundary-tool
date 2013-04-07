@@ -14,7 +14,7 @@ TEST(SimpleFaceXYTriangle, HasCorrectVertices) {
 	simple_face f(create_face(3,
 		simple_point(0, 0, 0),
 		simple_point(1, 0, 0),
-		simple_point(0, 1, 0)), &c);
+		simple_point(0, 1, 0)), false, &c);
 
 	EXPECT_EQ(3, f.outer().size());
 	EXPECT_EQ(0, f.inners().size());
@@ -36,7 +36,7 @@ TEST(SimpleFaceFlatRectangle, HasCorrectAveragePoint) {
 		simple_point(0, 0, 300),
 		simple_point(10, 0, 300),
 		simple_point(10, 15, 300),
-		simple_point(0, 15, 300)), &c);
+		simple_point(0, 15, 300)), false, &c);
 
 	EXPECT_EQ(point_3(5, 7.5, 300), f.average_outer_point());
 }
@@ -46,7 +46,7 @@ TEST(SimpleFaceNonAxisTriangle, HasCorrectVertices) {
 	simple_face f(create_face(3,
 		simple_point(1, 0, 0),
 		simple_point(0, 1, 0),
-		simple_point(0, 0, 1)), &c);
+		simple_point(0, 0, 1)), false, &c);
 
 	EXPECT_EQ(3, f.outer().size());
 	EXPECT_EQ(0, f.inners().size());
@@ -72,7 +72,7 @@ TEST(SimpleFaceNonPlanar, EndsUpPlanar) {
 		simple_point(-6603.14, 795.342, 272.202),
 		simple_point(-6603.14, 735.342, 257.148),
 		simple_point(-6655.14, 735.342, 257.148),
-		simple_point(-6655.14, 675.341, 242.094)), &c);
+		simple_point(-6655.14, 675.341, 242.094)), true, &c);
 	EXPECT_TRUE(f.is_planar());
 }
 
