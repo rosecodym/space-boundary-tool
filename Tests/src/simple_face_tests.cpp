@@ -76,6 +76,17 @@ TEST(SimpleFaceNonPlanar, EndsUpPlanar) {
 	EXPECT_TRUE(f.is_planar());
 }
 
+TEST(SimpleFaceReversed, HasCorrectOrthogonalDirection) {
+	equality_context c(0.01);
+	simple_face f(create_face(4,
+			simple_point(1, 15, 0),
+			simple_point(10, 15, 0),
+			simple_point(10, 2, 0),
+			simple_point(1, 2, 0)), false, &c);
+	ASSERT_EQ(direction_3(0, 0, -1), f.orthogonal_direction());
+	EXPECT_EQ(direction_3(0, 0, 1), f.reversed().orthogonal_direction());
+}
+
 } // namespace
 
 } // namespace geometry_2d
