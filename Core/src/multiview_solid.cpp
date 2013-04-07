@@ -37,7 +37,7 @@ extrusion_information get_extrusion_information(
 	if (c->is_zero(e.extrusion_depth)) {
 		throw shallow_extrusion_exception();
 	}
-	simple_face area(e.area, c);
+	simple_face area(e.area, true, c);
 	auto snapped_dir = c->snap(direction_3(e.ext_dx, e.ext_dy, e.ext_dz));
 	auto ext = normalize(snapped_dir.vector()) * e.extrusion_depth;
 	auto area_normal = area.orthogonal_direction().vector();
