@@ -143,6 +143,53 @@ find_holes:
 
 } // namespace
 
+std::vector<oriented_area> extrusion_to_faces(
+	const extrusion_information & ext,
+	equality_context * c)
+{
+	simple_face ext_base = std::get<0>(ext);
+	vector_3 ext_vec = std::get<1>(ext);
+	direction_3 ebdir = ext_base.orthogonal_direction();
+	direction_3 evdir = ext_vec.direction();
+	bool senses_opposite = !geometry_common::share_sense(ebdir, evdir);
+
+	simple_face base = senses_opposite ? ext_base : ext_base.reversed();
+	transformation_3 extrude(CGAL::TRANSLATION, std::get<1>(ext));
+
+	auto create_sides = [&extrude, c](const std::vector<point_3> & base) 
+		-> std::vector<oriented_area> 
+	{
+		typedef std::deque<point_3> res_loop;
+		std::vector<point_3> target;
+		boost::transform(base, std::back_inserter(target), extrude);
+		std::vector<res_loop> res_loops(base.size());
+		for (size_t i = 0; i < base.size(); ++i) {
+			res_loops[i].push_back(target[i]);
+			res_loops[i].push_back(base[i]);
+			res_loops[(i + 1) % base.size()].push_front(target[i]);
+			res_loops[(i + 1) % base.size()].push_front(base[i]);
+		}
+		std::vector<oriented_area> res;
+		for (auto loop = res_loops.begin(); loop != res_loops.end(); ++loop) {
+			auto as_vec = std::vector<point_3>(loop->begin(), loop->end());
+			res.push_back(oriented_area(as_vec, c));
+		}
+		return res;
+	};
+
+	std::vector<oriented_area> res;
+	res.push_back(oriented_area(base, c));
+	res.push_back(oriented_area(base.reversed().transformed(extrude), c));
+	boost::copy(create_sides(base.outer()), std::back_inserter(res));
+
+	for (auto h = base.inners().begin(); h != base.inners().end(); ++h) {
+		std::vector<point_3> reversed(h->rbegin(), h->rend());
+		boost::copy(create_sides(reversed), std::back_inserter(res));
+	}
+
+	return res;
+}
+
 nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_context * c) {
 	const simple_face & f = std::get<0>(ext);
 	const vector_3 & extrusion = std::get<1>(ext);

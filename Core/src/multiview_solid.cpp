@@ -222,7 +222,7 @@ std::vector<oriented_area> multiview_solid::oriented_faces(equality_context * c)
 			return oriented_areas;
 		}
 		oriented_area_groups operator () (const extrusion_information & ext) const {
-			return nef_to_oriented_area_groups(impl::extrusion_to_nef(ext, c), c);
+			return oriented_area_groups(1, impl::extrusion_to_faces(ext, c));
 		}
 		oriented_area_groups operator () (const nef_polyhedron_3 & nef) const {
 			return nef_to_oriented_area_groups(nef, c);
