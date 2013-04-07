@@ -9,98 +9,148 @@
 
 namespace {
 
-struct face_information {
-	bool * found_flag;
-	direction_3 d;
-	bool sense;
-	point_3 example_point;
-	NT p;
-	face_information() { }
-	face_information(bool * flag, const direction_3 & d, const point_3 & pt, bool sense, const NT & p)
-		: found_flag(flag), d(d), example_point(pt), sense(sense), p(p)
-	{ }
+class MultiviewSolidExtrusionReversed : public ::testing::Test {
+protected:
+	equality_context c;
+	std::vector<oriented_area> faces;
+	MultiviewSolidExtrusionReversed() : c(0.01) {
+		multiview_solid ms(create_ext(0, 0, 1, 300, create_face(4,
+			simple_point(1, 15, 0),
+			simple_point(10, 15, 0),
+			simple_point(10, 2, 0),
+			simple_point(1, 2, 0))), &c);
+		faces = ms.oriented_faces(&c);
+	}
 };
 
-TEST(MultiviewSolid, SimpleExtrusion) {
-	equality_context c(0.01);
-	solid s = create_ext(0, 0, 1, 300, create_face(4,
-		simple_point(1, 15, 0),
-		simple_point(10, 15, 0),
-		simple_point(10, 2, 0),
-		simple_point(1, 2, 0)));
-	
-	multiview_solid ms(s, &c);
-	auto faces = ms.oriented_faces(&c);
-
-	ASSERT_EQ(6, faces.size());
-
-	bool low = false;
-	bool high = false;
-	bool left = false;
-	bool right = false;
-	bool front = false;
-	bool back = false;
-
-	std::map<NT, face_information> locations;
-	locations[0] = face_information(&low, direction_3(0, 0, 1), point_3(5, 5, 0), false, 0);
-	locations[300] = face_information(&high, direction_3(0, 0, 1), point_3(5, 5, 300), true, 300);
-	locations[1] = face_information(&left, direction_3(1, 0, 0), point_3(1, 8, 50), false, 1);
-	locations[10] = face_information(&right, direction_3(1, 0, 0), point_3(10, 8, 50), true, 10);
-	locations[2] = face_information(&front, direction_3(0, 1, 0), point_3(4, 2, 100), false, 2);
-	locations[15] = face_information(&back, direction_3(0, 1, 0), point_3(4, 15, 100), true, 15);
-
-	boost::for_each(faces, [&locations](const oriented_area & f) {
-		NT plane_distance = CGAL::sqrt(CGAL::squared_distance(f.backing_plane(), point_3(0, 0, 0)));
-		auto match = locations.find(plane_distance);
-		ASSERT_NE(match, locations.end());
-		EXPECT_FALSE(*match->second.found_flag) << "Backing plane with distance " << CGAL::to_double(plane_distance);
-		*match->second.found_flag = true;
-		EXPECT_EQ(match->second.d, f.orientation().direction());
-		EXPECT_EQ(match->second.sense, f.sense()) << "Backing plane with distance " << CGAL::to_double(plane_distance);
-		EXPECT_EQ(match->second.p, f.height());
-		EXPECT_TRUE(f.backing_plane().has_on(match->second.example_point)) << "Backing plane with distance " << CGAL::to_double(plane_distance);
-	});
+TEST_F(MultiviewSolidExtrusionReversed, HasCorrectFaceCount) {
+	EXPECT_EQ(6, faces.size());
 }
 
-TEST(MultiviewSolid, SimpleExtrusionBaseReversed) {
-	equality_context c(0.01);
-	solid s = create_ext(0, 0, 1, 300, create_face(4,
-		simple_point(1, 2, 0),
-		simple_point(10, 2, 0),
-		simple_point(10, 15, 0),
-		simple_point(1, 15, 0)));
-	
-	multiview_solid ms(s, &c);
-	auto faces = ms.oriented_faces(&c);
-
-	ASSERT_EQ(6, faces.size());
-
-	bool low = false;
-	bool high = false;
-	bool left = false;
-	bool right = false;
-	bool front = false;
-	bool back = false;
-
-	std::map<NT, face_information> locations;
-	locations[0] = face_information(&low, direction_3(0, 0, 1), point_3(5, 5, 0), false, 0);
-	locations[300] = face_information(&high, direction_3(0, 0, 1), point_3(5, 5, 300), true, 300);
-	locations[1] = face_information(&left, direction_3(1, 0, 0), point_3(1, 8, 50), false, 1);
-	locations[10] = face_information(&right, direction_3(1, 0, 0), point_3(10, 8, 50), true, 10);
-	locations[2] = face_information(&front, direction_3(0, 1, 0), point_3(4, 2, 100), false, 2);
-	locations[15] = face_information(&back, direction_3(0, 1, 0), point_3(4, 15, 100), true, 15);
-
-	boost::for_each(faces, [&locations](const oriented_area & f) {
-		NT plane_distance = CGAL::sqrt(CGAL::squared_distance(f.backing_plane(), point_3(0, 0, 0)));
-		auto match = locations.find(plane_distance);
-		ASSERT_NE(match, locations.end());
-		EXPECT_FALSE(*match->second.found_flag) << "Backing plane with distance " << CGAL::to_double(plane_distance);
-		*match->second.found_flag = true;
-		EXPECT_EQ(match->second.d, f.orientation().direction());
-		EXPECT_EQ(match->second.sense, f.sense()) << "Backing plane with distance " << CGAL::to_double(plane_distance);
-		EXPECT_EQ(match->second.p, f.height());
-		EXPECT_TRUE(f.backing_plane().has_on(match->second.example_point)) << "Backing plane with distance " << CGAL::to_double(plane_distance);
+TEST_F(MultiviewSolidExtrusionReversed, BaseIsCorrect) {
+	auto base = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 0.0;
 	});
+	ASSERT_NE(faces.end(), base);
+	EXPECT_EQ(direction_3(0, 0, 1), base->orientation().direction());
+	EXPECT_FALSE(base->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionReversed, TargetIsCorrect) {
+	auto target = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 300;
+	});
+	ASSERT_NE(faces.end(), target);
+	EXPECT_EQ(direction_3(0, 0, 1), target->orientation().direction());
+	EXPECT_TRUE(target->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionReversed, LeftIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 1;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(1, 0, 0), side->orientation().direction());
+	EXPECT_FALSE(side->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionReversed, RightIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 10;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(1, 0, 0), side->orientation().direction());
+	EXPECT_TRUE(side->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionReversed, FrontIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 2;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(0, 1, 0), side->orientation().direction());
+	EXPECT_FALSE(side->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionReversed, BackIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 15;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(0, 1, 0), side->orientation().direction());
+	EXPECT_TRUE(side->sense());
+}
+
+class MultiviewSolidExtrusionAgrees : public ::testing::Test {
+protected:
+	equality_context c;
+	std::vector<oriented_area> faces;
+	MultiviewSolidExtrusionAgrees() : c(0.01) {
+		multiview_solid ms(create_ext(0, 0, 1, 300, create_face(4,
+			simple_point(1, 2, 0),
+			simple_point(10, 2, 0),
+			simple_point(10, 15, 0),
+			simple_point(1, 15, 0))), &c);
+		faces = ms.oriented_faces(&c);
+	}
+};
+
+TEST_F(MultiviewSolidExtrusionAgrees, HasCorrectFaceCount) {
+	EXPECT_EQ(6, faces.size());
+}
+
+TEST_F(MultiviewSolidExtrusionAgrees, BaseIsCorrect) {
+	auto base = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 0.0;
+	});
+	ASSERT_NE(faces.end(), base);
+	EXPECT_EQ(direction_3(0, 0, 1), base->orientation().direction());
+	EXPECT_FALSE(base->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionAgrees, TargetIsCorrect) {
+	auto target = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 300;
+	});
+	ASSERT_NE(faces.end(), target);
+	EXPECT_EQ(direction_3(0, 0, 1), target->orientation().direction());
+	EXPECT_TRUE(target->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionAgrees, LeftIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 1;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(1, 0, 0), side->orientation().direction());
+	EXPECT_FALSE(side->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionAgrees, RightIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 10;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(1, 0, 0), side->orientation().direction());
+	EXPECT_TRUE(side->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionAgrees, FrontIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 2;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(0, 1, 0), side->orientation().direction());
+	EXPECT_FALSE(side->sense());
+}
+
+TEST_F(MultiviewSolidExtrusionAgrees, BackIsCorrect) {
+	auto side = boost::find_if(faces, [](const oriented_area & o) {
+		return o.height() == 15;
+	});
+	ASSERT_NE(faces.end(), side);
+	EXPECT_EQ(direction_3(0, 1, 0), side->orientation().direction());
+	EXPECT_TRUE(side->sense());
 }
 
 TEST(MultiviewSolid, ExtrusionWithDuplicateBasePoint) {
