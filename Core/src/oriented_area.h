@@ -48,6 +48,8 @@ public:
 		*this = oriented_area(o, a, -height, !sense);
 	}
 
+	oriented_area(const std::vector<point_3> & pts, equality_context * c);
+
 	oriented_area(const oriented_area & src) { *this = src; }
 	oriented_area(oriented_area && src) { *this = std::move(src); }
 

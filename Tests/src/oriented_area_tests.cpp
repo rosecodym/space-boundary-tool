@@ -26,6 +26,17 @@ TEST(OrientedAreaFreeIntersection, CoplanarNonIntersectingIsSetAndEmpty) {
 	EXPECT_TRUE(intr->area_2d().is_empty());
 }
 
+TEST(OrientedAreaConstructionFromPoints, HeightIsCorrect) {
+	equality_context c(0.01);
+	std::vector<point_3> pts;
+	pts.push_back(point_3(1, 15, 300));
+	pts.push_back(point_3(1, 15, 0));
+	pts.push_back(point_3(1, 2, 0));
+	pts.push_back(point_3(1, 2, 300));
+	oriented_area o(pts, &c);
+	EXPECT_EQ(1, o.height());
+}
+
 // Legacy tests follow
 
 TEST(OrientedArea, SimpleFaceConstruction) {

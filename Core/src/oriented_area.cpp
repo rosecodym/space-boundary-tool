@@ -5,6 +5,7 @@
 #include "area.h"
 #include "equality_context.h"
 #include "flatten.h"
+#include "geometry_common.h"
 #include "orientation.h"
 #include "simple_face.h"
 
@@ -88,6 +89,26 @@ oriented_area::oriented_area(nef_halffacet_handle h, equality_context * c) {
 	});
 
 	a = area(loops_2d);
+}
+
+oriented_area::oriented_area(
+	const std::vector<point_3> & pts, 
+	equality_context * c)
+{
+	auto pts_info = geometry_common::calculate_plane_and_average_point(pts);
+	auto normal = std::get<0>(pts_info).orthogonal_direction();
+	std::tie(o, flipped) = c->request_orientation(normal);
+	flipped = !flipped;
+	p = calculate_p(std::get<0>(pts_info));
+	if (flipped) { p = -p; }
+	auto bound = convert_to_2d(pts, o->flattener(), c);
+	a = area(std::vector<std::vector<point_2>>(1, bound));
+	if (!pts.empty()) {
+		m_bounding_box = pts.front().bbox();
+		for (auto p = pts.begin(); p != pts.end(); ++p) {
+			m_bounding_box = m_bounding_box + p->bbox();
+		}
+	}
 }
 
 oriented_area & oriented_area::operator = (const oriented_area & src) {
