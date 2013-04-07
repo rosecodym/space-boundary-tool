@@ -136,3 +136,14 @@ std::vector<segment_3> simple_face::all_edges_voids_reversed() const {
 	});
 	return res;
 }
+
+simple_face simple_face::transformed(const transformation_3 & t) const {
+	loop new_outer;
+	boost::transform(m_outer, std::back_inserter(new_outer), t);
+	std::vector<loop> new_inners;
+	for (auto h = m_inners.begin(); h != m_inners.end(); ++h) {
+		new_inners.push_back(loop());
+		boost::transform(*h, std::back_inserter(new_inners.back()), t);
+	}
+	return simple_face(new_outer, new_inners, t(m_plane), t(m_average_point));
+}

@@ -40,5 +40,5 @@ public:
 
 	std::vector<segment_3> all_edges_voids_reversed() const;
 
-	simple_face transform(const transformation_3 & t) const;
+	simple_face transformed(const transformation_3 & t) const;
 };
