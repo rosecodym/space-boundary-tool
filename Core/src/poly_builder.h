@@ -30,16 +30,15 @@ public:
 				indices.back().push_back(exists->second);
 			});
 		}
-		assert(all_faces_planar());
 	}
 
 	template <typename PointRange>
-	poly_builder(const PointRange & base_loop, const transformation_3 & extrude, equality_context * c) {
+	poly_builder(const PointRange & base_loop, const transformation_3 & extrude) {
 		std::deque<size_t> base_indices;
 		std::deque<size_t> target_indices;
-		boost::transform(base_loop, std::back_inserter(points), [c](const point_3 & p) { return c->snap(p); });
+		boost::copy(base_loop, std::back_inserter(points));
 		size_t base_count = points.size();
-		boost::transform(base_loop, std::back_inserter(points), [&extrude, c](const point_3 & p) { return c->snap(extrude(p)); });
+		boost::transform(base_loop, std::back_inserter(points), extrude);
 		for (size_t i = 0; i < base_count; ++i) {
 			base_indices.push_back(i);
 			target_indices.push_back(i + base_count);
@@ -53,10 +52,10 @@ public:
 		}
 		indices.push_back(base_indices);
 		indices.push_back(std::deque<size_t>(target_indices.rbegin(), target_indices.rend()));
-		assert(all_faces_planar());
 	}
 	
 	void operator () (polyhedron_3::HDS & hds) {
+		assert(all_faces_planar());
 		CGAL::Polyhedron_incremental_builder_3<polyhedron_3::HDS> b(hds, true);
 		b.begin_surface(points.size(), indices.size());
 		for (auto p = points.begin(); p != points.end(); ++p) {
