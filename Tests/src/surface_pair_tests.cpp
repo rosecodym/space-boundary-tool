@@ -14,7 +14,26 @@ namespace impl {
 
 namespace {
 
-TEST(SurfacePair, StrictSubsetParallel) {
+TEST(SurfacePairXPerpendicularSuper, ContributesToEnvelope) {
+	equality_context c(0.01);
+
+	oriented_area larger(simple_face(create_face(4, 
+		simple_point(4050, 12000, 300),
+		simple_point(4050, 18000, 300),
+		simple_point(4050, 18000, 0),
+		simple_point(4050, 12000, 0)), false, &c), &c);
+
+	oriented_area smaller(simple_face(create_face(4, 
+		simple_point(8200, 18000, 0),
+		simple_point(8200, 18000, 300),
+		simple_point(8200, 17000, 300),
+		simple_point(8200, 17000, 0)), false, &c), &c);
+
+	surface_pair pair(smaller, larger, &c);
+	EXPECT_TRUE(pair.contributes_to_envelope());
+}
+
+TEST(SurfacePairYPerpendicularSub, ContributesToEnvelope) {
 	equality_context c(0.01);
 
 	oriented_area larger(simple_face(create_face(4,
