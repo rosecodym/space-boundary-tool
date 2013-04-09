@@ -162,6 +162,9 @@
     <ClCompile Include="src\geometry_common_tests.cpp">
       <Filter>unit\geometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\halfblocks_for_base_tests.cpp">
+      <Filter>unit\operations\blocking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">

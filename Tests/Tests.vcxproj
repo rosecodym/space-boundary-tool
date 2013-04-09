@@ -115,6 +115,7 @@
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\equality_context_tests.cpp" />
     <ClCompile Include="src\geometry_common_tests.cpp" />
+    <ClCompile Include="src\halfblocks_for_base_tests.cpp" />
     <ClCompile Include="src\is_hexahedral_prismatoid_tests.cpp" />
     <ClCompile Include="src\cleanup_loop_tests.cpp" />
     <ClCompile Include="src\library_assumptions.cpp" />
