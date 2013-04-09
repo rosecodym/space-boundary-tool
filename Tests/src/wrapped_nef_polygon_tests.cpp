@@ -4,6 +4,8 @@
 
 #include "wrapped_nef_polygon.h"
 
+#include "equality_context.h"
+
 namespace geometry_2d {
 
 namespace {
@@ -147,6 +149,18 @@ TEST(WrappedNefPolygonSubtractionUpdate, PointOnEdge) {
 	wrapped_nef_polygon nonrect(polygon_2(nonrect_pts, nonrect_pts + 4));
 	rect -= nonrect;
 	EXPECT_EQ(6, rect.vertex_count());
+}
+
+TEST(WrappedNefPolygonIsValid, SimpleRectangle) {
+	equality_context c(0.01);
+	point_2 pts[] = {
+		point_2(-300.000000, 12000.000000),
+		point_2(0.000000, 12000.000000),
+		point_2(0.000000, 18000.000000),
+		point_2(-300.000000, 18000.000000)
+	};
+	wrapped_nef_polygon nef(polygon_2(pts, pts + 4));
+	EXPECT_TRUE(nef.is_valid(c));
 }
 
 } // namespace
