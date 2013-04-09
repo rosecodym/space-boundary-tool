@@ -43,10 +43,12 @@ direction_3 equality_context::snap(const direction_3 & d) {
 	return d;
 }
 
-polygon_2 equality_context::snap(const polygon_2 & p) {
+polygon_2 equality_context::snap(const polygon_2 & poly) {
 	polygon_2 res;
-	std::for_each(p.vertices_begin(), p.vertices_end(), [&res, this](const point_2 & point) { res.push_back(this->snap(point)); });
-	return res;
+	for (auto p = poly.vertices_begin(); p != poly.vertices_end(); ++p) {
+		res.push_back(this->snap(*p));
+	}
+	return res.is_simple() ? res : polygon_2();
 }
 
 std::tuple<orientation *, bool> equality_context::request_orientation(const direction_3 & d) {
