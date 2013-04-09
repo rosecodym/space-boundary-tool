@@ -15,6 +15,7 @@ area::area(const std::vector<std::vector<point_2>> & loops) : use_nef(loops.size
 	else {
 		simple_rep = polygon_2(loops.front().begin(), loops.front().end());
 		ensure_counterclockwise();
+		assert(simple_rep.is_empty() || simple_rep.is_simple());
 	}
 }
 
@@ -25,6 +26,7 @@ area::area(const std::vector<polygon_2> & loops) : use_nef(loops.size() > 1) {
 	else {
 		simple_rep = loops.front();
 		ensure_counterclockwise();
+		assert(simple_rep.is_empty() || simple_rep.is_simple());
 	}
 }
 

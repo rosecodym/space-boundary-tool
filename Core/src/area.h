@@ -23,8 +23,15 @@ private:
 
 public:
 	area() : use_nef(false) { }
-	explicit area(const polygon_2 & poly) : simple_rep(poly), use_nef(false) { }
-	explicit area(polygon_2 && poly) : simple_rep(std::move(poly)), use_nef(false) { }
+	explicit area(const polygon_2 & poly) : simple_rep(poly), use_nef(false) { 
+		assert(simple_rep.is_empty() || simple_rep.is_simple());
+	}
+	explicit area(polygon_2 && poly) 
+		: simple_rep(std::move(poly)), 
+		  use_nef(false) 
+	{	
+		assert(simple_rep.is_empty() || simple_rep.is_simple());
+	}
 	explicit area(const std::vector<std::vector<point_2>> & loops);
 	explicit area(const std::vector<polygon_2> & loops);
 	explicit area(wrapped_nef_polygon && nef) : nef_rep(std::move(nef)), use_nef(true) { }
