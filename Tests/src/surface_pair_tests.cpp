@@ -14,7 +14,7 @@ namespace impl {
 
 namespace {
 
-TEST(SurfacePairXPerpendicularSuper, ContributesToEnvelope) {
+TEST(SurfacePairEnvelopeContribution, XPerpendicularSuper) {
 	equality_context c(0.01);
 
 	oriented_area larger(simple_face(create_face(4, 
@@ -33,7 +33,7 @@ TEST(SurfacePairXPerpendicularSuper, ContributesToEnvelope) {
 	EXPECT_TRUE(pair.contributes_to_envelope());
 }
 
-TEST(SurfacePairYPerpendicularSub, ContributesToEnvelope) {
+TEST(SurfacePairEnvelopeContribution, YPerpendicularSub) {
 	equality_context c(0.01);
 
 	oriented_area larger(simple_face(create_face(4,
@@ -70,6 +70,9 @@ TEST(SurfacePairProjectedArea, XPerpendicularSuper) {
 	surface_pair pair(smaller, larger, &c);
 	EXPECT_EQ(4, pair.projected_other_area().size());
 }
+
+// Legacy tests follow
+
 TEST(SurfacePair, Nonparallel) {
 	equality_context c(0.01);
 
