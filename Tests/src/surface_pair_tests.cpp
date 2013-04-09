@@ -52,6 +52,24 @@ TEST(SurfacePairYPerpendicularSub, ContributesToEnvelope) {
 	EXPECT_TRUE(pair.contributes_to_envelope());
 }
 
+TEST(SurfacePairProjectedArea, XPerpendicularSuper) {
+	equality_context c(0.01);
+
+	oriented_area larger(simple_face(create_face(4, 
+		simple_point(4050, 12120.109, 300),
+		simple_point(4050, 18195.109, 300),
+		simple_point(4050, 18195.109, 0),
+		simple_point(4050, 12120.109, 0)), false, &c), &c);
+
+	oriented_area smaller(simple_face(create_face(4, 
+		simple_point(8200, 18195.109, 0),
+		simple_point(8200, 18195.109, 300),
+		simple_point(8200, 17181.249, 300),
+		simple_point(8200, 17181.249, 0)), false, &c), &c);
+
+	surface_pair pair(smaller, larger, &c);
+	EXPECT_EQ(4, pair.projected_other_area().size());
+}
 TEST(SurfacePair, Nonparallel) {
 	equality_context c(0.01);
 
