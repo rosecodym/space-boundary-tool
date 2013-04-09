@@ -232,7 +232,7 @@ TEST(VolumeGroupToNef, ArtificialFaceSplitsDoNotCauseEmptiness) {
 			simple_point(1, 0, 0),
 			simple_point(0, 0, 1)), false, &c));
 
-	nef_polyhedron_3 nef = volume_group_to_nef(std::move(faces));
+	nef_polyhedron_3 nef = volume_group_to_nef(std::move(faces), c);
 	EXPECT_FALSE(nef.is_empty());
 }
 

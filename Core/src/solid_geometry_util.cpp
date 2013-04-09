@@ -99,7 +99,7 @@ std::vector<std::vector<simple_face>> to_volume_groups(std::vector<simple_face> 
 	return res;
 }
 
-void merge_adjacent_faces(polyhedron_3 * poly) {
+void merge_adjacent_faces(polyhedron_3 * poly, const equality_context & c) {
 	using geometry_common::calculate_plane_and_average_point;
 
 	for (auto f = poly->facets_begin(); f != poly->facets_end(); ++f) {
@@ -109,7 +109,7 @@ void merge_adjacent_faces(polyhedron_3 * poly) {
 		CGAL_For_all(v, end) {
 			points.push_back(v->vertex()->point());
 		}
-		f->plane() = std::get<0>(calculate_plane_and_average_point(points));
+		f->plane() = std::get<0>(calculate_plane_and_average_point(points, c));
 	}
 
 find_redundant_edges:
@@ -226,24 +226,30 @@ std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
 	return res;
 }
 
-nef_polyhedron_3 simple_faces_to_nef(std::vector<simple_face> && all_faces) {
+nef_polyhedron_3 simple_faces_to_nef(
+	std::vector<simple_face> && all_faces,
+	const equality_context & c)
+{
 	// There will be no reported problems if at least one of the face groups is 
 	// "good". Whether this is a bug or feature I leave as an exercise to the
 	// reader - remember that "Hey it kind of works!" is kind of the status quo
 	// in this domain.
 	auto as_groups = to_volume_groups(std::move(all_faces));
 	nef_polyhedron_3 res;
-	boost::for_each(as_groups, [&res](const std::vector<simple_face> & group) {
-		res += volume_group_to_nef(group);
+	boost::for_each(as_groups, [&](const std::vector<simple_face> & group) {
+		res += volume_group_to_nef(group, c);
 	});
 	return res.interior();
 }
 
-nef_polyhedron_3 volume_group_to_nef(const std::vector<simple_face> & group) {
+nef_polyhedron_3 volume_group_to_nef(
+	const std::vector<simple_face> & group,
+	const equality_context & c)
+{
 	polyhedron_3 poly;
 	poly_builder b(group);
 	poly.delegate(b);
-	merge_adjacent_faces(&poly);
+	merge_adjacent_faces(&poly, c);
 	if (!poly.is_valid() || !poly.is_closed()) {
 		// Why not throw an exception here? Well, currently, this only ever
 		// happens with a bad brep, so presumably a bad_brep_exception would do

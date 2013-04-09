@@ -95,7 +95,8 @@ oriented_area::oriented_area(
 	const std::vector<point_3> & pts, 
 	equality_context * c)
 {
-	auto pts_info = geometry_common::calculate_plane_and_average_point(pts);
+	auto pts_info = 
+		geometry_common::calculate_plane_and_average_point(pts, *c);
 	auto normal = std::get<0>(pts_info).orthogonal_direction();
 	std::tie(o, flipped) = c->request_orientation(normal);
 	flipped = !flipped;

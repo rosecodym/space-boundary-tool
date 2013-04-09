@@ -159,6 +159,9 @@
     <ClCompile Include="src\simple_face_tests.cpp">
       <Filter>unit\geometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\geometry_common_tests.cpp">
+      <Filter>unit\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">

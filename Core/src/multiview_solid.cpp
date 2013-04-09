@@ -102,7 +102,7 @@ multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 			// since we don't even have a way to *verify* normals, this is fatal
 			throw brep_with_voids_exception();
 		}
-		auto nef = simple_faces_to_nef(std::move(all_faces));
+		auto nef = simple_faces_to_nef(std::move(all_faces), *c);
 		if (nef.is_empty()) {
 			throw bad_brep_exception();
 		}

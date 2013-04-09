@@ -40,7 +40,7 @@ simple_face::simple_face(
 
 	plane_3 raw_pl;
 	std::tie(raw_pl, m_average_point) = 
-		calculate_plane_and_average_point(raw_loop);
+		calculate_plane_and_average_point(raw_loop, *c);
 
 	auto snapped_dir = c->snap(raw_pl.orthogonal_direction());
 	m_plane = plane_3(m_average_point, snapped_dir);
@@ -56,7 +56,8 @@ simple_face::simple_face(
 
 	for (size_t i = 0; i < f.void_count; ++i) {
 		auto inner = create_loop(f.voids[i], c);
-		auto inner_pl = std::get<0>(calculate_plane_and_average_point(inner));
+		auto inner_pl = 
+			std::get<0>(calculate_plane_and_average_point(inner, *c));
 		auto inner_dir = inner_pl.orthogonal_direction();
 		if (!share_sense(m_plane.orthogonal_direction(), inner_dir)) {
 			boost::reverse(inner);
