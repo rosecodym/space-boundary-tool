@@ -69,6 +69,14 @@ simple_face::simple_face(
 			m_inners.push_back(inner);
 		}
 	}
+
+#ifndef NDEBUG
+	direction_3 normal = m_plane.orthogonal_direction();
+	debug_dx = CGAL::to_double(normal.dx());
+	debug_dy = CGAL::to_double(normal.dy());
+	debug_dz = CGAL::to_double(normal.dz());
+#endif
+
 }
 
 simple_face & simple_face::operator = (simple_face && src) {

@@ -15,6 +15,12 @@ private:
 	plane_3 m_plane;
 	point_3 m_average_point;
 
+#ifndef NDEBUG
+	double debug_dx;
+	double debug_dy;
+	double debug_dz;
+#endif
+
 	template <typename PointRange, typename VoidRange>
 	simple_face(const PointRange outer, const VoidRange inners, const plane_3 & plane, const point_3 & point)
 		: m_outer(outer.begin(), outer.end()),
