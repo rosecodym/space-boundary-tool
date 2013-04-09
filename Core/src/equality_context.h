@@ -27,7 +27,15 @@ private:
 
 public:
 
-	equality_context(double tol) : tolerance(tol), heights(tol), xs_2d(tol), ys_2d(tol), xs_3d(tol), ys_3d(tol), zs_3d(tol) { init_constants(); }
+	explicit equality_context(double tol) 
+		: tolerance(tol), 
+		  heights(tol), 
+		  xs_2d(tol), 
+		  ys_2d(tol), 
+		  xs_3d(tol), 
+		  ys_3d(tol), 
+		  zs_3d(tol) 
+	{ init_constants(); }
 
 	double area_epsilon() const { return tolerance; }
 	double height_epsilon() const { return tolerance; }
