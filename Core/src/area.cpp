@@ -169,9 +169,10 @@ NT area::regular_area() const {
 
 area area::snap(equality_context * c) const {
 	if (use_nef) {
-		return area(nef_rep.update_all([c](const point_2 & p) {
+		auto snapped = nef_rep.update_all([c](const point_2 & p) {
 			return c->snap(p);
-		}));
+		});
+		return snapped.is_valid(*c) ? area(std::move(snapped)) : area();
 	}
 	else { return area(c->snap(simple_rep)); }
 }

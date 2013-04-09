@@ -60,7 +60,8 @@ bbox_2 wrapped_nef_polygon::bbox() const {
 	return res ? *res : bbox_2(0, 0, 0, 0);
 }
 
-bool wrapped_nef_polygon::is_valid(double eps) const {
+bool wrapped_nef_polygon::is_valid(const equality_context & c) const {
+	using geometry_common::smallest_squared_distance;
 	if (is_empty()) { return true; }
 	else if (*wrapped != wrapped->interior()) { return false; }
 	auto e = wrapped->explorer();
@@ -72,7 +73,8 @@ bool wrapped_nef_polygon::is_valid(double eps) const {
 			points.push_back(point_2(pt.x(), pt.y()));
 		}
 	}
-	return !equality_context::is_zero_squared(geometry_common::smallest_squared_distance(points.begin(), points.end()), eps);
+	auto dist = smallest_squared_distance(points.begin(), points.end());
+	return !c.is_zero_squared(dist);
 }
 
 std::string wrapped_nef_polygon::to_string() const {
