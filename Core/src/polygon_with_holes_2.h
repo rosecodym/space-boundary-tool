@@ -17,6 +17,7 @@ public:
 	template <typename HoleRange>
 	polygon_with_holes_2(const polygon_2 & outer, const HoleRange & holes) : m_outer(outer), m_holes(holes.begin(), holes.end()) { 
 		cleanup();
+		assert(m_outer.is_empty() || m_outer.is_simple());
 	}
 
 	template <typename PointRange, typename HoleRange>
@@ -25,6 +26,7 @@ public:
 			return polygon_2(hole.begin(), hole.end());
 		});
 		cleanup();
+		assert(m_outer.is_empty() || m_outer.is_simple());
 	}
 
 	const polygon_2 & outer() const { return m_outer; }
