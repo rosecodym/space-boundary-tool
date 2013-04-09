@@ -93,7 +93,13 @@ public:
 		const oriented_area & rhs);
 
 	static bool are_parallel(const oriented_area & a, const oriented_area & b) { return orientation::are_parallel(*a.o, *b.o); }
-	static bool are_perpendicular(const oriented_area & a, const oriented_area & b, double eps = 0.0) { return orientation::are_perpendicular(*a.o, *b.o, eps); }
+	static bool are_perpendicular(
+		const oriented_area & a, 
+		const oriented_area & b, 
+		double eps = 0.0) 
+	{ 
+		return orientation::are_perpendicular(*a.o, *b.o, eps); 
+	}
 	static bool share_plane_opposite(
 		const oriented_area & a,
 		const oriented_area & b,
