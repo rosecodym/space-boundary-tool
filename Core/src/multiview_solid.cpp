@@ -240,6 +240,10 @@ void multiview_solid::subtract(const multiview_solid & other, equality_context *
 		other.convert_to_nef([c]() { return c; });
 		boost::get<nef_polyhedron_3>(geometry) -= boost::get<nef_polyhedron_3>(other.geometry);
 	}
+	else {
+		// We shouldn't ever get here, but asserting as much will cause my unit
+		// tests to bail in really annoying ways. I need a better solution.
+	}
 }
 
 bool multiview_solid::share_plane_opposite(
