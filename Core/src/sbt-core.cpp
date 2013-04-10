@@ -118,7 +118,7 @@ sbt_return_t calculate_space_boundaries(
 		opening_assignment::assign_openings(
 			&surfaces, 
 			opening_blocks, 
-			g_opts.length_units_per_meter * EPS_MAGIC);
+			g_opts.length_units_per_meter / 3);
 
 		report_progress(
 			"Converting internal structures to interface structures");
