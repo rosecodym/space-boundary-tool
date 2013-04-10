@@ -96,6 +96,8 @@ void assign_openings(
 					(*p)->geometry().area_2d() == (*q)->geometry().area_2d())
 				{
 					surface::set_other_sides(*p, *q);
+					assert(!(*p)->parent()->is_external());
+					assert(!(*q)->parent()->is_external());
 					break;
 				}
 			}
