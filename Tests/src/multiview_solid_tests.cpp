@@ -153,6 +153,56 @@ TEST_F(MultiviewSolidExtrusionAgrees, BackIsCorrect) {
 	EXPECT_TRUE(side->sense());
 }
 
+TEST(MultiviewSolidSharePlaneOpposite, EmbeddedColumn) {
+	equality_context c(0.01);
+	multiview_solid col(create_ext(0, 0, 1, 108, create_face(4,
+		simple_point(4, 1, 0),
+		simple_point(4, 5, 0),
+		simple_point(6, 5, 0),
+		simple_point(6, 1, 0))), &c);
+	multiview_solid wall(create_ext(0, 0, 1, 84, create_face(4,
+		simple_point(8, 3, 0),
+		simple_point(2, 3, 0),
+		simple_point(2, 5, 0),
+		simple_point(8, 5, 0))), &c);
+	EXPECT_FALSE(multiview_solid::share_plane_opposite(col, wall, &c));
+}
+
+TEST(MultiviewSolidSubtract, EmbeddedColumnYieldsMultipleVolumes) {
+	equality_context c(0.01);
+	multiview_solid col(create_ext(0, 0, 1, 108, create_face(4,
+		simple_point(4, 1, 0),
+		simple_point(4, 5, 0),
+		simple_point(6, 5, 0),
+		simple_point(6, 1, 0))), &c);
+	multiview_solid wall(create_ext(0, 0, 1, 84, create_face(4,
+		simple_point(8, 3, 0),
+		simple_point(2, 3, 0),
+		simple_point(2, 5, 0),
+		simple_point(8, 5, 0))), &c);
+	wall.subtract(col, &c);
+	EXPECT_FALSE(wall.is_single_volume());
+}
+
+TEST(MultiviewSolidSubtract, WorksAfterFaceExtraction) {
+	equality_context c(0.01);
+	multiview_solid col(create_ext(0, 0, 1, 108, create_face(4,
+		simple_point(4, 1, 0),
+		simple_point(4, 5, 0),
+		simple_point(6, 5, 0),
+		simple_point(6, 1, 0))), &c);
+	multiview_solid wall(create_ext(0, 0, 1, 84, create_face(4,
+		simple_point(8, 3, 0),
+		simple_point(2, 3, 0),
+		simple_point(2, 5, 0),
+		simple_point(8, 5, 0))), &c);
+	wall.oriented_faces(&c);
+	wall.subtract(col, &c);
+	EXPECT_FALSE(wall.is_single_volume());
+}
+
+// legacy tests follow
+
 TEST(MultiviewSolid, ExtrusionWithDuplicateBasePoint) {
 	equality_context c(0.01);
 
