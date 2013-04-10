@@ -74,22 +74,22 @@ std::vector<element> load_elements(
 			bool performed_any_subtractions = false;
 
 			if (need_wall_column_check) {
-				boost::for_each(columns, [&, w, c](const element_box & col) {
+				for (auto col = columns.begin(); col != columns.end(); ++col) {
 					// The share_plane_opposite check will yield false 
 					// negatives in extremely pathological cases (if two 
 					// objects share an opposite face but intersect elsewhere) 
 					// but I'm not worried about that.
-					if (CGAL::do_overlap(w->bbox(), col.bbox()) &&
+					if (CGAL::do_overlap(w->bbox(), col->bbox()) &&
 						!element::share_plane_opposite(
 							*w->handle(), 
-							*col.handle(),
+							*col->handle(),
 							c))
 					{
-						w->handle()->subtract_geometry_of(*col.handle(), c);
+						w->handle()->subtract_geometry_of(*col->handle(), c);
 						report_progress(".");
 						performed_any_subtractions = true;
 					}
-				});
+				}
 			}
 
 			if (performed_any_subtractions) {

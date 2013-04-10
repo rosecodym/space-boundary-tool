@@ -250,11 +250,10 @@ bool multiview_solid::share_plane_opposite(
 	auto a_faces = a.oriented_faces(c);
 	auto b_faces = b.oriented_faces(c);
 	for (auto p = a_faces.begin(); p != a_faces.end(); ++p) {
-		if (boost::find_if(b_faces, [c, p](const oriented_area & f) {
-			return oriented_area::share_plane_opposite(*p, f, *c);
-		}) != b_faces.end())
-		{
-			return true;
+		for (auto q = b_faces.begin(); q != b_faces.end(); ++q) {
+			if (oriented_area::share_plane_opposite(*p, *q, *c)) {
+				return true;
+			}
 		}
 	}
 	return false;
