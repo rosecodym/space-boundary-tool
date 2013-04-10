@@ -106,6 +106,7 @@ public:
 		const equality_context & c)
 	{ 
 		return 
+			a.sense() != b.sense() &&
 			orientation::are_parallel(a.orientation(), b.orientation()) &&
 			c.are_equal(a.height(),  b.height());
 	}
