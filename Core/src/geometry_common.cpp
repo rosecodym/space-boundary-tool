@@ -49,9 +49,9 @@ std::tuple<plane_3, point_3> calculate_plane_and_average_point(
 		z += curr.z();
 	}
 	vector_3 avg_vec(x / pcount, y / pcount, z / pcount);
-	if (ctxt.is_zero(a)) { a = 0.0; }
-	if (ctxt.is_zero(b)) { b = 0.0; }
-	if (ctxt.is_zero(c)) { c = 0.0; }
+	a = ctxt.is_zero(a) ? 0.0 : CGAL::to_double(a);
+	b = ctxt.is_zero(b) ? 0.0 : CGAL::to_double(b);
+	c = ctxt.is_zero(c) ? 0.0 : CGAL::to_double(c);
 	NT d = -avg_vec * vector_3(a, b, c);
 	return std::make_tuple(plane_3(a, b, c, d), CGAL::ORIGIN + avg_vec);
 }
