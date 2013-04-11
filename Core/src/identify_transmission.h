@@ -115,8 +115,7 @@ std::vector<transmission_information> identify_transmission(
 		spaces.size() %
 		max_thickness);
 
-	equality_context height_c(
-		c->height_epsilon() * g_opts.length_units_per_meter);
+	equality_context height_c(g_opts.length_units_per_meter * 0.1);
 
 	auto space_faces = impl::get_space_faces_by_orientation(spaces, c);
 
