@@ -42,69 +42,6 @@ get_blocks_by_orientation(const BlockRange & blocks) {
 	return res;
 }
 
-template <typename SpaceFaceRange, typename BlockRange>
-building_graph create_building_graph(
-	SpaceFaceRange * space_faces,
-	const BlockRange & blocks,
-	const equality_context & c)
-{
-	static_assert(
-		std::is_same<BlockRange::value_type, const block *>::value,
-		"The values of the block range passed to create_building_graph must "
-		"be pointers to blocks.");
-
-	typedef building_graph::vertex_descriptor vertex;
-
-	building_graph g;
-	std::multimap<double, vertex> vertices_by_height;
-
-	reporting::report_progress("Creating building graph");
-	
-	for (auto f = space_faces->begin(); f != space_faces->end(); ++f) {
-		auto v = boost::add_vertex(bg_vertex_data(&*f), g);
-		double height = CGAL::to_double(f->height());
-		vertices_by_height.insert(std::make_pair(height, v));
-	}
-
-	for (auto b = blocks.begin(); b != blocks.end(); ++b) {
-		auto v = boost::add_vertex(bg_vertex_data(*b), g);
-		auto heights = (*b)->heights();
-		double h1 = CGAL::to_double(heights.first);
-		vertices_by_height.insert(std::make_pair(h1, v));
-		if (heights.second) {
-			double h2 = CGAL::to_double(*heights.second);
-			vertices_by_height.insert(std::make_pair(h2, v));
-		}
-	}
-
-	auto first_at_curr_height = vertices_by_height.begin();
-	while (first_at_curr_height != vertices_by_height.end()) {
-		double curr_height = first_at_curr_height->first;
-		auto first_greater_than = vertices_by_height.upper_bound(curr_height);
-		double too_far_height = curr_height + c.height_epsilon();
-		auto too_far = vertices_by_height.upper_bound(too_far_height);
-
-		for (auto p = first_at_curr_height; p != first_greater_than; ++p) {
-			for (auto q = p; q != too_far; ++q) {
-				if (p == q) { continue; }
-				boost::optional<double> connect_height =
-					bg_vertex_data::do_connect(g[p->second], g[q->second], c);
-				if (connect_height)
-				{
-					bg_edge_data data(*connect_height);
-					boost::add_edge(p->second, q->second, data, g);
-				}
-			}
-		}
-
-		first_at_curr_height = first_greater_than;
-		reporting::report_progress(".");
-	}
-	
-	reporting::report_progress("done.\n");
-	return g;
-}
-
 template <
 	typename SpaceFaceRange, 
 	typename BlockRange, 
