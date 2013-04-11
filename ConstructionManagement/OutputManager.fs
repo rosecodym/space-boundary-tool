@@ -72,11 +72,14 @@ type OutputManager (warnDelegate : Action<string>) =
         // has mucked something up. I don't think it's worth trying to
         // eliminate the fp issue.
 
-    let retrievePartialComposite origName layers depth reversed =
-        let checkLayers = if reversed then List.rev layers else layers
+    let retrieveModifiedComposite origName layers depth reversed =
+        let fromReversed = if reversed then List.rev layers else layers
+        let fromDepth =
+            match depth with
+            | Some(d) -> partial fromReversed d []
+            | None -> fromReversed
         let outputLayers =
-            partial checkLayers depth [] |>
-            List.map (fun (e, t) -> retrieveCopy (Some(t)) e)
+            fromDepth |> List.map (fun (e, t) -> retrieveCopy (Some(t)) e)
         retrieveConstruction outputLayers origName
 
     let getThickestLayer layers = Seq.maxBy snd layers |> fst
@@ -129,7 +132,11 @@ type OutputManager (warnDelegate : Action<string>) =
                 let layer = retrieveCopy (Some(reqThickness)) thickest
                 upcast retrieveConstruction [layer] None else
             let reversed = areAntiparallel surfaceNormal compositeNorm.Value
-            let c = retrievePartialComposite name layers reqThickness reversed
+            // Don't use the requested thickness here, in case it's not quite
+            // equal to the total composite thickness. (If this happens and the
+            // composite is reversed somewhere EnergyPlus will fatally
+            // complain.)
+            let c = retrieveModifiedComposite name layers None reversed
             upcast c
         | _ ->
             emitProblemConstruction (UnknownProblemComposite())
