@@ -49,7 +49,11 @@ extrusion_information get_extrusion_information(
 	return std::make_tuple(area, ext);
 }
 
-std::vector<oriented_area> to_oriented_face_group(const nef_polyhedron_3 & nef, nef_volume_handle v, equality_context * c) {
+std::vector<oriented_area> to_face_group(
+	const nef_polyhedron_3 & nef, 
+	nef_volume_handle v, 
+	equality_context * c) 
+{
 	
 	class face_generator {
 	private:
@@ -81,9 +85,7 @@ oriented_area_groups nef_to_oriented_area_groups(const nef_polyhedron_3 & nef, e
 	oriented_area_groups g;
 	nef_volume_handle v;
 	CGAL_forall_volumes(v, nef) {
-		if (v->mark()) {
-			g.push_back(to_oriented_face_group(nef, v, c));
-		}
+		if (v->mark()) { g.push_back(to_face_group(nef, v, c)); }
 	}
 	return g;
 }
@@ -97,148 +99,112 @@ multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 		}
 		std::vector<simple_face> all_faces = faces_from_brep(s.rep.as_brep, c);
 		if (boost::find_if(all_faces, [](const simple_face & f) { return !f.inners().empty(); }) != all_faces.end()) {
-			// if any faces have voids we can't build a nef polyhedron
-			// if we can't build a nef polyhedron then we can't fix normals
-			// since we don't even have a way to *verify* normals, this is fatal
+			// I've been insisting that breps are nef-able, but I can't for the
+			// life of me remember why.
 			throw brep_with_voids_exception();
 		}
 		auto nef = simple_faces_to_nef(std::move(all_faces), *c);
 		if (nef.is_empty()) {
 			throw bad_brep_exception();
 		}
-		geometry = nef;
+		as_nef_ = nef;
 	}
 	else if (s.rep_type == REP_EXT) {
-		geometry = get_extrusion_information(s.rep.as_ext, c);
+		as_extrusion_info_ = get_extrusion_information(s.rep.as_ext, c);
 	}
 	else {
 		throw unknown_geometry_rep_exception();
 	}
 }
 
-multiview_solid::multiview_solid(const nef_polyhedron_3 & nef, nef_volume_handle v, equality_context * c) {
-	geometry = oriented_area_groups();
-	boost::get<oriented_area_groups>(geometry).push_back(to_oriented_face_group(nef, v, c));
-}
-
-multiview_solid & multiview_solid::operator = (multiview_solid && src) {
-	if (&src != this) { 
-		geometry = std::move(src.geometry); 
-	} 
-	return *this; 
-}
+multiview_solid::multiview_solid(
+	const nef_polyhedron_3 & nef, 
+	nef_volume_handle v, 
+	equality_context * c)
+	: as_face_groups_(oriented_area_groups(1, to_face_group(nef, v, c))) { }
 
 bbox_3 multiview_solid::bounding_box() const {
-	struct bounding_box_visitor : public boost::static_visitor<bbox_3> {
-		bbox_3 operator () (const simple_face_groups & simple_faces) const {
-			bbox_3 res = simple_faces.front().front().outer().front().bbox();
-			for (auto group = simple_faces.begin(); group != simple_faces.end(); ++group) {
-				for (auto face = group->begin(); face != group->end(); ++face) {
-					for (auto p = face->outer().begin(); p != face->outer().end(); ++p) {
-						res = res + p->bbox();
-					}
-				}
+	if (as_extrusion_info_) {
+		auto ext = *as_extrusion_info_;
+		auto f = std::get<0>(ext);
+		transformation_3 extrude(CGAL::TRANSLATION, std::get<1>(ext));
+		bbox_3 res = f.outer().front().bbox();
+		for (auto p = f.outer().begin(); p != f.outer().end(); ++p) {
+			res = res + p->bbox() + extrude(*p).bbox();
+		}
+		return res;
+	}
+	else if (as_face_groups_) {
+		auto grps = *as_face_groups_;
+		bbox_3 res = grps.front().front().bounding_box();
+		for (auto g = grps.begin(); g != grps.end(); ++g) {
+			for (auto s = g->begin(); s != g->end(); ++s) {
+				res = res + s->bounding_box();
 			}
-			return res;
 		}
-		bbox_3 operator () (const oriented_area_groups & oriented_areas) const {
-			bbox_3 res = oriented_areas.front().front().bounding_box();
-			for (auto group = oriented_areas.begin(); group != oriented_areas.end(); ++group) {
-				for (auto s = group->begin(); s != group->end(); ++s) {
-					res = res + s->bounding_box();
-				}
-			}
-			return res;
-		}
-		bbox_3 operator () (const extrusion_information & ext) const {
-			const simple_face & f = std::get<0>(ext);
-			transformation_3 extrude = transformation_3(CGAL::TRANSLATION, std::get<1>(ext));
-			bbox_3 res = f.outer().front().bbox();
-			for (auto p = f.outer().begin(); p != f.outer().end(); ++p) {
-				res = res + p->bbox() + extrude(*p).bbox();
-			}
-			return res;
-		}
-		bbox_3 operator () (const nef_polyhedron_3 & nef) const {
-			return nef_bounding_box(nef);
-		}
-	};
-	return boost::apply_visitor(bounding_box_visitor(), geometry);
+		return res;
+	}
+	else if (as_nef_) { return nef_bounding_box(*as_nef_); }
+	else { return bbox_3(); }
 }
 
 bool multiview_solid::is_single_volume() const {
-	struct visitor : public boost::static_visitor<bool> {
-		bool operator () (const simple_face_groups & simple_faces) const {
-			return simple_faces.size() == 1;
-		}
-		bool operator () (const oriented_area_groups & oriented_areas) const {
-			return oriented_areas.size() == 1;
-		}
-		bool operator () (const extrusion_information & /*extrusion_information*/) const {
-			return true;
-		}
-		bool operator () (const nef_polyhedron_3 & nef) const {
-			return nef.number_of_volumes() == 2;
-		}
-	};
-	return boost::apply_visitor(visitor(), geometry);
+	if (as_extrusion_info_) { return true; }
+	else if (as_face_groups_) { return as_face_groups_->size() == 1; }
+	else if (as_nef_) { return as_nef_->number_of_volumes() == 2; }
+	else { return false; }
 }
 
-std::vector<multiview_solid> multiview_solid::as_single_volumes(equality_context * c) const {
-	struct visitor : public boost::static_visitor<std::vector<multiview_solid>> {
-		equality_context * c;
-		visitor(equality_context * c) : c(c) { }
-		std::vector<multiview_solid> operator () (const oriented_area_groups & oriented_areas) const {
-			std::vector<multiview_solid> res;
-			boost::transform(oriented_areas, std::back_inserter(res), [](const std::vector<oriented_area> & group) {
-				return multiview_solid(group);
-			});
-			return res;
+std::vector<multiview_solid> multiview_solid::as_single_volumes(
+	equality_context * c) const 
+{
+	if (as_extrusion_info_) { 
+		return std::vector<multiview_solid>(1, *as_extrusion_info_);
+	}
+	else if (as_face_groups_) {
+		std::vector<multiview_solid> res;
+		auto groups = *as_face_groups_;
+		for (auto g = groups.begin(); g != groups.end(); ++g) {
+			res.push_back(multiview_solid(*g));
 		}
-		std::vector<multiview_solid> operator () (const extrusion_information & ext) const {
-			return std::vector<multiview_solid>(1, ext);
-		}
-		std::vector<multiview_solid> operator () (const nef_polyhedron_3 & nef) const {
-			std::vector<multiview_solid> res;
-			res.reserve(nef.number_of_volumes() - 1);
-			nef_volume_handle v;
-			CGAL_forall_volumes(v, nef) {
-				if (v->mark()) {
-					res.push_back(multiview_solid(nef, v, c));
-				}
+		return res;
+	}
+	else if (as_nef_) {
+		std::vector<multiview_solid> res;
+		res.reserve(as_nef_->number_of_volumes() - 1);
+		nef_volume_handle v;
+		CGAL_forall_volumes(v, *as_nef_) {
+			if (v->mark()) {
+				res.push_back(multiview_solid(*as_nef_, v, c));
 			}
-			return res;
 		}
-	};
-	return boost::apply_visitor(visitor(c), geometry);
+		return res;
+	}
+	else { return std::vector<multiview_solid>(); }
 }
 
-std::vector<oriented_area> multiview_solid::oriented_faces(equality_context * c) const {
-	// Precondition: solid has one volume (two, including the outside).
-	struct v : public boost::static_visitor<oriented_area_groups> {
-		equality_context * c;
-		v(equality_context * c) : c(c) { }
-		oriented_area_groups operator () (const oriented_area_groups & oriented_areas) const { 
-			return oriented_areas;
-		}
-		oriented_area_groups operator () (const extrusion_information & ext) const {
-			return oriented_area_groups(1, impl::extrusion_to_faces(ext, c));
-		}
-		oriented_area_groups operator () (const nef_polyhedron_3 & nef) const {
-			return nef_to_oriented_area_groups(nef, c);
-		}
-	};
-	auto groups = boost::apply_visitor(v(c), geometry);
-	assert(groups.size() == 1);
-	geometry = groups;
-	return groups.front();
+std::vector<oriented_area> multiview_solid::oriented_faces(
+	equality_context * c) const 
+{
+	if (as_face_groups_) { return as_face_groups_->front(); }
+	else if (as_extrusion_info_) {
+		auto group = impl::extrusion_to_faces(*as_extrusion_info_, c);
+		return (as_face_groups_ = oriented_area_groups(1, group))->front();
+	}
+	else if (as_nef_) {
+		as_face_groups_ = nef_to_oriented_area_groups(*as_nef_, c);
+		return as_face_groups_->front();
+	}
+	else { return std::vector<oriented_area>(); }
 }
 
 void multiview_solid::subtract(const multiview_solid & other, equality_context * c) {
 	if (is_nef_representable() && other.is_nef_representable()) {
-		convert_to_nef([c]() { return c; });
-		other.convert_to_nef([c]() { return c; });
-		boost::get<nef_polyhedron_3>(geometry) -= boost::get<nef_polyhedron_3>(other.geometry);
+		create_nef_rep([c]() { return c; });
+		other.create_nef_rep([c]() { return c; });
+		as_nef_ = *as_nef_ - *other.as_nef_;
+		as_face_groups_.reset();
+		as_extrusion_info_.reset();
 	}
 	else {
 		// We shouldn't ever get here, but asserting as much will cause my unit
@@ -264,29 +230,17 @@ bool multiview_solid::share_plane_opposite(
 }
 
 bool multiview_solid::is_nef_representable() const {
-	struct visitor : public boost::static_visitor<bool> {
-		bool operator () (const oriented_area_groups & /*oriented_areas*/) const { return false; } // yeah, maybe, but it shouldn't happen and it's hard
-		bool operator () (const extrusion_information & /*extrusion_information*/) const { return true; }
-		bool operator () (const nef_polyhedron_3 & /*nef*/) const { return true; }
-	};
-	return boost::apply_visitor(visitor(), geometry);
+	return as_extrusion_info_ || as_nef_ || !as_face_groups_;
 }
 
-void multiview_solid::convert_to_nef(std::function<equality_context *(void)> lazy_c) const {
-	struct visitor : public boost::static_visitor<geometry_representation> {
-		std::function<equality_context *(void)> lazy_c;
-		visitor(std::function<equality_context *(void)> lazy_c) : lazy_c(lazy_c) { }
-		geometry_representation operator () (const oriented_area_groups & /*oriented_areas*/) const {
-			return nef_polyhedron_3::EMPTY;
-		}
-		geometry_representation operator () (const extrusion_information & ext) const {
-			return extrusion_to_nef(ext, lazy_c()).interior();
-		}
-		geometry_representation operator () (const nef_polyhedron_3 & nef) const {
-			return nef; 
-		}
-	};
-	geometry = boost::apply_visitor(visitor(lazy_c), geometry);
+void multiview_solid::create_nef_rep(
+	std::function<equality_context *(void)> lazy_c) const 
+{
+	if (as_nef_) { }
+	else if (as_extrusion_info_) { 
+		as_nef_ = extrusion_to_nef(*as_extrusion_info_, lazy_c()).interior();
+	}
+	else { as_nef_ = nef_polyhedron_3::EMPTY; }
 }
 
 } // namespace solid_geometry
