@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using LibIdf.Idd;
-using LibIdf.Idf;
+using IdfToolbox.Idd;
+using IdfToolbox.Idf;
 
 using Construction = ConstructionManagement.OutputConstruction;
 using Material = ConstructionManagement.OutputLayer;
@@ -28,9 +28,9 @@ namespace GUI.Operations
             {
                 idf.Write(
                     filename, 
-                    LibIdf.Base.IdfValidationChecks.None,
+                    IdfToolbox.Idf.ValidationChecks.None,
                     CommentPosition.Below,
-                    suppressCommentCharacter: false);
+                    false);
             }
 
             public static IdfCreator Build(EnergyPlusVersion version, Idd idd, Action<string> notify)

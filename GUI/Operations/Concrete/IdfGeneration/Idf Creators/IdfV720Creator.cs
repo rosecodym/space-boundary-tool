@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using LibIdf.Idd;
-using LibIdf.Idf;
+using IdfToolbox.Idd;
+using IdfToolbox.Idf;
 
 using Construction = ConstructionManagement.OutputConstruction;
 using Material = ConstructionManagement.OutputLayer;
@@ -152,9 +152,9 @@ namespace GUI.Operations
 
                     if (!surf.IsVirtual) {
                         var comment = "IFC element GUID: " + surf.ElementGuid;
-                        obj.AddComment(comment);
+                        obj.Comments.Add(comment);
                     }
-                    obj.AddComment(String.Format(
+                    obj.Comments.Add(String.Format(
                         "Normal: <{0}, {1}, {2}>", 
                         surf.Normal.X, 
                         surf.Normal.Y, 
@@ -191,7 +191,7 @@ namespace GUI.Operations
 
             public override void AddConstruction(Construction c)
             {
-                LibIdf.Idf.IdfObject obj = idf.CreateObject("Construction");
+                IdfToolbox.Idf.IdfObject obj = idf.CreateObject("Construction");
                 obj.Fields["Name"].Value = c.Name;
                 // All constructions *should* have layers, but let's make sure
                 // that a bad one doesn't bring down IDF generation entirely.
@@ -223,9 +223,9 @@ namespace GUI.Operations
                         obj.Fields[String.Format("Vertex {0} Y-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Y, 3);
                         obj.Fields[String.Format("Vertex {0} Z-coordinate", pair.Index + 1)].Value = Math.Round(pair.Point.Z, 3);
                     }
-                    obj.AddComment(
+                    obj.Comments.Add(
                         " IFC element GUID: " + fenestration.ElementGuid);
-                    obj.AddComment(String.Format(
+                    obj.Comments.Add(String.Format(
                         "Normal: <{0}, {1}, {2}>", 
                         fenestration.Normal.Item1, 
                         fenestration.Normal.Item2, 

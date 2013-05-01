@@ -92,7 +92,7 @@ namespace GUI.Operations
             try
             {
                 ReportProgress("Getting IDD.\n");
-                LibIdf.Idd.Idd idd = p.GetIdd();
+                IdfToolbox.Idd.Idd idd = p.GetIdd();
                 ReportProgress("Got IDD.\n");
                 ConstructionManager cmanager =
                     new ConstructionManager(

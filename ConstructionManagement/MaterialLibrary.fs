@@ -3,8 +3,8 @@
 open System
 open System.Collections.Generic
 
-open LibIdf.Base
-open LibIdf.Idf
+open IdfToolbox.Base
+open IdfToolbox.Idf
 
 let valueMaybe (obj: IdfObject) name def =
     if obj.HasField(name) then obj.Fields.[name].Value else def
@@ -218,10 +218,10 @@ type LibraryEntry =
 let Load(idf:Idf, notify:Action<string>) : ISet<LibraryEntry> =
     let compositeIsWindow = (fun (c:IdfObject) -> c.Fields |> Seq.exists (fun f -> f.RefersTo <> Unchecked.defaultof<IdfObject> && (f.RefersTo.Type = "WindowMaterial:Gas" || f.RefersTo.Type = "WindowMaterial:Glazing")))
     let groups = [
-        idf.GetObjectsByType("Material", false) :> seq<IdfObject>
-        idf.GetObjectsByType("Material:NoMass", false) :> seq<IdfObject>
-        idf.GetObjectsByType("Material:AirGap", false) :> seq<IdfObject>
-        idf.GetObjectsByType("Construction", false) |> Seq.filter compositeIsWindow
+        idf.GetObjectsByType("Material") :> seq<IdfObject>
+        idf.GetObjectsByType("Material:NoMass") :> seq<IdfObject>
+        idf.GetObjectsByType("Material:AirGap") :> seq<IdfObject>
+        idf.GetObjectsByType("Construction") |> Seq.filter compositeIsWindow
         ]
     let entries =
         groups

@@ -48,7 +48,7 @@ namespace GUI.Operations
             public Func<int, ModelConstruction> MaterialIDToModelConstruction { get; set; }
             public Func<int, Normal> MaterialIDToCompositeDir { get; set; }
             public EnergyPlusVersion EPVersion { get; set; }
-            public Func<LibIdf.Idd.Idd> GetIdd { get; set; }
+            public Func<IdfToolbox.Idd.Idd> GetIdd { get; set; }
             public bool AttachDebugger { get; set; }
         }
     }

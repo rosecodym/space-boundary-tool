@@ -5,8 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-using LibIdf.Idd;
-using LibIdf.Idf;
+using IdfToolbox.Idd;
+using IdfToolbox.Idf;
 
 using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 

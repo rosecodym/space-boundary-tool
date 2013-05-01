@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using LibIdf.Idd;
+using IdfToolbox.Idd;
 
 namespace GUI
 {

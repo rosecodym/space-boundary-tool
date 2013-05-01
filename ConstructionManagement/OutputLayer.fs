@@ -2,8 +2,8 @@
 
 open System
 
-open LibIdf.Base
-open LibIdf.Idf
+open IdfToolbox.Base
+open IdfToolbox.Idf
 
 open MaterialLibrary
 
