@@ -92,6 +92,11 @@ namespace GUI.Operations
             LongOperationComplete = res =>
             {
                 vm.CurrentSbtBuilding = res ?? vm.CurrentSbtBuilding;
+                var currProc = System.Diagnostics.Process.GetCurrentProcess();
+                vm.LastPeakWorkingSet = currProc.PeakWorkingSet64;
+                var currTime = currProc.TotalProcessorTime;
+                var diff = currTime - startCpuTime;
+                vm.LastSBCalcTime = GenerateTimeString(diff);
                 completionAction();
             };
         }
