@@ -23,6 +23,7 @@ std::vector<element> load_elements(
 	for (size_t i = 0; i < count; ++i) {
 		try {
 			if (filter(infos[i]->name)) {
+				report_progress(fmt("Loading element %s.\n") % infos[i]->name);
 				complex_elements.push_back(element(infos[i], c));
 			}
 		}
