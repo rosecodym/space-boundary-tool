@@ -41,6 +41,7 @@ simple_face::simple_face(
 	plane_3 raw_pl;
 	std::tie(raw_pl, m_average_point) = 
 		calculate_plane_and_average_point(raw_loop, *c);
+	if (raw_pl.is_degenerate()) { throw invalid_face_exception(); }
 
 	auto snapped_dir = c->snap(raw_pl.orthogonal_direction());
 	m_plane = plane_3(m_average_point, snapped_dir);
