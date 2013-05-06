@@ -179,6 +179,7 @@
     <ClCompile Include="src\oriented_area.cpp" />
     <ClCompile Include="src\polygon_with_holes_2.cpp" />
     <ClCompile Include="src\polygon_with_holes_3.cpp" />
+    <ClCompile Include="src\poly_builder.cpp" />
     <ClCompile Include="src\simple_face.cpp" />
     <ClCompile Include="src\one_dimensional_equality_context.cpp" />
     <ClCompile Include="src\precompiled.cpp">

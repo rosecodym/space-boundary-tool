@@ -278,5 +278,8 @@
     <ClCompile Include="src\assign_openings.cpp">
       <Filter>operations\opening assignment</Filter>
     </ClCompile>
+    <ClCompile Include="src\poly_builder.cpp">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

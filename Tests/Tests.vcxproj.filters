@@ -165,6 +165,9 @@
     <ClCompile Include="src\halfblocks_for_base_tests.cpp">
       <Filter>unit\operations\blocking</Filter>
     </ClCompile>
+    <ClCompile Include="..\Core\src\poly_builder.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common.h">
