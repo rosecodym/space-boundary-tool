@@ -198,7 +198,7 @@ nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_co
 	
 	transformation_3 extrude(CGAL::TRANSLATION, extrusion);
 	polyhedron_3 poly;
-	poly_builder builder(f.outer(), extrude);
+	auto builder = poly_builder::create(f.outer(), extrude);
 	poly.delegate(builder);
 	if (!poly.is_valid() || !poly.is_closed()) {
 		return nef_polyhedron_3();
@@ -206,7 +206,7 @@ nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_co
 	nef_polyhedron_3 res(poly);
 	boost::for_each(f.inners(), [&res, &extrude, c](const std::vector<point_3> & inner) {
 		polyhedron_3 poly;
-		poly_builder builder(inner, extrude);
+		auto builder = poly_builder::create(inner, extrude);
 		poly.delegate(builder);
 		res -= nef_polyhedron_3(poly);
 	});
@@ -247,16 +247,10 @@ nef_polyhedron_3 volume_group_to_nef(
 	const equality_context & c)
 {
 	polyhedron_3 poly;
-	poly_builder b(group);
+	auto b = poly_builder::create(group);
 	poly.delegate(b);
 	merge_adjacent_faces(&poly, c);
 	if (!poly.is_valid() || !poly.is_closed()) {
-		// Why not throw an exception here? Well, currently, this only ever
-		// happens with a bad brep, so presumably a bad_brep_exception would do
-		// the job nicely. Unfortunately I can't really guarantee this will
-		// happen in the future - this function could later be used in some 
-		// other case. So we're going to treat an empty return as an error code
-		// and let upstream handle it.
 		return nef_polyhedron_3::EMPTY;
 	}
 	else {

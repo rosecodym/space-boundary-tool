@@ -13,29 +13,89 @@ namespace impl {
 
 class poly_builder : public CGAL::Modifier_base<polyhedron_3::HDS> {
 private:
-	std::vector<point_3> points;
-	std::vector<std::deque<size_t>> indices;
+	std::vector<point_3> points_;
+	std::vector<std::deque<size_t>> indices_;
+
+	poly_builder(
+		const std::vector<point_3> & points,
+		const std::vector<std::deque<size_t>> & indices)
+		: points_(points),
+		  indices_(indices)
+	{ }
+
 public:
+	void operator () (polyhedron_3::HDS & hds) {
+		assert(all_faces_planar());
+		CGAL::Polyhedron_incremental_builder_3<polyhedron_3::HDS> b(hds, true);
+		b.begin_surface(points_.size(), indices_.size());
+		for (auto p = points_.begin(); p != points_.end(); ++p) {
+			b.add_vertex(*p);
+		}
+		for (auto f = indices_.begin(); f != indices_.end(); ++f) {
+			b.add_facet(f->begin(), f->end());
+		}
+		b.end_surface();
+	}
+
+	bool all_faces_planar() const {
+		for (auto p = indices_.begin(); p != indices_.end(); ++p) {
+			auto & vertices = *p;
+			plane_3 pl(
+					points_[vertices[0]], 
+					points_[vertices[1]], 
+					points_[vertices[2]]);
+			for (size_t i = 3; i < vertices.size(); ++i) {
+				if (!pl.has_on(points_[vertices[i]])) { return false; }
+			}
+		}
+		return true;
+	}
+
+	std::string to_string() const {
+		std::stringstream ss;
+		ss << "Poly builder for:\n" << reporting::to_string(points_);
+		for (size_t i = 0; i < indices_.size(); ++i) {
+			ss << "Facet " << i << ":\n";
+			for (auto p = indices_[i].begin(); p != indices_[i].end(); ++p) {
+				auto pt_string = reporting::to_string(points_[*p]);
+				ss << (boost::format("  [%u]\t%s\n") % *p % pt_string).str();
+			}
+		}
+		return ss.str();
+	}
+	
 	template <typename FaceRange>
-	poly_builder(const FaceRange & faces) {
+	static poly_builder create(const FaceRange & faces) {
+		std::vector<point_3> points;
+		std::vector<std::deque<size_t>> indices;
 		std::map<point_3, size_t> point_lookup;
+
 		for (auto f = faces.begin(); f != faces.end(); ++f) {
 			indices.push_back(std::deque<size_t>());
-			boost::for_each(f->outer(), [&point_lookup, this](const point_3 & p) {
-				auto exists = point_lookup.find(p);
+			assert(f->inners().size() == 0);
+			for (auto p = f->outer().begin(); p != f->outer().end(); ++p) {
+				auto exists = point_lookup.find(*p);
 				if (exists == point_lookup.end()) {
-					exists = point_lookup.insert(std::make_pair(p, points.size())).first;
-					points.push_back(p);
+					auto new_entry = std::make_pair(*p, points.size());
+					exists = point_lookup.insert(new_entry).first;
+					points.push_back(*p);
 				}
 				indices.back().push_back(exists->second);
-			});
+			}
 		}
+		return poly_builder(points, indices);
 	}
 
 	template <typename PointRange>
-	poly_builder(const PointRange & base_loop, const transformation_3 & extrude) {
+	static poly_builder create(
+		const PointRange & base_loop, 
+		const transformation_3 & extrude)
+	{
+		std::vector<point_3> points;
+		std::vector<std::deque<size_t>> indices;
 		std::deque<size_t> base_indices;
 		std::deque<size_t> target_indices;
+
 		boost::copy(base_loop, std::back_inserter(points));
 		size_t base_count = points.size();
 		boost::transform(base_loop, std::back_inserter(points), extrude);
@@ -51,47 +111,10 @@ public:
 			indices[(i + 1) % base_count].push_front(base_indices[i]);
 		}
 		indices.push_back(base_indices);
-		indices.push_back(std::deque<size_t>(target_indices.rbegin(), target_indices.rend()));
-	}
-	
-	void operator () (polyhedron_3::HDS & hds) {
-		assert(all_faces_planar());
-		CGAL::Polyhedron_incremental_builder_3<polyhedron_3::HDS> b(hds, true);
-		b.begin_surface(points.size(), indices.size());
-		for (auto p = points.begin(); p != points.end(); ++p) {
-			b.add_vertex(*p);
-		}
-		for (auto f = indices.begin(); f != indices.end(); ++f) {
-			b.add_facet(f->begin(), f->end());
-		}
-		b.end_surface();
-	}
-
-	bool all_faces_planar() const {
-		for (auto p = indices.begin(); p != indices.end(); ++p) {
-			auto & vertices = *p;
-			plane_3 pl(
-					points[vertices[0]], 
-					points[vertices[1]], 
-					points[vertices[2]]);
-			for (size_t i = 3; i < vertices.size(); ++i) {
-				if (!pl.has_on(points[vertices[i]])) { return false; }
-			}
-		}
-		return true;
-	}
-
-	std::string to_string() const {
-		std::stringstream ss;
-		ss << "Poly builder for:\n" << reporting::to_string(points);
-		for (size_t i = 0; i < indices.size(); ++i) {
-			ss << "Facet " << i << ":\n";
-			for (auto p = indices[i].begin(); p != indices[i].end(); ++p) {
-				auto pt_string = reporting::to_string(points[*p]);
-				ss << (boost::format("  [%u]\t%s\n") % *p % pt_string).str();
-			}
-		}
-		return ss.str();
+		indices.push_back(std::deque<size_t>(
+			target_indices.rbegin(), 
+			target_indices.rend()));
+		return poly_builder(points, indices);
 	}
 };
 
