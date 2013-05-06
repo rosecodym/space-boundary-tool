@@ -25,10 +25,8 @@ void equality_context::init_constants()
 }
 
 direction_3 equality_context::snap(const direction_3 & d) {
-	bool dx_zero = CGAL::is_zero(d.dx());
-	bool dy_zero = CGAL::is_zero(d.dy());
-	bool dz_zero = CGAL::is_zero(d.dz());
-	assert(!(dx_zero && dy_zero && dz_zero));
+	using CGAL::is_zero;
+	assert(!(is_zero(d.dx()) && is_zero(d.dy()) && is_zero(d.dz())));
 	vector_3 v = geometry_common::normalize(d.to_vector());
 	for (auto p = directions.begin(); p != directions.end(); ++p) {
 		if (p->first == d) {

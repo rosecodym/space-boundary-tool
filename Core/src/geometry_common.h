@@ -23,10 +23,8 @@ inline bool share_sense(const direction_3 & a, const direction_3 & b) {
 
 template <class VecT>
 inline VecT normalize(const VecT & v) {
-	bool x_zero = CGAL::is_zero(v.x());
-	bool y_zero = CGAL::is_zero(v.y());
-	bool z_zero = CGAL::is_zero(v.z());
-	assert(!(x_zero && y_zero && z_zero));
+	using CGAL::is_zero;
+	assert(!(is_zero(v.x()) && is_zero(v.y()) && is_zero(v.z())));
 	if (v.squared_length() < 1.0) {
 		return (100 * v) / sqrt((100 * v).squared_length());
 	}
