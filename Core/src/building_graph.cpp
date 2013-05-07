@@ -50,13 +50,21 @@ bool bg_vertex_data::represents_halfblock() const {
 boost::optional<double> bg_vertex_data::do_connect(
 	bg_vertex_data a, 
 	bg_vertex_data b, 
-	const equality_context & c) 
+	double height_eps) 
 {
 	typedef boost::optional<double> height_maybe;
 
 	struct v : public boost::static_visitor<height_maybe> {
-		const equality_context & c_;
-		v(const equality_context & c) : c_(c) { }
+		double height_eps_;
+		// This predicate is lazy because it's expensive and only necessary if
+		// the heights match.
+		std::function<bool(void)> areas_match_;
+		v(
+			double height_eps,
+			const std::function<bool(void)> & areas_match) 
+			: height_eps_(height_eps),
+			  areas_match_(areas_match)
+		{ }
 
 		static double avg(const NT & a, const NT & b) {
 			return (CGAL::to_double(a) + CGAL::to_double(b)) / 2;
@@ -65,31 +73,39 @@ boost::optional<double> bg_vertex_data::do_connect(
 		height_maybe operator () (space_face * f1, space_face * f2) const {
 			if (f1 != f2 &&
 				f1->sense() != f2->sense() &&
-				c_.are_equal(f1->height(), f2->height()))
+				equality_context::are_equal(
+					f1->height(), 
+					f2->height(), 
+					height_eps_))
 			{
-				if (!(f1->face_area() * f2->face_area()).is_empty()) {
-					return avg(f1->height(), f2->height());
-				}
+				if (areas_match_()) { return avg(f1->height(), f2->height()); }
 			}
 			return height_maybe();
 		}
 
 		height_maybe operator () (space_face * f, const block * b) const {
 			height_maybe matching_height;
-			if (f->sense() == b->sense()) {
+			if (f->sense() == b->sense()) 
+			{
 				if (b->heights().second &&
-					c_.are_equal(f->height(), *b->heights().second))
+					equality_context::are_equal(
+						f->height(), 
+						*b->heights().second, 
+						height_eps_))
 				{
 					matching_height = avg(f->height(), *b->heights().second);
 				}
 			}
 			else {
-				if (c_.are_equal(f->height(), b->heights().first)) {
+				if (equality_context::are_equal(
+						f->height(), 
+						b->heights().first, 
+						height_eps_)) 
+				{
 					matching_height = avg(f->height(), b->heights().first);
 				}
 			}
-			if (matching_height && 
-				!(f->face_area() * b->base_area()).is_empty())
+			if (matching_height && areas_match_())
 			{
 				return matching_height;
 			}
@@ -106,38 +122,51 @@ boost::optional<double> bg_vertex_data::do_connect(
 			height_maybe matching_height;
 			if (b1->sense() == b2->sense()) {
 				if (b1_hs.second && 
-					c_.are_equal(*b1_hs.second, b2_hs.first))
+					equality_context::are_equal(
+						*b1_hs.second, 
+						b2_hs.first,
+						height_eps_))
 				{
 					matching_height = avg(*b1_hs.second, b2_hs.first);
 				}
 				else if (
 					b2_hs.second && 
-					c_.are_equal(b1_hs.first, *b2_hs.second))
+					equality_context::are_equal(
+						b1_hs.first, 
+						*b2_hs.second,
+						height_eps_))
 				{
 					matching_height = avg(b1_hs.first, *b2_hs.second);
 				}
 			}
 			else {
-				if (c_.are_equal(b1_hs.first, b2_hs.first)) {
+				if (equality_context::are_equal(
+						b1_hs.first, 
+						b2_hs.first,
+						height_eps_)) 
+				{
 					matching_height = avg(b1_hs.first, b2_hs.first);
 				}
 				else if (
 					b1_hs.second && 
 					b2_hs.second && 
-					c_.are_equal(*b1_hs.second, *b2_hs.second))
+					equality_context::are_equal(
+						*b1_hs.second, 
+						*b2_hs.second,
+						height_eps_))
 				{
 					matching_height = avg(*b1_hs.second, *b2_hs.second);
 				}
 			}
-			if (matching_height &&
-				!(b1->base_area() * b2->base_area()).is_empty())
+			if (matching_height && areas_match_())
 			{
 				return matching_height;
 			}
 			else { return height_maybe(); }
 		}
 	};
-	return boost::apply_visitor(v(c), a.data_, b.data_);
+	auto areas_match = [&]() { return !(a.a() * b.a()).is_empty(); };
+	return boost::apply_visitor(v(height_eps, areas_match), a.data_, b.data_);
 }
 
 space_face * bg_vertex_data::represents_space_face() const {

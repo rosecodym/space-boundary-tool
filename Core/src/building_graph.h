@@ -4,6 +4,7 @@
 
 #include "area.h"
 #include "block.h"
+#include "equality_context.h"
 #include "layer_information.h"
 #include "report.h"
 #include "space_face.h"
@@ -41,7 +42,7 @@ public:
 	static boost::optional<double> do_connect(
 		bg_vertex_data a, 
 		bg_vertex_data b,
-		const equality_context & c);
+		double height_eps);
 };
 
 // This is a one-property bundle (instead of just storing doubles directly) so 
@@ -67,7 +68,7 @@ template <typename SpaceFaceRange, typename BlockRange>
 building_graph create_building_graph(
 	SpaceFaceRange * space_faces,
 	const BlockRange & blocks,
-	const equality_context & c)
+	double height_eps)
 {
 	static_assert(
 		std::is_same<BlockRange::value_type, const block *>::value,
@@ -102,14 +103,17 @@ building_graph create_building_graph(
 	while (first_at_curr_height != vertices_by_height.end()) {
 		double curr_height = first_at_curr_height->first;
 		auto first_greater_than = vertices_by_height.upper_bound(curr_height);
-		double too_far_height = curr_height + c.height_epsilon();
+		double too_far_height = curr_height + height_eps;
 		auto too_far = vertices_by_height.upper_bound(too_far_height);
 
 		for (auto p = first_at_curr_height; p != first_greater_than; ++p) {
 			for (auto q = p; q != too_far; ++q) {
 				if (p == q) { continue; }
 				boost::optional<double> connect_height =
-					bg_vertex_data::do_connect(g[p->second], g[q->second], c);
+					bg_vertex_data::do_connect(
+						g[p->second], 
+						g[q->second], 
+						height_eps);
 				if (connect_height)
 				{
 					bg_edge_data data(*connect_height);

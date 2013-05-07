@@ -52,18 +52,19 @@ void process_orientation(
 	const BlockRange & blocks, 
 	const orientation * o, 
 	double max_thickness, 
-	const equality_context & c, 
+	const equality_context & height_c, 
 	OutputIterator oi) 
 {
 	using namespace boost::adaptors;
 	typedef double regular_area;
-	building_graph g = create_building_graph(space_faces, blocks, c);
+	double height_eps = height_c.height_epsilon();
+	building_graph g = create_building_graph(space_faces, blocks, height_eps);
 	size_t ticks_per_dot = space_faces->size() / 80;
 	size_t curr_ticks = 0;
 	std::multimap<regular_area, vertex_wrapper> sf_vertices;
 	auto all_vertices = boost::vertices(g);
 	for (auto v = all_vertices.first; v != all_vertices.second; ++v) {
-		vertex_wrapper wrapped(*v, g, c);
+		vertex_wrapper wrapped(*v, g, height_c);
 		auto sf = wrapped.as_space_face();
 		if (sf != nullptr) { 
 			double reg_area = CGAL::to_double(sf->starting_regular_area());
