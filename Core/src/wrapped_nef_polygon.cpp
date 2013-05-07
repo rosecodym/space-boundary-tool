@@ -18,7 +18,6 @@ wrapped_nef_polygon::wrapped_nef_polygon(const face & f) {
 	}
 	else {
 		wrapped = std::unique_ptr<nef_polygon_2>(new nef_polygon_2(nef_polygon_2::EMPTY));
-		m_is_axis_aligned = true;
 	}
 }
 
@@ -176,76 +175,30 @@ wrapped_nef_polygon wrapped_nef_polygon::update_all(
 
 void wrapped_nef_polygon::clear() {
 	wrapped->clear();
-	m_is_axis_aligned = true;
 }
 
 wrapped_nef_polygon & wrapped_nef_polygon::operator += (const wrapped_nef_polygon & other) {
-	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
-		wrapped_nef_polygon other_snapped(other);
-		util::snap(&*other_snapped.wrapped, *wrapped);
-		*wrapped = util::clean(*wrapped + *other_snapped.wrapped);
-		m_is_axis_aligned = false;
-	}
-	else {
-		*wrapped += other.wrapped->interior();
-	}
-	*wrapped = wrapped->interior();
+	*wrapped = util::clean(*wrapped += other.wrapped->interior());
 	return *this;
 }
 
 wrapped_nef_polygon & wrapped_nef_polygon::operator *= (const wrapped_nef_polygon & other) {
-	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
-		wrapped_nef_polygon other_snapped(other);
-		util::snap(&*other_snapped.wrapped, *wrapped);
-		*wrapped = util::clean(*wrapped * *other_snapped.wrapped);
-		m_is_axis_aligned = false;
-	}
-	else {
-		*wrapped *= other.wrapped->interior();
-	}
-	*wrapped = wrapped->interior();
+	*wrapped = util::clean(*wrapped *= other.wrapped->interior());
 	return *this;
 }
 
 wrapped_nef_polygon & wrapped_nef_polygon::operator -= (const wrapped_nef_polygon & other) {
-	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
-		wrapped_nef_polygon other_snapped(other);
-		util::snap(&*other_snapped.wrapped, *wrapped);
-		*wrapped = util::clean(*wrapped - *other_snapped.wrapped);
-		m_is_axis_aligned = false;
-	}
-	else {
-		*wrapped -= other.wrapped->interior();
-	}
-	*wrapped = wrapped->interior();
+	*wrapped = util::clean(*wrapped -= other.wrapped->interior());
 	return *this;
 }
 
 wrapped_nef_polygon & wrapped_nef_polygon::operator ^= (const wrapped_nef_polygon & other) {
-	if (!m_is_axis_aligned || !other.m_is_axis_aligned) {
-		nef_polygon_2 self_copy = *wrapped;
-		wrapped_nef_polygon other_snapped(other);
-		util::snap(&*other_snapped.wrapped, *wrapped);
-		self_copy ^= *other_snapped.wrapped;
-		*wrapped = util::clean(self_copy);
-		m_is_axis_aligned = false;
-	}
-	else {
-		*wrapped ^= other.wrapped->interior();
-	}
-	*wrapped = wrapped->interior();
+	*wrapped = util::clean(*wrapped ^= other.wrapped->interior());
 	return *this;
 }
 
 bool wrapped_nef_polygon::do_intersect(const wrapped_nef_polygon & lhs, const wrapped_nef_polygon & rhs) {
-	if (!lhs.m_is_axis_aligned && !rhs.m_is_axis_aligned) {
-		wrapped_nef_polygon r_snapped(rhs);
-		util::snap(&*r_snapped.wrapped, *lhs.wrapped);
-		return !(lhs * r_snapped).is_empty();
-	}
-	else {
-		return !(lhs * rhs).is_empty();
-	}
+	return !(lhs * rhs).is_empty();
 }
 
 } // namespace 

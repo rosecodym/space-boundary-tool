@@ -14,34 +14,34 @@ namespace nef_polygons {
 class wrapped_nef_polygon {
 private:
 	std::unique_ptr<nef_polygon_2> wrapped;
-	bool m_is_axis_aligned;
 	mutable boost::optional<nef_polygon_2::Explorer> current_explorer;
 
-	wrapped_nef_polygon(const nef_polygon_2 & nef, bool aligned)
-		: wrapped(new nef_polygon_2(util::clean(nef))),
-		m_is_axis_aligned(aligned)
+	explicit wrapped_nef_polygon(const nef_polygon_2 & nef)
+		: wrapped(new nef_polygon_2(util::clean(nef)))
 	{ }
 
-	wrapped_nef_polygon(const face & f);
+	explicit wrapped_nef_polygon(const face & f);
 
 	std::vector<face> get_faces() const;
 
 public:
-	wrapped_nef_polygon() : wrapped(new nef_polygon_2(nef_polygon_2::EMPTY)), m_is_axis_aligned(true) { }
+	wrapped_nef_polygon() 
+		: wrapped(new nef_polygon_2(nef_polygon_2::EMPTY))
+	{ }
 	
 	wrapped_nef_polygon(const wrapped_nef_polygon & src) { *this = src; }
 	wrapped_nef_polygon(wrapped_nef_polygon && src) { *this = std::move(src); }
 
 	explicit wrapped_nef_polygon(const polygon_2 & poly)
-		: wrapped(new nef_polygon_2(util::create_nef_polygon(poly))),
-		m_is_axis_aligned(geometry_common::is_axis_aligned(poly))
+		: wrapped(new nef_polygon_2(util::create_nef_polygon(poly)))
 	{ }
 
 	template <typename PolyRange>
-	explicit wrapped_nef_polygon(const PolyRange & polys) : wrapped(new nef_polygon_2()), m_is_axis_aligned(true) {
+	explicit wrapped_nef_polygon(const PolyRange & polys) 
+		: wrapped(new nef_polygon_2()) 
+	{
 		boost::for_each(polys, [this](const polygon_2 & poly) {
 			*wrapped ^= *wrapped_nef_polygon(poly).wrapped;
-			m_is_axis_aligned &= geometry_common::is_axis_aligned(poly);
 		});
 	}
 
@@ -56,22 +56,17 @@ public:
 	wrapped_nef_polygon & operator = (const wrapped_nef_polygon & src) { 
 		if (&src != this) {
 			wrapped = std::unique_ptr<nef_polygon_2>(new nef_polygon_2(*src.wrapped));
-			m_is_axis_aligned = src.m_is_axis_aligned;
 		}
 		return *this; 
 	}
 	wrapped_nef_polygon & operator = (wrapped_nef_polygon && src) { 
-		if (&src != this) {
-			wrapped = std::move(src.wrapped);
-			m_is_axis_aligned = src.m_is_axis_aligned;
-		}
+		if (&src != this) { wrapped = std::move(src.wrapped); }
 		return *this;
 	}
 	
 	bool								any_points_satisfy_predicate(const std::function<bool(point_2)> & pred) const;
 	bbox_2								bbox() const;
 	size_t								face_count() const { return get_faces().size(); }
-	bool								is_axis_aligned() const { return m_is_axis_aligned; }
 	bool								is_empty() const { return !wrapped || wrapped->is_empty() || get_faces().empty(); }
 	std::vector<polygon_2>				to_simple_convex_pieces() const;
 	std::string							to_string() const;

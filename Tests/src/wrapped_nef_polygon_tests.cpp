@@ -18,7 +18,6 @@ TEST(WrappedNefPolygonConstruction, OnAxes) {
 		point_2(0, 0)
 	};
 	wrapped_nef_polygon nef(polygon_2(pts, pts + 4));
-	EXPECT_TRUE(nef.is_axis_aligned());
 	bbox_2 bbox = nef.bbox();
 	EXPECT_DOUBLE_EQ(0, bbox.xmin());
 	EXPECT_DOUBLE_EQ(8250, bbox.xmax());
@@ -34,7 +33,6 @@ TEST(WrappedNefPolygonConstruction, AxisAlignedOffAxes) {
 		point_2(10, 10)
 	};
 	wrapped_nef_polygon nef(polygon_2(pts, pts + 4));
-	EXPECT_TRUE(nef.is_axis_aligned());
 	bbox_2 bbox = nef.bbox();
 	EXPECT_DOUBLE_EQ(10, bbox.xmin());
 	EXPECT_DOUBLE_EQ(8250, bbox.xmax());

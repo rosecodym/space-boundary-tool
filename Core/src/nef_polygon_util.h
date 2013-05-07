@@ -12,7 +12,6 @@ namespace util {
 
 nef_polygon_2	clean(const nef_polygon_2 & nef);
 nef_polygon_2	create_nef_polygon(polygon_2 poly);
-void			snap(nef_polygon_2 * from, const nef_polygon_2 & to);
 espoint_2		to_espoint(const point_2 & p);
 size_t			vertex_count(const nef_polygon_2 & nef);
 
