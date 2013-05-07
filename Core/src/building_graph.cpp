@@ -10,18 +10,6 @@ namespace traversal {
 
 namespace impl {
 
-const geometry_2d::area & bg_vertex_data::a() const {
-	struct v : public boost::static_visitor<const geometry_2d::area &> {
-		const geometry_2d::area & operator () (space_face * sf) const {
-			return sf->face_area();
-		}
-		const geometry_2d::area & operator () (const block * b) const {
-			return b->base_area();
-		}
-	};
-	return boost::apply_visitor(v(), data_);
-}
-
 double bg_vertex_data::thickness() const {
 	struct v : public boost::static_visitor<double> {
 		double operator () (space_face *) const { return 0; }
