@@ -94,9 +94,11 @@ oriented_area_groups nef_to_oriented_area_groups(const nef_polyhedron_3 & nef, e
 
 multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 	if (s.rep_type == REP_BREP) {
-		if (s.rep.as_brep.face_count < 4) {
-			throw bad_brep_exception();
-		}
+		if (s.rep.as_brep.face_count < 4) { throw bad_brep_exception(); }
+		// This next cutoff is kind of arbitrary. I picked 89 because the slab 
+		// I can't figure out right now has 90 faces.
+		else if (s.rep.as_brep.face_count > 89) { throw bad_brep_exception(); }
+
 		std::vector<simple_face> all_faces = faces_from_brep(s.rep.as_brep, c);
 		if (boost::find_if(all_faces, [](const simple_face & f) { return !f.inners().empty(); }) != all_faces.end()) {
 			// I've been insisting that breps are nef-able, but I can't for the
