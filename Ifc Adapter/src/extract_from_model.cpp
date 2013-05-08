@@ -2,11 +2,12 @@
 
 #include "model_operations.h"
 
-#include "add_element.h"
 #include "internal_geometry.h"
 #include "unit_scaler.h"
 
 namespace {
+
+using boost::optional;
 
 template <typename T>
 T ** create_list(size_t count) {
@@ -38,6 +39,43 @@ bool is_shading(const cppw::Instance & inst) {
 	return false;
 }
 
+optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_inst) {
+	cppw::Set fillsVoids = fen_inst.get("FillsVoids");
+	if (fillsVoids.count() == 1) {
+		cppw::Instance fillsVoid = fillsVoids.get_(0);
+		return (cppw::Instance)fillsVoid.get("RelatingOpeningElement");
+	}
+	else { return optional<cppw::Instance>(); }
+}
+
+boost::optional<direction_3> get_composite_dir(
+	const cppw::Instance & inst,
+	const direction_3 & axis1,
+	const direction_3 & axis2,
+	const direction_3 & axis3) 
+{
+	if (!inst.is_kind_of("IfcWindow")) {
+		cppw::Set relAssociates = inst.get("HasAssociations");
+		for (relAssociates.move_first(); relAssociates.move_next(); ) {
+			cppw::Instance rel = relAssociates.get_();
+			if (rel.is_kind_of("IfcRelAssociatesMaterial")) {
+				cppw::Instance relatingMat = rel.get("RelatingMaterial");
+				if (relatingMat.is_kind_of("IfcMaterialLayerSetUsage")) {
+					cppw::String dir = relatingMat.get("LayerSetDirection");
+					cppw::String sense = relatingMat.get("DirectionSense");
+					direction_3 res =
+						dir == "AXIS1" ? axis1 :
+						dir == "AXIS2" ? axis2 :
+										 axis3;
+					if (sense == "NEGATIVE") { res = -res; }
+					return res;
+				}
+			}
+		}
+	}
+	return optional<direction_3>();
+}
+
 size_t get_elements(
 	cppw::Open_model & model, 
 	element_info *** elements, 
@@ -55,6 +93,7 @@ size_t get_elements(
 	std::vector<direction_3> composite_dirs;
 
 	int next_element_id = 1;
+	char buf[256];
 
 	auto building_elements = model.get_set_of("IfcBuildingElement", cppw::include_subtypes);
 	for (building_elements.move_first(); building_elements.move_next(); ) {
@@ -69,34 +108,70 @@ size_t get_elements(
 			(elem.is_kind_of("IfcCovering") && elem.get("PredefinedType").is_set() && (cppw::String)elem.get("PredefinedType") == "CEILING") ? SLAB : UNKNOWN;
 		std::string guid(((cppw::String)elem.get("GlobalId")).data());
 		if (type != UNKNOWN && passes_filter(guid.c_str())) {
-			if (!is_shading(elem)) {
-				add_element(
-					&infos, 
-					&composite_dirs,
-					type, 
-					elem, 
-					msg_func, 
-					warn_func,
-					s, 
-					next_element_id++, 
-					c);
+			std::string guid = ((cppw::String)elem.get("GlobalId")).data();
+			sprintf(buf, "Extracting element %s...", guid.c_str());
+			msg_func(buf);
+			optional<cppw::Instance> effective_instance = elem;
+			if (type == WINDOW || type == DOOR) {
+				if (!(effective_instance = get_related_opening(elem))) {
+					sprintf(
+						buf,
+						"Door or window %s has no related opening. It will be "
+						"skipped.\n",
+						guid.c_str());
+					warn_func(buf);
+					continue;
+				}
 			}
-			else if (shadings != nullptr) {
-				add_element(
-					shadings, 
-					nullptr, 
-					type, 
-					elem, 
-					msg_func, 
-					warn_func, 
-					s, 
-					-1, 
+			bool element_is_shading = is_shading(elem);
+			std::unique_ptr<internal_geometry::solid> internal_geom;
+			solid interface_geom;
+			transformation_3 globalizer;
+			direction_3 composite_dir(0, 0, 0);
+			try {
+				internal_geom = internal_geometry::get_local_geometry(
+					*effective_instance,
+					s,
 					c);
+				globalizer = internal_geometry::get_globalizer(
+					*effective_instance,
+					s,
+					c);
+				internal_geom->transform(globalizer);
+				interface_geom = internal_geom->to_interface_solid();
+				if (!element_is_shading && internal_geom->axis1()) {
+					auto cdir_maybe = get_composite_dir(
+						elem,
+						*internal_geom->axis1(),
+						*internal_geom->axis2(),
+						*internal_geom->axis3());
+					if (cdir_maybe) { composite_dir = *cdir_maybe; }
+				}
 			}
+			catch (internal_geometry::bad_rep_exception & ex) {
+				sprintf(
+					buf, 
+					"Element %s could not be loaded (%s). It will be "
+					"skipped.\n",
+					guid.c_str(),
+					ex.what());
+				warn_func(buf);
+				continue;
+			}
+			element_info * info = (element_info *)malloc(sizeof(element_info));
+			strncpy(info->name, guid.c_str(), ELEMENT_NAME_MAX_LEN);
+			info->type = type;
+			info->geometry = interface_geom;
+			info->id = next_element_id++;
+			if (element_is_shading) { shadings->push_back(info); }
+			else {
+				infos.push_back(info);
+				composite_dirs.push_back(composite_dir);
+			}
+			msg_func("done.\n");
 		}
 	}
 
-	char buf[256];
 	sprintf(buf, "Creating list for %u elements.\n", infos.size());
 	msg_func(buf);
 	*elements = create_list<element_info>(infos.size());

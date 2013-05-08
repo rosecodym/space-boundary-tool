@@ -30,9 +30,6 @@
     <ClInclude Include="src\edm_wrapper.h">
       <Filter>edm</Filter>
     </ClInclude>
-    <ClInclude Include="src\add_element.h">
-      <Filter>operations</Filter>
-    </ClInclude>
     <ClInclude Include="src\util.h">
       <Filter>main</Filter>
     </ClInclude>
@@ -96,9 +93,6 @@
       <Filter>edm</Filter>
     </ClCompile>
     <ClCompile Include="src\extract_from_model.cpp">
-      <Filter>operations</Filter>
-    </ClCompile>
-    <ClCompile Include="src\add_element.cpp">
       <Filter>operations</Filter>
     </ClCompile>
     <ClCompile Include="src\add_to_model.cpp">
