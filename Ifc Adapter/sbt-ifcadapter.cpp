@@ -157,6 +157,15 @@ ifcadapter_return_t execute(
 			&ctxt,
 			&shadings);
 		if (res != IFCADAPT_OK) { return res; }
+
+		for (size_t i = 0; i < *element_count; ++i) {
+			if ((*elements)[i]->id - 1 >= (int)*element_count) {
+				opts.warn_func(
+					"Internal error: an element has an invalid ID. IDF "
+					"generation will likely fail.");
+			}
+		}
+
 		sbt_return_t generate_res = 
 			calculate_space_boundaries(
 				*element_count, 
@@ -167,6 +176,22 @@ ifcadapter_return_t execute(
 				sbs, 
 				opts);
 		if (generate_res == SBT_OK) {
+
+			element_id_t max_id = -1;
+			for (size_t i = 0; i < *sb_count; ++i) {
+				for (size_t j = 0; j < (*sbs)[i]->material_layer_count; ++j) {
+					if ((*sbs)[i]->layers[j] > max_id) {
+						max_id = (*sbs)[i]->layers[j];
+					}
+				}
+			}
+			if (max_id - 1 >= (int)*element_count) {
+				opts.warn_func(
+					"Internal error: A space boundary material layer "
+					"references an invalid element. IDF generation will "
+					"likely fail.\n");
+			}
+
 			if (output_filename != nullptr) {
 				clear_sbs(&model);
 				// add_to_model figures out the right spaces by re-extracting 

@@ -288,6 +288,13 @@ namespace Sbt
                 spaceBoundaries.Add(new CoreTypes.SpaceBoundary(native));
             }
 
+            System.Diagnostics.Debug.Assert(
+                !spaceBoundaries.Any(_ => true) ||
+                spaceBoundaries
+                .SelectMany(sb => sb.MaterialLayers)
+                .Select(layer => layer.Id).Max() - 1 <
+                compositeDirs.Count);
+
             CoreTypes.SpaceBoundary.LinkOpposites(spaceBoundaries);
             CoreTypes.SpaceBoundary.LinkContaining(spaceBoundaries);
             CoreTypes.SpaceBoundary.LinkSpaces(spaceBoundaries, spaces);

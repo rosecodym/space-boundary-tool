@@ -73,6 +73,12 @@ namespace GUI.Operations
                         p.NotifyMessage,
                         p.WarnMessage,
                         p.ErrorMessage);
+                    System.Diagnostics.Debug.Assert(
+                        !spaceBoundaries.Any(_ => true) ||
+                        spaceBoundaries
+                        .SelectMany(sb => sb.MaterialLayers)
+                        .Select(layer => layer.Id).Max() - 1 <
+                        compositeDirs.Count);
                     p.NotifyMessage("Space boundary calculation completed in " + GenerateTimeString(DateTime.Now - startTime) + ".\n");
                     SbtBuildingInformation resultingBuilding = new SbtBuildingInformation();
                     resultingBuilding.IfcFilename = p.InputFilename;
