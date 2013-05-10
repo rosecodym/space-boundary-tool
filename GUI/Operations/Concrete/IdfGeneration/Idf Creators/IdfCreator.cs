@@ -35,13 +35,15 @@ namespace GUI.Operations
 
             public static IdfCreator Build(EnergyPlusVersion version, Idd idd, Action<string> notify)
             {
+                Idf idf = new Idf(idd);
+                idf.SuspendReferenceUpdates();
                 if (version == EnergyPlusVersion.V710)
                 {
-                    return new IdfV710Creator(new Idf(idd), notify);
+                    return new IdfV710Creator(idf, notify);
                 }
                 else if (version == EnergyPlusVersion.V720)
                 {
-                    return new IdfV720Creator(new Idf(idd), notify);
+                    return new IdfV720Creator(idf, notify);
                 }
                 else
                 {
