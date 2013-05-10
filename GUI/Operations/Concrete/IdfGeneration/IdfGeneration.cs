@@ -25,6 +25,7 @@ namespace GUI.Operations
 {
     partial class IdfGeneration : Operation<IdfGeneration.Parameters, object> // no return
     {
+
         private Parameters GetParameters(ViewModel vm)
         {
             if (vm.CurrentIfcBuilding == null)
@@ -311,64 +312,36 @@ namespace GUI.Operations
         static private IDictionary<string, string> GatherZoneNamesByGuid(
             ICollection<IfcSpace> usedSpaces)
         {
-            IDictionary<string, string> res = new Dictionary<string, string>();
-
-            Func<string, bool> empty = s => String.IsNullOrWhiteSpace(s);
-
-            foreach (IfcSpace s in usedSpaces.Where(s => s.Zones.Count != 0))
+            var getName = new Func<IfcSpace, int, string>[]
             {
-                var z = s.Zones.First();
-                res[s.Guid] = empty(z.Name) ? z.Guid : z.Name;
-            }
+                (sp, _) => String.Format("{0} {1}", sp.LongName, sp.Name),
+                (sp, _) => sp.LongName,
+                (sp, _) => sp.Name,
+                (sp, x) => sp.Guid + new String('X', x)
+            };
 
-            var unassigned =
-                new List<IfcSpace>(usedSpaces.Where(s => s.Zones.Count == 0));
-
-            bool allLongNamesPresent = !unassigned.Any(s => empty(s.LongName));
-            if (allLongNamesPresent)
+            var usedNames = new HashSet<string>();
+            var bySpace = new Dictionary<IfcSpace, string>();
+            Func<string, bool> unacceptable = name =>
+                String.IsNullOrWhiteSpace(name) || usedNames.Contains(name);
+            foreach (IfcSpace sp in usedSpaces)
             {
-                var asLongNames = unassigned.Select(s => s.LongName.ToUpper());
-                if (asLongNames.Distinct().Count() == unassigned.Count)
+                int x = 0;
+                string attempt;
+                do
                 {
-                    foreach (IfcSpace s in unassigned)
-                    { 
-                        res[s.Guid] = s.LongName; 
-                    }
-                    return res;
+                    attempt = getName[x++ > 3 ? 3 : x](sp, x - 3).ToUpper();
                 }
+                while (unacceptable(attempt));
+                bySpace[sp] = attempt;
+                usedNames.Add(attempt);
             }
 
-            bool allNamesPresent = !unassigned.Any(s => empty(s.Name));
-            if (allNamesPresent)
+            var res = new Dictionary<string, string>(bySpace.Count);
+            foreach (var kvp in bySpace)
             {
-                var asNames = unassigned.Select(s => s.Name.ToUpper());
-                if (asNames.Distinct().Count() == unassigned.Count)
-                {
-                    foreach (IfcSpace s in unassigned)
-                    { 
-                        res[s.Guid] = s.Name; 
-                    }
-                }
+                res[kvp.Key.Guid] = kvp.Value;
             }
-
-            if (allNamesPresent && allLongNamesPresent)
-            {
-                Func<IfcSpace, string> combinedName = s =>
-                    String.Format("{0} {1}", s.LongName, s.Name).ToUpper();
-                var combined = unassigned.Select(combinedName);
-                if (combined.Distinct().Count() == unassigned.Count)
-                {
-                    foreach (IfcSpace s in unassigned) {
-                        res[s.Guid] = combinedName(s); 
-                    }
-                    return res;
-                }
-            }
-
-            // TODO: Check for case-sensitivity collisions. This is only a
-            // problem when there are GUIDs that vary only by case (thanks for
-            // that one, Revit.
-            foreach (IfcSpace s in unassigned) { res[s.Guid] = s.Guid; }
             return res;
         }
 
