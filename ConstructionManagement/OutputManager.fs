@@ -131,6 +131,18 @@ type OutputManager (warnDelegate : Action<string>) =
             // complain.)
             let c = retrieveModifiedComposite name layers None reversed
             upcast c
+        | SimpleBeforeComposite surfaceNormal cnorms (name, simple, comp) ->
+            let ct = Seq.nth 1 thicknesses
+            let sentry = retrieveCopy (Some(Seq.nth 0 thicknesses)) simple
+            let getLayer (entry, t) = retrieveCopy (Some(t)) entry
+            let clayers = (partial comp ct []) |> List.map getLayer
+            upcast retrieveConstruction (sentry :: clayers) (Some(name))
+        | SimpleAfterComposite surfaceNormal cnorms (name, simple, comp) ->
+            let ct = Seq.nth 0 thicknesses
+            let sentry = retrieveCopy (Some(Seq.nth 1 thicknesses)) simple
+            let getLayer (entry, t) = retrieveCopy (Some(t)) entry
+            let clayers = (partial comp ct []) |> List.map getLayer
+            upcast retrieveConstruction (clayers @ [sentry]) (Some(name))
         | TwoComposites surfaceNormal cnorms (name, comp1, comp2) ->
             let t1 = Seq.nth 0 thicknesses
             let t2 = Seq.nth 1 thicknesses
