@@ -25,9 +25,9 @@ type UnorientedComposite () =
 
 type UnknownProblemComposite () =
     inherit ProblemConstruction(
-        "There was an unkown problem automatically generating a construction. \
-         It has been assigned the construction name 'UNMAPPED'. You will have \
-         to create this construction manually.")
+        "There was an unknown problem automatically generating a \
+         construction. It has been assigned the construction name 'UNMAPPED'. \
+         You will have to create this construction manually.")
     override this.Name = "UNMAPPED"
     override this.IsVirtual = false
 
