@@ -82,21 +82,11 @@ type OutputManager (warnDelegate : Action<string>) =
             fromDepth |> List.map (fun (e, t) -> retrieveCopy (Some(t)) e)
         retrieveConstruction outputLayers origName
 
+    // For some reason, rewriting this point-free borks the autogeneralization.
     let getThickestLayer layers = Seq.maxBy snd layers |> fst
 
-    let dotproduct (ax, ay, az) (bx, by, bz) =
-        ax * bx + ay * by + az * bz
-    let magSq (d: float * float * float) = dotproduct d d
-    let magnitude d = sqrt (magSq d)
-    let areParallel a b = 
-        let lhs = dotproduct a b 
-        let rhs = (magnitude a) * (magnitude b)
-        abs(lhs - rhs) < 0.001  || abs(lhs + rhs) < 0.001 // magic eps
-    let areAntiparallel a b =
-        let ax, ay, az = a
-        let bx, by, bz = b
-        let sum = ax + bx, ay + by, az + bz
-        magSq sum < magSq a + magSq b
+    let areParallel = ModelConstruction.normalsParallel
+    let areAntiparallel = ModelConstruction.normalsAntiparallel
 
     member this.AllOutputLayers = layers :> IEnumerable<OutputLayer>
     member this.AllOutputConstructions =
@@ -109,9 +99,12 @@ type OutputManager (warnDelegate : Action<string>) =
         let emitProblemConstruction (c: ProblemConstruction) =
             warn c.Message
             c :> OutputConstructionBase
-        let cnorms = normals |> Seq.map (function
-            | 0.0, 0.0, 0.0 -> None
-            | n -> Some(n))
+        let cnorms = 
+            normals 
+            |> Seq.map (function
+                | 0.0, 0.0, 0.0 -> None
+                | n -> Some(n))
+            |> List.ofSeq
         match List.ofSeq constructions with
         | Empty | SingleAirSpace -> 
             let layer = retrieveLayer (OutputLayerInfraredTransparent())
@@ -124,7 +117,7 @@ type OutputManager (warnDelegate : Action<string>) =
             upcast retrieveConstruction outputLayers None
         | SingleComposite(name, layers) ->
             let reqThickness = Seq.head thicknesses
-            let compositeNorm = Seq.head cnorms
+            let compositeNorm = cnorms.[0]
             if compositeNorm.IsNone then
                 emitProblemConstruction (UnorientedComposite()) else
             if not (areParallel surfaceNormal compositeNorm.Value) then
@@ -138,6 +131,13 @@ type OutputManager (warnDelegate : Action<string>) =
             // complain.)
             let c = retrieveModifiedComposite name layers None reversed
             upcast c
+        | TwoComposites surfaceNormal cnorms (name, comp1, comp2) ->
+            let t1 = Seq.nth 0 thicknesses
+            let t2 = Seq.nth 1 thicknesses
+            let entries = (partial comp1 t1 []) @ (partial comp2 t2 [])
+            let getLayer (entry, t) = retrieveCopy (Some(t)) entry
+            upcast 
+                retrieveConstruction (List.map getLayer entries) (Some(name))
         | _ ->
             emitProblemConstruction (UnknownProblemComposite())
 

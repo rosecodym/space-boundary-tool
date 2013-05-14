@@ -60,3 +60,22 @@ let (|SimpleOnly|_|) (modelConstructions: ModelConstruction list) =
             Some(SimpleOnly(List.choose id asSimple))
         else None
     else None
+
+let (|TwoComposites|_|) snorm cnorms = function
+    | [LayerSet(firstName, firstLayers); LayerSet(secondName, secondLayers)] ->
+        let map (layers: (ModelMappingSource * double) list) cnorm =
+            let srcs, thicknesses = List.unzip layers
+            let mapped = srcs |> Seq.map (fun src -> src.MappingTarget)
+            let res = List.zip (List.ofSeq mapped) thicknesses
+            if ModelConstruction.normalsAntiparallel snorm cnorm
+                then List.rev res else res
+        let cnorm1, cnorm2 =
+            match cnorms with
+            | Some(a) :: Some(b) :: _ -> a, b
+            | _ -> failwith "improper cnorms list"
+        let name1 = defaultArg firstName "Unnamed composite"
+        let name2 = defaultArg secondName "unnamed composite"
+        Some(TwoComposites(name1 + "+" + name2,
+                           map firstLayers cnorm1, 
+                           map secondLayers cnorm2))
+    | _ -> None
