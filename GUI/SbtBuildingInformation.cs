@@ -17,5 +17,9 @@ namespace GUI
         public IList<SpaceInfo> Spaces { get; set; }
         public SpaceBoundaryCollection SpaceBoundaries { get; set; }
         public IList<Normal> CompositeDirections { get; set; }
+        public int PointCount { get; set; }
+        public int EdgeCount { get; set; }
+        public int FaceCount { get; set; }
+        public int SolidCount { get; set; }
     }
 }

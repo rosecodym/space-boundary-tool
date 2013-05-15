@@ -106,6 +106,52 @@ void notify(char * msg) {
 	g_opts.notify_func(msg);
 }
 
+void update_geometry_info(
+	int * curr_points, 
+	int * curr_edges,
+	int * curr_faces,
+	int * curr_solids,
+	const solid & s)
+{
+	if (s.rep_type == REP_BREP) {
+		*curr_faces = *curr_faces + s.rep.as_brep.face_count;
+	}
+	else {
+		const extruded_area_solid & ext = s.rep.as_ext;
+		*curr_faces = *curr_faces + ext.area.outer_boundary.vertex_count + 2;
+	}
+	*curr_solids = *curr_solids + 1;
+}
+
+void gather_geometry_info(
+	int * total_points,
+	int * total_edges,
+	int * total_faces,
+	int * total_solids,
+	size_t element_count,
+	element_info ** elements,
+	size_t space_count,
+	space_info ** spaces)
+{
+	*total_points = *total_edges = *total_faces = *total_solids = 0;
+	for (size_t i = 0; i < element_count; ++i) {
+		update_geometry_info(
+			total_points,
+			total_edges,
+			total_faces,
+			total_solids,
+			elements[i]->geometry);
+	}	
+	for (size_t i = 0; i < space_count; ++i) {
+		update_geometry_info(
+			total_points,
+			total_edges,
+			total_faces,
+			total_solids,
+			spaces[i]->geometry);
+	}
+}
+
 } // namespace
 
 ifcadapter_return_t execute(
@@ -120,7 +166,11 @@ ifcadapter_return_t execute(
 	size_t * space_count,
 	space_info *** spaces,
 	size_t * sb_count,
-	space_boundary *** sbs)
+	space_boundary *** sbs,
+	int * total_points,
+	int * total_edges,
+	int * total_faces,
+	int * total_solids)
 {
 	typedef boost::format fmt;
 	try {
@@ -157,6 +207,15 @@ ifcadapter_return_t execute(
 			&ctxt,
 			&shadings);
 		if (res != IFCADAPT_OK) { return res; }
+		gather_geometry_info(
+			total_points,
+			total_edges,
+			total_faces,
+			total_solids,
+			*element_count,
+			*elements,
+			*space_count,
+			*spaces);
 
 		for (size_t i = 0; i < *element_count; ++i) {
 			if ((*elements)[i]->id - 1 >= (int)*element_count) {

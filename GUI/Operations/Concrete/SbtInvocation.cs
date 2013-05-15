@@ -59,6 +59,10 @@ namespace GUI.Operations
                     ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
                     ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
                     var startTime = System.DateTime.Now;
+                    int pointCount;
+                    int edgeCount;
+                    int faceCount;
+                    int solidCount;
                     Sbt.EntryPoint.CalculateSpaceBoundariesFromIfc(
                         p.InputFilename,
                         p.OutputFilename,
@@ -66,6 +70,10 @@ namespace GUI.Operations
                         out compositeDirs,
                         out spaces,
                         out spaceBoundaries,
+                        out pointCount,
+                        out edgeCount,
+                        out faceCount,
+                        out solidCount,
                         p.Flags,
                         0.5,
                         p.SpaceGuidFilter,
@@ -86,6 +94,10 @@ namespace GUI.Operations
                     resultingBuilding.Spaces = new List<Sbt.CoreTypes.SpaceInfo>(spaces);
                     resultingBuilding.SpaceBoundaries = new SpaceBoundaryCollection(spaceBoundaries);
                     resultingBuilding.CompositeDirections = compositeDirs;
+                    resultingBuilding.PointCount = pointCount;
+                    resultingBuilding.EdgeCount = edgeCount;
+                    resultingBuilding.FaceCount = faceCount;
+                    resultingBuilding.SolidCount = solidCount;
                     return resultingBuilding;
                 }
                 catch (Exception ex)

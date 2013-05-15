@@ -81,6 +81,26 @@ namespace GUI
             }
         }
 
+        public int LastModelPointCount
+        {
+            get { return sbtBuilding.PointCount; }
+        }
+
+        public int LastModelEdgeCount
+        {
+            get { return sbtBuilding.EdgeCount; }
+        }
+
+        public int LastModelFaceCount
+        {
+            get { return sbtBuilding.FaceCount; }
+        }
+
+        public int LastModelSolidCount
+        {
+            get { return sbtBuilding.SolidCount; }
+        }
+
         public SbtBuildingInformation CurrentSbtBuilding
         {
             get { return sbtBuilding; }
@@ -434,7 +454,27 @@ namespace GUI
                     }
                 },
                 new { Dependent = "AvailableStartDays", DependentOn = new[] { "StartMonth" } },
-                new { Dependent = "AvailableEndDays", DependentOn = new[] { "EndMonth" } }
+                new 
+                { 
+                    Dependent = "AvailableEndDays", 
+                    DependentOn = new[] { "EndMonth" } 
+                },
+                new { 
+                    Dependent = "LastModelPointCount",
+                    DependentOn = new [] { "CurrentSbtBuilding" }
+                },
+                new { 
+                    Dependent = "LastModelEdgeCount",
+                    DependentOn = new [] { "CurrentSbtBuilding" }
+                },
+                new { 
+                    Dependent = "LastModelFaceCount",
+                    DependentOn = new [] { "CurrentSbtBuilding" }
+                },
+                new { 
+                    Dependent = "LastModelSolidCount",
+                    DependentOn = new [] { "CurrentSbtBuilding" }
+                }
             };
 
             PropertyChanged += (_, args) =>

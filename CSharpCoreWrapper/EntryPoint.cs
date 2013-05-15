@@ -49,7 +49,11 @@ namespace Sbt
             out uint spaceCount,
             out IntPtr spaces,
             out uint sbCount,
-            out IntPtr spaceBoundaries);
+            out IntPtr spaceBoundaries,
+            out int totalPoints,
+            out int totalEdges,
+            out int totalFaces,
+            out int totalSolids);
 
         [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "release_elements")]
         private static extern void FreeElements(IntPtr elements, uint count);
@@ -154,6 +158,10 @@ namespace Sbt
             out IList<Tuple<double, double, double>> compositeDirs,
             out ICollection<CoreTypes.SpaceInfo> spaces,
             out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
+            out int pointCount,
+            out int edgeCount,
+            out int faceCount,
+            out int solidCount,
             SbtFlags flags = SbtFlags.None,
             double maxPairDistanceInMeters = 0.5,
             IEnumerable<string> spaceFilter = null,
@@ -228,7 +236,11 @@ namespace Sbt
                 out spaceCount,
                 out nativeSpaces,
                 out spaceBoundaryCount, 
-                out nativeSbs);
+                out nativeSbs,
+                out pointCount,
+                out edgeCount,
+                out faceCount,
+                out solidCount);
 
             if (res == IfcAdapterResult.EdmError)
             {
