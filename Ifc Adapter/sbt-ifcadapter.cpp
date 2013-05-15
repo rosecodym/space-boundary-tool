@@ -122,21 +122,30 @@ void update_geometry_info(
 
 	if (s.rep_type == REP_BREP) {
 		const brep & b = s.rep.as_brep;
+		std::set<point, pntcmp> pts;
 		int halfedge_count = 0;
 		for (size_t i = 0; i < b.face_count; ++i) {
-			halfedge_count += b.faces[i].outer_boundary.vertex_count;
+			const face & f = b.faces[i];
+			for (size_t j = 0; j < f.outer_boundary.vertex_count; ++j) {
+				pts.insert(f.outer_boundary.vertices[j]);
+			}
+			halfedge_count += f.outer_boundary.vertex_count;
 		}
+		*curr_points = *curr_points + pts.size();
 		*curr_edges = *curr_edges + halfedge_count / 2;
 		*curr_faces = *curr_faces + b.face_count;
 	}
 	else {
 		const extruded_area_solid & ext = s.rep.as_ext;
+		int point_count = ext.area.outer_boundary.vertex_count * 2;
 		int edge_count = ext.area.outer_boundary.vertex_count * 3;
 		int face_count = ext.area.outer_boundary.vertex_count + 2;
 		for (size_t i = 0; i < ext.area.void_count; ++i) {
+			point_count += ext.area.voids[i].vertex_count * 2;
 			edge_count += ext.area.voids[i].vertex_count * 3;
 			face_count += ext.area.voids[i].vertex_count;
 		}
+		*curr_points = *curr_points + point_count;
 		*curr_edges = *curr_edges + edge_count;
 		*curr_faces = *curr_faces + face_count;
 	}
