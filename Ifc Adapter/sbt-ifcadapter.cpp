@@ -113,12 +113,32 @@ void update_geometry_info(
 	int * curr_solids,
 	const solid & s)
 {
+	struct pntcmp : public std::binary_function<point, point, bool> {
+		bool operator () (const point & a, const point & b) const {
+			if (a.x == b.x) { return a.y == b.y ? a.z < b.z : a.y < b.y; }
+			else { return a.x < b.x; }
+		}
+	};
+
 	if (s.rep_type == REP_BREP) {
-		*curr_faces = *curr_faces + s.rep.as_brep.face_count;
+		const brep & b = s.rep.as_brep;
+		int halfedge_count = 0;
+		for (size_t i = 0; i < b.face_count; ++i) {
+			halfedge_count += b.faces[i].outer_boundary.vertex_count;
+		}
+		*curr_edges = *curr_edges + halfedge_count / 2;
+		*curr_faces = *curr_faces + b.face_count;
 	}
 	else {
 		const extruded_area_solid & ext = s.rep.as_ext;
-		*curr_faces = *curr_faces + ext.area.outer_boundary.vertex_count + 2;
+		int edge_count = ext.area.outer_boundary.vertex_count * 3;
+		int face_count = ext.area.outer_boundary.vertex_count + 2;
+		for (size_t i = 0; i < ext.area.void_count; ++i) {
+			edge_count += ext.area.voids[i].vertex_count * 3;
+			face_count += ext.area.voids[i].vertex_count;
+		}
+		*curr_edges = *curr_edges + edge_count;
+		*curr_faces = *curr_faces + face_count;
 	}
 	*curr_solids = *curr_solids + 1;
 }
