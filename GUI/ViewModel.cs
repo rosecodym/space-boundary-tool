@@ -28,6 +28,8 @@ namespace GUI
         readonly Action<Operations.OperationStatus> updateStatusDisplay = _ => { };
 
         bool debugOptionsAvailable = false;
+        long lastPeakWorkingSet = 0;
+        string lastSBCalcTime = String.Empty;
 
         SbtBuildingInformation sbtBuilding;
         IfcBuildingInformation ifcBuilding;
@@ -56,6 +58,26 @@ namespace GUI
             {
                 debugOptionsAvailable = value;
                 Updated("DebugOptionsAvailable");
+            }
+        }
+
+        public long LastPeakWorkingSet
+        {
+            get { return lastPeakWorkingSet; }
+            set
+            {
+                lastPeakWorkingSet = value;
+                Updated("LastPeakWorkingSet");
+            }
+        }
+
+        public string LastSBCalcTime
+        {
+            get { return lastSBCalcTime; }
+            set
+            {
+                lastSBCalcTime = value;
+                Updated("LastSBCalcTime");
             }
         }
 
