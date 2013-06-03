@@ -133,13 +133,13 @@
       <Project>{B08D640C-794E-486E-9B61-3790D4FA0D97}</Project>
       <Name>ConstructionManagement</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CSharpCoreWrapper\ManagedWrapper.csproj">
+    <ProjectReference Include="..\Core Managed Wrapper\Core Managed Wrapper.csproj">
       <Project>{2B180C45-2DA1-4C26-9850-F92B9369D626}</Project>
-      <Name>ManagedWrapper</Name>
+      <Name>Core Managed Wrapper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IfcInformationExtractor\IfcInformationExtractor.vcxproj">
+    <ProjectReference Include="..\EDM Managed Wrapper\EDM Managed Wrapper.vcxproj">
       <Project>{C30F68F1-3D01-419D-A925-05D517906CC0}</Project>
-      <Name>IfcInformationExtractor</Name>
+      <Name>EDM Managed Wrapper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

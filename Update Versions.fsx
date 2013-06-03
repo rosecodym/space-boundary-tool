@@ -39,9 +39,9 @@ let cases = [
      "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
     ("Ifc Adapter/src", "add_to_model.cpp", 
      "app\.put\(\"Version\", \"", "\"\);", false)
-    ("IfcInformationExtractor", "AssemblyInfo.cpp", 
+    ("EDM Managed Wrapper", "AssemblyInfo.cpp", 
      "\[assembly:AssemblyVersionAttribute\(\"", "\"\)\];", true)
-    ("CSharpCoreWrapper/Properties", "AssemblyInfo.cs", 
+    ("Core Managed Wrapper/Properties", "AssemblyInfo.cs", 
      "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
     ]
 
