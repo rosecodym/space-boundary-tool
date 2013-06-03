@@ -34,7 +34,8 @@ namespace GUI
             {
                 writer.Write(resources[version]);
             }
-            loaded[version] = new Idd(filename, warn);
+            loaded[version] = new Idd(filename);
+            foreach (var w in loaded[version].Warnings) { warn(w); }
             File.Delete(filename);
         }
 
