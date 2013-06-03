@@ -33,12 +33,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_29B722FA30974CB181D0C3D50D9CB417"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_32CFDC8CC4CB5B7BDA0AADB71801A806"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
         "MsmSig" = "8:_UNDEFINED"
@@ -71,12 +65,6 @@
         {
         "MsmKey" = "8:_603184890994A476E3CA19B344A8E788"
         "OwnerKey" = "8:_A0B7928A50CB4C8197B788BDCD8095DE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6168E41675F04E8AB8A4C5369543A13F"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -294,26 +282,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_29B722FA30974CB181D0C3D50D9CB417"
-            {
-            "SourcePath" = "8:..\\GUI\\bin\\Release\\IddParser.dll"
-            "TargetName" = "8:IddParser.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_531C661FED394C5DB2BE0935C055FCD9"
             {
             "SourcePath" = "8:..\\GUI\\bin\\Release\\edmikit500.dll"
@@ -338,26 +306,6 @@
             {
             "SourcePath" = "8:C:\\Algorithmic Solutions\\LEDA-6.3-free-win32-msc10-std-multithread\\leda_md.dll"
             "TargetName" = "8:leda_md.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6168E41675F04E8AB8A4C5369543A13F"
-            {
-            "SourcePath" = "8:..\\GUI\\bin\\Release\\IdfParser.dll"
-            "TargetName" = "8:IdfParser.dll"
             "Tag" = "8:"
             "Folder" = "8:_6C323D11EFA94F86AEAE2C152EE84C12"
             "Condition" = "8:"
