@@ -21537,6 +21537,7 @@ HVACTemplate:Zone:PTHP,
       \minimum> 0.0
       \autosizable
       \default autosize
+      \units W
  N16, \field Heat Pump Heating Coil Rated COP
       \note Heat Pump Heating Coil Rated Capacity divided by power input to the compressor and outdoor fan,
       \note Does not include supply air fan heat or supply air fan electrical energy
@@ -22113,6 +22114,7 @@ HVACTemplate:Zone:WaterToAirHeatPump,
       \minimum> 0.0
       \autosizable
       \default autosize
+      \units W
  N16, \field Heat Pump Heating Coil Rated COP
       \note Heat Pump Heating Coil Rated Capacity divided by power input to the compressor and outdoor fan,
       \note does not include supply air fan heat or supply air fan electrical energy
@@ -22559,6 +22561,7 @@ HVACTemplate:System:UnitaryHeatPump:AirToAir,
       \minimum> 0.0
       \autosizable
       \default autosize
+      \units W
  N14, \field Heat Pump Heating Coil Rated COP
       \note Heat Pump Heating Coil Rated Capacity divided by power input to the compressor and outdoor fan,
       \note does not include supply air fan heat or supply air fan electrical energy.
@@ -25029,6 +25032,7 @@ ZoneHVAC:IdealLoadsAirSystem,
        \key LimitFlowRate
        \key LimitCapacity
        \key LimitFlowRateAndCapacity
+       \default NoLimit
        \default NoLimit
   N5 , \field Maximum Heating Air Flow Rate
        \note This field is ignored if Heating Limit = NoLimit
@@ -60884,7 +60888,7 @@ Curve:QuadLinear,
        \required-field
        \type real
        \unitsBasedOnField A3
-  N11 , \field Minimum Value of y
+  N11, \field Minimum Value of y
        \required-field
        \type real
        \unitsBasedOnField A4
@@ -76236,5 +76240,3 @@ Output:PreprocessorMessage,
         \retaincase
    A12; \field Message Line 10
         \retaincase
-
-
