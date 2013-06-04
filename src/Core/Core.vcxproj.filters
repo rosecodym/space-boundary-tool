@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="types">
+      <UniqueIdentifier>{f5019ef5-e3a2-4a87-829c-dc9b5d5f5188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{69c3c15f-2dc2-4450-9ea8-145d5f8c8bd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations">
+      <UniqueIdentifier>{2d2a4be8-2a73-4950-a05f-df09eb8f5e75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry">
+      <UniqueIdentifier>{1a191f61-9d72-445f-b4f1-58785fe2e374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\blocking">
+      <UniqueIdentifier>{bc60402f-29cd-4aa0-a2b7-bf2658b6988a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry\geometry_2d">
+      <UniqueIdentifier>{4be45817-fc17-464d-b230-9c0f7f999346}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry\solid_geometry">
+      <UniqueIdentifier>{d4b9ce15-03dc-4543-ac7f-90bf6051ab49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\element loading">
+      <UniqueIdentifier>{1a26a81e-3dcc-413b-b0d8-0c21c06ec17a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\space loading">
+      <UniqueIdentifier>{fada8317-382e-4dbc-86e8-a85662ea0bee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\opening assignment">
+      <UniqueIdentifier>{70403e83-00e7-4636-8256-97ab8842638a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\conversion to interface">
+      <UniqueIdentifier>{ebc714fb-ddd0-4c65-99bb-7915e67dc8bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry\geometry_2d\nef_polygons">
+      <UniqueIdentifier>{029e96c7-6144-4eb7-bfaa-cfc84913dd06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry\common">
+      <UniqueIdentifier>{ba376630-5ea6-4d3d-91a0-3fc47d4c04cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reporting">
+      <UniqueIdentifier>{a0d94793-58df-4382-9721-d16cef32f412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="operations\traversal">
+      <UniqueIdentifier>{642dd4f1-51e0-4cf4-a63d-6f1acd8ebe63}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\precompiled.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CreateGuid_64.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sbt-core.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\equality_context.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\one_dimensional_equality_context.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\polygon_with_holes_3.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\orientation.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\oriented_area.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\space.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\element.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\guid_filter.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\build_blocks.h">
+      <Filter>operations\blocking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\surface_pair.h">
+      <Filter>operations\blocking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\is_right_cuboid.h">
+      <Filter>operations\blocking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\is_hexahedral_prismatoid.h">
+      <Filter>operations\blocking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\halfblocks_for_base.h">
+      <Filter>operations\blocking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\area.h">
+      <Filter>geometry\geometry_2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\polygon_with_holes_2.h">
+      <Filter>geometry\geometry_2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simple_face.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiview_solid.h">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\poly_builder.h">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solid_geometry_common.h">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\link_halfblocks.h">
+      <Filter>operations\blocking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\load_elements.h">
+      <Filter>operations\element loading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\block.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\layer_information.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\load_spaces.h">
+      <Filter>operations\space loading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\surface.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\assign_openings.h">
+      <Filter>operations\opening assignment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exceptions.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\convert_to_space_boundaries.h">
+      <Filter>operations\conversion to interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrapped_nef_polygon.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nef_polygon_util.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nef_polygon_face.h">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_common.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cleanup_loop.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flatten.h">
+      <Filter>geometry\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stringification.h">
+      <Filter>reporting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\report.h">
+      <Filter>reporting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solid_geometry_util.h">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="src\building_graph.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\space_face.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\extend_path.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\identify_transmission.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transmission_information.h">
+      <Filter>types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vertex_wrapper.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bg_path.h">
+      <Filter>operations\traversal</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\sbt-core.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\precompiled.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CreateGuid_64.c">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c-test.c">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\equality_context.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\one_dimensional_equality_context.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\orientation.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oriented_area.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\guid_filter.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\area.cpp">
+      <Filter>geometry\geometry_2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polygon_with_holes_2.cpp">
+      <Filter>geometry\geometry_2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simple_face.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\multiview_solid.cpp">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\surface_pair.cpp">
+      <Filter>operations\blocking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\load_elements.cpp">
+      <Filter>operations\element loading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\build_blocks.cpp">
+      <Filter>operations\blocking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\convert_to_space_boundaries.cpp">
+      <Filter>operations\conversion to interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrapped_nef_polygon.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nef_polygon_face.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nef_polygon_util.cpp">
+      <Filter>geometry\geometry_2d\nef_polygons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_common.cpp">
+      <Filter>geometry\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flatten.cpp">
+      <Filter>geometry\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stringification.cpp">
+      <Filter>reporting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solid_geometry_util.cpp">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polygon_with_holes_3.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\building_graph.cpp">
+      <Filter>operations\traversal</Filter>
+    </ClCompile>
+    <ClCompile Include="src\extend_path.cpp">
+      <Filter>operations\traversal</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vertex_wrapper.cpp">
+      <Filter>operations\traversal</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assign_openings.cpp">
+      <Filter>operations\opening assignment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\poly_builder.cpp">
+      <Filter>geometry\solid_geometry</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

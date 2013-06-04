@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\CreateGuid_64.h" />
+    <ClInclude Include="src\edm_wrapper.h" />
+    <ClInclude Include="src\exact_surrogates.h" />
+    <ClInclude Include="src\geometry_common.h" />
+    <ClInclude Include="src\get_length_units_per_meter.h" />
+    <ClInclude Include="src\ifc-to-cgal.h" />
+    <ClInclude Include="src\ifc-to-face.h" />
+    <ClInclude Include="src\model_operations.h" />
+    <ClInclude Include="src\number_collection.h" />
+    <ClInclude Include="src\one_dimensional_equality_context.h" />
+    <ClInclude Include="src\precompiled.h" />
+    <ClInclude Include="src\reassign_bounded_spaces.h" />
+    <ClInclude Include="src\release.h" />
+    <ClInclude Include="src\sbt-ifcadapter.h" />
+    <ClInclude Include="src\internal_geometry.h" />
+    <ClInclude Include="src\unit_scaler.h" />
+    <ClInclude Include="src\util.h" />
+    <ClInclude Include="src\wrapped_nef_operations.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\add_to_model.cpp" />
+    <ClCompile Include="src\c-test.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\CreateGuid_64.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\edm_wrapper.cpp" />
+    <ClCompile Include="src\exact_surrogates.cpp" />
+    <ClCompile Include="src\extract_from_model.cpp" />
+    <ClCompile Include="src\get_length_units_per_meter.cpp" />
+    <ClCompile Include="src\ifc-to-face.cpp" />
+    <ClCompile Include="src\internal_geometry.cpp" />
+    <ClCompile Include="src\precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\reassign_bounded_spaces.cpp" />
+    <ClCompile Include="src\release.cpp" />
+    <ClCompile Include="src\sbt-ifcadapter.cpp" />
+    <ClCompile Include="src\unit_scaler.cpp" />
+    <ClCompile Include="src\wrapped_nef_operations.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.vcxproj">
+      <Project>{68821491-76e6-4090-b7a8-fa8c329fa2db}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="schema.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\LBNL\IFC2X3_final.exp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D703A763-8163-4B2E-A5E9-DECD31AE18C4}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>IfcAdapter</RootNamespace>
+    <ProjectName>Ifc Adapter</ProjectName>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Dependencies.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Dependencies.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>SBT-IFC</TargetName>
+    <OutDir>$(SolutionDir)\..\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>SBT-IFC</TargetName>
+    <OutDir>$(SolutionDir)\..\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;CGAL_NO_AUTOLINK_GMP;CGAL_NO_AUTOLINK_MPFR;CGAL_USE_LEDA;CGAL_LEDA_VERSION=630;LEDA_DLL;LEDA_DLL;CGAL_LEDA_VERSION=630;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl;$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4503;4512</DisableSpecificWarnings>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\dependencies\lib;$(BoostDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(LedaDir)\leda_mdd.lib;$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>for %%I in ("$(BoostDir)\lib\boost_thread-vc100-mt-gd-1_47.dll" "$(SolutionDir)\..\dependencies\lib\CGAL-vc100-mt-gd-4.1.dll" "$(LedaDir)\leda_mdd.dll" "$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
+do copy %%I "$(OutDir)"</Command>
+      <Message>Copying runtime libraries to output directory</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;CGAL_NO_AUTOLINK_GMP;CGAL_NO_AUTOLINK_MPFR;CGAL_USE_LEDA;CGAL_LEDA_VERSION=630;LEDA_DLL;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl;$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4503;4512</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\dependencies\lib;$(BoostDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(LedaDir)\leda_md.lib;$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ShowProgress>NotSet</ShowProgress>
+    </Link>
+    <PostBuildEvent>
+      <Command>for %%I in ("$(BoostDir)\lib\boost_thread-vc100-mt-1_47.dll" "$(SolutionDir)\..\dependencies\lib\CGAL-vc100-mt-4.1.dll" "$(LedaDir)\leda_md.dll" "$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
+do copy %%I "$(OutDir)"</Command>
+      <Message>Copying runtime libraries to output directory</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -32,3 +32,4 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 run.bat
 stacks.txt
+*.props
