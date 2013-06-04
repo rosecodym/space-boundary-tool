@@ -1,0 +1,1 @@
+Space Boundary Tool (version 1) is available under various license agreements, the text of which are available in the licenses/ directory of this distribution. All licenses are granted free of charge except for the commercial source code license. Contact sbt-support@lbl.gov with any questions.
