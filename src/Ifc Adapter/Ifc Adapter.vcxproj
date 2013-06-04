@@ -114,7 +114,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;CGAL_NO_AUTOLINK_GMP;CGAL_NO_AUTOLINK_MPFR;CGAL_USE_LEDA;CGAL_LEDA_VERSION=630;LEDA_DLL;LEDA_DLL;CGAL_LEDA_VERSION=630;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl;$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
@@ -140,7 +140,7 @@ do copy %%I "$(OutDir)"</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;CGAL_NO_AUTOLINK_GMP;CGAL_NO_AUTOLINK_MPFR;CGAL_USE_LEDA;CGAL_LEDA_VERSION=630;LEDA_DLL;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl;$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>

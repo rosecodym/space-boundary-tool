@@ -1,5 +1,8 @@
 #pragma once
 
+#define CGAL_LEDA_VERSION 630
+#define LEDA_DLL
+
 #pragma warning (push,1)
 #pragma warning (disable:4005) // macro redefinition
 #pragma warning (disable:4293) // shift count negative or too big
