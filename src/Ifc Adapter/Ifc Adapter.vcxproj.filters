@@ -132,6 +132,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\LBNL\IFC2X3_final.exp" />
+    <None Include="..\..\res\IFC2X3_final.exp">
+      <Filter>resources</Filter>
+    </None>
   </ItemGroup>
 </Project>
