@@ -58,7 +58,8 @@
       <PreprocessorDefinitions>SBT_CORE_EXPORTS;WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;CGAL_NO_AUTOLINK_GMP;CGAL_NO_AUTOLINK_MPFR;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <ExceptionHandling>Async</ExceptionHandling>
@@ -89,7 +90,8 @@ do copy %%I "$(OutDir)"</Command>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4503; 4800</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <AdditionalOptions>%(AdditionalOptions) -Zm169</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>Async</ExceptionHandling>

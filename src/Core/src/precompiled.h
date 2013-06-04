@@ -10,6 +10,7 @@
 // All MSVC warnings. Arguably these shouldn't be in source but this way I can
 // notate what they actually do.
 #pragma warning (disable:4018) // signed/unsigned mismatch
+#pragma warning (disable:4503) // decorated name length exceeded
 #pragma warning (disable:4512) // assignment operator could not be generated
 
 #pragma warning (push,1)
