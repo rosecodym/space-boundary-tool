@@ -44,7 +44,7 @@
 
 //#define CGAL_USE_GMPXX 1
 
-//#define CGAL_USE_LEDA 1
+#define CGAL_USE_LEDA 1
 
 //#define CGAL_USE_MPFI 1
 
@@ -55,6 +55,4 @@
 #define CGAL_BUILD_SHARED_LIBS 1
 
 //#define CGAL_USE_CORE 1
-
-#define CGAL_HAS_IMAGEIO 1
 

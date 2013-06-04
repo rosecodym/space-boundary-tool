@@ -3,7 +3,6 @@
 // Do NOT enable this, CGAL 4.1 (nef polyhedra specifically) breaks if you do.
 //#define BOOST_RESULT_OF_USE_DECLTYPE
 
-#define CGAL_USE_LEDA
 #define CGAL_LEDA_VERSION 630
 #define LEDA_DLL
 
