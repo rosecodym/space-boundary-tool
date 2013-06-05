@@ -51,19 +51,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4FF7C3FAD5A44223BF70675D66D1F276"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6003DAF1FC9348C192F050F8EEFFAA16"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_800B959A3FCB4A2CA1F8D2B096E278BC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -77,12 +65,6 @@
         {
         "MsmKey" = "8:_855303E670804ADDB2A792088CEBDE69"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_897A35271083E976ACAC54B50B1479BF"
-        "OwnerKey" = "8:_BADBBC679B9AA46B7BC694BEF5DB8EDE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -118,12 +100,6 @@
         "Entry"
         {
         "MsmKey" = "8:_B686617ECB1424885D6726172A7D34B4"
-        "OwnerKey" = "8:_897A35271083E976ACAC54B50B1479BF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B686617ECB1424885D6726172A7D34B4"
         "OwnerKey" = "8:_9B06D276DB8D5632E92755F20A51AD2D"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -143,12 +119,6 @@
         {
         "MsmKey" = "8:_D06D9F56ACE38780C84899B49ED78E0E"
         "OwnerKey" = "8:_966AF3F7AECE40B99FA5B5DFA4434E97"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D06D9F56ACE38780C84899B49ED78E0E"
-        "OwnerKey" = "8:_897A35271083E976ACAC54B50B1479BF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -177,6 +147,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F9AF20C9D55B4E1AB1B85A462917CA73"
+        "OwnerKey" = "8:_82877DD6FE324CD9AAD771F34A6D49FF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_D06D9F56ACE38780C84899B49ED78E0E"
         "MsmSig" = "8:_UNDEFINED"
@@ -191,12 +167,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_BADBBC679B9AA46B7BC694BEF5DB8EDE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_897A35271083E976ACAC54B50B1479BF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -416,6 +386,11 @@
             "AssemblyAsmDisplayName" = "8:SBTWrapper, Version=1.5.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_4377C30B15E672D8BA4263049F263527"
+                    {
+                    "Name" = "8:SBTWrapper.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:SBTWrapper.dll"
             "TargetName" = "8:"
@@ -435,50 +410,10 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4FF7C3FAD5A44223BF70675D66D1F276"
-            {
-            "SourcePath" = "8:..\\..\\bin\\Release\\CGAL-vc100-mt-4.1.dll"
-            "TargetName" = "8:CGAL-vc100-mt-4.1.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_787DA585257342A68F93DFD1A011860A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6003DAF1FC9348C192F050F8EEFFAA16"
             {
             "SourcePath" = "8:..\\..\\bin\\Release\\leda_md.dll"
             "TargetName" = "8:leda_md.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_787DA585257342A68F93DFD1A011860A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_800B959A3FCB4A2CA1F8D2B096E278BC"
-            {
-            "SourcePath" = "8:..\\..\\bin\\Release\\boost_thread-vc100-mt-1_47.dll"
-            "TargetName" = "8:boost_thread-vc100-mt-1_47.dll"
             "Tag" = "8:"
             "Folder" = "8:_787DA585257342A68F93DFD1A011860A"
             "Condition" = "8:"
@@ -513,37 +448,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_897A35271083E976ACAC54B50B1479BF"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ConstructionManagement, Version=1.5.7.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_897A35271083E976ACAC54B50B1479BF"
-                    {
-                    "Name" = "8:ConstructionManagement.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:ConstructionManagement.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_787DA585257342A68F93DFD1A011860A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9B06D276DB8D5632E92755F20A51AD2D"
@@ -767,7 +671,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
         "ProductCode" = "8:{1201DAFE-6374-475B-914A-15ACD422FD16}"
-        "PackageCode" = "8:{654E6CBD-D0FB-4658-A0AB-500F2D263216}"
+        "PackageCode" = "8:{4727C083-908C-437E-94EB-5EAB6D18F670}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

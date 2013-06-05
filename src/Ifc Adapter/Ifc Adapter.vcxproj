@@ -158,7 +158,7 @@ do copy %%I "$(OutDir)"</Command>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PostBuildEvent>
-      <Command>for %%I in ("$(BoostDir)\lib\boost_thread-vc100-mt-1_47.dll" "$(SolutionDir)\..\dependencies\lib\CGAL-vc100-mt-4.1.dll" "$(LedaDir)\leda_md.dll" "$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
+      <Command>for %%I in ("$(LedaDir)\leda_md.dll" "$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
 do copy %%I "$(OutDir)"</Command>
       <Message>Copying runtime libraries to output directory</Message>
     </PostBuildEvent>

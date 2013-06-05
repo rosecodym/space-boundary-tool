@@ -52,7 +52,7 @@
 
 //#define CGAL_USE_NTL 1
 
-#define CGAL_BUILD_SHARED_LIBS 1
+//#define CGAL_BUILD_SHARED_LIBS 1
 
 //#define CGAL_USE_CORE 1
 
