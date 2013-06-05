@@ -55,7 +55,7 @@ bool is_right_cuboid(
 
 		auto distance = [&](size_t ix) -> double {
 			auto & pair = surf_rels[*blocks[ix].first][*blocks[ix].second];
-			NT dist = abs(pair.base().height() - pair.other().height());
+			NT dist = CGAL::abs(pair.base().height() - pair.other().height());
 			return CGAL::to_double(dist);
 		};
 
