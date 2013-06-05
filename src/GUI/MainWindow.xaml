@@ -245,17 +245,19 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Label Content="Output IDF:" Height="28" HorizontalAlignment="Left" Margin="0" Name="label13" VerticalAlignment="Center" />
                         <TextBox Grid.Column="1" Grid.ColumnSpan="1" Height="23" HorizontalAlignment="Stretch" Margin="0" Name="textBox2" VerticalAlignment="Center" Width="Auto" Text="{Binding OutputIdfFilePath}" PreviewDragEnter="TextBox_PreviewDrag" PreviewDragOver="TextBox_PreviewDrag" PreviewDrop="TextBox_PreviewDrop" />
                         <Button Content="Browse..." Grid.Column="2" Height="23" HorizontalAlignment="Center" Margin="4" Name="button5" VerticalAlignment="Center" Width="75" Command="{Binding BrowseToOutputIdfFileCommand}"/>
                         <Button 
-                            Content="Generate IDF" Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" 
+                            Content="Generate IDF" Grid.Column="5" Height="23" HorizontalAlignment="Center" Margin="4" Name="button6" VerticalAlignment="Center" Width="75" 
                             Command="{Binding IdfGeneration}"
                             ToolTipService.ShowOnDisabled="True" 
                             ToolTip="{Binding ReasonForDisabledIdfGeneration}" Padding="1" />
-                        <ComboBox Grid.Column="3" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionIndexToWrite}"/>
-                        <Button Content="View IDF" Grid.Column="5" Height="23" HorizontalAlignment="Left" Margin="4" Name="button2" VerticalAlignment="Center" Width="75" Command="{Binding ViewIdfCommand}" />
+                        <ComboBox Grid.Column="4" Height="23" HorizontalAlignment="Center" Margin="4" Name="comboBox1" VerticalAlignment="Center" Width="120" ItemsSource="{Binding AvailableEPVersions}" SelectedIndex="{Binding EnergyPlusVersionIndexToWrite}"/>
+                        <Button Content="View IDF" Grid.Column="6" Height="23" HorizontalAlignment="Left" Margin="4" Name="button2" VerticalAlignment="Center" Width="75" Command="{Binding ViewIdfCommand}" />
+                        <Label Content="EnergyPlus version:" Grid.Column="3" Height="28" HorizontalAlignment="Left" Margin="0" Name="label42" VerticalAlignment="Center" />
                     </Grid>
                     <GroupBox Header="Simulation control parameters" Height="Auto" HorizontalAlignment="Stretch" Margin="0" Name="groupBox7" VerticalAlignment="Stretch" Width="Auto">
                         <Grid>
