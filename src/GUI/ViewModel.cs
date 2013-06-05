@@ -83,22 +83,22 @@ namespace GUI
 
         public int LastModelPointCount
         {
-            get { return sbtBuilding.PointCount; }
+            get { return sbtBuilding != null ? sbtBuilding.PointCount : 0; }
         }
 
         public int LastModelEdgeCount
         {
-            get { return sbtBuilding.EdgeCount; }
+            get { return sbtBuilding != null ? sbtBuilding.EdgeCount : 0; }
         }
 
         public int LastModelFaceCount
         {
-            get { return sbtBuilding.FaceCount; }
+            get { return sbtBuilding != null ? sbtBuilding.FaceCount : 0; }
         }
 
         public int LastModelSolidCount
         {
-            get { return sbtBuilding.SolidCount; }
+            get { return sbtBuilding != null ? sbtBuilding.SolidCount : 0; }
         }
 
         public SbtBuildingInformation CurrentSbtBuilding
