@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "GUI\GUI.csproj", "{A
 		{68821491-76E6-4090-B7A8-FA8C329FA2DB} = {68821491-76E6-4090-B7A8-FA8C329FA2DB}
 	EndProjectSection
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Full Installer", "Full Installer\Full Installer.vdproj", "{3B596BA1-EEB7-4607-8638-B00607CB062C}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ConstructionManagement", "ConstructionManagement\ConstructionManagement.fsproj", "{B08D640C-794E-486E-9B61-3790D4FA0D97}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12C1E152-CA76-4EC1-840A-A9E3EE87A44C}"
@@ -25,6 +23,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core Tests", "Core Tests\Core Tests.vcxproj", "{26E4360A-9FEC-4EEE-B36D-626CDD587D3E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EDM Managed Wrapper", "EDM Managed Wrapper\EDM Managed Wrapper.vcxproj", "{C30F68F1-3D01-419D-A925-05D517906CC0}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Full Installer", "Full Installer\Full Installer.vdproj", "{CA2E520A-4623-405C-99C3-D42C202AC72E}"
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
@@ -78,14 +78,6 @@ Global
 		{A3147515-FF43-4B3E-BA2C-F747745D3EB8}.Release|Win32.ActiveCfg = Release|x86
 		{A3147515-FF43-4B3E-BA2C-F747745D3EB8}.Release|x86.ActiveCfg = Release|x86
 		{A3147515-FF43-4B3E-BA2C-F747745D3EB8}.Release|x86.Build.0 = Release|x86
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|Any CPU.ActiveCfg = Debug
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|Mixed Platforms.ActiveCfg = Debug
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|Win32.ActiveCfg = Debug
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Debug|x86.ActiveCfg = Debug
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|Any CPU.ActiveCfg = Release
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|Mixed Platforms.ActiveCfg = Release
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|Win32.ActiveCfg = Release
-		{3B596BA1-EEB7-4607-8638-B00607CB062C}.Release|x86.ActiveCfg = Release
 		{B08D640C-794E-486E-9B61-3790D4FA0D97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B08D640C-794E-486E-9B61-3790D4FA0D97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B08D640C-794E-486E-9B61-3790D4FA0D97}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -134,6 +126,14 @@ Global
 		{C30F68F1-3D01-419D-A925-05D517906CC0}.Release|Win32.ActiveCfg = Release|Win32
 		{C30F68F1-3D01-419D-A925-05D517906CC0}.Release|Win32.Build.0 = Release|Win32
 		{C30F68F1-3D01-419D-A925-05D517906CC0}.Release|x86.ActiveCfg = Release|Win32
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Debug|Any CPU.ActiveCfg = Debug
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Debug|Win32.ActiveCfg = Debug
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Debug|x86.ActiveCfg = Debug
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Release|Any CPU.ActiveCfg = Release
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Release|Mixed Platforms.ActiveCfg = Release
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Release|Win32.ActiveCfg = Release
+		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

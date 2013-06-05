@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:GUI"
         Height="502" Width="1156" Closed="MainWindowClosed" 
         xmlns:converters="clr-namespace:GUI.Converters">
-    <Window.Title>Space Boundary Tool 1.5.6</Window.Title>
+    <Window.Title>Space Boundary Tool 1.5.7</Window.Title>
     <Window.Resources>
         <DrawingImage x:Key="OKSmall">
             <DrawingImage.Drawing>
