@@ -100,7 +100,7 @@ type internal OutputLayerGlazing (name, entry:LibraryEntryGlazing, thickness) =
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
     override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
-    member this.AddToIdf(idf) =
+    member private this.AddToIdf(idf) =
         let obj = idf.CreateObject("WindowMaterial:Glazing")
         obj.Fields.["Name"].Value <- Alpha(this.Name)
         obj.Fields.["Optical Data Type"].Value <- entry.OpticalDataType
@@ -128,7 +128,7 @@ type internal OutputLayerInfraredTransparent () =
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
     override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
-    member this.AddToIdf(idf) =
+    member private this.AddToIdf(idf) =
         let obj = idf.CreateObject("Material:InfraredTransparent")
         obj.Fields.["Name"].Value <- Alpha(this.Name)
 
@@ -142,7 +142,7 @@ type internal OutputLayerNoMass (name, libraryEntry:LibraryEntryNoMass) =
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
     override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
-    member this.AddToIdf(idf) =
+    member private this.AddToIdf(idf) =
         let obj = idf.CreateObject("Material:NoMass")
         obj.Fields.["Name"].Value <- Alpha(this.Name)
         obj.Fields.["Roughness"].Value <- libraryEntry.Roughness
@@ -161,7 +161,7 @@ type internal OutputLayerOpaque (name, libraryEntry:LibraryEntryOpaque, thicknes
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
     override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
-    member this.AddToIdf(idf) =
+    member private this.AddToIdf(idf) =
         let obj = idf.CreateObject("Material")
         obj.Fields.["Name"].Value <- Alpha(this.Name)
         obj.Fields.["Thickness"].Value <- Real(thickness)
