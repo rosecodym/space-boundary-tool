@@ -21,5 +21,6 @@ namespace GUI
         public int EdgeCount { get; set; }
         public int FaceCount { get; set; }
         public int SolidCount { get; set; }
+        public TimeSpan? CalculationTime { get; set; }
     }
 }

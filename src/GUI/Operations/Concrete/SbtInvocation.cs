@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Diagnostics;
 
 using Normal = System.Tuple<double, double, double>;
 
@@ -10,6 +12,9 @@ namespace GUI.Operations
 {
     class SbtInvocation : Operation<SbtInvocation.Parameters, SbtBuildingInformation>
     {
+        [DllImport("Kernel32", EntryPoint = "GetCurrentThreadId")]
+        public static extern Int32 GetCurrentWin32ThreadId();
+
         public class Parameters
         {
             public string InputFilename { get; set; }
@@ -54,15 +59,28 @@ namespace GUI.Operations
             {
                 try
                 {
+                    var threadId = GetCurrentWin32ThreadId();
+                    ProcessThread thisThread = null;
+                    var proc = System.Diagnostics.Process.GetCurrentProcess();
+                    foreach (ProcessThread thread in proc.Threads)
+                    {
+                        if (thread.Id == threadId) { thisThread = thread; }
+                    }
+
                     IList<Sbt.CoreTypes.ElementInfo> elements;
                     IList<Tuple<double, double, double>> compositeDirs;
                     ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
                     ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
-                    var startTime = System.DateTime.Now;
                     int pointCount;
                     int edgeCount;
                     int faceCount;
                     int solidCount;
+
+                    TimeSpan? startCpuTime = null;
+                    if (thisThread != null) {
+                        startCpuTime = thisThread.TotalProcessorTime; 
+                    }
+                    DateTime startWallTime = DateTime.Now;
                     Sbt.EntryPoint.CalculateSpaceBoundariesFromIfc(
                         p.InputFilename,
                         p.OutputFilename,
@@ -81,13 +99,23 @@ namespace GUI.Operations
                         p.NotifyMessage,
                         p.WarnMessage,
                         p.ErrorMessage);
+                    TimeSpan? cpuTime = null;
+                    if (thisThread != null)
+                    {
+                        var endTime = thisThread.TotalProcessorTime;
+                        cpuTime = endTime - startCpuTime.Value;
+                    }
+                    TimeSpan wallTime = DateTime.Now - startWallTime;
+
                     System.Diagnostics.Debug.Assert(
                         !spaceBoundaries.Any(_ => true) ||
                         spaceBoundaries
                         .SelectMany(sb => sb.MaterialLayers)
                         .Select(layer => layer.Id).Max() - 1 <
                         compositeDirs.Count);
-                    p.NotifyMessage("Space boundary calculation completed in " + GenerateTimeString(DateTime.Now - startTime) + ".\n");
+                    p.NotifyMessage(String.Format(
+                        "Space boundary calculation completed in {0}.\n", 
+                        GenerateTimeString(wallTime)));
                     SbtBuildingInformation resultingBuilding = new SbtBuildingInformation();
                     resultingBuilding.IfcFilename = p.InputFilename;
                     resultingBuilding.Elements = new List<Sbt.CoreTypes.ElementInfo>(elements);
@@ -98,6 +126,7 @@ namespace GUI.Operations
                     resultingBuilding.EdgeCount = edgeCount;
                     resultingBuilding.FaceCount = faceCount;
                     resultingBuilding.SolidCount = solidCount;
+                    resultingBuilding.CalculationTime = cpuTime;
                     return resultingBuilding;
                 }
                 catch (Exception ex)
@@ -112,9 +141,12 @@ namespace GUI.Operations
                 vm.CurrentSbtBuilding = res ?? vm.CurrentSbtBuilding;
                 var currProc = System.Diagnostics.Process.GetCurrentProcess();
                 vm.LastPeakWorkingSet = currProc.PeakWorkingSet64;
-                var currTime = currProc.TotalProcessorTime;
-                var diff = currTime - startCpuTime;
-                vm.LastSBCalcTime = GenerateTimeString(diff);
+                var calcTime = res.CalculationTime;
+                if (calcTime.HasValue)
+                {
+                    vm.LastSBCalcTime = GenerateTimeString(calcTime.Value);
+                }
+                else { vm.LastSBCalcTime = String.Empty; }
                 completionAction();
             };
         }
