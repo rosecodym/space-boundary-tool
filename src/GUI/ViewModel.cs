@@ -211,7 +211,8 @@ namespace GUI
                 return new List<EnergyPlusVersion>(new EnergyPlusVersion[] 
                 { 
                     EnergyPlusVersion.V710,
-                    EnergyPlusVersion.V720
+                    EnergyPlusVersion.V720,
+                    EnergyPlusVersion.V800
                 });
             }
         }

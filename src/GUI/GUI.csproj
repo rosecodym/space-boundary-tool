@@ -64,6 +64,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV720Creator.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV800Creator.cs" />
     <Compile Include="Operations\Infrastructure\Operation.cs" />
     <Compile Include="Operations\Infrastructure\ProgressEvent.cs" />
     <Compile Include="Operations\Concrete\BuildingLoad.cs" />
@@ -127,6 +128,7 @@
     <None Include="Resources\IFC2X3_final.exp" />
     <None Include="Resources\V7-1-0-Energy+.idd" />
     <None Include="Resources\V7-2-0-Energy+.idd" />
+    <None Include="Resources\V8-0-0-Energy+.idd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConstructionManagement\ConstructionManagement.fsproj">

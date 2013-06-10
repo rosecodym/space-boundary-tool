@@ -137,5 +137,23 @@ namespace GUI.Properties {
                 return ResourceManager.GetString("V7_2_0_Energy_", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to !IDD_Version 8.0.0.008
+        ///! **************************************************************************
+        ///! This file is the Input Data Dictionary (IDD) for EnergyPlus.
+        ///! The IDD defines the syntax and data model for each type of input &quot;Object.&quot;
+        ///! Lines in EnergyPlus input files (and IDD) are limited to 500 characters.
+        ///!
+        ///! Object Description
+        ///! ------------------
+        ///! To define an object (a record with data), develop a key word that is unique
+        ///! Each data item to the object can be A (Alphanumeric string) or N [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string V8_0_0_Energy_ {
+            get {
+                return ResourceManager.GetString("V8_0_0_Energy_", resourceCulture);
+            }
+        }
     }
 }

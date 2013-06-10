@@ -15,6 +15,7 @@ type OutputLayer () =
 
     abstract member AddToIdfV710 : Idf -> unit
     abstract member AddToIdfV720 : Idf -> unit
+    abstract member AddToIdfV800 : Idf -> unit
 
     override this.Equals(obj:Object) = 
         match obj with
@@ -48,6 +49,7 @@ type internal OutputLayerAirGap (resistance:float) =
 
     override this.AddToIdfV710(idf) = this.AddToIdf(idf)
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
+    override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
     member private this.AddToIdf(idf) =
         let obj = idf.CreateObject("Material:AirGap")
@@ -60,18 +62,13 @@ type internal OutputLayerGas (name, entry:LibraryEntryGas, thickness) =
     override this.IsAirLayer = false
     override this.IsIRTransparent = false
 
-    override this.AddToIdfV710(idf) = this.AddToIdfCommon(idf) |> ignore
+    override this.AddToIdfV710(idf) = this.CreateWithCommonProps idf |> ignore
+    override this.AddToIdfV720(idf) = 
+        this.CreateWithCommonProps idf |> this.AddPost710Props
+    override this.AddToIdfV800(idf) = 
+        this.CreateWithCommonProps idf |> this.AddPost710Props
 
-    override this.AddToIdfV720(idf) =
-        let obj = this.AddToIdfCommon(idf)
-        obj.Fields.["Conductivity Coefficient C"].Value <-
-            entry.ConductivityCoefficientC
-        obj.Fields.["Viscosity Coefficient C"].Value <-
-            entry.ViscosityCoefficientC
-        obj.Fields.["Specific Heat Coefficient C"].Value <-
-            entry.SpecificHeatCoefficientC
-
-    member private this.AddToIdfCommon(idf) : IdfObject =
+    member private this.CreateWithCommonProps idf =
         let obj = idf.CreateObject("WindowMaterial:Gas")
         obj.Fields.["Name"].Value <- Alpha(this.Name)
         obj.Fields.["Gas Type"].Value <- entry.GasType
@@ -85,6 +82,14 @@ type internal OutputLayerGas (name, entry:LibraryEntryGas, thickness) =
         obj.Fields.["Molecular Weight"].Value <- entry.MolecularWeight
         obj
 
+    member private this.AddPost710Props obj = 
+        obj.Fields.["Conductivity Coefficient C"].Value <-
+            entry.ConductivityCoefficientC
+        obj.Fields.["Viscosity Coefficient C"].Value <-
+            entry.ViscosityCoefficientC
+        obj.Fields.["Specific Heat Coefficient C"].Value <-
+            entry.SpecificHeatCoefficientC
+
 type internal OutputLayerGlazing (name, entry:LibraryEntryGlazing, thickness) =
     inherit OutputLayer()
     override this.Name = name
@@ -93,6 +98,7 @@ type internal OutputLayerGlazing (name, entry:LibraryEntryGlazing, thickness) =
 
     override this.AddToIdfV710(idf) = this.AddToIdf(idf)
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
+    override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
     member this.AddToIdf(idf) =
         let obj = idf.CreateObject("WindowMaterial:Glazing")
@@ -120,6 +126,7 @@ type internal OutputLayerInfraredTransparent () =
 
     override this.AddToIdfV710(idf) = this.AddToIdf(idf)
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
+    override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
     member this.AddToIdf(idf) =
         let obj = idf.CreateObject("Material:InfraredTransparent")
@@ -133,6 +140,7 @@ type internal OutputLayerNoMass (name, libraryEntry:LibraryEntryNoMass) =
 
     override this.AddToIdfV710(idf) = this.AddToIdf(idf)
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
+    override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
     member this.AddToIdf(idf) =
         let obj = idf.CreateObject("Material:NoMass")
@@ -151,6 +159,7 @@ type internal OutputLayerOpaque (name, libraryEntry:LibraryEntryOpaque, thicknes
 
     override this.AddToIdfV710(idf) = this.AddToIdf(idf)
     override this.AddToIdfV720(idf) = this.AddToIdf(idf)
+    override this.AddToIdfV800(idf) = this.AddToIdf(idf)
 
     member this.AddToIdf(idf) =
         let obj = idf.CreateObject("Material")

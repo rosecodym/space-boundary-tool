@@ -12,7 +12,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="EnergyPlusVersionIndexToWrite" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="OutputIdfFilename" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

@@ -26,8 +26,6 @@ namespace GUI.Operations
         private ObservableCollection<Problem> problems = new ObservableCollection<Problem>();
         private Action<OperationStatus> statusChanged = _ => { };
         private Func<bool> canExecute = () => true;
-        
-        protected TimeSpan startCpuTime;
 
         public event EventHandler CanExecuteChanged
         {
@@ -66,7 +64,6 @@ namespace GUI.Operations
             bw.DoWork += new DoWorkEventHandler((_, e) =>
             {
                 var currProc = System.Diagnostics.Process.GetCurrentProcess();
-                startCpuTime = currProc.TotalProcessorTime;
                 e.Result = PerformLongOperation(e.Argument as TParameters);
             });
             bw.ProgressChanged += new ProgressChangedEventHandler((_sender, e) =>

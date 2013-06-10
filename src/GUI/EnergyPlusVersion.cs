@@ -8,6 +8,7 @@ namespace GUI
     enum EnergyPlusVersion
     {
         V710,
-        V720
+        V720,
+        V800
     }
 }
