@@ -26,6 +26,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EDM Managed Wrapper", "EDM 
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Full Installer", "Full Installer\Full Installer.vdproj", "{CA2E520A-4623-405C-99C3-D42C202AC72E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Edm Wrapper", "Edm Wrapper\Edm Wrapper.vcxproj", "{6133D6D1-B93B-468F-8B6F-6120E900BF72}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -134,6 +136,18 @@ Global
 		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Release|Mixed Platforms.ActiveCfg = Release
 		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Release|Win32.ActiveCfg = Release
 		{CA2E520A-4623-405C-99C3-D42C202AC72E}.Release|x86.ActiveCfg = Release
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Debug|Win32.Build.0 = Debug|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Debug|x86.ActiveCfg = Debug|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Release|Any CPU.ActiveCfg = Release|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Release|Win32.ActiveCfg = Release|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Release|Win32.Build.0 = Release|Win32
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
