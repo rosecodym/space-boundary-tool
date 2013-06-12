@@ -100,10 +100,10 @@ multiview_solid::multiview_solid(const solid & s, equality_context * c) {
 		else if (s.rep.as_brep.face_count > 89) { throw bad_brep_exception(); }
 
 		std::vector<simple_face> all_faces = faces_from_brep(s.rep.as_brep, c);
-		if (boost::find_if(all_faces, [](const simple_face & f) { return !f.inners().empty(); }) != all_faces.end()) {
-			// I've been insisting that breps are nef-able, but I can't for the
-			// life of me remember why.
-			throw brep_with_voids_exception();
+		// These need to be nef-able because that's how face normals are
+		// reconciled.
+		for (auto f = all_faces.begin(); f != all_faces.end(); ++f) {
+			if (!f->voids().empty()) { throw brep_with_voids_exception(); }
 		}
 		auto nef = simple_faces_to_nef(std::move(all_faces), *c);
 		if (nef.is_empty()) {

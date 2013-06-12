@@ -36,7 +36,7 @@ public:
 	simple_face & operator = (simple_face && src);
 
 	const loop & outer() const { return m_outer; }
-	const std::vector<loop> & inners() const { return m_inners; }
+	const std::vector<loop> & voids() const { return m_inners; }
 	direction_3 orthogonal_direction() const { return m_plane.orthogonal_direction(); }
 	const plane_3 & plane() const { return m_plane; }
 	const point_3 & average_outer_point() const { return m_average_point; }

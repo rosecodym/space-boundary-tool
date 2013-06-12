@@ -45,7 +45,7 @@ oriented_area::oriented_area(const simple_face & f, equality_context * c) {
 	loops.push_back(convert_to_2d(f.outer(), o->flattener(), c));
 		
 	boost::transform(
-		f.inners(),
+		f.voids(),
 		std::back_inserter(loops),
 		[this, c](const std::vector<point_3> & inner) { return convert_to_2d(inner | reversed, o->flattener(), c); });
 
