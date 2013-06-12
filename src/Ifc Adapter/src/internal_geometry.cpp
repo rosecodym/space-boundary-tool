@@ -209,7 +209,7 @@ face::face(
 {
 	cppw::Instance inst(sel);
 	if (inst.is_instance_of("IfcFaceBound")) {
-		outer = build_polyloop(inst.get("Bound"), scale, c);
+		outer_ = build_polyloop(inst.get("Bound"), scale, c);
 	}
 	else if (inst.is_instance_of("IfcFace")) {
 		cppw::Set bounds = inst.get("Bounds");
@@ -222,21 +222,21 @@ face::face(
 		}
 	}
 	else if (inst.is_instance_of("IfcArbitraryProfileDefWithVoids")) {
-		outer = build_polyloop(inst.get("OuterCurve"), scale, c);
+		outer_ = build_polyloop(inst.get("OuterCurve"), scale, c);
 		cppw::Set inners = inst.get("InnerCurves");
 		for (inners.move_first(); inners.move_next(); ) {
-			voids.push_back(build_polyloop(inners.get_(), scale, c));
+			voids_.push_back(build_polyloop(inners.get_(), scale, c));
 		}
 	}
 	else {
-		outer = build_polyloop(inst, scale, c);
+		outer_ = build_polyloop(inst, scale, c);
 	}
 }
 
 direction_3 face::normal() const {
 	// http://cs.haifa.ac.il/~gordon/plane.pdf
 	NT a(0.0), b(0.0), c(0.0);
-	auto & loop = outer;
+	auto & loop = outer_;
 	for (size_t i = 0; i < loop.size(); ++i) {
 		auto & curr = loop[i];
 		auto & next = loop[(i+1) % loop.size()];
@@ -260,34 +260,34 @@ interface_face face::to_interface() const {
 		return res;
 	};
 	interface_face f;
-	f.outer_boundary = export_loop(outer);
+	f.outer_boundary = export_loop(outer_);
 	f.voids = nullptr;
-	f.void_count = voids.size();
-	if (!voids.empty()) {
+	f.void_count = voids_.size();
+	if (!voids_.empty()) {
 		f.voids = (::polyloop *)malloc(sizeof(::polyloop) * f.void_count);
-		for (size_t i = 0; i < voids.size(); ++i) {
-			f.voids[i] = export_loop(voids[i]);
+		for (size_t i = 0; i < voids_.size(); ++i) {
+			f.voids[i] = export_loop(voids_[i]);
 		}
 	}
 	return f;
 }
 
 void face::reverse() {
-	boost::reverse(outer);
-	boost::for_each(voids, [](std::vector<point_3> & v) {
+	boost::reverse(outer_);
+	boost::for_each(voids_, [](std::vector<point_3> & v) {
 		boost::reverse(v);
 	});
 }
 
 void face::transform(const transformation_3 & t) {
 	auto previous_normal = normal();
-	boost::transform(outer, outer.begin(), t);
+	boost::transform(outer_, outer_.begin(), t);
 	// Note that t(previous_normal) does not equal normal() here if the columns
 	// of the transformation matrix are not orthnormal, which can happen due to
 	// numeric instability in the IfcBuildAxes function. This isn't really
 	// worth "fixing" because IfcBuildAxes keeps the columns very *close* to
 	// orthonormal.
-	for (auto v = voids.begin(); v != voids.end(); ++v) {
+	for (auto v = voids_.begin(); v != voids_.end(); ++v) {
 		boost::transform(*v, v->begin(), t);
 	}
 }
@@ -303,6 +303,9 @@ brep::brep(
 	cppw::Set faceSet = inst.get("CfsFaces");
 	for (faceSet.move_first(); faceSet.move_next(); ) {
 		faces.push_back(face(faceSet.get_(), scale_length, c));
+		if (!faces.back().voids().empty()) {
+			throw bad_rep_exception("brep with face voids");
+		}
 	}
 }
 

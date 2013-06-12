@@ -16,17 +16,18 @@ typedef ::solid interface_solid;
 
 class face {
 private:
-	std::vector<point_3> outer;
-	std::vector<std::vector<point_3>> voids;
+	std::vector<point_3> outer_;
+	std::vector<std::vector<point_3>> voids_;
 public:
 	face(
 		const cppw::Select & sel,
 		const length_scaler & scale_length,
 		number_collection<K> * c);
 
-	explicit face(const std::vector<point_3> & points) : outer(points) { }
+	explicit face(const std::vector<point_3> & points) : outer_(points) { }
 
-	const std::vector<point_3> outer_boundary() const { return outer; }
+	const std::vector<point_3> outer_boundary() const { return outer_; }
+	const std::vector<std::vector<point_3>> voids() const { return voids_ ; }
 	direction_3 normal() const;
 	interface_face to_interface() const;
 	void reverse();
