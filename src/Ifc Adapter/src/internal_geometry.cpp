@@ -214,8 +214,11 @@ face::face(
 	else if (inst.is_instance_of("IfcFace")) {
 		cppw::Set bounds = inst.get("Bounds");
 		for (bounds.move_first(); bounds.move_next(); ) {
-			auto thisbound = build_polyloop(bounds.get_(), scale, c);
-			boost::copy(thisbound, std::back_inserter(outer));
+			cppw::Instance bound = bounds.get_();
+			if (bound.is_instance_of("IfcFaceOuterBound")) {
+				outer_ = build_polyloop(bound, scale, c);
+			}
+			else { voids_.push_back(build_polyloop(bound, scale, c)); }
 		}
 	}
 	else if (inst.is_instance_of("IfcArbitraryProfileDefWithVoids")) {
