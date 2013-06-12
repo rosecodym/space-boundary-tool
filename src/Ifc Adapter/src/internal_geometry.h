@@ -1,3 +1,5 @@
+#pragma once
+
 #include "precompiled.h"
 
 #include "exact_surrogates.h"
