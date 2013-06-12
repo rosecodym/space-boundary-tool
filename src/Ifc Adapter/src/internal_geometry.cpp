@@ -303,9 +303,6 @@ brep::brep(
 	cppw::Set faceSet = inst.get("CfsFaces");
 	for (faceSet.move_first(); faceSet.move_next(); ) {
 		faces.push_back(face(faceSet.get_(), scale_length, c));
-		if (!faces.back().voids().empty()) {
-			throw bad_rep_exception("brep with face voids");
-		}
 	}
 }
 
