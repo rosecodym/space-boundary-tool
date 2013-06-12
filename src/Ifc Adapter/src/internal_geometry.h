@@ -2,7 +2,6 @@
 
 #include "precompiled.h"
 
-#include "exact_surrogates.h"
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"
 
@@ -24,8 +23,10 @@ public:
 		const cppw::Select & sel,
 		const length_scaler & scale_length,
 		number_collection<K> * c);
-	// Legacy facade
-	face(const exact_face & f);
+
+	explicit face(const std::vector<point_3> & points) : outer(points) { }
+
+	const std::vector<point_3> outer_boundary() const { return outer; }
 	direction_3 normal() const;
 	interface_face to_interface() const;
 	void reverse();
@@ -61,8 +62,6 @@ public:
 
 	virtual void transform(const transformation_3 & t) = 0;
 	virtual interface_solid to_interface_solid() const = 0;
-	
-	static std::unique_ptr<solid> legacy_facade_build(const exact_solid & s);
 };
 
 class brep : public solid {
@@ -73,24 +72,26 @@ public:
 		const cppw::Instance & inst, 
 		const length_scaler & scale_length,
 		number_collection<K> * c);
-	// Legacy facade
-	brep(const exact_brep & b);
+
+	explicit brep(const std::vector<face> & faces) : faces(faces) { }
+
 	virtual void transform(const transformation_3 & t);
 	virtual interface_solid to_interface_solid() const;
 };
 
 class ext : public solid {
 private:
-	face area;
-	direction_3 dir;
-	NT depth;
+	face area_;
+	direction_3 dir_;
+	NT depth_;
 public:
 	ext(
 		const cppw::Instance & inst, 
 		const length_scaler & scale_length,
 		number_collection<K> * c);
-	// Legacy facade
-	ext(const exact_extruded_area_solid & e);
+	const face & base() const { return area_; }
+	const direction_3 & dir() const { return dir_; }
+	const NT & depth() const { return depth_; }
 	virtual void transform(const transformation_3 & t);
 	virtual interface_solid to_interface_solid() const;
 };

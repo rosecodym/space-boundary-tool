@@ -230,20 +230,6 @@ face::face(
 	}
 }
 
-face::face(const exact_face & f) {
-	typedef std::vector<point_3> loop;
-	auto import_loop = [](const exact_polyloop & eloop) -> loop {
-		loop res;
-		auto & vs = eloop.vertices;
-		boost::transform(vs, back_inserter(res), [](const exact_point & p) {
-			return point_3(p.x, p.y, p.z);
-		});
-		return res;
-	};
-	outer = import_loop(f.outer_boundary);
-	boost::transform(f.voids, std::back_inserter(voids), import_loop);
-}
-
 direction_3 face::normal() const {
 	// http://cs.haifa.ac.il/~gordon/plane.pdf
 	NT a(0.0), b(0.0), c(0.0);
@@ -303,18 +289,6 @@ void face::transform(const transformation_3 & t) {
 	}
 }
 
-std::unique_ptr<solid> solid::legacy_facade_build(const exact_solid & s) {
-	if (s.rep_type() == REP_BREP) {
-		return std::unique_ptr<brep>(new brep(*s.rep.as_brep));
-	}
-	else if (s.rep_type() == REP_EXT) {
-		return std::unique_ptr<ext>(new ext(*s.rep.as_ext));
-	}
-	else {
-		throw bad_rep_exception("unset internal exact surrogate rep type");
-	}
-}
-
 brep::brep(
 	const cppw::Instance & inst,
 	const length_scaler & scale_length,
@@ -327,14 +301,6 @@ brep::brep(
 	for (faceSet.move_first(); faceSet.move_next(); ) {
 		faces.push_back(face(faceSet.get_(), scale_length, c));
 	}
-}
-
-brep::brep(const exact_brep & b) {
-	using std::back_inserter;
-	using boost::transform;
-	transform(b.faces, back_inserter(faces), [](const exact_face & f) {
-		return face(f);
-	});
 }
 
 void brep::transform(const transformation_3 & t) {
@@ -360,46 +326,41 @@ ext::ext(
 	const cppw::Instance & inst,
 	const length_scaler & scale,
 	number_collection<K> * c)
-	: area(inst.get("SweptArea"), scale, c)
+	: area_(inst.get("SweptArea"), scale, c)
 {
 	double unscaled_depth = inst.get("Depth");
-	depth = c->request_height(scale(unscaled_depth));
+	depth_ = c->request_height(scale(unscaled_depth));
 	cppw::Instance d = inst.get("ExtrudedDirection");
 	cppw::List ratios = d.get("DirectionRatios");
 	double dx = ratios.get_(0);
 	double dy = ratios.get_(1);
 	double dz = ((cppw::Integer)d.get("Dim")) == 3 ? ratios.get_(2) : 0.0;
-	dir = c->request_direction(dx, dy, dz);
-	if (!normal_matches_dir(area, dir)) {
-		area.reverse();
+	dir_ = c->request_direction(dx, dy, dz);
+	if (!normal_matches_dir(area_, dir_)) {
+		area_.reverse();
 	}
-	assert(!are_perpendicular(area.normal(), dir));
+	assert(!are_perpendicular(area_.normal(), dir_));
 }
 
-ext::ext(const exact_extruded_area_solid & e) 
-	: area(e.area),
-	  dir(e.ext_dir),
-	  depth(e.extrusion_depth) { }
-
 void ext::transform(const transformation_3 & t) {
-	assert(!are_perpendicular(area.normal(), dir));
-	area.transform(t);
-	dir = dir.transform(t);
+	assert(!are_perpendicular(area_.normal(), dir_));
+	area_.transform(t);
+	dir_ = dir_.transform(t);
 	if (axes_) { 
 		axes_ = std::make_tuple(axis1()->transform(t), axis2()->transform(t));
 	}
-	assert(!are_perpendicular(area.normal(), dir));
+	assert(!are_perpendicular(area_.normal(), dir_));
 }
 
 interface_solid ext::to_interface_solid() const {
 	interface_solid res;
 	res.rep_type = REP_EXT;
 	auto & rep = res.rep.as_ext;
-	rep.area = area.to_interface();
-	rep.extrusion_depth = CGAL::to_double(depth);
-	rep.ext_dx = CGAL::to_double(dir.dx());
-	rep.ext_dy = CGAL::to_double(dir.dy());
-	rep.ext_dz = CGAL::to_double(dir.dz());
+	rep.area = area_.to_interface();
+	rep.extrusion_depth = CGAL::to_double(depth_);
+	rep.ext_dx = CGAL::to_double(dir_.dx());
+	rep.ext_dy = CGAL::to_double(dir_.dy());
+	rep.ext_dz = CGAL::to_double(dir_.dz());
 	return res;
 }
 
@@ -563,13 +524,7 @@ std::unique_ptr<solid> get_local_geometry(
 		return get_local_geometry(mapped_rep, scaler, c);
 	}
 	else if (inst.is_instance_of("IfcBooleanClippingResult")) {
-		exact_solid legacy_facade;
-		wrapped_nef_operations::solid_from_boolean_result(
-			&legacy_facade,
-			inst,
-			scaler,
-			c);
-		return solid::legacy_facade_build(legacy_facade);
+		return wrapped_nef_operations::from_boolean_result(inst, scaler, c);
 	}
 	else if (inst.is_instance_of("IfcFaceBasedSurfaceModel")) {
 		cppw::Set face_set = inst.get("FbsmFaces");

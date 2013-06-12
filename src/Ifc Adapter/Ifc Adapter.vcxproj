@@ -14,11 +14,9 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\CreateGuid_64.h" />
     <ClInclude Include="src\edm_wrapper.h" />
-    <ClInclude Include="src\exact_surrogates.h" />
     <ClInclude Include="src\geometry_common.h" />
     <ClInclude Include="src\get_length_units_per_meter.h" />
     <ClInclude Include="src\ifc-to-cgal.h" />
-    <ClInclude Include="src\ifc-to-face.h" />
     <ClInclude Include="src\model_operations.h" />
     <ClInclude Include="src\number_collection.h" />
     <ClInclude Include="src\one_dimensional_equality_context.h" />
@@ -42,10 +40,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\edm_wrapper.cpp" />
-    <ClCompile Include="src\exact_surrogates.cpp" />
     <ClCompile Include="src\extract_from_model.cpp" />
     <ClCompile Include="src\get_length_units_per_meter.cpp" />
-    <ClCompile Include="src\ifc-to-face.cpp" />
     <ClCompile Include="src\internal_geometry.cpp" />
     <ClCompile Include="src\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
