@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "equality_context.h"
+#include "sbt-core.h"
 #include "simple_face.h"
 #include "solid_geometry_util.h"
 
@@ -12,6 +13,168 @@ namespace solid_geometry {
 namespace impl {
 
 namespace {
+
+TEST(FacesFromBrep, VoidsAreFiltered) {
+	// A cube with a column cut out of the middle of it.
+	equality_context c(0.01);
+	point lln;
+	lln.x = lln.y = lln.z = 0.0;
+	point lrn = lln;
+	lrn.x = 3.0;
+	point urn = lrn;
+	urn.z = 3.0;
+	point uln = urn;
+	uln.x = 0.0;
+	point ulf = uln;
+	ulf.y = 3.0;
+	point urf = ulf;
+	urf.x = 3.0;
+	point lrf = urf;
+	lrf.z = 0.0;
+	point llf = lrf;
+	llf.x = 0.0;
+	point illf = llf;
+	llf.x = 1.0;
+	llf.y = 2.0;
+	point illn = illf;
+	illn.y = 1.0;
+	point ilrn = illn;
+	ilrn.x = 2.0;
+	point ilrf = ilrn;
+	ilrf.y = 2.0;
+	point iurf = ilrf;
+	iurf.z = 3.0;
+	point iurn = iurf;
+	iurn.y = 1.0;
+	point iuln = iurn;
+	iuln.x = 1.0;
+	point iulf = iuln;
+	iuln.y = 2.0;
+	auto set_for_voids = [](face * f) {
+		f->outer_boundary.vertex_count = 4;
+		f->outer_boundary.vertices = (point *)malloc(4 * sizeof(point));
+		f->void_count = 1;
+		f->voids = (polyloop *)malloc(sizeof(polyloop));
+		f->voids[0].vertex_count = 4;
+		f->voids[0].vertices = (point *)malloc(4 * sizeof(point));
+	};
+	auto set_no_voids = [](face * f) {
+		f->outer_boundary.vertex_count = 4;
+		f->outer_boundary.vertices = (point *)malloc(4 * sizeof(point));
+		f->void_count = 0;
+		f->voids = nullptr;
+	};
+	brep b;
+	b.face_count = 10;
+	b.faces = (face *)malloc(b.face_count * sizeof(face));
+	set_no_voids(&b.faces[0]);
+	b.faces[0].outer_boundary.vertices[0] = lln;
+	b.faces[0].outer_boundary.vertices[1] = uln;
+	b.faces[0].outer_boundary.vertices[2] = ulf;
+	b.faces[0].outer_boundary.vertices[3] = llf;
+	set_no_voids(&b.faces[1]);
+	b.faces[1].outer_boundary.vertices[0] = llf;
+	b.faces[1].outer_boundary.vertices[1] = ulf;
+	b.faces[1].outer_boundary.vertices[2] = urf;
+	b.faces[1].outer_boundary.vertices[3] = lrf;
+	set_no_voids(&b.faces[2]);
+	b.faces[2].outer_boundary.vertices[0] = lrf;
+	b.faces[2].outer_boundary.vertices[1] = urf;
+	b.faces[2].outer_boundary.vertices[2] = urn;
+	b.faces[2].outer_boundary.vertices[3] = lrn;
+	set_no_voids(&b.faces[3]);
+	b.faces[3].outer_boundary.vertices[0] = lrn;
+	b.faces[3].outer_boundary.vertices[1] = urn;
+	b.faces[3].outer_boundary.vertices[2] = uln;
+	b.faces[3].outer_boundary.vertices[3] = lln;
+	set_for_voids(&b.faces[4]);
+	b.faces[4].outer_boundary.vertices[0] = lln;
+	b.faces[4].outer_boundary.vertices[1] = llf;
+	b.faces[4].outer_boundary.vertices[2] = lrf;
+	b.faces[4].outer_boundary.vertices[3] = lrn;
+	b.faces[4].voids[0].vertices[0] = illn;
+	b.faces[4].voids[0].vertices[1] = illf;
+	b.faces[4].voids[0].vertices[2] = ilrf;
+	b.faces[4].voids[0].vertices[3] = ilrn;
+	set_for_voids(&b.faces[5]);
+	b.faces[5].outer_boundary.vertices[0] = uln;
+	b.faces[5].outer_boundary.vertices[1] = ulf;
+	b.faces[5].outer_boundary.vertices[2] = urf;
+	b.faces[5].outer_boundary.vertices[3] = urn;
+	b.faces[5].voids[0].vertices[0] = iuln;
+	b.faces[5].voids[0].vertices[1] = iulf;
+	b.faces[5].voids[0].vertices[2] = iurf;
+	b.faces[5].voids[0].vertices[3] = iurn;
+	set_no_voids(&b.faces[6]);
+	b.faces[6].outer_boundary.vertices[0] = illn;
+	b.faces[6].outer_boundary.vertices[1] = illf;
+	b.faces[6].outer_boundary.vertices[2] = iulf;
+	b.faces[6].outer_boundary.vertices[3] = iuln;
+	set_no_voids(&b.faces[7]);
+	b.faces[7].outer_boundary.vertices[0] = illf;
+	b.faces[7].outer_boundary.vertices[1] = iulf;
+	b.faces[7].outer_boundary.vertices[2] = iurf;
+	b.faces[7].outer_boundary.vertices[3] = illf;
+	set_no_voids(&b.faces[8]);
+	b.faces[8].outer_boundary.vertices[0] = ilrf;
+	b.faces[8].outer_boundary.vertices[1] = iurf;
+	b.faces[8].outer_boundary.vertices[2] = iurn;
+	b.faces[8].outer_boundary.vertices[3] = ilrn;
+	set_no_voids(&b.faces[9]);
+	b.faces[9].outer_boundary.vertices[0] = ilrn;
+	b.faces[9].outer_boundary.vertices[1] = illn;
+	b.faces[9].outer_boundary.vertices[2] = iuln;
+	b.faces[9].outer_boundary.vertices[3] = iurn;
+
+	auto faces = faces_from_brep(b, &c);
+	EXPECT_EQ(6, faces.size());
+	for (auto f = faces.begin(); f != faces.end(); ++f) {
+		EXPECT_TRUE(f->voids().empty());
+	}
+}
+
+TEST(VolumeGroupToNef, ArtificialFaceSplitsDoNotCauseEmptiness) {
+	// This tests a stunt that Revit's been pulling recently. Imagine a
+	// tetrahedral "tent" with one of the faces split like "flaps." If there's
+	// no corresponding vertex at the split on the "floor" face then CGAL will
+	// consider the resulting polyhedron open. (In addition, even when this
+	// splitting happens to work out space faces get all messed up.)
+
+	equality_context c(0.01);
+
+	std::vector<simple_face> faces;
+
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 1, 0),
+			simple_point(1, 0, 0)), false, &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 0, 1),
+			simple_point(0, 1, 0)), false, &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(0, 0, 1),
+			simple_point(1, 0, 0),
+			simple_point(0, 1, 0)), false, &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(-1, 0, 0),
+			simple_point(0, 0, 0),
+			simple_point(0, 0, 1)), false, &c));
+	faces.push_back(simple_face(
+		create_face(3,
+			simple_point(0, 0, 0),
+			simple_point(1, 0, 0),
+			simple_point(0, 0, 1)), false, &c));
+
+	nef_polyhedron_3 nef = volume_group_to_nef(std::move(faces), c);
+	EXPECT_FALSE(nef.is_empty());
+}
+
+// Legacy tests follow
 
 std::string stringify(const point_3 & p) {
 	std::stringstream ss;
@@ -193,47 +356,6 @@ TEST(SolidGeometryUtil, ExtrusionToNefReversedBase) {
 	nef_polyhedron_3::Shell_entry_const_iterator sit;
 	face_checker checker;
 	nef.visit_shell_objects(nef_sface_handle(marked_v->shells_begin()), checker);
-}
-
-TEST(VolumeGroupToNef, ArtificialFaceSplitsDoNotCauseEmptiness) {
-	// This tests a stunt that Revit's been pulling recently. Imagine a
-	// tetrahedral "tent" with one of the faces split like "flaps." If there's
-	// no corresponding vertex at the split on the "floor" face then CGAL will
-	// consider the resulting polyhedron open. (In addition, even when this
-	// splitting happens to work out space faces get all messed up.)
-
-	equality_context c(0.01);
-
-	std::vector<simple_face> faces;
-
-	faces.push_back(simple_face(
-		create_face(3,
-			simple_point(-1, 0, 0),
-			simple_point(0, 1, 0),
-			simple_point(1, 0, 0)), false, &c));
-	faces.push_back(simple_face(
-		create_face(3,
-			simple_point(-1, 0, 0),
-			simple_point(0, 0, 1),
-			simple_point(0, 1, 0)), false, &c));
-	faces.push_back(simple_face(
-		create_face(3,
-			simple_point(0, 0, 1),
-			simple_point(1, 0, 0),
-			simple_point(0, 1, 0)), false, &c));
-	faces.push_back(simple_face(
-		create_face(3,
-			simple_point(-1, 0, 0),
-			simple_point(0, 0, 0),
-			simple_point(0, 0, 1)), false, &c));
-	faces.push_back(simple_face(
-		create_face(3,
-			simple_point(0, 0, 0),
-			simple_point(1, 0, 0),
-			simple_point(0, 0, 1)), false, &c));
-
-	nef_polyhedron_3 nef = volume_group_to_nef(std::move(faces), c);
-	EXPECT_FALSE(nef.is_empty());
 }
 
 } // namespace

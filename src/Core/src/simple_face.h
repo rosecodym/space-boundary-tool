@@ -43,8 +43,14 @@ public:
 	bool is_planar() const;
 	std::string to_string() const;
 	simple_face reversed() const;
-
 	std::vector<segment_3> all_edges_voids_reversed() const;
-
 	simple_face transformed(const transformation_3 & t) const;
+
+	simple_face without_voids() const {
+		return simple_face(
+			m_outer, 
+			std::vector<loop>(), 
+			m_plane, 
+			m_average_point);
+	}
 };
