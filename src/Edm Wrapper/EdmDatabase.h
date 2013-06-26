@@ -12,6 +12,8 @@ namespace IfcInterface {
 
 private ref class EdmDatabase {
 public:
+	cppw::Open_repository * GetRepository(const char * name);
+
 	static EdmDatabase ^ Instance() { return instance->Value; }
 
 private:
@@ -50,6 +52,8 @@ private:
 
 	static EdmDatabase ^ Create() { return gcnew EdmDatabase(); }
 
+	// Owning via bare-pointers is a no-no, but these objects are singletons
+	// and last the lifetime of the program, so who cares.
 	cppw::EDM * manager_;
 	cppw::String * db_path_;
 	cppw::Database_handler * db_handler_;

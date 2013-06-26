@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cpp_edmi.h>
+
 #include "EdmDatabase.h"
 
 using namespace System;
@@ -9,11 +11,19 @@ namespace IfcInterface {
 public ref class IfcModel {
 public:
 	IfcModel(String ^ pathToFile);
+	!IfcModel() {
+		delete repo_;
+		delete model_;
+	}
+	~IfcModel() { this->!IfcModel(); }
 
 private:
-	static IfcModel();
-
-	static Lazy<EdmDatabase ^> ^ database;
+	EdmDatabase ^ database_;
+	// The possibility of leaking memory by owning with bare pointers here has
+	// been judged to be worth the tradeoff of not having to create a managed
+	// smart pointer type. These objects simply aren't used very much.
+	cppw::Open_repository * repo_;
+	cppw::Open_model * model_;
 };
 
 } // namespace IfcInterface

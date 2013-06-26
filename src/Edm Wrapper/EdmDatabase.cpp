@@ -59,4 +59,11 @@ EdmDatabase::EdmDatabase() : manager_(new cppw::EDM()) {
 	}
 }
 
+cppw::Open_repository * EdmDatabase::GetRepository(const char * name)
+{
+	return new cppw::Open_repository(
+		(*db_handler_)->get_repository(name),
+		cppw::RW_access);
+}
+
 } // namespace IfcInterface
