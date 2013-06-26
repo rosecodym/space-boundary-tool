@@ -58,7 +58,7 @@ private:
 	cppw::String * db_path_;
 	cppw::Database_handler * db_handler_;
 
-	static Lazy<EdmDatabase ^> ^ instance;
+	static initonly Lazy<EdmDatabase ^> ^ instance;
 };
 
 } // namespace IfcInterface

@@ -29,7 +29,7 @@ private:
 
 	cppw::EDM * native_;
 
-	static Lazy<Edm ^> ^ instance;
+	static initonly Lazy<Edm ^> ^ instance;
 };
 
 } // namespace IfcInterface
