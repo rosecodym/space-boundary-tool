@@ -2,21 +2,13 @@
 
 #include "EdmDatabase.h"
 
-using namespace System::Reflection;
-using namespace System::Runtime::InteropServices;
+#include "string_conversion.h"
 
 namespace IfcInterface {
 
 namespace {
 
 const int MAX_PATH = 260;
-
-char * managedStringToNativeString(char dst[], String ^ src, size_t len) {
-	char * str = (char *)(Marshal::StringToHGlobalAnsi(src)).ToPointer();
-	strncpy(dst, str, len);
-	Marshal::FreeHGlobal(IntPtr(str));
-	return dst;
-}
 
 } // namespace
 
@@ -38,7 +30,7 @@ EdmDatabase::EdmDatabase() : manager_(new cppw::EDM()) {
 	try {
 		String ^ tmpDir = System::IO::Path::GetTempPath();
 		char tmp_dir[MAX_PATH];
-		managedStringToNativeString(tmp_dir, tmpDir, MAX_PATH);
+		managed_string_to_native(tmp_dir, tmpDir, MAX_PATH);
 		db_path_ = new cppw::String(tmp_dir);
 		ClearDB();
 		cppw::String db_name(DB_NAME);
@@ -49,7 +41,7 @@ EdmDatabase::EdmDatabase() : manager_(new cppw::EDM()) {
 			db_name, 
 			db_pass));
 		char schema_path[MAX_PATH];
-		managedStringToNativeString(schema_path, schemaPath, MAX_PATH);
+		managed_string_to_native(schema_path, schemaPath, MAX_PATH);
 		cppw::Express_compiler compiler(schema_path);
 		cppw::Compile_results res = compiler.compile();
 		if (res.errors) { 
