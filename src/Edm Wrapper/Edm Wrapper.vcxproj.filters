@@ -21,9 +21,7 @@
     <ClInclude Include="Edm.h">
       <Filter>managed</Filter>
     </ClInclude>
-    <ClInclude Include="string_conversion.h">
-      <Filter>managed</Filter>
-    </ClInclude>
+    <ClInclude Include="string_conversion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico">
