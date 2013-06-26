@@ -57,10 +57,14 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
+    <PostBuildEvent>
+      <Command>for %%I in ("$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
+do copy %%I "$(OutDir)"</Command>
+      <Message>Copying runtime libraries to output directory</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -71,10 +75,14 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
+    <PostBuildEvent>
+      <Command>for %%I in ("$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
+do copy %%I "$(OutDir)"</Command>
+      <Message>Copying runtime libraries to output directory</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="System" />
