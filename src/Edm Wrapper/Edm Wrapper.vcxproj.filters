@@ -22,6 +22,15 @@
       <Filter>managed</Filter>
     </ClInclude>
     <ClInclude Include="string_conversion.h" />
+    <ClInclude Include="EdmException.h">
+      <Filter>managed</Filter>
+    </ClInclude>
+    <ClInclude Include="IfcSpace.h">
+      <Filter>managed</Filter>
+    </ClInclude>
+    <ClInclude Include="IfcElement.h">
+      <Filter>managed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico">
@@ -41,6 +50,12 @@
       <Filter>managed</Filter>
     </ClCompile>
     <ClCompile Include="EdmDatabase.cpp">
+      <Filter>managed</Filter>
+    </ClCompile>
+    <ClCompile Include="IfcSpace.cpp">
+      <Filter>managed</Filter>
+    </ClCompile>
+    <ClCompile Include="IfcElement.cpp">
       <Filter>managed</Filter>
     </ClCompile>
   </ItemGroup>

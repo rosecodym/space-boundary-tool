@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IfcBuildingInformation.cs" />
     <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV720Creator.cs" />
     <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV800Creator.cs" />
     <Compile Include="Operations\Infrastructure\Operation.cs" />
@@ -139,9 +140,9 @@
       <Project>{2B180C45-2DA1-4C26-9850-F92B9369D626}</Project>
       <Name>Core Managed Wrapper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EDM Managed Wrapper\EDM Managed Wrapper.vcxproj">
-      <Project>{C30F68F1-3D01-419D-A925-05D517906CC0}</Project>
-      <Name>EDM Managed Wrapper</Name>
+    <ProjectReference Include="..\Edm Wrapper\Edm Wrapper.vcxproj">
+      <Project>{6133D6D1-B93B-468F-8B6F-6120E900BF72}</Project>
+      <Name>Edm Wrapper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -92,14 +92,19 @@ do copy %%I "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="Edm.h" />
     <ClInclude Include="EdmDatabase.h" />
+    <ClInclude Include="EdmException.h" />
+    <ClInclude Include="IfcElement.h" />
     <ClInclude Include="IfcModel.h" />
+    <ClInclude Include="IfcSpace.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="string_conversion.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="EdmDatabase.cpp" />
+    <ClCompile Include="IfcElement.cpp" />
     <ClCompile Include="IfcModel.cpp" />
+    <ClCompile Include="IfcSpace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />

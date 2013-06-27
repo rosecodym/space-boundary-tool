@@ -3,6 +3,7 @@
 #include <cpp_edmi.h>
 
 #include "Edm.h"
+#include "EdmException.h"
 
 using namespace System;
 using namespace System::IO;
@@ -14,7 +15,10 @@ private ref class EdmDatabase {
 public:
 	cppw::Open_repository * GetRepository(const char * name);
 
-	static EdmDatabase ^ Instance() { return instance->Value; }
+	static EdmDatabase ^ Instance() { 
+		try { return instance->Value; }
+		catch (cppw::Error & e) { throw gcnew EdmException(e.message.data()); }
+	}
 
 private:
 	static const char * const DB_NAME = "db";

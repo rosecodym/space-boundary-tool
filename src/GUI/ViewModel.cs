@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
-using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
+using IfcInterface;
+
 using IfcConstruction = ConstructionManagement.ModelConstructions.ModelConstruction;
 using IfcConstructionMappingSource = ConstructionManagement.ModelConstructions.ModelMappingSource;
-using IfcElement = IfcInformationExtractor.Element;
 
 using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
@@ -530,7 +530,7 @@ namespace GUI
             string elementGuid = CurrentSbtBuilding.Elements[id - 1].Guid;
             IfcElement ifcElement;
             if (!CurrentIfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
-            return ifcElement.AssociatedConstruction;
+            return ifcElement.AssociatedConstruction as IfcConstruction;
         }
 
         internal Normal SbtMaterialIDToCompositeNormal(int id)
