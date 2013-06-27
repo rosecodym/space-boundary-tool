@@ -12,7 +12,12 @@ const int MAX_PATH = 260;
 
 } // namespace
 
-EdmDatabase::EdmDatabase() : manager_(new cppw::EDM()) {
+EdmDatabase::EdmDatabase() 
+	: manager_(new cppw::EDM()), 
+	  db_path_(__nullptr),
+	  db_handler_(__nullptr),
+	  repo_(__nullptr)
+{
 	String ^ schemaPath = System::IO::Path::GetTempFileName();
 	String ^ resName = "IFC2X3_final.exp";
 	Assembly ^ assembly = Assembly::GetExecutingAssembly();
@@ -48,6 +53,10 @@ EdmDatabase::EdmDatabase() : manager_(new cppw::EDM()) {
 			ClearDB(); 
 			throw gcnew Exception("Error compiling the schema.");
 		}
+		(*db_handler_)->create_repository(cppw::String(REPO_NAME));
+		repo_ = new cppw::Open_repository(
+			(*db_handler_)->get_repository(cppw::String(REPO_NAME)),
+			cppw::RW_access);
 	}
 	catch (cppw::Error & e) {
 		char buf[256];
@@ -59,10 +68,16 @@ EdmDatabase::EdmDatabase() : manager_(new cppw::EDM()) {
 	}
 }
 
-cppw::Open_repository * EdmDatabase::GetRepository(const char * name)
+cppw::Open_model * EdmDatabase::LoadModel(String ^ path)
 {
-	return new cppw::Open_repository(
-		(*db_handler_)->get_repository(name),
+	String ^ modelName = System::IO::Path::GetFileNameWithoutExtension(path);
+	char pathBuf[MAX_PATH];
+	char modelNameBuf[MAX_PATH];
+	managed_string_to_native(pathBuf, path, MAX_PATH);
+	managed_string_to_native(modelNameBuf, modelName, MAX_PATH);
+	cppw::Step_reader(pathBuf, cppw::String(REPO_NAME), modelNameBuf).read();
+	return new cppw::Open_model(
+		repo_->get_model(modelNameBuf), 
 		cppw::RW_access);
 }
 

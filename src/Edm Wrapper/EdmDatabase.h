@@ -13,7 +13,7 @@ namespace IfcInterface {
 
 private ref class EdmDatabase {
 public:
-	cppw::Open_repository * GetRepository(const char * name);
+	cppw::Open_model * LoadModel(String ^ path);
 
 	static EdmDatabase ^ Instance() { 
 		try { return instance->Value; }
@@ -23,13 +23,17 @@ public:
 private:
 	static const char * const DB_NAME = "db";
 	static const char * const DB_PASS = "pass";
+	static const char * const REPO_NAME = "repo";
 
 	EdmDatabase();
 	!EdmDatabase() {
-		if (db_handler_) { manager_->close(*db_handler_); }
+		delete repo_;
+		if (db_handler_) { 
+			manager_->close(*db_handler_);
+			delete db_handler_;
+		}
 		ClearDB();
 		delete db_path_;
-		delete db_handler_;
 		delete manager_;
 	}
 	~EdmDatabase() { this->!EdmDatabase(); }
@@ -61,6 +65,7 @@ private:
 	cppw::EDM * manager_;
 	cppw::String * db_path_;
 	cppw::Database_handler * db_handler_;
+	cppw::Open_repository * repo_;
 
 	static initonly Lazy<EdmDatabase ^> ^ instance;
 };

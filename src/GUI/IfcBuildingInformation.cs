@@ -13,7 +13,17 @@ namespace GUI
     {
         public IfcBuildingInformation(string path)
         {
-            throw new NotImplementedException();
+            using (var model = new IfcModel(path))
+            {
+                Filename = path;
+                Elevation = model.Elevation;
+                NorthAxis = model.NorthAxis;
+                Latitude = model.Latitude;
+                Longitude = model.Longitude;
+                SpacesByGuid = new Dictionary<string, IfcSpace>();
+                ElementsByGuid = new Dictionary<string, IfcElement>();
+                ConstructionMappingSources = new List<ModelMappingSource>();
+            }
         }
 
         public String Filename { get; private set; }
