@@ -206,7 +206,7 @@ namespace GUI.Operations
                 var wallBoundaries = new List<BuildingSurface>(wallFilter);
 
                 List<Shading> shadings = new List<Shading>();
-                foreach (IfcElement e in p.IfcBuilding.ElementsByGuid.Values)
+                foreach (IfcElement e in p.IfcBuilding.Elements)
                 {
                     // elementGeometries might not have e because it was 
                     // filtered.

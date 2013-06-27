@@ -528,9 +528,7 @@ namespace GUI
         {
             if (id > CurrentSbtBuilding.Elements.Count) { return null; }
             string elementGuid = CurrentSbtBuilding.Elements[id - 1].Guid;
-            IfcElement ifcElement;
-            if (!CurrentIfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
-            throw new NotImplementedException();
+            return CurrentIfcBuilding.ConstructionForElementGuid(elementGuid);
         }
 
         internal Normal SbtMaterialIDToCompositeNormal(int id)
