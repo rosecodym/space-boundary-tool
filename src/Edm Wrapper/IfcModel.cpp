@@ -54,4 +54,15 @@ double IfcModel::Longitude::get() {
 	return res;
 }
 
+ICollection<IfcSpace ^> ^ IfcModel::Spaces::get() {
+	if (model_ == __nullptr) { return nullptr; }
+	cppw::Instance_set instances = 
+		model_->get_set_of("IfcSpace", cppw::include_subtypes);
+	List<IfcSpace ^> ^ spaces = gcnew List<IfcSpace ^>();
+	for (instances.move_first(); instances.move_next(); ) {
+		spaces->Add(gcnew IfcSpace(instances.get()));
+	}
+	return spaces;
+}
+
 } // namespace IfcInterface

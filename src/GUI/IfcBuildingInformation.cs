@@ -23,6 +23,11 @@ namespace GUI
                 SpacesByGuid = new Dictionary<string, IfcSpace>();
                 ElementsByGuid = new Dictionary<string, IfcElement>();
                 ConstructionMappingSources = new List<ModelMappingSource>();
+                SpacesByGuid = new Dictionary<string, IfcSpace>();
+                foreach (var space in model.Spaces)
+                {
+                    SpacesByGuid[space.Guid] = space;
+                }
             }
         }
 

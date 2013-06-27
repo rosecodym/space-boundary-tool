@@ -3,6 +3,7 @@
 #include <cpp_edmi.h>
 
 #include "EdmDatabase.h"
+#include "IfcSpace.h"
 
 using namespace System;
 
@@ -21,6 +22,10 @@ public:
 	property double NorthAxis { double get(); }
 	property double Latitude { double get(); }
 	property double Longitude { double get(); }
+	property ICollection<IfcSpace ^> ^ Spaces 
+	{ 
+		ICollection<IfcSpace ^> ^ get(); 
+	}
 
 private:
 	initonly EdmDatabase ^ database_;
