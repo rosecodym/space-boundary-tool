@@ -31,6 +31,9 @@
     <ClInclude Include="IfcElement.h">
       <Filter>managed</Filter>
     </ClInclude>
+    <ClInclude Include="IfcZone.h">
+      <Filter>managed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico">
@@ -56,6 +59,9 @@
       <Filter>managed</Filter>
     </ClCompile>
     <ClCompile Include="IfcElement.cpp">
+      <Filter>managed</Filter>
+    </ClCompile>
+    <ClCompile Include="IfcZone.cpp">
       <Filter>managed</Filter>
     </ClCompile>
   </ItemGroup>

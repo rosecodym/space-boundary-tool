@@ -1,6 +1,9 @@
 #pragma once
 
+#include "IfcZone.h"
+
 using namespace System;
+using namespace System::Collections::Generic;
 
 namespace IfcInterface {
 
@@ -18,6 +21,10 @@ public:
 	property String ^ Name 
 	{ 
 		String ^ get() { throw gcnew NotImplementedException(); } 
+	}
+	property ICollection<IfcZone ^> ^ Zones
+	{
+		ICollection<IfcZone ^> ^ get() { return gcnew List<IfcZone ^>(); }
 	}
 
 internal:
