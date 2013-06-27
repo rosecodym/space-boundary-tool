@@ -3,6 +3,7 @@
 #include <cpp_edmi.h>
 
 #include "EdmDatabase.h"
+#include "IfcElement.h"
 #include "IfcSpace.h"
 
 using namespace System;
@@ -22,6 +23,10 @@ public:
 	property double NorthAxis { double get(); }
 	property double Latitude { double get(); }
 	property double Longitude { double get(); }
+	property ICollection<IfcElement ^> ^ Elements
+	{
+		ICollection<IfcElement ^> ^ get();
+	}
 	property ICollection<IfcSpace ^> ^ Spaces 
 	{ 
 		ICollection<IfcSpace ^> ^ get(); 

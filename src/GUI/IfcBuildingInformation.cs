@@ -20,14 +20,17 @@ namespace GUI
                 NorthAxis = model.NorthAxis;
                 Latitude = model.Latitude;
                 Longitude = model.Longitude;
-                SpacesByGuid = new Dictionary<string, IfcSpace>();
                 ElementsByGuid = new Dictionary<string, IfcElement>();
-                ConstructionMappingSources = new List<ModelMappingSource>();
+                foreach (var element in model.Elements)
+                {
+                    ElementsByGuid[element.Guid] = element;
+                }
                 SpacesByGuid = new Dictionary<string, IfcSpace>();
                 foreach (var space in model.Spaces)
                 {
                     SpacesByGuid[space.Guid] = space;
                 }
+                ConstructionMappingSources = new List<ModelMappingSource>();
             }
         }
 

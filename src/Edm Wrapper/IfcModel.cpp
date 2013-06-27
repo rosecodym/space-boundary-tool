@@ -54,6 +54,17 @@ double IfcModel::Longitude::get() {
 	return res;
 }
 
+ICollection<IfcElement ^> ^ IfcModel::Elements::get() {
+	if (model_ == __nullptr) { return nullptr; }
+	cppw::Instance_set instances = 
+		model_->get_set_of("IfcBuildingElement", cppw::include_subtypes);
+	IList<IfcElement ^> ^ elements = gcnew List<IfcElement ^>();
+	for (instances.move_first(); instances.move_next(); ) {
+		elements->Add(gcnew IfcElement(instances.get()));
+	}
+	return elements;
+}
+
 ICollection<IfcSpace ^> ^ IfcModel::Spaces::get() {
 	if (model_ == __nullptr) { return nullptr; }
 	cppw::Instance_set instances = 
