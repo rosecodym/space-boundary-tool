@@ -4,6 +4,8 @@
 
 #include "string_conversion.h"
 
+using namespace System::Text::RegularExpressions;
+
 namespace IfcInterface {
 
 namespace {
@@ -71,6 +73,8 @@ EdmDatabase::EdmDatabase()
 cppw::Open_model * EdmDatabase::LoadModel(String ^ path)
 {
 	String ^ modelName = System::IO::Path::GetFileNameWithoutExtension(path);
+	String ^ patt = gcnew String("[^a-zA-Z]");
+	modelName = Regex::Replace(modelName, patt, String::Empty);
 	char pathBuf[MAX_PATH];
 	char modelNameBuf[MAX_PATH];
 	managed_string_to_native(pathBuf, path, MAX_PATH);
