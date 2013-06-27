@@ -7,8 +7,6 @@ namespace IfcInterface {
 public ref class IfcElement
 {
 public:
-	IfcElement() { throw gcnew NotImplementedException(); }
-
 	property String ^ Guid 
 	{ 
 		String ^ get() { throw gcnew NotImplementedException(); } 
@@ -21,6 +19,9 @@ public:
 	{
 		Object ^ get() { throw gcnew NotImplementedException(); }
 	}
+
+internal:
+	IfcElement() { throw gcnew NotImplementedException(); }
 };
 
 } // namespace IfcInterface

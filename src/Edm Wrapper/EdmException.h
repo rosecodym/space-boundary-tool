@@ -7,7 +7,7 @@ using namespace System;
 namespace IfcInterface {
 
 public ref class EdmException : public Exception {
-public:
+internal:
 	EdmException(const char * msg) : Exception(gcnew String(msg)) { }
 };
 
