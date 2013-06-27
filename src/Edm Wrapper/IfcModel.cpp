@@ -9,7 +9,9 @@ IfcModel::IfcModel(String ^ path)
 	  repo_(__nullptr),
 	  model_(__nullptr)
 {
-	try { model_ = database_->LoadModel(path); }
+	try { 
+		model_ = database_->LoadModel(path); 
+	}
 	catch (cppw::Error & e) { throw gcnew EdmException(e.message.data()); }
 }
 
