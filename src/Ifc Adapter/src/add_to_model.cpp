@@ -1,11 +1,15 @@
 #include "precompiled.h"
 
+#include "../../Edm Wrapper/edm_wrapper_native_interface.h"
+
 #include "CreateGuid_64.h"
 #include "geometry_common.h"
 #include "ifc-to-cgal.h"
 #include "model_operations.h"
 #include "sbt-ifcadapter.h"
 #include "unit_scaler.h"
+
+using namespace ifc_interface;
 
 namespace {
 
@@ -20,45 +24,26 @@ int get_level(const space_boundary & b) {
 		b.bounded_space == b.opposite->bounded_space ? 4 : 2;
 }
 
-cppw::Application_instance create_point(
-	cppw::Open_model & model, 
-	const ipoint_2 & p, 
-	const unit_scaler & scaler) 
+ifc_object * create_point(
+	model * m,
+	const ipoint_3 & p,
+	const unit_scaler & scaler)
 {
-	cppw::Application_instance point = model.create("IfcCartesianPoint");
-	cppw::List coords(point.create_aggregate("Coordinates"));
-	coords.add(scaler.length_out(CGAL::to_double(p.x())));
-	coords.add(scaler.length_out(CGAL::to_double(p.y())));
-	return point;
+	double x = scaler.length_out(CGAL::to_double(p.x()));
+	double y = scaler.length_out(CGAL::to_double(p.y()));
+	double z = scaler.length_out(CGAL::to_double(p.y()));
+	return m->create_point(x, y, z);
 }
 
-cppw::Application_instance create_point(
-	cppw::Open_model & model, 
-	const ipoint_3 & p, 
-	const unit_scaler & scaler) 
-{
-	cppw::Application_instance point = model.create("IfcCartesianPoint");
-	cppw::List coords(point.create_aggregate("Coordinates"));
-	coords.add(scaler.length_out(CGAL::to_double(p.x())));
-	coords.add(scaler.length_out(CGAL::to_double(p.y())));
-	coords.add(scaler.length_out(CGAL::to_double(p.z())));
-	return point;
+ifc_object * create_direction(model * m, const idirection_3 & d) {
+	double dx = CGAL::to_double(d.dx());
+	double dy = CGAL::to_double(d.dy());
+	double dz = CGAL::to_double(d.dz());
+	return m->create_direction(dx, dy, dz);
 }
 
-cppw::Application_instance create_direction(
-	cppw::Open_model & model, 
-	const idirection_3 & d) 
-{
-	cppw::Application_instance direction = model.create("IfcDirection");
-	cppw::List ratios(direction.create_aggregate("DirectionRatios"));
-	ratios.add(CGAL::to_double(d.dx()));
-	ratios.add(CGAL::to_double(d.dy()));
-	ratios.add(CGAL::to_double(d.dz()));
-	return direction;
-}
-
-cppw::Application_instance create_a2p3d(
-	cppw::Open_model & model, 
+ifc_object * create_a2p3d(
+	model * m,
 	const itransformation_3 & space_placement, 
 	space_boundary * sb, 
 	std::vector<ipoint_2> * points_2d, 
@@ -133,125 +118,119 @@ cppw::Application_instance create_a2p3d(
 		.transform(unflatten)
 		.transform(space_placement.inverse());
 
-	cppw::Application_instance a2p3d = model.create("IfcAxis2Placement3D");
-	a2p3d.put("Location", create_point(model, origin, scaler));
-	a2p3d.put("Axis", create_direction(model, z_axis));
-	a2p3d.put("RefDirection", create_direction(model, refdir));
-
-	return a2p3d;
+	auto res = m->create_object("IfcAxis2Placement3D");
+	set_field(res, "Location", *create_point(m, origin, scaler));
+	set_field(res, "Axis", *create_direction(m, z_axis));
+	set_field(res, "RefDirection", *create_direction(m, refdir));
+	return res;
 }
 
-cppw::Application_instance create_plane(
-	cppw::Open_model & model, 
+ifc_object * create_plane(
+	model * m, 
 	const itransformation_3 & space_placement, 
 	space_boundary * sb, 
 	std::vector<ipoint_2> * points_2d, 
 	const unit_scaler & scaler) 
 {
-	cppw::Application_instance plane = model.create("IfcPlane");
-	plane.put("Position", create_a2p3d(model, space_placement, sb, points_2d, scaler));
+	auto plane = m->create_object("IfcPlane");
+	auto a2p3d = create_a2p3d(m, space_placement, sb, points_2d, scaler);
+	set_field(plane, "Position", *a2p3d);
 	return plane;
 }
 
-cppw::Application_instance create_curve(
-	cppw::Open_model & model, 
+ifc_object * create_curve(
+	model * m,
 	const std::vector<ipoint_2> & points, 
 	const unit_scaler & scaler) 
 {
-	cppw::Application_instance curve = model.create("IfcPolyline");
-	cppw::List pts = curve.create_aggregate("Points");
+	std::vector<std::pair<double, double>> pts;
 	for (auto p = points.begin(); p != points.end(); ++p) {
-		pts.add(create_point(model, *p, scaler));
+		double x = scaler.length_out(CGAL::to_double(p->x()));
+		double y = scaler.length_out(CGAL::to_double(p->y()));
+		pts.push_back(std::make_pair(x, y));
 	}
-	return curve;
+	return m->create_curve(pts);
 }
 
-cppw::Application_instance create_boundary(
-	cppw::Open_model & model, 
+ifc_object * create_boundary(
+	model * m, 
 	const itransformation_3 & space_placement, 
 	space_boundary * sb, 
 	const unit_scaler & scaler) 
 {
-	cppw::Application_instance boundary = model.create("IfcCurveBoundedPlane");
+	auto res = m->create_object("IfcCurveBoundedPlane");
 	std::vector<ipoint_2> points_2d;
-	boundary.put("BasisSurface", create_plane(model, space_placement, sb, &points_2d, scaler));
-	boundary.put("OuterBoundary", create_curve(model, points_2d, scaler));
-	return boundary;
+	auto basis = create_plane(m, space_placement, sb, &points_2d, scaler);
+	set_field(res, "BasisSurface", *basis);
+	set_field(res, "OuterBoundary", *create_curve(m, points_2d, scaler));
+	return res;
 }
 
-cppw::Application_instance create_geometry(
-	cppw::Open_model & model, 
+ifc_object * create_geometry(
+	model * m, 
 	const itransformation_3 & space_placement, 
 	space_boundary * sb, 
 	const unit_scaler & scaler) 
 {
-	cppw::Application_instance geometry = model.create("IfcConnectionSurfaceGeometry");
-	geometry.put("SurfaceOnRelatingElement", create_boundary(model, space_placement, sb, scaler));
-	return geometry;
+	auto res = m->create_object("IfcConnectionSurfaceGeometry");
+	auto boundary = create_boundary(m, space_placement, sb, scaler);
+	set_field(res, "SurfaceOnRelatingElement", *boundary);
+	return res;
 }
 
-cppw::Application_instance create_sb(
-	cppw::Open_model & model,
-	const cppw::Instance & ownerhistory, 
-	const cppw::Instance & space,
-	const cppw::Instance & element,
+ifc_object * create_sb(
+	model * m,
+	const ifc_object & space,
+	const ifc_object & element,
 	space_boundary * sb,
 	const unit_scaler & scaler,
 	number_collection<iK> * c)
 {
+	auto space_trans = object_field(space, "ObjectPlacement");
+	auto space_placement = build_transformation(space_trans, scaler, c);
 
-	auto space_placement = 
-		build_transformation(space.get("ObjectPlacement"), scaler, c);
-
-	cppw::Application_instance inst = model.create("IfcRelSpaceBoundary");
+	auto res = m->create_object("IfcRelSpaceBoundary");
 
 	int level = get_level(*sb);
 
-	inst.put("GlobalId", sb->global_id);
-	inst.put("OwnerHistory", ownerhistory);
-	inst.put("Name", (
+	set_field(res, "GlobalId", sb->global_id);
+	set_field(res, "Name", (
 		level == 3 ? "3rdLevel" :
 		level == 4 ? "4thLevel" :
 		level == 5 ? "5thLevel" : "2ndLevel"));
 	if (level == 2 || level == 3 || level == 4 || level == 5) {
-		inst.put("Description", level == 2 ? "2a" : "2b");
+		set_field(res, "Description", level == 2 ? "2a" : "2b");
 	}
-	inst.put("RelatingSpace", space);
-	inst.put("RelatedBuildingElement", element);
-	inst.put("PhysicalOrVirtualBoundary", is_virtual(*sb) ? "VIRTUAL" : "PHYSICAL");
-	inst.put("InternalOrExternalBoundary", sb->is_external ? "EXTERNAL" : "INTERNAL");
-	inst.put("ConnectionGeometry", create_geometry(model, space_placement, sb, scaler));
-	return inst;
+	set_field(res, "RelatingSpace", space);
+	set_field(res, "RelatedBuildingElement", element);
+	auto virt_string = is_virtual(*sb) ? "VIRTUAL" : "PHYSICAL";
+	set_field(res, "PhysicalOrVirtualBoundary", virt_string);
+	auto ext_string = sb->is_external ? "EXTERNAL" : "INTERNAL";
+	set_field(res, "InternalOrExternalBoundary", ext_string);
+	auto geom = create_geometry(m, space_placement, sb, scaler);
+	set_field(res, "ConnectionGeometry", *geom);
+	return res;
 }
 
-cppw::Application_instance create_rel_aggregates(cppw::Open_model & model, cppw::Instance & ownerhistory, const char * name, const char * desc) {
-	cppw::Application_instance inst = model.create("IfcRelAggregates");
+ifc_object * create_rel_aggregates(
+	model * m, 
+	const char * name, 
+	const char * desc) 
+{
+	auto res = m->create_object("IfcRelAggregates");
 	char guidbuf[128];
 	CreateCompressedGuidString(guidbuf, 127);
-	inst.put("GlobalId", cppw::String(guidbuf));
-	inst.put("OwnerHistory", ownerhistory);
-	inst.put("Name", cppw::String(name));
-	inst.put("Description", cppw::String(desc));
-	return inst;
+	set_field(res, "GlobalId", guidbuf);
+	set_field(res, "Name", name);
+	set_field(res, "Description", desc);
+	return res;
 }
 
-cppw::Application_instance create_owner_history(cppw::Open_model * model) {
-	cppw::Application_aggregate histories = model->get_set_of("IfcOwnerHistory");
-	cppw::Application_instance inst = ((cppw::Application_instance)histories.get_(0)).clone();
-	inst.put("ChangeAction", "ADDED");
-	cppw::Application_instance app = model->create("IfcApplication");
-	cppw::Application_instance org = model->create("IfcOrganization");
-	org.put("Name", "Lawrence Berkeley National Laboratory");
-	app.put("ApplicationDeveloper", org);
-	app.put("Version", "1.5.7");
-	app.put("ApplicationFullName", "Space Boundary Tool");
-	app.put("ApplicationIdentifier", "SBT");
-	inst.put("LastModifyingApplication", app);
-	inst.put("CreationDate", (int)time(NULL));
-	return inst;
-}
-
-void create_necessary_virtual_elements(cppw::Open_model * model, space_boundary ** sbs, int sb_count, const cppw::Instance & ownerhistory) {
+void create_necessary_virtual_elements(
+	model * m, 
+	space_boundary ** sbs, 
+	int sb_count)
+{
 	std::map<space_boundary *, space_boundary *> virtuals;
 	for (int i = 0; i < sb_count; ++i) {
 		if (is_virtual(*sbs[i])) {
@@ -262,11 +241,10 @@ void create_necessary_virtual_elements(cppw::Open_model * model, space_boundary 
 		}
 	}
 	for (auto pair = virtuals.begin(); pair != virtuals.end(); ++pair) {
-		cppw::Application_instance inst = model->create("IfcVirtualElement");
+		auto inst = m->create_object("IfcVirtualElement");
 		char guidbuf[128];
 		CreateCompressedGuidString(guidbuf, 127);
-		inst.put("GlobalId", guidbuf);
-		inst.put("OwnerHistory", ownerhistory);
+		set_field(inst, "GlobalId", guidbuf);
 		strncpy(pair->first->element_name, guidbuf, ELEMENT_NAME_MAX_LEN);
 		strncpy(pair->second->element_name, guidbuf, ELEMENT_NAME_MAX_LEN);
 	}
@@ -275,7 +253,7 @@ void create_necessary_virtual_elements(cppw::Open_model * model, space_boundary 
 } // namespace
 
 ifcadapter_return_t add_to_model(
-	cppw::Open_model & model,
+	model * m,
 	size_t sb_count, 
 	space_boundary ** sbs,
 	void (*msg_func)(char *),
@@ -284,26 +262,31 @@ ifcadapter_return_t add_to_model(
 	unit_scaler scaler = unit_scaler::identity_scaler;
 
 	msg_func("Preparing to add space boundaries to the model.\n");
-	cppw::Instance ownerhistory = create_owner_history(&model);
+	auto version_string = "1.5.7";
+	m->set_new_owner_history(
+		"Space Boundary Tool",
+		"SBT",
+		version_string,
+		"Lawrence Berkeley National Laboratory");
 
-	create_necessary_virtual_elements(&model, sbs, sb_count, ownerhistory);
+	create_necessary_virtual_elements(m, sbs, sb_count);
 	msg_func("Created virtual elements.\n");
 
-	std::map<std::string, int> element_map; // we have to use indices because Instances aren't default-constructable
-	auto es = model.get_set_of("IfcElement", cppw::include_subtypes);
-	for (int i = 0; i < es.count(); ++i) {
-		if (es.get(i).is_kind_of("IfcBuildingElement") || es.get(i).is_kind_of("IfcVirtualElement")) {
-			element_map[((cppw::String)es.get(i).get("GlobalId")).data()] = i;
-		}
-	}
-	msg_func("Created element map.\n");
+	//std::map<std::string, int> element_map; // we have to use indices because Instances aren't default-constructable
+	//auto es = model.get_set_of("IfcElement", cppw::include_subtypes);
+	//for (int i = 0; i < es.count(); ++i) {
+	//	if (es.get(i).is_kind_of("IfcBuildingElement") || es.get(i).is_kind_of("IfcVirtualElement")) {
+	//		element_map[((cppw::String)es.get(i).get("GlobalId")).data()] = i;
+	//	}
+	//}
+	//msg_func("Created element map.\n");
 
-	std::map<std::string, int> space_map;
-	auto ss = model.get_set_of("IfcSpace");
-	for (int i = 0; i < ss.count(); ++i) {
-		space_map[((cppw::String)ss.get(i).get("GlobalId")).data()] = i;
-	}
-	msg_func("Created space map.\n");
+	//std::map<std::string, int> space_map;
+	//auto ss = model.get_set_of("IfcSpace");
+	//for (int i = 0; i < ss.count(); ++i) {
+	//	space_map[((cppw::String)ss.get(i).get("GlobalId")).data()] = i;
+	//}
+	//msg_func("Created space map.\n");
 	
 	msg_func("Adding space boundaries to model");
 	int added_count = 0;
@@ -313,10 +296,9 @@ ifcadapter_return_t add_to_model(
 			// want everything to crash if they do.
 			if (sbs[i]->geometry.vertex_count > 0) {
 				create_sb(
-					model, 
-					ownerhistory, 
-					ss.get(space_map[sbs[i]->bounded_space->id]), 
-					es.get(element_map[sbs[i]->element_name]), 
+					m, 
+					*m->space_with_guid(sbs[i]->bounded_space->id),
+					*m->element_with_guid(sbs[i]->element_name),
 					sbs[i], 
 					scaler, 
 					c);

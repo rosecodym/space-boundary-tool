@@ -57,9 +57,6 @@
     <ClInclude Include="src\one_dimensional_equality_context.h">
       <Filter>geometry</Filter>
     </ClInclude>
-    <ClInclude Include="src\get_length_units_per_meter.h">
-      <Filter>operations</Filter>
-    </ClInclude>
     <ClInclude Include="src\release.h">
       <Filter>main</Filter>
     </ClInclude>
@@ -97,9 +94,6 @@
     </ClCompile>
     <ClCompile Include="src\unit_scaler.cpp">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\get_length_units_per_meter.cpp">
-      <Filter>operations</Filter>
     </ClCompile>
     <ClCompile Include="src\release.cpp">
       <Filter>main</Filter>

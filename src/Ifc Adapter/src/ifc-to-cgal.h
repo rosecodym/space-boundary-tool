@@ -5,55 +5,55 @@
 #include "number_collection.h"
 #include "unit_scaler.h"
 
+namespace ifc_interface {
+
+class ifc_object;
+
+} // namespace ifc_interface
+
 template <typename KernelT>
 CGAL::Point_3<KernelT> build_point(
-	const cppw::Instance & inst,
+	const ifc_interface::ifc_object & obj,
 	const unit_scaler & s,
 	number_collection<KernelT> * c)
 {
-	assert(inst.is_kind_of("IfcCartesianPoint"));
-	cppw::List coords(inst.get("Coordinates"));
-	double x = coords.get_(0);
-	double y = coords.get_(1);
-	double z = (cppw::Integer)inst.get("Dim") == 3 ? coords.get_(2) : 0.0;
+	assert(is_kind_of(obj, "IfcCartesianPoint"));
+	double x, y, z;
+	std::tie(x, y, z) = triple_field(obj, "Coordinates");
 	return c->request_point(s.length_in(x), s.length_in(y), s.length_in(z));
 }
 
 template <typename KernelT>
 CGAL::Direction_3<KernelT> build_direction(
-	const cppw::Instance & inst,
+	const ifc_interface::ifc_object & obj,
 	number_collection<KernelT> * c)
 {
-	assert(inst.is_instance_of("IfcDirection"));
-	cppw::List ratios = inst.get("DirectionRatios");
-	double dx = ratios.get_(0);
-	double dy = ratios.get_(1);
-	double dz = (cppw::Integer)inst.get("Dim") == 3 ? ratios.get_(2) : 0.0;
+	assert(is_kind_of(obj, "IfcDirection"));
+	double dx, dy, dz;
+	std::tie(dx, dy, dz) = triple_field(obj, "DirectionRatios");
 	return c->request_direction(dx, dy, dz);
 }
 
 template <typename KernelT>
 CGAL::Aff_transformation_3<KernelT> build_transformation(
-	const cppw::Select & sel,
+	const ifc_interface::ifc_object * obj,
 	const unit_scaler & s,
 	number_collection<KernelT> * c)
 {
 	typedef CGAL::Aff_transformation_3<KernelT> result_t;
-	if (sel.is_set()) {
-		cppw::Instance inst(sel);
-		if (inst.is_instance_of("IfcLocalPlacement")) {
-			auto relTo = inst.get("PlacementRelTo");
-			auto from = inst.get("RelativePlacement");
+	if (obj) {
+		if (is_instance_of(*obj, "IfcLocalPlacement")) {
+			auto relTo = object_field(*obj, "PlacementRelTo");
+			auto from = object_field(*obj, "RelativePlacement");
 			return 
 				build_transformation(relTo, s, c) *
 				build_transformation(from, s, c);
 		}
-		else if (inst.is_instance_of("IfcAxis2Placement2D")) {
-			cppw::Instance location = inst.get("Location");
-			auto loc = build_point(location, s, c);
-			cppw::Aggregate p = inst.get("P");
-			auto xdir = build_direction((cppw::Instance)p.get_(0), c);
-			auto ydir = build_direction((cppw::Instance)p.get_(1), c);
+		else if (is_instance_of(*obj, "IfcAxis2Placement2D")) {
+			auto loc = build_point(*object_field(*obj, "Location"), s, c);
+			auto p = collection_field(*obj, "P");
+			auto xdir = build_direction(*p[0], c);
+			auto ydir = build_direction(*p[1], c);
 			auto xcol = normalize(xdir.vector());
 			auto ycol = normalize(ydir.vector());
 			decltype(ycol) zcol(0, 0, 1);
@@ -61,13 +61,12 @@ CGAL::Aff_transformation_3<KernelT> build_transformation(
 							xcol.y(), ycol.y(), zcol.y(), loc.y(),
 							xcol.z(), ycol.z(), zcol.z(), loc.z());
 		}
-		else if (inst.is_instance_of("IfcAxis2Placement3D")) {
-			cppw::Instance location = inst.get("Location");
-			auto loc = build_point(location, s, c);
-			cppw::Aggregate p = inst.get("P");
-			auto xdir = build_direction((cppw::Instance)p.get_(0), c);
-			auto ydir = build_direction((cppw::Instance)p.get_(1), c);
-			auto zdir = build_direction((cppw::Instance)p.get_(2), c);
+		else if (is_instance_of(*obj, "IfcAxis2Placement3D")) {
+			auto loc = build_point(*object_field(*obj, "Location"), s, c);
+			auto p = collection_field(*obj, "P");
+			auto xdir = build_direction(*p[0], c);
+			auto ydir = build_direction(*p[1], c);
+			auto zdir = build_direction(*p[2], c);
 			auto xcol = normalize(xdir.vector());
 			auto ycol = normalize(ydir.vector());
 			auto zcol = normalize(zdir.vector());
@@ -75,17 +74,17 @@ CGAL::Aff_transformation_3<KernelT> build_transformation(
 							xcol.y(), ycol.y(), zcol.y(), loc.y(),
 							xcol.z(), ycol.z(), zcol.z(), loc.z());
 		}
-		else if (inst.is_instance_of("IfcPlane")) {
-			return build_transformation(inst.get("Position"), s, c);
+		else if (is_instance_of(*obj, "IfcPlane")) {
+			return build_transformation(object_field(*obj, "Position"), s, c);
 		}
-		else if (inst.is_instance_of("IfcCartesianTransformationOperator3D")) {
-			cppw::Instance location = inst.get("LocalOrigin");
-			auto loc = build_point(location, s, c);
-			cppw::Aggregate p = inst.get("U");
-			double scale = (cppw::Real)inst.get("Scl");
-			auto xdir = build_direction((cppw::Instance)p.get_(0), c);
-			auto ydir = build_direction((cppw::Instance)p.get_(1), c);
-			auto zdir = build_direction((cppw::Instance)p.get_(2), c);
+		else if (is_instance_of(*obj, "IfcCartesianTransformationOperator3D")) 
+		{
+			auto loc = build_point(*object_field(*obj, "LocalOrigin"), s, c);
+			auto p = collection_field(*obj, "U");
+			double scale = real_field(*obj, "Scl");
+			auto xdir = build_direction(*p[0], c);
+			auto ydir = build_direction(*p[1], c);
+			auto zdir = build_direction(*p[2], c);
 			auto xcol = normalize(xdir.vector()) * scale;
 			auto ycol = normalize(ydir.vector()) * scale;
 			auto zcol = normalize(zdir.vector()) * scale;

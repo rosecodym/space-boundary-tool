@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "../../Edm Wrapper/edm_wrapper_native_interface.h"
+
 #include "geometry_common.h"
 #include "internal_geometry.h"
 #include "number_collection.h"
@@ -9,6 +11,8 @@
 #include "wrapped_nef_operations.h"
 
 extern sb_calculation_options g_opts;
+
+using namespace ifc_interface;
 
 namespace {
 
@@ -20,17 +24,15 @@ typedef CGAL::Nef_polyhedron_3<eK>				nef_polyhedron_3;
 
 typedef number_collection<K> eqc;
 
-point_3 to_exact_point(const cppw::Instance & inst, eqc * c) {
-	cppw::List coords = inst.get("Coordinates");
-	return c->request_point((cppw::Real)coords.get_(0), (cppw::Real)coords.get_(1), (cppw::Integer)inst.get("Dim") == 3 ? (cppw::Real)coords.get_(2) : 0);
+point_3 to_exact_point(const ifc_object & obj, eqc * c) {
+	double x, y, z;
+	std::tie(x, y, z) = triple_field(obj, "Coordinates");
+	return c->request_point(x, y, z);
 }
 
-direction_3 to_exact_direction(const cppw::Instance & inst, eqc * c) {
-	cppw::List ratios = inst.get("DirectionRatios");
-	cppw::Real dx = ratios.get_(0);
-	cppw::Real dy = ratios.get_(1);
-	cppw::Real dz = 0.0;
-	if ((cppw::Integer)inst.get("Dim") == 3) { dz = ratios.get_(2); }
+direction_3 to_exact_direction(const ifc_object & obj, eqc * c) {
+	double dx, dy, dz;
+	std::tie(dx, dy, dz) = triple_field(obj, "DirectionRatios");
 	assert(!(dx == 0 && dy == 0 && dz == 0));
 	return c->request_direction(dx, dy, dz);
 }
@@ -53,14 +55,14 @@ extended_plane_3 create_extended_plane(const ray_3 & r, const point_3 & p, numbe
 }
 
 nef_polyhedron_3 create_nef(
-	const cppw::Instance & inst, 
+	const ifc_object & obj, 
 	const unit_scaler & scaler, 
 	eqc * c, 
 	number_collection<eK> * ec) 
 {
 	auto s = [&scaler](double x) { return scaler.length_in(x); };
-	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
-		internal_geometry::ext internal_ext(inst, s, c);
+	if (is_kind_of(obj, "IfcExtrudedAreaSolid")) {
+		internal_geometry::ext internal_ext(obj, s, c);
 		using boost::transform;
 		using std::back_inserter;
 		const auto & bverts = internal_ext.base().outer_boundary();
@@ -71,10 +73,10 @@ nef_polyhedron_3 create_nef(
 				CGAL::to_double(p.y()),
 				CGAL::to_double(p.z()));
 		});
-		cppw::Instance ifc_dir = inst.get("ExtrudedDirection");
-		auto extrusion_vec = to_exact_direction(ifc_dir, c).to_vector();
+		auto ifc_dir = object_field(obj, "ExtrudedDirection");
+		auto extrusion_vec = to_exact_direction(*ifc_dir, c).to_vector();
 		extrusion_vec = extrusion_vec / sqrt(extrusion_vec.squared_length());
-		double depth = inst.get("Depth");
+		double depth = real_field(obj, "Depth");
 		extrusion_vec = extrusion_vec * c->request_height(depth);
 		transformation_3 extrusion(CGAL::TRANSLATION, extrusion_vec);
 		points.reserve(bverts.size() * 2);
@@ -128,38 +130,48 @@ nef_polyhedron_3 create_nef(
 		poly.delegate(b);
 		return nef_polyhedron_3(poly);
 	}
-	else if (inst.is_instance_of("IfcHalfspaceSolid") || inst.is_instance_of("IfcBoxedHalfSpace")) {
-		cppw::Instance base_surface = inst.get("BaseSurface");
-		if (!base_surface.is_instance_of("IfcPlane")) {
+	else if (is_instance_of(obj, "IfcHalfspaceSolid") || 
+			 is_instance_of(obj, "IfcBoxedHalfSpace"))
+	{
+		auto base_surface = object_field(obj, "BaseSurface");
+		if (!is_instance_of(*base_surface, "IfcPlane")) {
 			g_opts.error_func("[Error - tried to use something other than an IfcPlane for the base surface of an IfcHalfspaceSolid.]\n");
 			return nef_polyhedron_3();
 		}
-		cppw::Instance surface_placement = base_surface.get("Position");
-		cppw::Instance point = surface_placement.get("Location");
-		cppw::Select normal = surface_placement.get("Axis");
-		direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : direction_3(0, 0, 1);
-		extended_plane_3 p = create_extended_plane(to_exact_point(point, c), inst.get("AgreementFlag") ? n : -n, ec);
+		auto surface_placement = object_field(*base_surface, "Position");
+		auto point = object_field(*surface_placement, "Location");
+		auto normal = object_field(*surface_placement, "Axis");
+		direction_3 n;
+		if (normal) { n = to_exact_direction(*normal, c); }
+		else { n = direction_3(0, 0, 1); }
+		bool agrees = boolean_field(obj, "AgreementFlag");
+		auto ep = to_exact_point(*point, c);
+		extended_plane_3 p = create_extended_plane(ep, agrees ? n : -n, ec);
 		return nef_polyhedron_3(p);
 	}
-	else if (inst.is_kind_of("IfcPolygonalBoundedHalfSpace")) {
-		internal_geometry::face base(inst.get("PolygonalBoundary"), s, c);
+	else if (is_kind_of(obj, "IfcPolygonalBoundedHalfSpace")) {
+		auto boundary = object_field(obj, "PolygonalBoundary");
+		internal_geometry::face base(*boundary, s, c);
 		const auto & base_points = base.outer_boundary();
 		std::vector<extended_plane_3> planes;
 		size_t pc = base_points.size();
 		for (size_t i = 0; i < pc; ++i) {
 			planes.push_back(create_extended_plane(ray_3(base_points[(i + 1) % pc], direction_3(0, 0, 1)), base_points[i], ec));
 		}
-		cppw::Instance base_surface = inst.get("BaseSurface");
-		if (!base_surface.is_instance_of("IfcPlane")) {
+		auto base_surface = object_field(obj, "BaseSurface");
+		if (!is_instance_of(*base_surface, "IfcPlane")) {
 			g_opts.error_func("[Error - tried to use something other than an IfcPlane for the base surface of an IfcPolygonalBoundedHalfSpace.]\n");
 			return nef_polyhedron_3();
 		}
-		cppw::Instance surface_placement = base_surface.get("Position");
-		cppw::Instance point = surface_placement.get("Location");
-		cppw::Select normal = surface_placement.get("Axis");
-		direction_3 n = normal.is_set() ? to_exact_direction((cppw::Instance)normal, c) : direction_3(0, 0, 1);
-		planes.push_back(create_extended_plane(to_exact_point(point, c), n, ec));
-		if (!inst.get("AgreementFlag")) {
+		auto surface_placement = object_field(*base_surface, "Position");
+		auto point = object_field(*surface_placement, "Location");
+		auto normal = object_field(*surface_placement, "Axis");
+		direction_3 n;
+		if (normal) { n = to_exact_direction(*normal, c); }
+		else { n = direction_3(0, 0, 1); }
+		auto ep = to_exact_point(*point, c);
+		planes.push_back(create_extended_plane(ep, n, ec));
+		if (!boolean_field(obj, "AgreementFlag")) {
 			planes.back() = planes.back().opposite();
 		}
 		nef_polyhedron_3 result(planes.front());
@@ -168,12 +180,12 @@ nef_polyhedron_3 create_nef(
 		});
 		return result;
 	}
-	else if (inst.is_instance_of("IfcBooleanClippingResult")) {
-		cppw::Instance operand1 = inst.get("FirstOperand");
-		cppw::Instance operand2 = inst.get("SecondOperand");
-		nef_polyhedron_3 first = create_nef(operand1, scaler, c, ec);
-		nef_polyhedron_3 second = create_nef(operand2, scaler, c, ec);
-		cppw::String op = inst.get("Operator");
+	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
+		auto operand1 = object_field(obj, "FirstOperand");
+		auto operand2 = object_field(obj, "SecondOperand");
+		nef_polyhedron_3 first = create_nef(*operand1, scaler, c, ec);
+		nef_polyhedron_3 second = create_nef(*operand2, scaler, c, ec);
+		auto op = *string_field(obj, "Operator");
 		if (op == "DIFFERENCE") {
 			return (first - second).regularization();
 		}
@@ -236,12 +248,12 @@ std::unique_ptr<internal_geometry::solid> convert_to_solid(
 namespace wrapped_nef_operations {
 
 std::unique_ptr<internal_geometry::solid> from_boolean_result(
-	const cppw::Instance & inst, 
+	const ifc_object & obj, 
 	const unit_scaler & scaler, eqc * c) 
 {
 	g_opts.notify_func("(geometry requires boolean operations)...");
 	number_collection<eK> extended_context(EPS_MAGIC / 20);
-	return convert_to_solid(create_nef(inst, scaler, c, &extended_context), c);
+	return convert_to_solid(create_nef(obj, scaler, c, &extended_context), c);
 }
 
 } // namespace wrapped_nef_operations

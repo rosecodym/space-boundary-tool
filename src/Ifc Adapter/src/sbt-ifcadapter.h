@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../Core/src/sbt-core.h"
-#include "../../Edm Wrapper/edm_wrapper_native_interface.h"
 
 #ifdef __cplusplus
 extern "C" {

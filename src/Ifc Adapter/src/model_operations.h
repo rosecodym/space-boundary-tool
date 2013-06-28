@@ -30,7 +30,7 @@ ifcadapter_return_t extract_from_model(
 	std::vector<element_info *> * shadings);
 
 ifcadapter_return_t add_to_model(
-	const ifc_interface::model & model,
+	ifc_interface::model * model,
 	size_t sb_count,
 	space_boundary ** space_boundaries,
 	void (*msg_func)(char *),

@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "../../Edm Wrapper/edm_wrapper_native_interface.h"
+
 #include "internal_geometry.h"
 
 #include "geometry_common.h"
@@ -432,7 +434,7 @@ boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 		}
 		double p1x, p1y, p2x, p2y;
 		std::tie(p1x, p1y, std::ignore) = triple_field(*pts[0], "Coordinates");
-		std::tie(p1x, p1y, std::ignore) = triple_field(*pts[1], "Coordinates");
+		std::tie(p2x, p2y, std::ignore) = triple_field(*pts[1], "Coordinates");
 		direction_3 a1 = c->request_direction(p2x - p1x, p2y - p1y, 0.0);
 		vector_3 a3(0, 0, 1);
 		direction_3 a2 = CGAL::cross_product(a3, a1.to_vector()).direction();

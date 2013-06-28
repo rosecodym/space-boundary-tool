@@ -4,7 +4,6 @@
 
 #include "sbt-ifcadapter.h"
 
-#include "get_length_units_per_meter.h"
 #include "model_operations.h"
 #include "number_collection.h"
 #include "reassign_bounded_spaces.h"
@@ -269,12 +268,12 @@ ifcadapter_return_t execute(
 		}
 
 		if (output_filename != nullptr) {
-			m.invalidate_all_object_pointers();
+			m.invalidate_all_ownership_pointers();
 			m.remove_all_space_boundaries();
 			// add_to_model figures out the right spaces by re-extracting 
 			// them based on guids.
 			res = add_to_model(
-					m, 
+					&m, 
 					*sb_count, 
 					*sbs, 
 					opts.notify_func, 
