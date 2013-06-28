@@ -6,6 +6,15 @@ class equality_context;
 
 namespace geometry_common {
 
+struct point_3_cmp : public std::binary_function<point_3, point_3, bool> {
+	bool operator () (const point_3 & a, const point_3 & b) const {
+		if (a.x() == b.x()) {
+			return a.y() == b.y() ? a.z() < b.z() : a.y() < b.y();
+		}
+		else { return a.x() < b.x(); }
+	}
+};
+
 bool is_valid(const polygon_2 & poly, double eps);
 
 inline bool is_axis_aligned(const polygon_2 & poly) {

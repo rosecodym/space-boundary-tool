@@ -35,7 +35,7 @@ public:
 
 		for (auto f = faces.begin(); f != faces.end(); ++f) {
 			indices.push_back(std::deque<size_t>());
-			assert(f->inners().size() == 0);
+			assert(f->voids().size() == 0);
 			for (auto p = f->outer().begin(); p != f->outer().end(); ++p) {
 				auto exists = point_lookup.find(*p);
 				if (exists == point_lookup.end()) {

@@ -206,45 +206,33 @@ face::face(
 	number_collection<K> * c)
 {
 	if (is_instance_of(obj, "IfcFaceBound")) {
-		outer = build_polyloop(*object_field(obj, "Bound"), scale, c);
+		outer_ = build_polyloop(*object_field(obj, "Bound"), scale, c);
 	}
 	else if (is_instance_of(obj, "IfcFace")) {
 		auto bounds = collection_field(obj, "Bounds");
 		for (auto b = bounds.begin(); b != bounds.end(); ++b) {
-			auto thisbound = build_polyloop(**b, scale, c);
-			boost::copy(thisbound, std::back_inserter(outer));
+			if (is_instance_of(**b, "IfcFaceOuterBound")) {
+				outer_ = build_polyloop(**b, scale, c);
+			}
+			else { voids_.push_back(build_polyloop(**b, scale, c)); }
 		}
 	}
 	else if (is_instance_of(obj, "IfcArbitraryProfileDefWithVoids")) {
-		outer = build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
+		outer_ = build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
 		auto inners = collection_field(obj, "InnerCurves");
 		for (auto p = inners.begin(); p != inners.end(); ++p) {
-			voids.push_back(build_polyloop(**p, scale, c));
+			voids_.push_back(build_polyloop(**p, scale, c));
 		}
 	}
 	else {
-		outer = build_polyloop(obj, scale, c);
+		outer_ = build_polyloop(obj, scale, c);
 	}
-}
-
-face::face(const exact_face & f) {
-	typedef std::vector<point_3> loop;
-	auto import_loop = [](const exact_polyloop & eloop) -> loop {
-		loop res;
-		auto & vs = eloop.vertices;
-		boost::transform(vs, back_inserter(res), [](const exact_point & p) {
-			return point_3(p.x, p.y, p.z);
-		});
-		return res;
-	};
-	outer = import_loop(f.outer_boundary);
-	boost::transform(f.voids, std::back_inserter(voids), import_loop);
 }
 
 direction_3 face::normal() const {
 	// http://cs.haifa.ac.il/~gordon/plane.pdf
 	NT a(0.0), b(0.0), c(0.0);
-	auto & loop = outer;
+	auto & loop = outer_;
 	for (size_t i = 0; i < loop.size(); ++i) {
 		auto & curr = loop[i];
 		auto & next = loop[(i+1) % loop.size()];
@@ -268,47 +256,35 @@ interface_face face::to_interface() const {
 		return res;
 	};
 	interface_face f;
-	f.outer_boundary = export_loop(outer);
+	f.outer_boundary = export_loop(outer_);
 	f.voids = nullptr;
-	f.void_count = voids.size();
-	if (!voids.empty()) {
+	f.void_count = voids_.size();
+	if (!voids_.empty()) {
 		f.voids = (::polyloop *)malloc(sizeof(::polyloop) * f.void_count);
-		for (size_t i = 0; i < voids.size(); ++i) {
-			f.voids[i] = export_loop(voids[i]);
+		for (size_t i = 0; i < voids_.size(); ++i) {
+			f.voids[i] = export_loop(voids_[i]);
 		}
 	}
 	return f;
 }
 
 void face::reverse() {
-	boost::reverse(outer);
-	boost::for_each(voids, [](std::vector<point_3> & v) {
+	boost::reverse(outer_);
+	boost::for_each(voids_, [](std::vector<point_3> & v) {
 		boost::reverse(v);
 	});
 }
 
 void face::transform(const transformation_3 & t) {
 	auto previous_normal = normal();
-	boost::transform(outer, outer.begin(), t);
+	boost::transform(outer_, outer_.begin(), t);
 	// Note that t(previous_normal) does not equal normal() here if the columns
 	// of the transformation matrix are not orthnormal, which can happen due to
 	// numeric instability in the IfcBuildAxes function. This isn't really
 	// worth "fixing" because IfcBuildAxes keeps the columns very *close* to
 	// orthonormal.
-	for (auto v = voids.begin(); v != voids.end(); ++v) {
+	for (auto v = voids_.begin(); v != voids_.end(); ++v) {
 		boost::transform(*v, v->begin(), t);
-	}
-}
-
-std::unique_ptr<solid> solid::legacy_facade_build(const exact_solid & s) {
-	if (s.rep_type() == REP_BREP) {
-		return std::unique_ptr<brep>(new brep(*s.rep.as_brep));
-	}
-	else if (s.rep_type() == REP_EXT) {
-		return std::unique_ptr<ext>(new ext(*s.rep.as_ext));
-	}
-	else {
-		throw bad_rep_exception("unset internal exact surrogate rep type");
 	}
 }
 
@@ -324,14 +300,6 @@ brep::brep(
 	for (auto f = face_set.begin(); f != face_set.end(); ++f) {
 		faces.push_back(face(**f, scale_length, c));
 	}
-}
-
-brep::brep(const exact_brep & b) {
-	using std::back_inserter;
-	using boost::transform;
-	transform(b.faces, back_inserter(faces), [](const exact_face & f) {
-		return face(f);
-	});
 }
 
 void brep::transform(const transformation_3 & t) {
@@ -357,44 +325,39 @@ ext::ext(
 	const ifc_object & obj,
 	const length_scaler & scale,
 	number_collection<K> * c)
-	: area(*object_field(obj, "SweptArea"), scale, c)
+	: area_(*object_field(obj, "SweptArea"), scale, c)
 {
 	double unscaled_depth = real_field(obj, "Depth");
-	depth = c->request_height(scale(unscaled_depth));
+	depth_ = c->request_height(scale(unscaled_depth));
 	auto d = object_field(obj, "ExtrudedDirection");
 	double dx, dy, dz;
 	std::tie(dx, dy, dz) = triple_field(*d, "DirectionRatios");
-	dir = c->request_direction(dx, dy, dz);
-	if (!normal_matches_dir(area, dir)) {
-		area.reverse();
+	dir_ = c->request_direction(dx, dy, dz);
+	if (!normal_matches_dir(area_, dir_)) {
+		area_.reverse();
 	}
-	assert(!are_perpendicular(area.normal(), dir));
+	assert(!are_perpendicular(area_.normal(), dir_));
 }
 
-ext::ext(const exact_extruded_area_solid & e) 
-	: area(e.area),
-	  dir(e.ext_dir),
-	  depth(e.extrusion_depth) { }
-
 void ext::transform(const transformation_3 & t) {
-	assert(!are_perpendicular(area.normal(), dir));
-	area.transform(t);
-	dir = dir.transform(t);
+	assert(!are_perpendicular(area_.normal(), dir_));
+	area_.transform(t);
+	dir_ = dir_.transform(t);
 	if (axes_) { 
 		axes_ = std::make_tuple(axis1()->transform(t), axis2()->transform(t));
 	}
-	assert(!are_perpendicular(area.normal(), dir));
+	assert(!are_perpendicular(area_.normal(), dir_));
 }
 
 interface_solid ext::to_interface_solid() const {
 	interface_solid res;
 	res.rep_type = REP_EXT;
 	auto & rep = res.rep.as_ext;
-	rep.area = area.to_interface();
-	rep.extrusion_depth = CGAL::to_double(depth);
-	rep.ext_dx = CGAL::to_double(dir.dx());
-	rep.ext_dy = CGAL::to_double(dir.dy());
-	rep.ext_dz = CGAL::to_double(dir.dz());
+	rep.area = area_.to_interface();
+	rep.extrusion_depth = CGAL::to_double(depth_);
+	rep.ext_dx = CGAL::to_double(dir_.dx());
+	rep.ext_dy = CGAL::to_double(dir_.dy());
+	rep.ext_dz = CGAL::to_double(dir_.dz());
 	return res;
 }
 
@@ -534,13 +497,7 @@ std::unique_ptr<solid> get_local_geometry(
 		return get_local_geometry(*rep, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
-		exact_solid legacy_facade;
-		wrapped_nef_operations::solid_from_boolean_result(
-			&legacy_facade,
-			obj,
-			scaler,
-			c);
-		return solid::legacy_facade_build(legacy_facade);
+		return wrapped_nef_operations::from_boolean_result(obj, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcFaceBasedSurfaceModel")) {
 		auto face_set = collection_field(obj, "FbsmFaces");

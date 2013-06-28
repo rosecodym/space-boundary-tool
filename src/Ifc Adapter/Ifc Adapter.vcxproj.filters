@@ -66,12 +66,6 @@
     <ClInclude Include="src\wrapped_nef_operations.h">
       <Filter>legacy</Filter>
     </ClInclude>
-    <ClInclude Include="src\ifc-to-face.h">
-      <Filter>legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="src\exact_surrogates.h">
-      <Filter>legacy</Filter>
-    </ClInclude>
     <ClInclude Include="src\internal_geometry.h">
       <Filter>geometry</Filter>
     </ClInclude>
@@ -111,12 +105,6 @@
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="src\wrapped_nef_operations.cpp">
-      <Filter>legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ifc-to-face.cpp">
-      <Filter>legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="src\exact_surrogates.cpp">
       <Filter>legacy</Filter>
     </ClCompile>
     <ClCompile Include="src\internal_geometry.cpp">

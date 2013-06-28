@@ -76,9 +76,8 @@ struct face {
 	struct polyloop * voids;
 };
 
-// Note: if a brep face has voids they will be ignored. (Unfortunately, there's
-// no way at present to communicate CSG solids to the core that can't be 
-// expressed using an extruded_area_solid.)
+// Note: if a brep face has voids, the voids and all faces directly connected
+// to the voids (other than the hosting face) will be ignored.
 struct brep {
 	size_t face_count;
 	struct face * faces;
