@@ -51,7 +51,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;EDM_WRAPPER_EXPORTS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -69,7 +69,7 @@ do copy %%I "$(OutDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;EDM_WRAPPER_EXPORTS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -93,6 +93,7 @@ do copy %%I "$(OutDir)"</Command>
     <ClInclude Include="Edm.h" />
     <ClInclude Include="EdmDatabase.h" />
     <ClInclude Include="EdmException.h" />
+    <ClInclude Include="edm_wrapper_native_interface.h" />
     <ClInclude Include="IfcElement.h" />
     <ClInclude Include="IfcModel.h" />
     <ClInclude Include="IfcSpace.h" />

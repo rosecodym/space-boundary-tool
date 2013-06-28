@@ -8,7 +8,6 @@
 
 #include "ifc-to-face.h"
 
-extern bool found_freestanding;
 extern sb_calculation_options g_opts;
 
 namespace {
@@ -127,7 +126,6 @@ exact_face ifc_to_face(const cppw::Instance & inst, const unit_scaler & s, numbe
 		return f;
 	}
 	else if (inst.is_instance_of("IfcArbitraryProfileDefWithVoids")) {
-		found_freestanding = true;
 		exact_face f;
 		f.outer_boundary = ifc_to_polyloop((cppw::Instance)inst.get("OuterCurve"), s, c);
 		cppw::Set innerCurves = inst.get("InnerCurves");

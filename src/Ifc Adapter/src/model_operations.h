@@ -1,13 +1,20 @@
 #pragma once
 
 #include "precompiled.h"
+
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"
+
+namespace ifc_interface {
+
+class model;
+
+} // namespace ifc_interface
 
 class unit_scaler;
 
 ifcadapter_return_t extract_from_model(
-	cppw::Open_model & model, 
+	const ifc_interface::model & model, 
 	size_t * element_count, 
 	element_info *** elements, 
 	double ** composite_layer_dxs,
@@ -23,7 +30,7 @@ ifcadapter_return_t extract_from_model(
 	std::vector<element_info *> * shadings);
 
 ifcadapter_return_t add_to_model(
-	cppw::Open_model & model,
+	const ifc_interface::model & model,
 	size_t sb_count,
 	space_boundary ** space_boundaries,
 	void (*msg_func)(char *),

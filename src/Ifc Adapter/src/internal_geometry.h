@@ -6,6 +6,10 @@
 
 class unit_scaler;
 
+namespace ifc_interface {
+class ifc_object;
+} // namespace ifc_interface
+
 namespace internal_geometry {
 
 typedef std::function<double(double)> length_scaler;
@@ -19,7 +23,7 @@ private:
 	std::vector<std::vector<point_3>> voids;
 public:
 	face(
-		const cppw::Select & sel,
+		const ifc_interface::ifc_object & obj,
 		const length_scaler & scale_length,
 		number_collection<K> * c);
 	// Legacy facade
@@ -68,7 +72,7 @@ private:
 	std::vector<face> faces;
 public:
 	brep(
-		const cppw::Instance & inst, 
+		const ifc_interface::ifc_object & inst, 
 		const length_scaler & scale_length,
 		number_collection<K> * c);
 	// Legacy facade
@@ -84,7 +88,7 @@ private:
 	NT depth;
 public:
 	ext(
-		const cppw::Instance & inst, 
+		const ifc_interface::ifc_object & inst, 
 		const length_scaler & scale_length,
 		number_collection<K> * c);
 	// Legacy facade
@@ -102,20 +106,12 @@ public:
 };
 
 transformation_3 get_globalizer(
-	const cppw::Select & sel, 
-	const unit_scaler & scaler,
-	number_collection<K> * c);
-transformation_3 get_globalizer(
-	const cppw::Instance & inst, 
+	const ifc_interface::ifc_object & obj, 
 	const unit_scaler & scaler,
 	number_collection<K> * c);
 
 std::unique_ptr<solid> get_local_geometry(
-	const cppw::Select & sel, 
-	const unit_scaler & scaler,
-	number_collection<K> * c);
-std::unique_ptr<solid> get_local_geometry(
-	const cppw::Instance & inst, 
+	const ifc_interface::ifc_object & obj, 
 	const unit_scaler & scaler,
 	number_collection<K> * c);
 

@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="native">
+      <UniqueIdentifier>{7c5e9ed8-8d6d-4595-938a-d39183f13a9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IfcModel.h">
@@ -33,6 +36,9 @@
     </ClInclude>
     <ClInclude Include="IfcZone.h">
       <Filter>managed</Filter>
+    </ClInclude>
+    <ClInclude Include="edm_wrapper_native_interface.h">
+      <Filter>native</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

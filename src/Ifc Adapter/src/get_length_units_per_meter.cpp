@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "../../Edm Wrapper/edm_wrapper_native_interface.h"
+
 #include "get_length_units_per_meter.h"
 
 namespace {
@@ -50,7 +52,7 @@ double get_scale_for(const cppw::Instance & inst) {
 
 } // namespace
 
-double get_length_units_per_meter(const cppw::Open_model & model) {
+double get_length_units_per_meter(const ifc_interface::model & m) {
 	cppw::Set projects = model.get_set_of("IfcProject");
 	cppw::Instance project = projects.get_(0);
 	cppw::Instance unitAssignment = project.get("UnitsInContext");
