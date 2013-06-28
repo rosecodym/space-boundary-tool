@@ -17,7 +17,7 @@ TEST(SimpleFaceXYTriangle, HasCorrectVertices) {
 		simple_point(0, 1, 0)), false, &c);
 
 	EXPECT_EQ(3, f.outer().size());
-	EXPECT_EQ(0, f.inners().size());
+	EXPECT_EQ(0, f.voids().size());
 
 	auto has_point = [&f](double x, double y, double z) {
 		return 
@@ -49,7 +49,7 @@ TEST(SimpleFaceNonAxisTriangle, HasCorrectVertices) {
 		simple_point(0, 0, 1)), false, &c);
 
 	EXPECT_EQ(3, f.outer().size());
-	EXPECT_EQ(0, f.inners().size());
+	EXPECT_EQ(0, f.voids().size());
 
 	auto has_point = [&f](double x, double y, double z) {
 		return 

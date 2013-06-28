@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 #include "geometry_common.h"
-#include "ifc-to-face.h"
+#include "internal_geometry.h"
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"
 #include "unit_scaler.h"
@@ -52,18 +52,24 @@ extended_plane_3 create_extended_plane(const ray_3 & r, const point_3 & p, numbe
 	return create_extended_plane(p, r.direction(), c);
 }
 
-nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, eqc * c, number_collection<eK> * ec) {
+nef_polyhedron_3 create_nef(
+	const cppw::Instance & inst, 
+	const unit_scaler & scaler, 
+	eqc * c, 
+	number_collection<eK> * ec) 
+{
+	auto s = [&scaler](double x) { return scaler.length_in(x); };
 	if (inst.is_kind_of("IfcExtrudedAreaSolid")) {
+		internal_geometry::ext internal_ext(inst, s, c);
 		using boost::transform;
 		using std::back_inserter;
-		exact_face base = ifc_to_face((cppw::Instance)inst.get("SweptArea"), s, c);
-		const auto & bverts = base.outer_boundary.vertices;
+		const auto & bverts = internal_ext.base().outer_boundary();
 		std::vector<point_3> points;
-		transform(bverts, back_inserter(points), [c](const exact_point & p) {
+		transform(bverts, back_inserter(points), [c](const point_3 & p) {
 			return c->request_point(
-				CGAL::to_double(p.x),
-				CGAL::to_double(p.y),
-				CGAL::to_double(p.z));
+				CGAL::to_double(p.x()),
+				CGAL::to_double(p.y()),
+				CGAL::to_double(p.z()));
 		});
 		cppw::Instance ifc_dir = inst.get("ExtrudedDirection");
 		auto extrusion_vec = to_exact_direction(ifc_dir, c).to_vector();
@@ -136,11 +142,8 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		return nef_polyhedron_3(p);
 	}
 	else if (inst.is_kind_of("IfcPolygonalBoundedHalfSpace")) {
-		exact_face base = ifc_to_face((cppw::Instance)inst.get("PolygonalBoundary"), s, c);
-		std::vector<point_3> base_points;
-		std::transform(base.outer_boundary.vertices.begin(), base.outer_boundary.vertices.end(), std::back_inserter(base_points), [c](const exact_point & p) {
-			return c->request_point(CGAL::to_double(p.x), CGAL::to_double(p.y), CGAL::to_double(p.z));
-		});
+		internal_geometry::face base(inst.get("PolygonalBoundary"), s, c);
+		const auto & base_points = base.outer_boundary();
 		std::vector<extended_plane_3> planes;
 		size_t pc = base_points.size();
 		for (size_t i = 0; i < pc; ++i) {
@@ -166,8 +169,10 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 		return result;
 	}
 	else if (inst.is_instance_of("IfcBooleanClippingResult")) {
-		nef_polyhedron_3 first = create_nef((cppw::Instance)inst.get("FirstOperand"), s, c, ec);
-		nef_polyhedron_3 second = create_nef((cppw::Instance)inst.get("SecondOperand"), s, c, ec);
+		cppw::Instance operand1 = inst.get("FirstOperand");
+		cppw::Instance operand2 = inst.get("SecondOperand");
+		nef_polyhedron_3 first = create_nef(operand1, scaler, c, ec);
+		nef_polyhedron_3 second = create_nef(operand2, scaler, c, ec);
 		cppw::String op = inst.get("Operator");
 		if (op == "DIFFERENCE") {
 			return (first - second).regularization();
@@ -189,8 +194,11 @@ nef_polyhedron_3 create_nef(const cppw::Instance & inst, const unit_scaler & s, 
 	}
 }
 
-void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, eqc * c) {
-	s->set_rep_type(REP_BREP);
+std::unique_ptr<internal_geometry::solid> convert_to_solid(
+	const nef_polyhedron_3 & nef, 
+	eqc * c) 
+{
+	std::vector<std::vector<point_3>> all_pts;
 	nef_polyhedron_3::Halffacet_const_iterator facet;
 	int face_index = 0;
 	CGAL_forall_halffacets(facet, nef) {
@@ -199,33 +207,41 @@ void convert_to_solid(exact_solid * s, const nef_polyhedron_3 & nef, eqc * c) {
 				char buf[256];
 				sprintf(buf, "[Error - boolean result solid facet with a hole (%u cycles).]\n", std::distance(facet->facet_cycles_begin(), facet->facet_cycles_end()));
 				g_opts.error_func(buf);
-				return;
+				return std::unique_ptr<internal_geometry::solid>();
 			}
 			auto cycle = facet->facet_cycles_begin();
-			s->rep.as_brep->faces.push_back(exact_face());
+			all_pts.push_back(std::vector<point_3>());
 			nef_polyhedron_3::SHalfedge_around_facet_const_circulator start(cycle);
 			nef_polyhedron_3::SHalfedge_around_facet_const_circulator end(cycle);
 			CGAL_For_all(start, end) {
 				auto p = start->source()->center_vertex()->point();
-				point_3 req = c->request_point(
+				all_pts.back().push_back(c->request_point(
 					CGAL::to_double(p.x()),
 					CGAL::to_double(p.y()),
-					CGAL::to_double(p.z()));
-				s->rep.as_brep->faces.back().outer_boundary.vertices.push_back(exact_point(req.x(), req.y(), req.z()));
+					CGAL::to_double(p.z())));
 			}
 			++face_index;
 		}
 	}
+	std::vector<internal_geometry::face> faces;
+	for (auto loop = all_pts.begin(); loop != all_pts.end(); ++loop) {
+		faces.push_back(internal_geometry::face(*loop));
+	}
+	auto b = new internal_geometry::brep(faces);
+	return std::unique_ptr<internal_geometry::solid>(b);
 }
 
 } // namespace
 
 namespace wrapped_nef_operations {
 
-void solid_from_boolean_result(exact_solid * s, const cppw::Instance & inst, const unit_scaler & scaler, eqc * c) {
+std::unique_ptr<internal_geometry::solid> from_boolean_result(
+	const cppw::Instance & inst, 
+	const unit_scaler & scaler, eqc * c) 
+{
 	g_opts.notify_func("(geometry requires boolean operations)...");
 	number_collection<eK> extended_context(EPS_MAGIC / 20);
-	convert_to_solid(s, create_nef(inst, scaler, c, &extended_context), c);
+	return convert_to_solid(create_nef(inst, scaler, c, &extended_context), c);
 }
 
 } // namespace wrapped_nef_operations

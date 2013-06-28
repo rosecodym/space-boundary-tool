@@ -182,7 +182,7 @@ std::vector<oriented_area> extrusion_to_faces(
 	res.push_back(oriented_area(base.reversed().transformed(extrude), c));
 	boost::copy(create_sides(base.outer()), std::back_inserter(res));
 
-	for (auto h = base.inners().begin(); h != base.inners().end(); ++h) {
+	for (auto h = base.voids().begin(); h != base.voids().end(); ++h) {
 		std::vector<point_3> reversed(h->rbegin(), h->rend());
 		boost::copy(create_sides(reversed), std::back_inserter(res));
 	}
@@ -204,7 +204,7 @@ nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_co
 		return nef_polyhedron_3();
 	}
 	nef_polyhedron_3 res(poly);
-	boost::for_each(f.inners(), [&res, &extrude, c](const std::vector<point_3> & inner) {
+	boost::for_each(f.voids(), [&res, &extrude, c](const std::vector<point_3> & inner) {
 		polyhedron_3 poly;
 		auto builder = poly_builder::create(inner, extrude);
 		poly.delegate(builder);
@@ -214,16 +214,33 @@ nef_polyhedron_3 extrusion_to_nef(const extrusion_information & ext, equality_co
 }
 
 std::vector<simple_face> faces_from_brep(const brep & b, equality_context * c) {
-	std::vector<simple_face> res;
+	using boost::copy;
+	std::set<point_3, geometry_common::point_3_cmp> inner_pts;
+	std::list<simple_face> res;
 	for (size_t i = 0; i < b.face_count; ++i) {
 		try {
 			res.push_back(simple_face(b.faces[i], false, c));
+			const auto & voids = res.back().voids();
+			if (!voids.empty()) {
+				for (auto v = voids.begin(); v != voids.end(); ++v) {
+					copy(*v, std::inserter(inner_pts, inner_pts.begin()));
+				}
+				res.back() = res.back().without_voids();
+			}
+			res.remove_if([&inner_pts](const simple_face & f) -> bool {
+				for (auto p = inner_pts.begin(); p != inner_pts.end(); ++p) {
+					if (boost::find(f.outer(), *p) != f.outer().end()) {
+						return true;
+					}
+				}
+				return false;
+			});
 		}
 		catch (invalid_face_exception & /*ex*/) {
 			throw bad_brep_exception();
 		}
 	}
-	return res;
+	return std::vector<simple_face>(res.begin(), res.end());
 }
 
 nef_polyhedron_3 simple_faces_to_nef(
