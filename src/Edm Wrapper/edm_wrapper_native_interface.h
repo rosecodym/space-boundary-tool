@@ -59,9 +59,10 @@ EDM_WRAPPER_INTERFACE bool set_field(
 class EDM_WRAPPER_INTERFACE model {
 public:
 	model(const char * path);
+	~model();
 	
-	std::vector<ifc_object *> building_elements() const;
-	std::vector<ifc_object *> spaces() const;
+	std::vector<const ifc_object *> building_elements();
+	std::vector<const ifc_object *> spaces();
 
 	double length_units_per_meter() const;
 	const ifc_object * element_with_guid(const std::string & guid) const;
@@ -72,17 +73,26 @@ public:
 	ifc_object * create_curve(
 		const std::vector<std::pair<double, double>> & points);
 	ifc_object * create_direction(double dx, double dy, double dz);
-	ifc_object * create_object(const std::string & type);
+	ifc_object * create_object(
+		const std::string & type,
+		bool with_owner_history);
 	ifc_object * create_point(double x, double y);
 	ifc_object * create_point(double x, double y, double z);
 
 	void invalidate_all_ownership_pointers();
 	void remove_all_space_boundaries();
-	void set_new_owner_history(
-		const std::string & app_full_name,
-		const std::string & app_identifier,
-		const std::string & app_version,
-		const std::string & organization);
+	bool set_new_owner_history(
+		const char * app_full_name,
+		const char * app_identifier,
+		const char * app_version,
+		const char * organization);
+
+	// For internal use only
+	ifc_object * take_ownership(ifc_object && obj);
+
+private:
+	struct internals;
+	internals * d_;
 };
 
 } // namespace ifc_interface

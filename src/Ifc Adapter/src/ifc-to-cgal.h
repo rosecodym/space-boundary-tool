@@ -19,7 +19,7 @@ CGAL::Point_3<KernelT> build_point(
 {
 	assert(is_kind_of(obj, "IfcCartesianPoint"));
 	double x, y, z;
-	std::tie(x, y, z) = triple_field(obj, "Coordinates");
+	triple_field(obj, "Coordinates", &x, &y, &z);
 	return c->request_point(s.length_in(x), s.length_in(y), s.length_in(z));
 }
 
@@ -30,7 +30,7 @@ CGAL::Direction_3<KernelT> build_direction(
 {
 	assert(is_kind_of(obj, "IfcDirection"));
 	double dx, dy, dz;
-	std::tie(dx, dy, dz) = triple_field(obj, "DirectionRatios");
+	triple_field(obj, "DirectionRatios", &dx, &dy, &dz);
 	return c->request_direction(dx, dy, dz);
 }
 

@@ -26,13 +26,13 @@ typedef number_collection<K> eqc;
 
 point_3 to_exact_point(const ifc_object & obj, eqc * c) {
 	double x, y, z;
-	std::tie(x, y, z) = triple_field(obj, "Coordinates");
+	triple_field(obj, "Coordinates", &x, &y, &z);
 	return c->request_point(x, y, z);
 }
 
 direction_3 to_exact_direction(const ifc_object & obj, eqc * c) {
 	double dx, dy, dz;
-	std::tie(dx, dy, dz) = triple_field(obj, "DirectionRatios");
+	triple_field(obj, "DirectionRatios", &dx, &dy, &dz);
 	assert(!(dx == 0 && dy == 0 && dz == 0));
 	return c->request_direction(dx, dy, dz);
 }
@@ -185,7 +185,7 @@ nef_polyhedron_3 create_nef(
 		auto operand2 = object_field(obj, "SecondOperand");
 		nef_polyhedron_3 first = create_nef(*operand1, scaler, c, ec);
 		nef_polyhedron_3 second = create_nef(*operand2, scaler, c, ec);
-		auto op = *string_field(obj, "Operator");
+		auto op = string_field(obj, "Operator");
 		if (op == "DIFFERENCE") {
 			return (first - second).regularization();
 		}

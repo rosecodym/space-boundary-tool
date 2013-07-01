@@ -118,7 +118,7 @@ ifc_object * create_a2p3d(
 		.transform(unflatten)
 		.transform(space_placement.inverse());
 
-	auto res = m->create_object("IfcAxis2Placement3D");
+	auto res = m->create_object("IfcAxis2Placement3D", false);
 	set_field(res, "Location", *create_point(m, origin, scaler));
 	set_field(res, "Axis", *create_direction(m, z_axis));
 	set_field(res, "RefDirection", *create_direction(m, refdir));
@@ -132,7 +132,7 @@ ifc_object * create_plane(
 	std::vector<ipoint_2> * points_2d, 
 	const unit_scaler & scaler) 
 {
-	auto plane = m->create_object("IfcPlane");
+	auto plane = m->create_object("IfcPlane", false);
 	auto a2p3d = create_a2p3d(m, space_placement, sb, points_2d, scaler);
 	set_field(plane, "Position", *a2p3d);
 	return plane;
@@ -158,7 +158,7 @@ ifc_object * create_boundary(
 	space_boundary * sb, 
 	const unit_scaler & scaler) 
 {
-	auto res = m->create_object("IfcCurveBoundedPlane");
+	auto res = m->create_object("IfcCurveBoundedPlane", false);
 	std::vector<ipoint_2> points_2d;
 	auto basis = create_plane(m, space_placement, sb, &points_2d, scaler);
 	set_field(res, "BasisSurface", *basis);
@@ -172,7 +172,7 @@ ifc_object * create_geometry(
 	space_boundary * sb, 
 	const unit_scaler & scaler) 
 {
-	auto res = m->create_object("IfcConnectionSurfaceGeometry");
+	auto res = m->create_object("IfcConnectionSurfaceGeometry", false);
 	auto boundary = create_boundary(m, space_placement, sb, scaler);
 	set_field(res, "SurfaceOnRelatingElement", *boundary);
 	return res;
@@ -189,7 +189,7 @@ ifc_object * create_sb(
 	auto space_trans = object_field(space, "ObjectPlacement");
 	auto space_placement = build_transformation(space_trans, scaler, c);
 
-	auto res = m->create_object("IfcRelSpaceBoundary");
+	auto res = m->create_object("IfcRelSpaceBoundary", true);
 
 	int level = get_level(*sb);
 
@@ -217,7 +217,7 @@ ifc_object * create_rel_aggregates(
 	const char * name, 
 	const char * desc) 
 {
-	auto res = m->create_object("IfcRelAggregates");
+	auto res = m->create_object("IfcRelAggregates", true);
 	char guidbuf[128];
 	CreateCompressedGuidString(guidbuf, 127);
 	set_field(res, "GlobalId", guidbuf);
@@ -241,7 +241,7 @@ void create_necessary_virtual_elements(
 		}
 	}
 	for (auto pair = virtuals.begin(); pair != virtuals.end(); ++pair) {
-		auto inst = m->create_object("IfcVirtualElement");
+		auto inst = m->create_object("IfcVirtualElement", true);
 		char guidbuf[128];
 		CreateCompressedGuidString(guidbuf, 127);
 		set_field(inst, "GlobalId", guidbuf);
@@ -271,22 +271,6 @@ ifcadapter_return_t add_to_model(
 
 	create_necessary_virtual_elements(m, sbs, sb_count);
 	msg_func("Created virtual elements.\n");
-
-	//std::map<std::string, int> element_map; // we have to use indices because Instances aren't default-constructable
-	//auto es = model.get_set_of("IfcElement", cppw::include_subtypes);
-	//for (int i = 0; i < es.count(); ++i) {
-	//	if (es.get(i).is_kind_of("IfcBuildingElement") || es.get(i).is_kind_of("IfcVirtualElement")) {
-	//		element_map[((cppw::String)es.get(i).get("GlobalId")).data()] = i;
-	//	}
-	//}
-	//msg_func("Created element map.\n");
-
-	//std::map<std::string, int> space_map;
-	//auto ss = model.get_set_of("IfcSpace");
-	//for (int i = 0; i < ss.count(); ++i) {
-	//	space_map[((cppw::String)ss.get(i).get("GlobalId")).data()] = i;
-	//}
-	//msg_func("Created space map.\n");
 	
 	msg_func("Adding space boundaries to model");
 	int added_count = 0;

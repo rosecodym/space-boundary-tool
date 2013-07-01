@@ -29,7 +29,7 @@ point_3 build_point(
 	number_collection<K> * c) 
 {
 	double x, y, z;
-	std::tie(x, y, z) = ifc_interface::triple_field(obj, "Coordinates");
+	ifc_interface::triple_field(obj, "Coordinates", &x, &y, &z);
 	return c->request_point(scale_length(x), scale_length(y), scale_length(z));
 }
 
@@ -38,7 +38,7 @@ direction_3 build_direction(
 	number_collection<K> * c)
 {
 	double dx, dy, dz;
-	std::tie(dx, dy, dz) = ifc_interface::triple_field(obj, "DirectionRatios");
+	ifc_interface::triple_field(obj, "DirectionRatios", &dx, &dy, &dz);
 	return c->request_direction(dx, dy, dz);
 }
 
@@ -333,7 +333,7 @@ ext::ext(
 	depth_ = c->request_height(scale(unscaled_depth));
 	auto d = object_field(obj, "ExtrudedDirection");
 	double dx, dy, dz;
-	std::tie(dx, dy, dz) = triple_field(*d, "DirectionRatios");
+	triple_field(*d, "DirectionRatios", &dx, &dy, &dz);
 	dir_ = c->request_direction(dx, dy, dz);
 	if (!normal_matches_dir(area_, dir_)) {
 		area_.reverse();
@@ -378,7 +378,7 @@ transformation_3 get_globalizer(
 	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
 		auto reps = collection_field(obj, "Representations");
 		for (auto r = reps.begin(); r != reps.end(); ++r) {
-			if (*string_field(**r, "RepresentationIdentifier") == "Body") {
+			if (string_field(**r, "RepresentationIdentifier") == "Body") {
 				return get_globalizer(**r, scaler, c);
 			}
 		}
@@ -386,7 +386,7 @@ transformation_3 get_globalizer(
 	}
 	else if (
 		is_instance_of(obj, "IfcShapeRepresentation") &&
-		*string_field(obj, "RepresentationIdentifier") == "Body")
+		string_field(obj, "RepresentationIdentifier") == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
@@ -432,9 +432,9 @@ boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 			throw bad_rep_exception(
 				"axis definition without exactly two points");
 		}
-		double p1x, p1y, p2x, p2y;
-		std::tie(p1x, p1y, std::ignore) = triple_field(*pts[0], "Coordinates");
-		std::tie(p2x, p2y, std::ignore) = triple_field(*pts[1], "Coordinates");
+		double p1x, p1y, p2x, p2y, dummy;
+		triple_field(*pts[0], "Coordinates", &p1x, &p1y, &dummy);
+		triple_field(*pts[1], "Coordinates", &p2x, &p2y, &dummy);
 		direction_3 a1 = c->request_direction(p2x - p1x, p2y - p1y, 0.0);
 		vector_3 a3(0, 0, 1);
 		direction_3 a2 = CGAL::cross_product(a3, a1.to_vector()).direction();
@@ -457,7 +457,7 @@ std::unique_ptr<solid> get_local_geometry(
 		std::unique_ptr<solid> geometry;
 		boost::optional<std::tuple<direction_3, direction_3>> axes;
 		for (auto r = reps.begin(); r != reps.end(); ++r) {
-			auto identifier = *string_field(**r, "RepresentationIdentifier");
+			auto identifier = string_field(**r, "RepresentationIdentifier");
 			if (identifier == "Body") {
 				geometry = get_local_geometry(**r, scaler, c);
 			}
@@ -473,7 +473,7 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (
 		is_instance_of(obj, "IfcShapeRepresentation") &&
-		*string_field(obj, "RepresentationIdentifier") == "Body")
+		string_field(obj, "RepresentationIdentifier") == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping

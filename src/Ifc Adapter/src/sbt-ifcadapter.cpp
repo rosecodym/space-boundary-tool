@@ -208,7 +208,7 @@ ifcadapter_return_t execute(
 	opts.length_units_per_meter = lupm;
 	unit_scaler scaler(lupm);
 	ifcadapter_return_t res = extract_from_model(
-		m,
+		&m,
 		element_count,
 		elements,
 		composite_layer_dxs,

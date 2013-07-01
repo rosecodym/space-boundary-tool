@@ -24,14 +24,14 @@ T ** create_list(size_t count) {
 
 bool is_shading(const ifc_object & obj) {
 	auto name = string_field(obj, "Name");
-	if (name && strstr(name->c_str(), "Shading")) { return true; }
+	if (strstr(name.c_str(), "Shading")) { return true; }
 
 	auto defined_by = collection_field(obj, "IsDefinedBy");
 	for (auto d = defined_by.begin(); d != defined_by.end(); ++d) {
 		if (is_instance_of(**d, "IfcRelDefinesByProperties")) {
 			auto pset = object_field(**d, "RelatingPropertyDefinition");
 			auto name = string_field(*pset, "Name");
-			if (name && strstr(name->c_str(), "ElementShading")) {
+			if (strstr(name.c_str(), "ElementShading")) {
 				return true;
 			}
 		}
@@ -42,7 +42,7 @@ bool is_shading(const ifc_object & obj) {
 ifc_object * get_related_opening(const ifc_object & fen) {
 	auto fills_voids = collection_field(fen, "FillsVoids");
 	if (fills_voids.size() == 1) {
-		return object_field(*fills_voids.front(), "RelatedOpeningElement");
+		return object_field(*fills_voids.front(), "RelatingOpeningElement");
 	}
 	else { return nullptr; }
 }
@@ -62,10 +62,10 @@ boost::optional<direction_3> get_composite_dir(
 					auto dir = string_field(*mat, "LayerSetDirection");
 					auto sense = string_field(*mat, "DirectionSense");
 					direction_3 res =
-						*dir == "AXIS1" ? axis1 :
-						*dir == "AXIS2" ? axis2 :
+						dir == "AXIS1" ? axis1 :
+						dir == "AXIS2" ? axis2 :
 										 axis3;
-					if (*sense == "NEGATIVE") { res = -res; }
+					if (sense == "NEGATIVE") { res = -res; }
 					return res;
 				}
 			}
@@ -95,9 +95,7 @@ size_t get_elements(
 
 	auto is_ceiling = [](const ifc_object & o) -> bool {
 		if (!is_kind_of(o, "IfcCovering")) { return false; }
-		auto type = string_field(o, "PredefinedType");
-		if (!type) { return false; }
-		return *type == "CEILING";
+		return string_field(o, "PredefinedType") == "CEILING";
 	};
 
 	auto bldg_elems = m->building_elements();
@@ -110,7 +108,7 @@ size_t get_elements(
 			is_kind_of(**e, "IfcDoor") ? DOOR :
 			is_kind_of(**e, "IfcWindow") ? WINDOW : 
 			is_ceiling(**e) ? SLAB : UNKNOWN;
-		auto guid = *string_field(**e, "GlobalId");
+		auto guid = string_field(**e, "GlobalId");
 		if (type != UNKNOWN && passes_filter(guid.c_str())) {
 			sprintf(buf, "Extracting element %s...", guid.c_str());
 			msg_func(buf);
@@ -212,7 +210,7 @@ size_t get_spaces(
 	std::vector<space_info> space_vector;
 
 	for (auto sp = ss.begin(); sp != ss.end(); ++sp) {
-		auto id = *string_field(**sp, "GlobalId");
+		auto id = string_field(**sp, "GlobalId");
 		try {
 			if (space_filter(id.c_str())) {
 				fmt m("Extracting space %s...");

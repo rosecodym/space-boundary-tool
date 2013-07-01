@@ -8,7 +8,9 @@
 class unit_scaler;
 
 namespace ifc_interface {
+
 class ifc_object;
+
 } // namespace ifc_interface
 
 namespace internal_geometry {

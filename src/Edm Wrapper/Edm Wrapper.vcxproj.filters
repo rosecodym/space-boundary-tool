@@ -40,6 +40,9 @@
       <Filter>native</Filter>
     </ClInclude>
     <ClInclude Include="utility.h" />
+    <ClInclude Include="ifc_object.h">
+      <Filter>native</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico">
@@ -70,6 +73,15 @@
     <ClCompile Include="IfcZone.cpp">
       <Filter>managed</Filter>
     </ClCompile>
+    <ClCompile Include="ifc_model.cpp">
+      <Filter>native</Filter>
+    </ClCompile>
     <ClCompile Include="utility.cpp" />
+    <ClCompile Include="ifc_object_operations.cpp">
+      <Filter>native</Filter>
+    </ClCompile>
+    <ClCompile Include="ifc_object.cpp">
+      <Filter>native</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

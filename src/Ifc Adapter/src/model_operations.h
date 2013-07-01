@@ -14,7 +14,7 @@ class model;
 class unit_scaler;
 
 ifcadapter_return_t extract_from_model(
-	const ifc_interface::model & model, 
+	ifc_interface::model * m, 
 	size_t * element_count, 
 	element_info *** elements, 
 	double ** composite_layer_dxs,
