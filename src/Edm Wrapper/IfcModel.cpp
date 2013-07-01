@@ -1,6 +1,7 @@
 #include "IfcModel.h"
 
 #include "EdmException.h"
+#include "utility.h"
 
 namespace IfcInterface {
 
