@@ -30,7 +30,7 @@ namespace GUI
                 {
                     SpacesByGuid[space.Guid] = space;
                 }
-                double mplu = model.MetersPerLengthUnit;
+                double mplu = 1 / model.LengthUnitsPerMeter;
                 cs = new ModelConstructionCollection(mplu);
                 foreach (var element in Elements)
                 {

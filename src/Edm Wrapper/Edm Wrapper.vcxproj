@@ -99,7 +99,7 @@ do copy %%I "$(OutDir)"</Command>
     <ClInclude Include="IfcSpace.h" />
     <ClInclude Include="IfcZone.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="string_conversion.h" />
+    <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
@@ -108,6 +108,7 @@ do copy %%I "$(OutDir)"</Command>
     <ClCompile Include="IfcModel.cpp" />
     <ClCompile Include="IfcSpace.cpp" />
     <ClCompile Include="IfcZone.cpp" />
+    <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />

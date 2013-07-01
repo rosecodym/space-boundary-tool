@@ -23,7 +23,7 @@ public:
 	property double NorthAxis { double get(); }
 	property double Latitude { double get(); }
 	property double Longitude { double get(); }
-	property double MetersPerLengthUnit { double get(); }
+	property double LengthUnitsPerMeter { double get(); }
 	property ICollection<IfcElement ^> ^ Elements
 	{
 		ICollection<IfcElement ^> ^ get();

@@ -24,7 +24,6 @@
     <ClInclude Include="Edm.h">
       <Filter>managed</Filter>
     </ClInclude>
-    <ClInclude Include="string_conversion.h" />
     <ClInclude Include="EdmException.h">
       <Filter>managed</Filter>
     </ClInclude>
@@ -40,6 +39,7 @@
     <ClInclude Include="edm_wrapper_native_interface.h">
       <Filter>native</Filter>
     </ClInclude>
+    <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico">
@@ -70,5 +70,6 @@
     <ClCompile Include="IfcZone.cpp">
       <Filter>managed</Filter>
     </ClCompile>
+    <ClCompile Include="utility.cpp" />
   </ItemGroup>
 </Project>
