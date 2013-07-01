@@ -6,12 +6,11 @@
 namespace IfcInterface {
 
 IfcModel::IfcModel(String ^ path) 
-	: database_(EdmDatabase::Instance()),
-	  repo_(__nullptr),
+	: repo_(__nullptr),
 	  model_(__nullptr)
 {
 	try { 
-		model_ = database_->LoadModel(path); 
+		model_ = EdmDatabase::Instance()->LoadModel(path); 
 	}
 	catch (cppw::Error & e) { throw gcnew EdmException(e.message.data()); }
 }

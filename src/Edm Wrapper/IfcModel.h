@@ -34,7 +34,6 @@ public:
 	}
 
 private:
-	initonly EdmDatabase ^ database_;
 	// The possibility of leaking memory by owning with bare pointers here has
 	// been judged to be worth the tradeoff of not having to create a managed
 	// smart pointer type. These objects simply aren't used very much.
