@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj", "{68821491-76E6-4090-B7A8-FA8C329FA2DB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ifc Adapter", "Ifc Adapter\Ifc Adapter.vcxproj", "{D703A763-8163-4B2E-A5E9-DECD31AE18C4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6133D6D1-B93B-468F-8B6F-6120E900BF72} = {6133D6D1-B93B-468F-8B6F-6120E900BF72}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "GUI\GUI.csproj", "{A3147515-FF43-4B3E-BA2C-F747745D3EB8}"
 	ProjectSection(ProjectDependencies) = postProject
