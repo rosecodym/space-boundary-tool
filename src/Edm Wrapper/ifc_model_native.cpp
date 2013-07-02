@@ -9,8 +9,7 @@
 
 #include "edm_wrapper_native_interface.h"
 
-#include "EdmDatabase.h"
-
+#include "ifc_model_internals.h"
 #include "ifc_object.h"
 
 #include "utility.h"
@@ -18,21 +17,6 @@
 using namespace System;
 
 namespace ifc_interface {
-
-struct model::internals {
-	internals() : m(__nullptr) { }
-	cppw::Open_model * m;
-	std::map<std::string, ifc_object> building_elements;
-	std::map<std::string, ifc_object> spaces;
-	std::list<ifc_object> additional_objects;
-	boost::optional<cppw::Instance> owner_history;
-};
-
-model::model(const char * path) : d_(new internals)
-{
-	IfcInterface::EdmDatabase ^ db = IfcInterface::EdmDatabase::Instance();
-	d_->m = db->LoadModel(gcnew String(path));
-}
 
 model::~model() { 
 	delete d_->m; 

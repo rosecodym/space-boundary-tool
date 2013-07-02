@@ -98,6 +98,7 @@ do copy %%I "$(OutDir)"</Command>
     <ClInclude Include="IfcModel.h" />
     <ClInclude Include="IfcSpace.h" />
     <ClInclude Include="IfcZone.h" />
+    <ClInclude Include="ifc_model_internals.h" />
     <ClInclude Include="ifc_object.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utility.h" />
@@ -109,7 +110,8 @@ do copy %%I "$(OutDir)"</Command>
     <ClCompile Include="IfcModel.cpp" />
     <ClCompile Include="IfcSpace.cpp" />
     <ClCompile Include="IfcZone.cpp" />
-    <ClCompile Include="ifc_model.cpp" />
+    <ClCompile Include="ifc_model_managed.cpp" />
+    <ClCompile Include="ifc_model_native.cpp" />
     <ClCompile Include="ifc_object.cpp" />
     <ClCompile Include="ifc_object_operations.cpp" />
     <ClCompile Include="utility.cpp" />
