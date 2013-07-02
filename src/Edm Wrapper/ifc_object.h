@@ -1,3 +1,5 @@
+#pragma once
+
 #include <boost/variant.hpp>
 
 #include <cpp_edmi.h>
