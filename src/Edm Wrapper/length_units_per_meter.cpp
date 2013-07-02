@@ -1,8 +1,8 @@
-#include "utility.h"
+#include <cpp_edmi.h>
+
+#include "length_units_per_meter.h"
 
 namespace IfcInterface {
-
-namespace Internal {
 
 namespace {
 
@@ -47,7 +47,5 @@ double length_units_per_meter(const cppw::Open_model & m) {
 	}
 	return res;
 }
-
-} // namespace Internal
 
 } // namespace IfcInterface

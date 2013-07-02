@@ -101,7 +101,7 @@ do copy %%I "$(OutDir)"</Command>
     <ClInclude Include="ifc_model_internals.h" />
     <ClInclude Include="ifc_object.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="utility.h" />
+    <ClInclude Include="length_units_per_meter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
@@ -114,7 +114,7 @@ do copy %%I "$(OutDir)"</Command>
     <ClCompile Include="ifc_model_native.cpp" />
     <ClCompile Include="ifc_object.cpp" />
     <ClCompile Include="ifc_object_operations.cpp" />
-    <ClCompile Include="utility.cpp" />
+    <ClCompile Include="length_units_per_meter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />

@@ -39,13 +39,13 @@
     <ClInclude Include="edm_wrapper_native_interface.h">
       <Filter>native</Filter>
     </ClInclude>
-    <ClInclude Include="utility.h" />
     <ClInclude Include="ifc_object.h">
       <Filter>native</Filter>
     </ClInclude>
     <ClInclude Include="ifc_model_internals.h">
       <Filter>native</Filter>
     </ClInclude>
+    <ClInclude Include="length_units_per_meter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico">
@@ -76,7 +76,6 @@
     <ClCompile Include="IfcZone.cpp">
       <Filter>managed</Filter>
     </ClCompile>
-    <ClCompile Include="utility.cpp" />
     <ClCompile Include="ifc_object_operations.cpp">
       <Filter>native</Filter>
     </ClCompile>
@@ -89,5 +88,6 @@
     <ClCompile Include="ifc_model_managed.cpp">
       <Filter>native</Filter>
     </ClCompile>
+    <ClCompile Include="length_units_per_meter.cpp" />
   </ItemGroup>
 </Project>

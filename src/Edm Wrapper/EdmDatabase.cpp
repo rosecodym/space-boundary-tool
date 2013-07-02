@@ -2,8 +2,9 @@
 
 #include "EdmDatabase.h"
 
-#include "utility.h"
+#include "length_units_per_meter.h"
 
+using namespace System::Runtime::InteropServices;
 using namespace System::Text::RegularExpressions;
 
 namespace IfcInterface {
@@ -11,6 +12,13 @@ namespace IfcInterface {
 namespace {
 
 const int MAX_PATH = 260;
+
+inline char * managed_string_to_native(char dst[], String ^ src, size_t len) {
+	char * str = (char *)(Marshal::StringToHGlobalAnsi(src)).ToPointer();
+	strncpy(dst, str, len);
+	Marshal::FreeHGlobal(IntPtr(str));
+	return dst;
+}
 
 } // namespace
 
@@ -37,7 +45,7 @@ EdmDatabase::EdmDatabase()
 	try {
 		String ^ tmpDir = System::IO::Path::GetTempPath();
 		char tmp_dir[MAX_PATH];
-		Internal::managed_string_to_native(tmp_dir, tmpDir, MAX_PATH);
+		managed_string_to_native(tmp_dir, tmpDir, MAX_PATH);
 		db_path_ = new cppw::String(tmp_dir);
 		ClearDB();
 		cppw::String db_name(DB_NAME);
@@ -48,7 +56,7 @@ EdmDatabase::EdmDatabase()
 			db_name, 
 			db_pass));
 		char schema_path[MAX_PATH];
-		Internal::managed_string_to_native(schema_path, schemaPath, MAX_PATH);
+		managed_string_to_native(schema_path, schemaPath, MAX_PATH);
 		cppw::Express_compiler compiler(schema_path);
 		cppw::Compile_results res = compiler.compile();
 		if (res.errors) { 
@@ -77,8 +85,8 @@ cppw::Open_model * EdmDatabase::LoadModel(String ^ path)
 	modelName = Regex::Replace(modelName, patt, String::Empty);
 	char pathBuf[MAX_PATH];
 	char modelNameBuf[MAX_PATH];
-	Internal::managed_string_to_native(pathBuf, path, MAX_PATH);
-	Internal::managed_string_to_native(modelNameBuf, modelName, MAX_PATH);
+	managed_string_to_native(pathBuf, path, MAX_PATH);
+	managed_string_to_native(modelNameBuf, modelName, MAX_PATH);
 	cppw::Step_reader(pathBuf, cppw::String(REPO_NAME), modelNameBuf).read();
 	return new cppw::Open_model(
 		repo_->get_model(modelNameBuf), 

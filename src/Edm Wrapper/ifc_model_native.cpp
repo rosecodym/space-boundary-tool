@@ -11,8 +11,7 @@
 
 #include "ifc_model_internals.h"
 #include "ifc_object.h"
-
-#include "utility.h"
+#include "length_units_per_meter.h"
 
 using namespace System;
 
@@ -53,7 +52,7 @@ std::vector<const ifc_object *> model::spaces() {
 }
 
 double model::length_units_per_meter() const {
-	return IfcInterface::Internal::length_units_per_meter(*d_->m);
+	return IfcInterface::length_units_per_meter(*d_->m);
 }
 
 const ifc_object * model::element_with_guid(const std::string & guid) const {

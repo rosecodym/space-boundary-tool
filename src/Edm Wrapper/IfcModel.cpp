@@ -1,7 +1,7 @@
 #include "IfcModel.h"
 
 #include "EdmException.h"
-#include "utility.h"
+#include "length_units_per_meter.h"
 
 namespace IfcInterface {
 
@@ -24,7 +24,7 @@ double IfcModel::Elevation::get() {
 }
 
 double IfcModel::LengthUnitsPerMeter::get() {
-	return Internal::length_units_per_meter(*model_);
+	return length_units_per_meter(*model_);
 }
 
 double IfcModel::NorthAxis::get() {
