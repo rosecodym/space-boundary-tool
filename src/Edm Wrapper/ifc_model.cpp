@@ -171,6 +171,7 @@ bool model::set_new_owner_history(
 	try {
 		cppw::Application_aggregate histories = 
 			d_->m->get_set_of("IfcOwnerHistory");
+		if (histories.size() < 1) { return false; }
 		cppw::Application_instance existing = histories.get_(0);
 		cppw::Application_instance inst = existing.clone();
 		inst.put("ChangeAction", "ADDED");
@@ -186,8 +187,7 @@ bool model::set_new_owner_history(
 		d_->owner_history = inst;
 		return true;
 	}
-	catch (cppw::Error & ex) { 
-		ex = ex;
+	catch (cppw::Error & /*ex*/) { 
 		return false; 
 	}
 }
