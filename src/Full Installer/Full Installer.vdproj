@@ -87,12 +87,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B0D0FB03962F4B329003362B1D2D8721"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_B686617ECB1424885D6726172A7D34B4"
         "OwnerKey" = "8:_966AF3F7AECE40B99FA5B5DFA4434E97"
         "MsmSig" = "8:_UNDEFINED"
@@ -124,31 +118,19 @@
         "Entry"
         {
         "MsmKey" = "8:_D06D9F56ACE38780C84899B49ED78E0E"
-        "OwnerKey" = "8:_9B06D276DB8D5632E92755F20A51AD2D"
+        "OwnerKey" = "8:_B686617ECB1424885D6726172A7D34B4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_D06D9F56ACE38780C84899B49ED78E0E"
-        "OwnerKey" = "8:_B686617ECB1424885D6726172A7D34B4"
+        "OwnerKey" = "8:_9B06D276DB8D5632E92755F20A51AD2D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_ED89034E08D84EB6838D6B9FB05A9CA7"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F9AF20C9D55B4E1AB1B85A462917CA73"
-        "OwnerKey" = "8:_B0D0FB03962F4B329003362B1D2D8721"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F9AF20C9D55B4E1AB1B85A462917CA73"
-        "OwnerKey" = "8:_82877DD6FE324CD9AAD771F34A6D49FF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -160,19 +142,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_966AF3F7AECE40B99FA5B5DFA4434E97"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BADBBC679B9AA46B7BC694BEF5DB8EDE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4377C30B15E672D8BA4263049F263527"
+        "OwnerKey" = "8:_B686617ECB1424885D6726172A7D34B4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -184,7 +154,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B686617ECB1424885D6726172A7D34B4"
+        "OwnerKey" = "8:_4377C30B15E672D8BA4263049F263527"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_BADBBC679B9AA46B7BC694BEF5DB8EDE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_966AF3F7AECE40B99FA5B5DFA4434E97"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -212,6 +194,19 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+                    {
+                    "Name" = "8:Windows Installer 3.1"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+                    }
+                }
             }
         }
         "Release"
@@ -386,11 +381,6 @@
             "AssemblyAsmDisplayName" = "8:SBTWrapper, Version=1.5.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_4377C30B15E672D8BA4263049F263527"
-                    {
-                    "Name" = "8:SBTWrapper.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:SBTWrapper.dll"
             "TargetName" = "8:"
@@ -457,11 +447,6 @@
             "AssemblyAsmDisplayName" = "8:ConstructionManagement, Version=1.5.7.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_9B06D276DB8D5632E92755F20A51AD2D"
-                    {
-                    "Name" = "8:ConstructionManagement.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ConstructionManagement.dll"
             "TargetName" = "8:"
@@ -488,11 +473,6 @@
             "AssemblyAsmDisplayName" = "8:IdfToolbox, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_B686617ECB1424885D6726172A7D34B4"
-                    {
-                    "Name" = "8:IdfToolbox.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:IdfToolbox.dll"
             "TargetName" = "8:"
@@ -539,11 +519,6 @@
             "AssemblyAsmDisplayName" = "8:EDM Managed Wrapper, Version=1.5.7.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_BADBBC679B9AA46B7BC694BEF5DB8EDE"
-                    {
-                    "Name" = "8:EDM Managed Wrapper.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:EDM Managed Wrapper.dll"
             "TargetName" = "8:"
@@ -570,11 +545,6 @@
             "AssemblyAsmDisplayName" = "8:FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_D06D9F56ACE38780C84899B49ED78E0E"
-                    {
-                    "Name" = "8:FSharp.Core.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:FSharp.Core.dll"
             "TargetName" = "8:"
@@ -670,15 +640,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Space Boundary Tool"
-        "ProductCode" = "8:{1201DAFE-6374-475B-914A-15ACD422FD16}"
-        "PackageCode" = "8:{4727C083-908C-437E-94EB-5EAB6D18F670}"
+        "ProductCode" = "8:{B6B30FF5-58B5-4EC0-8579-5619F2566CB4}"
+        "PackageCode" = "8:{DF1A152B-82F1-4E6A-B1B4-67D81AF2D831}"
         "UpgradeCode" = "8:{A0881C6F-F110-4CAA-94E6-FFE8E8B108FE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.5.7"
+        "ProductVersion" = "8:1.5.8"
         "Manufacturer" = "8:LBNL"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1201,20 +1171,6 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_F9AF20C9D55B4E1AB1B85A462917CA73"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:Microsoft_VC100_CRT_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
         }
         "ProjectOutput"
         {
@@ -1269,34 +1225,6 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{A3147515-FF43-4B3E-BA2C-F747745D3EB8}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B0D0FB03962F4B329003362B1D2D8721"
-            {
-            "SourcePath" = "8:..\\..\\bin\\Release\\SBT-IFC.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_787DA585257342A68F93DFD1A011860A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{D703A763-8163-4B2E-A5E9-DECD31AE18C4}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
