@@ -357,7 +357,6 @@ namespace GUI
             {
                 List<string> reasons = new List<string>();
                 if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are already being calculated."); }
-                if (CurrentlyLoadingIfcModel) { reasons.Add("The IFC model constructions are being loaded (these operations cannot be simultaneous)."); }
                 if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
                 return reasons.Count == 0 ? null : "Space boundaries cannot be calculated:\n" + String.Join(Environment.NewLine, reasons);
             }
@@ -381,7 +380,6 @@ namespace GUI
                 List<string> reasons = new List<string>();
                 if (CurrentlyLoadingIfcModel) { reasons.Add("IFC constructions are already being loaded."); }
                 if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
-                if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are currently being calculated (these operations cannot be simultaneous)."); }
                 return reasons.Count == 0 ? null : "IFC constructions cannot be loaded:\n" + String.Join(Environment.NewLine, reasons);
             }
         }
