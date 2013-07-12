@@ -279,13 +279,11 @@ ifcadapter_return_t add_to_model(
 			// Space boundaries with no geometry shouldn't exist but I don't
 			// want everything to crash if they do.
 			if (sbs[i]->geometry.vertex_count > 0) {
-				create_sb(
-					m, 
-					*m->space_with_guid(sbs[i]->bounded_space->id),
-					*m->element_with_guid(sbs[i]->element_name),
-					sbs[i], 
-					scaler, 
-					c);
+				auto sp = m->space_with_guid(sbs[i]->bounded_space->id);
+				assert(sp);
+				auto el = m->element_with_guid(sbs[i]->element_name);
+				assert(el);
+				create_sb(m, *sp, *el, sbs[i], scaler, c);
 				++added_count;
 				msg_func(".");
 			}
