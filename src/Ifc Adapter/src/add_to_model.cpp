@@ -31,7 +31,7 @@ ifc_object * create_point(
 {
 	double x = scaler.length_out(CGAL::to_double(p.x()));
 	double y = scaler.length_out(CGAL::to_double(p.y()));
-	double z = scaler.length_out(CGAL::to_double(p.y()));
+	double z = scaler.length_out(CGAL::to_double(p.z()));
 	return m->create_point(x, y, z);
 }
 
