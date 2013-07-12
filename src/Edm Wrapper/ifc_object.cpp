@@ -18,7 +18,7 @@ const Instance * ifc_object::as_instance() const {
 	return boost::apply_visitor(v(), data_);
 }
 
-Application_instance * ifc_object::as_app_instance() const {
+Application_instance * ifc_object::as_app_instance() {
 	struct v : public boost::static_visitor<Application_instance *> {
 		Application_instance * operator () (const Instance & /*inst*/) const {
 			return __nullptr;

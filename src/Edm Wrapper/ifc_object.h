@@ -20,7 +20,7 @@ public:
 	{ }
 
 	const cppw::Instance * as_instance() const;
-	cppw::Application_instance * as_app_instance() const;
+	cppw::Application_instance * as_app_instance();
 	model * parent_model() const { return m_; }
 
 private:
