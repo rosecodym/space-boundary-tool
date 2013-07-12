@@ -65,8 +65,6 @@ public:
 	std::vector<const ifc_object *> spaces();
 
 	double length_units_per_meter() const;
-	const ifc_object * element_with_guid(const std::string & guid) const;
-	const ifc_object * space_with_guid(const std::string & guid) const;
 
 	void write(const std::string & path) const;
 	
@@ -92,6 +90,7 @@ public:
 
 private:
 	struct internals;
+
 	internals * d_;
 };
 

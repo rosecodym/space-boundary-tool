@@ -22,9 +22,7 @@ namespace ifc_interface {
 struct model::internals {
 	internals() : m(__nullptr) { }
 	cppw::Open_model * m;
-	std::map<std::string, ifc_object> building_elements;
-	std::map<std::string, ifc_object> spaces;
-	std::list<ifc_object> additional_objects;
+	std::list<ifc_object> known_objects;
 	boost::optional<cppw::Instance> owner_history;
 };
 

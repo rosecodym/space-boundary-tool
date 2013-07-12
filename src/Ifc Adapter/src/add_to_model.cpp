@@ -273,17 +273,26 @@ ifcadapter_return_t add_to_model(
 	msg_func("Created virtual elements.\n");
 	
 	msg_func("Adding space boundaries to model");
+	std::map<std::string, const ifc_object *> by_guid;
+	auto ifc_spaces = m->spaces();
+	for (auto s = ifc_spaces.begin(); s != ifc_spaces.end(); ++s) {
+		by_guid[string_field(**s, "GlobalId")] = *s;
+	}
+	auto ifc_bldg_elems = m->building_elements();
+	for (auto e = ifc_bldg_elems.begin(); e != ifc_bldg_elems.end(); ++e) {
+		by_guid[string_field(**e, "GlobalId")] = *e;
+	}
 	int added_count = 0;
 	for (size_t i = 0; i < sb_count; ++i) {
 		try {
 			// Space boundaries with no geometry shouldn't exist but I don't
 			// want everything to crash if they do.
 			if (sbs[i]->geometry.vertex_count > 0) {
-				auto sp = m->space_with_guid(sbs[i]->bounded_space->id);
-				assert(sp);
-				auto el = m->element_with_guid(sbs[i]->element_name);
-				assert(el);
-				create_sb(m, *sp, *el, sbs[i], scaler, c);
+				auto sp = by_guid.find(sbs[i]->bounded_space->id);
+				assert(sp != by_guid.end());
+				auto el = by_guid.find(sbs[i]->element_name);
+				assert(el != by_guid.end());
+				create_sb(m, *sp->second, *el->second, sbs[i], scaler, c);
 				++added_count;
 				msg_func(".");
 			}
