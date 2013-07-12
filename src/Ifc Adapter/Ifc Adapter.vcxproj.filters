@@ -4,9 +4,6 @@
     <Filter Include="main">
       <UniqueIdentifier>{67a2ab3c-949d-401f-a5c1-c27c6f076116}</UniqueIdentifier>
     </Filter>
-    <Filter Include="edm">
-      <UniqueIdentifier>{a42d1206-db16-4182-9a2e-55a26eaeb65e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="operations">
       <UniqueIdentifier>{7962b378-5af0-40f6-a94d-740041f31a7c}</UniqueIdentifier>
     </Filter>
@@ -26,9 +23,6 @@
     </ClInclude>
     <ClInclude Include="src\sbt-ifcadapter.h">
       <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="src\edm_wrapper.h">
-      <Filter>edm</Filter>
     </ClInclude>
     <ClInclude Include="src\util.h">
       <Filter>main</Filter>
@@ -76,9 +70,6 @@
     </ClCompile>
     <ClCompile Include="src\c-test.c">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\edm_wrapper.cpp">
-      <Filter>edm</Filter>
     </ClCompile>
     <ClCompile Include="src\extract_from_model.cpp">
       <Filter>operations</Filter>
