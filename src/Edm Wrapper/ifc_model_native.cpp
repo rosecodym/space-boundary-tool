@@ -13,8 +13,6 @@
 #include "ifc_object.h"
 #include "length_units_per_meter.h"
 
-using namespace System;
-
 namespace ifc_interface {
 
 model::~model() { 
