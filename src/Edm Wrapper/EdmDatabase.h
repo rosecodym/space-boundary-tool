@@ -6,6 +6,7 @@
 #include "EdmException.h"
 
 using namespace System;
+using namespace System::Collections::Generic;
 using namespace System::IO;
 using namespace System::Reflection;
 
@@ -60,12 +61,16 @@ private:
 
 	static EdmDatabase ^ Create() { return gcnew EdmDatabase(); }
 
-	// Owning via bare-pointers is a no-no, but these objects are singletons
-	// and last the lifetime of the program, so who cares.
+	// If the way EdmDatabases manage their child resources seems kind of
+	// lackadaisical, it's because I don't expect each database to load more
+	// than two (at most) models during any particular instance of the
+	// application.
 	cppw::EDM * manager_;
 	cppw::String * db_path_;
 	cppw::Database_handler * db_handler_;
 	cppw::Open_repository * repo_;
+
+	Dictionary<String ^, String ^> ^ modelNames_;
 
 	static initonly Lazy<EdmDatabase ^> ^ instance;
 };

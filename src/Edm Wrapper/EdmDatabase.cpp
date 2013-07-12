@@ -67,6 +67,7 @@ EdmDatabase::EdmDatabase()
 		repo_ = new cppw::Open_repository(
 			(*db_handler_)->get_repository(cppw::String(REPO_NAME)),
 			cppw::RW_access);
+		modelNames_ = gcnew Dictionary<String ^, String ^>();
 	}
 	catch (cppw::Error & e) {
 		char buf[256];
@@ -80,17 +81,20 @@ EdmDatabase::EdmDatabase()
 
 cppw::Open_model * EdmDatabase::LoadModel(String ^ path)
 {
-	String ^ modelName = System::IO::Path::GetFileNameWithoutExtension(path);
-	String ^ patt = gcnew String("[^a-zA-Z]");
-	modelName = Regex::Replace(modelName, patt, String::Empty);
-	char pathBuf[MAX_PATH];
-	char modelNameBuf[MAX_PATH];
-	managed_string_to_native(pathBuf, path, MAX_PATH);
-	managed_string_to_native(modelNameBuf, modelName, MAX_PATH);
-	cppw::Step_reader(pathBuf, cppw::String(REPO_NAME), modelNameBuf).read();
-	return new cppw::Open_model(
-		repo_->get_model(modelNameBuf), 
-		cppw::RW_access);
+	String ^ modelName;
+	char mdlNameBuf[MAX_PATH];
+	if (!modelNames_->TryGetValue(path, modelName)) {
+		modelName = Path::GetFileNameWithoutExtension(path);
+		String ^ patt = gcnew String("[^a-zA-Z]");
+		modelName = Regex::Replace(modelName, patt, String::Empty);
+		char pathBuf[MAX_PATH];
+		managed_string_to_native(pathBuf, path, MAX_PATH);
+		managed_string_to_native(mdlNameBuf, modelName, MAX_PATH);
+		cppw::Step_reader(pathBuf, cppw::String(REPO_NAME), mdlNameBuf).read();
+		modelNames_->Add(path, modelName);
+	}
+	else { managed_string_to_native(mdlNameBuf, modelName, MAX_PATH); }
+	return new cppw::Open_model(repo_->get_model(mdlNameBuf), cppw::RW_access);
 }
 
 } // namespace IfcInterface
