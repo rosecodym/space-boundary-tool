@@ -111,7 +111,10 @@ do copy %%I "$(OutDir)"</Command>
     <ClCompile Include="IfcSpace.cpp" />
     <ClCompile Include="IfcZone.cpp" />
     <ClCompile Include="ifc_model_managed.cpp" />
-    <ClCompile Include="ifc_model_native.cpp" />
+    <ClCompile Include="ifc_model_native.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
+    </ClCompile>
     <ClCompile Include="ifc_object.cpp" />
     <ClCompile Include="ifc_object_operations.cpp" />
     <ClCompile Include="length_units_per_meter.cpp" />
