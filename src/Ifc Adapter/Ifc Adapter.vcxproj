@@ -146,7 +146,7 @@ do copy %%I "$(OutDir)"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\dependencies\lib;$(BoostDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(LedaDir)\leda_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Debug/Edm Wrapper.lib;$(LedaDir)\leda_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PostBuildEvent>
