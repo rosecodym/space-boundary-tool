@@ -21,30 +21,23 @@ model::~model() {
 }
 
 std::vector<const ifc_object *> model::building_elements() {
-	cppw::Instance_set elems = 
-		d_->m->get_set_of("IfcBuildingElement", cppw::include_subtypes);
 	std::vector<const ifc_object *> res;
-	for (elems.move_first(); elems.move_next(); ) {
-		cppw::Instance inst = elems.get();
-		std::string guid(((cppw::String)inst.get("GlobalId")).data());
-		ifc_object obj(inst, this);
-		std::map<std::string, ifc_object>::const_iterator iter =
-			d_->building_elements.insert(std::make_pair(guid, obj)).first;
-		res.push_back(&iter->second);
+	typedef std::map<std::string, ifc_object>::const_iterator iter_t;
+	for (iter_t it = d_->building_elements.begin(); 
+		 it != d_->building_elements.end(); 
+		 ++it)
+	{
+		res.push_back(&it->second);
 	}
 	return res;
 }
 
 std::vector<const ifc_object *> model::spaces() {
-	cppw::Instance_set spaces = d_->m->get_set_of("IfcSpace");
 	std::vector<const ifc_object *> res;
-	for (spaces.move_first(); spaces.move_next(); ) {
-		cppw::Instance inst = spaces.get();
-		std::string guid(((cppw::String)inst.get("GlobalId")).data());
-		ifc_object obj(inst, this);
-		std::map<std::string, ifc_object>::const_iterator iter =
-			d_->spaces.insert(std::make_pair(guid, obj)).first;
-		res.push_back(&iter->second);
+	typedef std::map<std::string, ifc_object>::const_iterator iter_t;
+	for (iter_t it = d_->spaces.begin(); it != d_->spaces.end(); ++it)
+	{
+		res.push_back(&it->second);
 	}
 	return res;
 }
