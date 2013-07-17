@@ -138,15 +138,18 @@ namespace GUI.Operations
             ProgressHandler = evt => vm.UpdateOutputDirectly(evt.Message);
             LongOperationComplete = res =>
             {
-                vm.CurrentSbtBuilding = res ?? vm.CurrentSbtBuilding;
-                var currProc = System.Diagnostics.Process.GetCurrentProcess();
-                vm.LastPeakWorkingSet = currProc.PeakWorkingSet64;
-                var calcTime = res.CalculationTime;
-                if (calcTime.HasValue)
+                if (res != null)
                 {
-                    vm.LastSBCalcTime = GenerateTimeString(calcTime.Value);
+                    vm.CurrentSbtBuilding = res;
+                    var currProc = Process.GetCurrentProcess();
+                    vm.LastPeakWorkingSet = currProc.PeakWorkingSet64;
+                    var calcTime = res.CalculationTime;
+                    if (calcTime.HasValue)
+                    {
+                        vm.LastSBCalcTime = GenerateTimeString(calcTime.Value);
+                    }
+                    else { vm.LastSBCalcTime = String.Empty; }
                 }
-                else { vm.LastSBCalcTime = String.Empty; }
                 completionAction();
             };
         }
