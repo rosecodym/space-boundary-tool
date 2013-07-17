@@ -284,7 +284,8 @@ namespace GUI.Operations
             public override void AddZone(string name)
             {
                 IdfObject obj = idf.CreateObject("Zone");
-                obj.Fields["Name"].Value = name;
+                obj.Fields["Name"].Value = 
+                    name.Replace(",", " |").Replace(";", " |");
             }
         }
     }
