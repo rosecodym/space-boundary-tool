@@ -262,7 +262,7 @@ ifcadapter_return_t add_to_model(
 	unit_scaler scaler = unit_scaler::identity_scaler;
 
 	msg_func("Preparing to add space boundaries to the model.\n");
-	auto version_string = "1.5.7";
+	auto version_string = "1.5.8";
 	m->set_new_owner_history(
 		"Space Boundary Tool",
 		"SBT",
