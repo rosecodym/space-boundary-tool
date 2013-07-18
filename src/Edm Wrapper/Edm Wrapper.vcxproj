@@ -79,7 +79,7 @@ copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;EDM_WRAPPER_EXPORTS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BoostDir);$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
