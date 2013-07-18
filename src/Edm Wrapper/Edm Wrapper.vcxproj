@@ -63,12 +63,12 @@
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PostBuildEvent>
-      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
 copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
       <Message>Removing EDM license key and copying output to dependency directory</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"</Command>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Injecting EDM license key</Message>
@@ -87,12 +87,12 @@ copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PostBuildEvent>
-      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
 copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
       <Message>Removing EDM license key and copying output to dependency directory</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"</Command>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Injecting EDM license key</Message>
