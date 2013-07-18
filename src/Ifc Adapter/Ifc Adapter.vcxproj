@@ -13,9 +13,7 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\CreateGuid_64.h" />
-    <ClInclude Include="src\edm_wrapper.h" />
     <ClInclude Include="src\geometry_common.h" />
-    <ClInclude Include="src\get_length_units_per_meter.h" />
     <ClInclude Include="src\ifc-to-cgal.h" />
     <ClInclude Include="src\model_operations.h" />
     <ClInclude Include="src\number_collection.h" />
@@ -39,9 +37,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\edm_wrapper.cpp" />
     <ClCompile Include="src\extract_from_model.cpp" />
-    <ClCompile Include="src\get_length_units_per_meter.cpp" />
     <ClCompile Include="src\internal_geometry.cpp" />
     <ClCompile Include="src\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -112,7 +108,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl;$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503;4512</DisableSpecificWarnings>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
@@ -121,7 +117,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\dependencies\lib;$(BoostDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(LedaDir)\leda_mdd.lib;$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Debug/Edm Wrapper.lib;$(LedaDir)\leda_mdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>for %%I in ("$(BoostDir)\lib\boost_thread-vc100-mt-gd-1_47.dll" "$(SolutionDir)\..\dependencies\lib\CGAL-vc100-mt-gd-4.1.dll" "$(LedaDir)\leda_mdd.dll" "$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
@@ -138,7 +134,7 @@ do copy %%I "$(OutDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>SBT_IFC_EXPORTS;WIN32;IFCADAPTER_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl;$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\dependencies\include\gmp;$(SolutionDir)\..\dependencies\include\CGAL;$(BoostDir);$(LedaDir)\incl</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <AdditionalOptions>-Zm130 %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4503;4512</DisableSpecificWarnings>
@@ -150,11 +146,11 @@ do copy %%I "$(OutDir)"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\dependencies\lib;$(BoostDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(LedaDir)\leda_md.lib;$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Debug/Edm Wrapper.lib;$(LedaDir)\leda_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PostBuildEvent>
-      <Command>for %%I in ("$(LedaDir)\leda_md.dll" "$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
+      <Command>for %%I in ("$(BoostDir)\lib\boost_thread-vc100-mt-1_47.dll" "$(SolutionDir)\..\dependencies\lib\CGAL-vc100-mt-4.1.dll" "$(LedaDir)\leda_md.dll") ^
 do copy %%I "$(OutDir)"</Command>
       <Message>Copying runtime libraries to output directory</Message>
     </PostBuildEvent>

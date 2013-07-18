@@ -36,9 +36,6 @@
 #include <direct.h>
 #pragma warning (pop)
 
-#include <cpp_edmi.h>
-#include <sdai.h>
-
 typedef CGAL::Simple_cartesian<leda_real>	K;
 typedef K::FT								NT;
 typedef CGAL::Point_2<K>					point_2;

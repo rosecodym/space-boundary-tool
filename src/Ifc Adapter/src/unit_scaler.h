@@ -2,19 +2,18 @@
 
 #include "precompiled.h"
 
-#include <cpp_edmi.h>
-
 class unit_scaler {
 private:
-	double length_factor;
+	double lupm_;
 
-	unit_scaler() : length_factor(1.0) { }
+	unit_scaler() : lupm_(1.0) { }
 
 public:
-	unit_scaler(const cppw::Open_model & model);
+	unit_scaler(double length_units_per_meter)
+		: lupm_(length_units_per_meter) { }
 
-	double length_in(double val) const { return val * length_factor; }
-	double length_out(double val) const { return val / length_factor; }
+	double length_in(double val) const { return val / lupm_; }
+	double length_out(double val) const { return val * lupm_; }
 
 	static const unit_scaler identity_scaler;
 };

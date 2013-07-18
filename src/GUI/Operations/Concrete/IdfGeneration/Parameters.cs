@@ -44,7 +44,7 @@ namespace GUI.Operations
             public int EndDay { get; set; }
             public int Timestep { get; set; }
             public SbtBuildingInformation SbtBuilding { get; set; }
-            public IfcInformationExtractor.BuildingInformation IfcBuilding { get; set; }
+            public IfcBuildingInformation IfcBuilding { get; set; }
             public Func<int, ModelConstruction> MaterialIDToModelConstruction { get; set; }
             public Func<int, Normal> MaterialIDToCompositeDir { get; set; }
             public EnergyPlusVersion EPVersion { get; set; }

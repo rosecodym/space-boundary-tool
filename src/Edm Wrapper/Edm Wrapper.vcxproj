@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6133D6D1-B93B-468F-8B6F-6120E900BF72}</ProjectGuid>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Keyword>ManagedCProj</Keyword>
+    <RootNamespace>EdmWrapper</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="EDM Settings.props" />
+    <Import Project="..\Dependencies.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="EDM Settings.props" />
+    <Import Project="..\Dependencies.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;EDM_WRAPPER_EXPORTS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(BoostDir);$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+    </Link>
+    <PostBuildEvent>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
+copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
+      <Message>Removing EDM license key and copying output to dependency directory</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Injecting EDM license key</Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;EDM_WRAPPER_EXPORTS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(BoostDir);$(EdmDir)\developerseat\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(EdmDir)\developerseat\lib\edmicpp500_2010.lib;$(EdmDir)\developerseat\lib\edmikit500.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+    </Link>
+    <PostBuildEvent>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
+copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
+      <Message>Removing EDM license key and copying output to dependency directory</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Injecting EDM license key</Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EdmDatabase.h" />
+    <ClInclude Include="EdmException.h" />
+    <ClInclude Include="edm_wrapper_native_interface.h" />
+    <ClInclude Include="IfcElement.h" />
+    <ClInclude Include="IfcModel.h" />
+    <ClInclude Include="IfcSpace.h" />
+    <ClInclude Include="IfcZone.h" />
+    <ClInclude Include="ifc_model_internals.h" />
+    <ClInclude Include="ifc_object.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="length_units_per_meter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="EdmDatabase.cpp" />
+    <ClCompile Include="IfcElement.cpp" />
+    <ClCompile Include="IfcModel.cpp" />
+    <ClCompile Include="IfcSpace.cpp" />
+    <ClCompile Include="IfcZone.cpp" />
+    <ClCompile Include="ifc_model_managed.cpp" />
+    <ClCompile Include="ifc_model_native.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="ifc_object.cpp" />
+    <ClCompile Include="ifc_object_operations.cpp" />
+    <ClCompile Include="length_units_per_meter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.ico" />
+    <None Include="Manipulate EDM License Key.fsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="app.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

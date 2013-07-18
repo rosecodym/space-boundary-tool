@@ -45,6 +45,17 @@ void exception_translator(unsigned int code, struct _EXCEPTION_POINTERS *) {
 	}
 }
 
+class translator_setter {
+public:
+	typedef void (*translator_t)(unsigned int, struct _EXCEPTION_POINTERS *);
+	translator_setter(translator_t translator)
+		: old_(_set_se_translator(translator))
+	{ }
+	~translator_setter() { _set_se_translator(old_); }
+private:
+	translator_t old_;
+};
+
 } // namespace
 
 sbt_return_t calculate_space_boundaries(
@@ -73,7 +84,7 @@ sbt_return_t calculate_space_boundaries(
 
 	sbt_return_t retval;
 
-	_set_se_translator(&exception_translator);
+	translator_setter translate(&exception_translator);
 
 	try {
 		report_progress(

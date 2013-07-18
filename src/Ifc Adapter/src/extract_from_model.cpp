@@ -1,9 +1,13 @@
 #include "precompiled.h"
 
+#include "../../Edm Wrapper/edm_wrapper_native_interface.h"
+
 #include "model_operations.h"
 
 #include "internal_geometry.h"
 #include "unit_scaler.h"
+
+using namespace ifc_interface;
 
 namespace {
 
@@ -18,51 +22,45 @@ T ** create_list(size_t count) {
 	return res;
 }
 
-bool is_shading(const cppw::Instance & inst) {
-	cppw::Select name = inst.get("Name");
-	if (name.is_set() && strstr(((cppw::String)name).data(), "Shading")) {
-		return true;
-	}
-	cppw::Set defined_by = inst.get("IsDefinedBy");
-	for (defined_by.move_first(); defined_by.move_next(); ) {
-		cppw::Instance d = defined_by.get_();
-		if (d.is_instance_of("IfcRelDefinesByProperties")) {
-			cppw::Instance pset = d.get("RelatingPropertyDefinition");
-			if (pset.get("Name").is_set()) {
-				cppw::String name = pset.get("Name");
-				if (strstr(name.data(), "ElementShading")) {
-					return true;
-				}
+bool is_shading(const ifc_object & obj) {
+	auto name = string_field(obj, "Name");
+	if (strstr(name.c_str(), "Shading")) { return true; }
+
+	auto defined_by = collection_field(obj, "IsDefinedBy");
+	for (auto d = defined_by.begin(); d != defined_by.end(); ++d) {
+		if (is_instance_of(**d, "IfcRelDefinesByProperties")) {
+			auto pset = object_field(**d, "RelatingPropertyDefinition");
+			auto name = string_field(*pset, "Name");
+			if (strstr(name.c_str(), "ElementShading")) {
+				return true;
 			}
 		}
 	}
 	return false;
 }
 
-optional<cppw::Instance> get_related_opening(const cppw::Instance & fen_inst) {
-	cppw::Set fillsVoids = fen_inst.get("FillsVoids");
-	if (fillsVoids.count() == 1) {
-		cppw::Instance fillsVoid = fillsVoids.get_(0);
-		return (cppw::Instance)fillsVoid.get("RelatingOpeningElement");
+ifc_object * get_related_opening(const ifc_object & fen) {
+	auto fills_voids = collection_field(fen, "FillsVoids");
+	if (fills_voids.size() == 1) {
+		return object_field(*fills_voids.front(), "RelatingOpeningElement");
 	}
-	else { return optional<cppw::Instance>(); }
+	else { return nullptr; }
 }
 
 boost::optional<direction_3> get_composite_dir(
-	const cppw::Instance & inst,
+	const ifc_object & obj,
 	const direction_3 & axis1,
 	const direction_3 & axis2,
 	const direction_3 & axis3) 
 {
-	if (!inst.is_kind_of("IfcWindow")) {
-		cppw::Set relAssociates = inst.get("HasAssociations");
-		for (relAssociates.move_first(); relAssociates.move_next(); ) {
-			cppw::Instance rel = relAssociates.get_();
-			if (rel.is_kind_of("IfcRelAssociatesMaterial")) {
-				cppw::Instance relatingMat = rel.get("RelatingMaterial");
-				if (relatingMat.is_kind_of("IfcMaterialLayerSetUsage")) {
-					cppw::String dir = relatingMat.get("LayerSetDirection");
-					cppw::String sense = relatingMat.get("DirectionSense");
+	if (!is_kind_of(obj, "IfcWindow")) {
+		auto rel_assoc = collection_field(obj, "HasAssociations");
+		for (auto o = rel_assoc.begin(); o != rel_assoc.end(); ++o) {
+			if (is_kind_of(**o, "IfcRelAssociatesMaterial")) {
+				auto mat = object_field(**o, "RelatingMaterial");
+				if (is_kind_of(*mat, "IfcMaterialLayerSetUsage")) {
+					auto dir = string_field(*mat, "LayerSetDirection");
+					auto sense = string_field(*mat, "DirectionSense");
 					direction_3 res =
 						dir == "AXIS1" ? axis1 :
 						dir == "AXIS2" ? axis2 :
@@ -77,7 +75,7 @@ boost::optional<direction_3> get_composite_dir(
 }
 
 size_t get_elements(
-	cppw::Open_model & model, 
+	model * m,
 	element_info *** elements, 
 	double ** composite_layer_dxs,
 	double ** composite_layer_dys,
@@ -95,25 +93,29 @@ size_t get_elements(
 	int next_element_id = 1;
 	char buf[256];
 
-	auto building_elements = model.get_set_of("IfcBuildingElement", cppw::include_subtypes);
-	for (building_elements.move_first(); building_elements.move_next(); ) {
-		auto elem = building_elements.get();
+	auto is_ceiling = [](const ifc_object & o) -> bool {
+		if (!is_kind_of(o, "IfcCovering")) { return false; }
+		return string_field(o, "PredefinedType") == "CEILING";
+	};
+
+	auto bldg_elems = m->building_elements();
+	for (auto e = bldg_elems.begin(); e != bldg_elems.end(); ++e) {
 		element_type type =
-			elem.is_kind_of("IfcWall") ? WALL :
-			elem.is_kind_of("IfcSlab") ? SLAB :
-			elem.is_kind_of("IfcColumn") ? COLUMN :
-			elem.is_kind_of("IfcBeam") ? BEAM :
-			elem.is_kind_of("IfcDoor") ? DOOR :
-			elem.is_kind_of("IfcWindow") ? WINDOW : 
-			(elem.is_kind_of("IfcCovering") && elem.get("PredefinedType").is_set() && (cppw::String)elem.get("PredefinedType") == "CEILING") ? SLAB : UNKNOWN;
-		std::string guid(((cppw::String)elem.get("GlobalId")).data());
+			is_kind_of(**e, "IfcWall") ? WALL :
+			is_kind_of(**e, "IfcSlab") ? SLAB :
+			is_kind_of(**e, "IfcColumn") ? COLUMN :
+			is_kind_of(**e, "IfcBeam") ? BEAM :
+			is_kind_of(**e, "IfcDoor") ? DOOR :
+			is_kind_of(**e, "IfcWindow") ? WINDOW : 
+			is_ceiling(**e) ? SLAB : UNKNOWN;
+		auto guid = string_field(**e, "GlobalId");
 		if (type != UNKNOWN && passes_filter(guid.c_str())) {
-			std::string guid = ((cppw::String)elem.get("GlobalId")).data();
 			sprintf(buf, "Extracting element %s...", guid.c_str());
 			msg_func(buf);
-			optional<cppw::Instance> effective_instance = elem;
+			const ifc_object * effective_object = *e;
 			if (type == WINDOW || type == DOOR) {
-				if (!(effective_instance = get_related_opening(elem))) {
+				effective_object = get_related_opening(**e);
+				if (!effective_object) {
 					sprintf(
 						buf,
 						"Door or window %s has no related opening. It will be "
@@ -123,25 +125,25 @@ size_t get_elements(
 					continue;
 				}
 			}
-			bool element_is_shading = is_shading(elem);
+			bool element_is_shading = is_shading(**e);
 			std::unique_ptr<internal_geometry::solid> internal_geom;
 			solid interface_geom;
 			transformation_3 globalizer;
 			direction_3 composite_dir(0, 0, 0);
 			try {
 				internal_geom = internal_geometry::get_local_geometry(
-					*effective_instance,
+					*effective_object,
 					s,
 					c);
 				globalizer = internal_geometry::get_globalizer(
-					*effective_instance,
+					*effective_object,
 					s,
 					c);
 				internal_geom->transform(globalizer);
 				interface_geom = internal_geom->to_interface_solid();
 				if (!element_is_shading && internal_geom->axis1()) {
 					auto cdir_maybe = get_composite_dir(
-						elem,
+						**e,
 						*internal_geom->axis1(),
 						*internal_geom->axis2(),
 						*internal_geom->axis3());
@@ -192,7 +194,7 @@ size_t get_elements(
 }
 
 size_t get_spaces(
-	cppw::Open_model & model, 
+	model * m, 
 	space_info *** spaces, 
 	void (*msg_func)(char *), 
 	void (*warn_func)(char *),
@@ -204,17 +206,17 @@ size_t get_spaces(
 	using internal_geometry::get_globalizer;
 	typedef boost::format fmt;
 		
-	auto ss = model.get_set_of("IfcSpace");
+	auto ss = m->spaces();
 	std::vector<space_info> space_vector;
 
-	for (ss.move_first(); ss.move_next(); ) {
-		std::string id(((cppw::String)ss.get().get("GlobalId")).data());
+	for (auto sp = ss.begin(); sp != ss.end(); ++sp) {
+		auto id = string_field(**sp, "GlobalId");
 		try {
 			if (space_filter(id.c_str())) {
 				fmt m("Extracting space %s...");
 				msg_func(const_cast<char *>((m % id).str().c_str()));
-				auto geometry = get_local_geometry(ss.get(), s, c);
-				auto globalizer = get_globalizer(ss.get(), s, c);
+				auto geometry = get_local_geometry(**sp, s, c);
+				auto globalizer = get_globalizer(**sp, s, c);
 				geometry->transform(globalizer);
 				space_info this_space;
 				strncpy(this_space.id, id.c_str(), SPACE_ID_MAX_LEN);
@@ -239,7 +241,7 @@ size_t get_spaces(
 } // namespace
 
 ifcadapter_return_t extract_from_model(
-	cppw::Open_model & model, 
+	model * m, 
 	size_t * element_count, 
 	element_info *** elements, 
 	double ** composite_layer_dxs,
@@ -257,7 +259,7 @@ ifcadapter_return_t extract_from_model(
 	auto scaler = unit_scaler::identity_scaler;
 	char buf[256];
 	*element_count = get_elements(
-		model, 
+		m, 
 		elements, 
 		composite_layer_dxs,
 		composite_layer_dys,
@@ -271,7 +273,7 @@ ifcadapter_return_t extract_from_model(
 	sprintf(buf, "Got %u building elements.\n", *element_count);
 	notify(buf);
 	*space_count = 
-		get_spaces(model, spaces, notify, warn, scaler, space_filter, c);
+		get_spaces(m, spaces, notify, warn, scaler, space_filter, c);
 	sprintf(buf, "Got %u building spaces.\n", *space_count);
 	notify(buf);
 	return IFCADAPT_OK;

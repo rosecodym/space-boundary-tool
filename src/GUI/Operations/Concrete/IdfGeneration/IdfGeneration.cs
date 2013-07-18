@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
+using IfcInterface;
+
 using Solid = Sbt.CoreTypes.Solid;
 using SbtLayer = Sbt.CoreTypes.MaterialLayer;
 using SbtElement = Sbt.CoreTypes.ElementInfo;
@@ -14,8 +16,6 @@ using IdfConstruction = ConstructionManagement.OutputConstruction;
 using IdfMaterial = ConstructionManagement.OutputLayer;
 
 using IfcConstruction = ConstructionManagement.ModelConstructions.ModelConstruction;
-using IfcElement = IfcInformationExtractor.Element;
-using IfcSpace = IfcInformationExtractor.Space;
 
 using LibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
@@ -206,7 +206,7 @@ namespace GUI.Operations
                 var wallBoundaries = new List<BuildingSurface>(wallFilter);
 
                 List<Shading> shadings = new List<Shading>();
-                foreach (IfcElement e in p.IfcBuilding.ElementsByGuid.Values)
+                foreach (IfcElement e in p.IfcBuilding.Elements)
                 {
                     // elementGeometries might not have e because it was 
                     // filtered.

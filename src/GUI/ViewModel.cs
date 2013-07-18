@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
-using IfcBuildingInformation = IfcInformationExtractor.BuildingInformation;
+using IfcInterface;
+
 using IfcConstruction = ConstructionManagement.ModelConstructions.ModelConstruction;
 using IfcConstructionMappingSource = ConstructionManagement.ModelConstructions.ModelMappingSource;
-using IfcElement = IfcInformationExtractor.Element;
 
 using MaterialLibraryEntry = ConstructionManagement.MaterialLibrary.LibraryEntry;
 
@@ -357,7 +357,6 @@ namespace GUI
             {
                 List<string> reasons = new List<string>();
                 if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are already being calculated."); }
-                if (CurrentlyLoadingIfcModel) { reasons.Add("The IFC model constructions are being loaded (these operations cannot be simultaneous)."); }
                 if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
                 return reasons.Count == 0 ? null : "Space boundaries cannot be calculated:\n" + String.Join(Environment.NewLine, reasons);
             }
@@ -381,7 +380,6 @@ namespace GUI
                 List<string> reasons = new List<string>();
                 if (CurrentlyLoadingIfcModel) { reasons.Add("IFC constructions are already being loaded."); }
                 if (String.IsNullOrWhiteSpace(InputIfcFilePath) || !System.IO.File.Exists(InputIfcFilePath)) { reasons.Add("The specified IFC file does not exist."); }
-                if (CurrentlyCalculatingSBs) { reasons.Add("Space boundaries are currently being calculated (these operations cannot be simultaneous)."); }
                 return reasons.Count == 0 ? null : "IFC constructions cannot be loaded:\n" + String.Join(Environment.NewLine, reasons);
             }
         }
@@ -528,9 +526,7 @@ namespace GUI
         {
             if (id > CurrentSbtBuilding.Elements.Count) { return null; }
             string elementGuid = CurrentSbtBuilding.Elements[id - 1].Guid;
-            IfcElement ifcElement;
-            if (!CurrentIfcBuilding.ElementsByGuid.TryGetValue(elementGuid, out ifcElement)) { return null; }
-            return ifcElement.AssociatedConstruction;
+            return CurrentIfcBuilding.ConstructionForElementGuid(elementGuid);
         }
 
         internal Normal SbtMaterialIDToCompositeNormal(int id)

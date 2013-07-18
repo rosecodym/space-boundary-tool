@@ -1,11 +1,15 @@
 #include "precompiled.h"
 
+#include "../../Edm Wrapper/edm_wrapper_native_interface.h"
+
 #include "internal_geometry.h"
 
 #include "geometry_common.h"
 #include "number_collection.h"
 #include "unit_scaler.h"
 #include "wrapped_nef_operations.h"
+
+using namespace ifc_interface;
 
 namespace internal_geometry {
 
@@ -20,80 +24,75 @@ length_scaler build_scale_function(const unit_scaler & us) {
 }
 
 point_3 build_point(
-	const cppw::Select & sel, 
+	const ifc_interface::ifc_object & obj,
 	const length_scaler & scale_length,
 	number_collection<K> * c) 
 {
-	cppw::Instance inst = sel;
-	cppw::List coords(inst.get("Coordinates"));
-	cppw::Integer dim = inst.get("Dim");
-	auto scaled_x = scale_length(coords.get_(0));
-	auto scaled_y = scale_length(coords.get_(1));
-	auto scaled_z = dim == 3 ? scale_length(coords.get_(2)) : 0.0;
-	return c->request_point(scaled_x, scaled_y, scaled_z);
+	double x, y, z;
+	ifc_interface::triple_field(obj, "Coordinates", &x, &y, &z);
+	return c->request_point(scale_length(x), scale_length(y), scale_length(z));
 }
 
 direction_3 build_direction(
-	const cppw::Select & sel, 
+	const ifc_object & obj,
 	number_collection<K> * c)
 {
-	cppw::Instance inst = sel;
-	cppw::List ratios = inst.get("DirectionRatios");
-	cppw::Integer dim = inst.get("Dim");
-	cppw::Real dx = ratios.get_(0);
-	cppw::Real dy = ratios.get_(1);
-	cppw::Real dz = dim == 3 ? ratios.get_(2) : 0.0;
+	double dx, dy, dz;
+	ifc_interface::triple_field(obj, "DirectionRatios", &dx, &dy, &dz);
 	return c->request_direction(dx, dy, dz);
 }
 
 transformation_3 build_transformation(
-	const cppw::Select & sel,
+	const ifc_object * obj,
 	const length_scaler & scale_length,
 	number_collection<K> * c) 
 {
-	if (!sel.is_set()) { return transformation_3(); }
-	cppw::Instance inst = sel;
-	if (inst.is_instance_of("IfcLocalPlacement")) {
+	if (!obj) { return transformation_3(); }
+	if (is_instance_of(*obj, "IfcLocalPlacement")) {
 		auto to = build_transformation(
-			inst.get("PlacementRelTo"),
+			object_field(*obj, "PlacementRelTo"),
 			scale_length,
 			c);
 		auto from = build_transformation(
-			inst.get("RelativePlacement"), 
+			object_field(*obj, "RelativePlacement"),
 			scale_length,
 			c);
 		return to * from;
 	}
-	else if (inst.is_instance_of("IfcAxis2Placement2D")) {
-		auto location = build_point(inst.get("Location"), scale_length, c);
-		cppw::Aggregate p = inst.get("P");
-		auto xcol = normalize(build_direction(p.get_(0), c).vector());
-		auto ycol = normalize(build_direction(p.get_(1), c).vector());
+	else if (is_instance_of(*obj, "IfcAxis2Placement2D")) {
+		auto loc_obj = object_field(*obj, "Location");
+		auto location = build_point(*loc_obj, scale_length, c);
+		auto p = collection_field(*obj, "P");
+		auto xcol = normalize(build_direction(*p[0], c).vector());
+		auto ycol = normalize(build_direction(*p[1], c).vector());
 		vector_3 zcol(0, 0, 1);
 		return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
 								xcol.y(), ycol.y(), zcol.y(), location.y(),
 								xcol.z(), ycol.z(), zcol.z(), location.z());
 	}
-	else if (inst.is_instance_of("IfcAxis2Placement3D")) {
-		auto location = build_point(inst.get("Location"), scale_length, c);
-		cppw::Aggregate p = inst.get("P");
-		auto xcol = normalize(build_direction(p.get_(0), c).vector());
-		auto ycol = normalize(build_direction(p.get_(1), c).vector());
-		auto zcol = normalize(build_direction(p.get_(2), c).vector());
+	else if (is_instance_of(*obj, "IfcAxis2Placement3D")) {
+		auto loc_obj = object_field(*obj, "Location");
+		auto location = build_point(*loc_obj, scale_length, c);
+		auto p = collection_field(*obj, "P");
+		auto xcol = normalize(build_direction(*p[0], c).vector());
+		auto ycol = normalize(build_direction(*p[1], c).vector());
+		auto zcol = normalize(build_direction(*p[2], c).vector());
 		return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
 								xcol.y(), ycol.y(), zcol.y(), location.y(),
 								xcol.z(), ycol.z(), zcol.z(), location.z());
 	}
-	else if (inst.is_instance_of("IfcPlane")) {
-		return build_transformation(inst.get("Position"), scale_length, c);
+	else if (is_instance_of(*obj, "IfcPlane")) {
+		auto position = object_field(*obj, "Position");
+		return build_transformation(position, scale_length, c);
 	}
-	else if (inst.is_instance_of("IfcCartesianTransformationOperator3D")) {
-		point_3 loc = build_point(inst.get("LocalOrigin"), scale_length, c);
-		cppw::Aggregate p = inst.get("U");
-		double scale = (cppw::Real)inst.get("Scl");
-		auto xcol = normalize(build_direction(p.get_(0), c).vector()) * scale;
-		auto ycol = normalize(build_direction(p.get_(1), c).vector()) * scale;
-		auto zcol = normalize(build_direction(p.get_(2), c).vector()) * scale;
+	else if (is_instance_of(*obj, "IfcCartesianTransformationOperator3D")) {
+		auto loc_obj = object_field(*obj, "LocalOrigin");
+		point_3 loc = build_point(*loc_obj, scale_length, c);
+		auto p = collection_field(*obj, "U");
+		double scale = real_field(*obj, "Scl");
+		auto xcol = normalize(build_direction(*p[0], c).vector()) * scale;
+		auto ycol = normalize(build_direction(*p[1], c).vector()) * scale;
+		auto zcol = normalize(build_direction(*p[2], c).vector()) * scale;
 		return transformation_3(xcol.x(), ycol.x(), zcol.x(), loc.x(),
 								xcol.y(), ycol.y(), zcol.y(), loc.y(),
 								xcol.z(), ycol.z(), zcol.z(), loc.z());
@@ -104,53 +103,54 @@ transformation_3 build_transformation(
 }
 
 std::vector<point_3> build_polyloop(
-	const cppw::Select & sel,
+	const ifc_object & obj,
 	const length_scaler & scale,
 	number_collection<K> * c)
 {
 	typedef std::vector<point_3> loop;
-	cppw::Instance inst(sel);
-	if (inst.is_instance_of("IfcPolyline")) {
+	if (is_instance_of(obj, "IfcPolyline")) {
 		loop res;
-		cppw::List pts = inst.get("Points");
-		for (pts.move_first(); pts.move_next(); ) {
-			res.push_back(build_point(pts.get_(), scale, c));
+		auto pts = collection_field(obj, "Points");
+		for (auto p = pts.begin(); p != pts.end(); ++p) {
+			res.push_back(build_point(**p, scale, c));
 		}
 		if (res.front() == res.back()) { res.pop_back(); }
 		return res;
 	}
-	else if (inst.is_instance_of("IfcCompositeCurveSegment")) {
-		return build_polyloop(inst.get("ParentCurve"), scale, c);
+	else if (is_instance_of(obj, "IfcCompositeCurveSegment")) {
+		return build_polyloop(*object_field(obj, "ParentCurve"), scale, c);
 	}
-	else if (inst.is_instance_of("IfcCompositeCurve")) {
-		cppw::List components = inst.get("Segments");
+	else if (is_instance_of(obj, "IfcCompositeCurve")) {
+		auto components = collection_field(obj, "Segments");
 		if (components.size() != 1) {
 			throw bad_rep_exception(
 				"composite curves without exactly one segment are "
 				"unsupported");
 		}
-		return build_polyloop(components.get_(0), scale, c);
+		return build_polyloop(*components[0], scale, c);
 	}
-	else if (inst.is_instance_of("IfcPolyLoop")) {
+	else if (is_instance_of(obj, "IfcPolyLoop")) {
 		loop res;
-		cppw::List pts = inst.get("Polygon");
-		for (pts.move_first(); pts.move_next(); ) {
-			res.push_back(build_point(pts.get_(), scale, c));
+		auto pts = collection_field(obj, "Polygon");
+		for (auto p = pts.begin(); p != pts.end(); ++p) {
+			res.push_back(build_point(**p, scale, c));
 		}
 		return res;
 	}
-	else if (inst.is_instance_of("IfcCurveBoundedPlane")) {
-		auto res = build_polyloop(inst.get("OuterBoundary"), scale, c);
-		auto t = build_transformation(inst.get("BasisSurface"), scale, c);
+	else if (is_instance_of(obj, "IfcCurveBoundedPlane")) {
+		auto bound = object_field(obj, "OuterBoundary");
+		auto res = build_polyloop(*bound, scale, c);
+		auto basis = object_field(obj, "BasisSurface");
+		auto t = build_transformation(basis, scale, c);
 		boost::transform(res, res.begin(), t);
 		return res;
 	}
-	else if (inst.is_instance_of("IfcArbitraryClosedProfileDef")) {
-		return build_polyloop(inst.get("OuterCurve"), scale, c);
+	else if (is_instance_of(obj, "IfcArbitraryClosedProfileDef")) {
+		return build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
 	}
-	else if (inst.is_instance_of("IfcRectangleProfileDef")) {
-		double xdim = inst.get("XDim");
-		double ydim = inst.get("YDim");
+	else if (is_instance_of(obj, "IfcRectangleProfileDef")) {
+		double xdim = real_field(obj, "XDim");
+		double ydim = real_field(obj, "YDim");
 		point_2 req;
 		loop res;
 		req = c->request_point(scale(-xdim) / 2, scale(-ydim) / 2);
@@ -161,21 +161,21 @@ std::vector<point_3> build_polyloop(
 		res.push_back(point_3(req.x(), req.y(), 0));
 		req = c->request_point(scale(-xdim) / 2, scale(ydim) / 2);
 		res.push_back(point_3(req.x(), req.y(), 0));
-		auto t = build_transformation(inst.get("Position"), scale, c);
+		auto t = build_transformation(object_field(obj, "Position"), scale, c);
 		boost::transform(res, res.begin(), t);
 		assert(boost::find_if(res, [](const point_3 & p) {
 			return !CGAL::is_zero(p.z());
 		}) == res.end());
 		return res;
 	}
-	else if (inst.is_kind_of("IfcFaceBound")) {
-		auto res = build_polyloop(inst.get("Bound"), scale, c);
-		if (!inst.get("Orientation")) { 
+	else if (is_kind_of(obj, "IfcFaceBound")) {
+		auto res = build_polyloop(*object_field(obj, "Bound"), scale, c);
+		if (!boolean_field(obj, "Orientation")) { 
 			boost::reverse(res); 
 		}
 		return res;
 	}
-	else if (inst.is_kind_of("IfcCircleProfileDef")) {
+	else if (is_kind_of(obj, "IfcCircleProfileDef")) {
 		throw bad_rep_exception(
 			"curved geometry definitions are not supported.");
 	}
@@ -203,33 +203,31 @@ bool normal_matches_dir(
 } // namespace
 
 face::face(
-	const cppw::Select & sel,
+	const ifc_object & obj,
 	const length_scaler & scale,
 	number_collection<K> * c)
 {
-	cppw::Instance inst(sel);
-	if (inst.is_instance_of("IfcFaceBound")) {
-		outer_ = build_polyloop(inst.get("Bound"), scale, c);
+	if (is_instance_of(obj, "IfcFaceBound")) {
+		outer_ = build_polyloop(*object_field(obj, "Bound"), scale, c);
 	}
-	else if (inst.is_instance_of("IfcFace")) {
-		cppw::Set bounds = inst.get("Bounds");
-		for (bounds.move_first(); bounds.move_next(); ) {
-			cppw::Instance bound = bounds.get_();
-			if (bound.is_instance_of("IfcFaceOuterBound")) {
-				outer_ = build_polyloop(bound, scale, c);
+	else if (is_instance_of(obj, "IfcFace")) {
+		auto bounds = collection_field(obj, "Bounds");
+		for (auto b = bounds.begin(); b != bounds.end(); ++b) {
+			if (is_instance_of(**b, "IfcFaceOuterBound")) {
+				outer_ = build_polyloop(**b, scale, c);
 			}
-			else { voids_.push_back(build_polyloop(bound, scale, c)); }
+			else { voids_.push_back(build_polyloop(**b, scale, c)); }
 		}
 	}
-	else if (inst.is_instance_of("IfcArbitraryProfileDefWithVoids")) {
-		outer_ = build_polyloop(inst.get("OuterCurve"), scale, c);
-		cppw::Set inners = inst.get("InnerCurves");
-		for (inners.move_first(); inners.move_next(); ) {
-			voids_.push_back(build_polyloop(inners.get_(), scale, c));
+	else if (is_instance_of(obj, "IfcArbitraryProfileDefWithVoids")) {
+		outer_ = build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
+		auto inners = collection_field(obj, "InnerCurves");
+		for (auto p = inners.begin(); p != inners.end(); ++p) {
+			voids_.push_back(build_polyloop(**p, scale, c));
 		}
 	}
 	else {
-		outer_ = build_polyloop(inst, scale, c);
+		outer_ = build_polyloop(obj, scale, c);
 	}
 }
 
@@ -293,16 +291,16 @@ void face::transform(const transformation_3 & t) {
 }
 
 brep::brep(
-	const cppw::Instance & inst,
+	const ifc_object & obj,
 	const length_scaler & scale_length,
 	number_collection<K> * c)
 {
-	if (!inst.is_kind_of("IfcConnectedFaceSet")) {
+	if (!is_kind_of(obj, "IfcConnectedFaceSet")) {
 		throw bad_rep_exception("unsupported representation for a brep");
 	}
-	cppw::Set faceSet = inst.get("CfsFaces");
-	for (faceSet.move_first(); faceSet.move_next(); ) {
-		faces.push_back(face(faceSet.get_(), scale_length, c));
+	auto face_set = collection_field(obj, "CfsFaces");
+	for (auto f = face_set.begin(); f != face_set.end(); ++f) {
+		faces.push_back(face(**f, scale_length, c));
 	}
 }
 
@@ -326,18 +324,16 @@ interface_solid brep::to_interface_solid() const {
 }
 
 ext::ext(
-	const cppw::Instance & inst,
+	const ifc_object & obj,
 	const length_scaler & scale,
 	number_collection<K> * c)
-	: area_(inst.get("SweptArea"), scale, c)
+	: area_(*object_field(obj, "SweptArea"), scale, c)
 {
-	double unscaled_depth = inst.get("Depth");
+	double unscaled_depth = real_field(obj, "Depth");
 	depth_ = c->request_height(scale(unscaled_depth));
-	cppw::Instance d = inst.get("ExtrudedDirection");
-	cppw::List ratios = d.get("DirectionRatios");
-	double dx = ratios.get_(0);
-	double dy = ratios.get_(1);
-	double dz = ((cppw::Integer)d.get("Dim")) == 3 ? ratios.get_(2) : 0.0;
+	auto d = object_field(obj, "ExtrudedDirection");
+	double dx, dy, dz;
+	triple_field(*d, "DirectionRatios", &dx, &dy, &dz);
 	dir_ = c->request_direction(dx, dy, dz);
 	if (!normal_matches_dir(area_, dir_)) {
 		area_.reverse();
@@ -368,62 +364,57 @@ interface_solid ext::to_interface_solid() const {
 }
 
 transformation_3 get_globalizer(
-	const cppw::Select & sel,
-	const unit_scaler & scaler,
-	number_collection<K> * c)
-{
-	return get_globalizer((cppw::Instance)sel, scaler, c);
-}
-
-transformation_3 get_globalizer(
-	const cppw::Instance & inst,
+	const ifc_object & obj,
 	const unit_scaler & scaler,
 	number_collection<K> * c) 
 {
-	if (inst.is_kind_of("IfcProduct")) {
-		auto inner = get_globalizer(inst.get("Representation"), scaler, c);
-		cppw::Select placement = inst.get("ObjectPlacement");
+	if (is_kind_of(obj, "IfcProduct")) {
+		auto rep = object_field(obj, "Representation");
+		auto inner = get_globalizer(*rep, scaler, c);
+		auto placement = object_field(obj, "ObjectPlacement");
 		auto sf = build_scale_function(scaler);
 		return inner * build_transformation(placement, sf, c);
 	}
-	else if (inst.is_instance_of("IfcProductDefinitionShape")) {
-		cppw::List reps = inst.get("Representations");
-		for (reps.move_first(); reps.move_next(); ) {
-			cppw::Instance this_rep = reps.get_();
-			if (this_rep.get("RepresentationIdentifier") == "Body") {
-				return get_globalizer(this_rep, scaler, c);
+	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
+		auto reps = collection_field(obj, "Representations");
+		for (auto r = reps.begin(); r != reps.end(); ++r) {
+			if (string_field(**r, "RepresentationIdentifier") == "Body") {
+				return get_globalizer(**r, scaler, c);
 			}
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
 	}
 	else if (
-		inst.is_instance_of("IfcShapeRepresentation") &&
-		inst.get("RepresentationIdentifier") == "Body")
+		is_instance_of(obj, "IfcShapeRepresentation") &&
+		string_field(obj, "RepresentationIdentifier") == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		cppw::Set rep_items = inst.get("Items");
-		return get_globalizer(rep_items.get_(0), scaler, c);
+		auto rep_items = collection_field(obj, "Items");
+		return get_globalizer(*rep_items[0], scaler, c);
 	}
-	else if (inst.is_instance_of("IfcFacetedBrep")) {
+	else if (is_instance_of(obj, "IfcFacetedBrep")) {
 		return transformation_3();
 	}
-	else if (inst.is_instance_of("IfcExtrudedAreaSolid")) {
+	else if (is_instance_of(obj, "IfcExtrudedAreaSolid")) {
 		return transformation_3();
 	}
-	else if (inst.is_instance_of("IfcMappedItem")) {
-		cppw::Instance ms = inst.get("MappingSource");
+	else if (is_instance_of(obj, "IfcMappedItem")) {
+		auto ms = object_field(obj, "MappingSource");
 		auto sf = build_scale_function(scaler);
-		auto base = get_globalizer(ms.get("MappedRepresentation"), scaler, c);
-		auto from = build_transformation(ms.get("MappingOrigin"), sf, c);
-		auto to = build_transformation(inst.get("MappingTarget"), sf, c);
+		auto mapped_rep = object_field(*ms, "MappedRepresentation");
+		auto base = get_globalizer(*mapped_rep, scaler, c);
+		auto mapping_origin = object_field(*ms, "MappingOrigin");
+		auto from = build_transformation(mapping_origin, sf, c);
+		auto mapping_target = object_field(obj, "MappingTarget");
+		auto to = build_transformation(mapping_target, sf, c);
 		return base * from * to;
 	}
-	else if (inst.is_instance_of("IfcBooleanClippingResult")) {
+	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
 		return transformation_3();
 	}
-	else if (inst.is_instance_of("IfcFaceBasedSurfaceModel")) {
+	else if (is_instance_of(obj, "IfcFaceBasedSurfaceModel")) {
 		return transformation_3();
 	}
 	else {
@@ -432,23 +423,18 @@ transformation_3 get_globalizer(
 }
 
 boost::optional<std::tuple<direction_3, direction_3>> get_axes(
-	const cppw::Instance & inst,
+	const ifc_object & obj,
 	number_collection<K> * c)
 {
-	if (inst.is_instance_of("IfcPolyline")) {
-		cppw::List pts = inst.get("Points");
-		if (pts.count() != 2) {
+	if (is_instance_of(obj, "IfcPolyline")) {
+		auto pts = collection_field(obj, "Points");
+		if (pts.size() != 2) {
 			throw bad_rep_exception(
 				"axis definition without exactly two points");
 		}
-		cppw::Instance p1(pts.get_(0));
-		cppw::List coords = p1.get("Coordinates");
-		double p1x = coords.get_(0);
-		double p1y = coords.get_(1);
-		cppw::Instance p2(pts.get_(1));
-		coords = cppw::List(p2.get("Coordinates"));
-		double p2x = coords.get_(0);
-		double p2y = coords.get_(1);
+		double p1x, p1y, p2x, p2y, dummy;
+		triple_field(*pts[0], "Coordinates", &p1x, &p1y, &dummy);
+		triple_field(*pts[1], "Coordinates", &p2x, &p2y, &dummy);
 		direction_3 a1 = c->request_direction(p2x - p1x, p2y - p1y, 0.0);
 		vector_3 a3(0, 0, 1);
 		direction_3 a2 = CGAL::cross_product(a3, a1.to_vector()).direction();
@@ -457,41 +443,26 @@ boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 	return boost::optional<std::tuple<direction_3, direction_3>>();
 }
 
-boost::optional<std::tuple<direction_3, direction_3>> get_axes(
-	const cppw::Select & sel,
-	number_collection<K> * c)
-{
-	return get_axes(cppw::Instance(sel), c);
-}
-
 std::unique_ptr<solid> get_local_geometry(
-	const cppw::Select & sel,
+	const ifc_object & obj,
 	const unit_scaler & scaler,
 	number_collection<K> * c)
 {
-	return get_local_geometry((cppw::Instance)sel, scaler, c);
-}
-
-std::unique_ptr<solid> get_local_geometry(
-	const cppw::Instance & inst,
-	const unit_scaler & scaler,
-	number_collection<K> * c)
-{
-	if (inst.is_kind_of("IfcProduct")) {
-		return get_local_geometry(inst.get("Representation"), scaler, c);
+	if (is_kind_of(obj, "IfcProduct")) {
+		auto rep = object_field(obj, "Representation");
+		return get_local_geometry(*rep, scaler, c);
 	}
-	else if (inst.is_instance_of("IfcProductDefinitionShape")) {
-		cppw::List reps = inst.get("Representations");
+	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
+		auto reps = collection_field(obj, "Representations");
 		std::unique_ptr<solid> geometry;
 		boost::optional<std::tuple<direction_3, direction_3>> axes;
-		for (reps.move_first(); reps.move_next(); ) {
-			cppw::Instance this_rep = reps.get_();
-			if (this_rep.get("RepresentationIdentifier") == "Body") {
-				geometry = get_local_geometry(this_rep, scaler, c);
+		for (auto r = reps.begin(); r != reps.end(); ++r) {
+			auto identifier = string_field(**r, "RepresentationIdentifier");
+			if (identifier == "Body") {
+				geometry = get_local_geometry(**r, scaler, c);
 			}
-			else if (this_rep.get("RepresentationIdentifier") == "Axis") {
-				cppw::Set rep_items = this_rep.get("Items");
-				axes = get_axes(rep_items.get_(0), c);
+			else if (identifier == "Axis") {
+				axes = get_axes(*collection_field(**r, "Items")[0], c);
 			}
 		}
 		if (geometry) {
@@ -501,39 +472,39 @@ std::unique_ptr<solid> get_local_geometry(
 		throw bad_rep_exception("no 'Body' representation identifier");
 	}
 	else if (
-		inst.is_instance_of("IfcShapeRepresentation") &&
-		inst.get("RepresentationIdentifier") == "Body")
+		is_instance_of(obj, "IfcShapeRepresentation") &&
+		string_field(obj, "RepresentationIdentifier") == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		cppw::Set rep_items = inst.get("Items");
-		return get_local_geometry(rep_items.get_(0), scaler, c);
+		auto items = collection_field(obj, "Items");
+		return get_local_geometry(*items[0], scaler, c);
 	}
-	else if (inst.is_instance_of("IfcFacetedBrep")) {
-		cppw::Instance b = inst.get("Outer");
+	else if (is_instance_of(obj, "IfcFacetedBrep")) {
+		auto b = object_field(obj, "Outer");
 		auto sf = build_scale_function(scaler);
-		return std::unique_ptr<brep>(new brep(b, sf, c));
+		return std::unique_ptr<brep>(new brep(*b, sf, c));
 	}
-	else if (inst.is_instance_of("IfcExtrudedAreaSolid")) {
+	else if (is_instance_of(obj, "IfcExtrudedAreaSolid")) {
 		auto sf = build_scale_function(scaler);
-		auto res = std::unique_ptr<ext>(new ext(inst, sf, c));
-		res->transform(build_transformation(inst.get("Position"), sf, c));
+		auto res = std::unique_ptr<ext>(new ext(obj, sf, c));
+		auto pos = object_field(obj, "Position");
+		res->transform(build_transformation(pos, sf, c));
 		return std::move(res);
 	}
-	else if (inst.is_instance_of("IfcMappedItem")) {
-		cppw::Instance mapping_source = inst.get("MappingSource");
-		cppw::Select mapped_rep = mapping_source.get("MappedRepresentation");
-		return get_local_geometry(mapped_rep, scaler, c);
+	else if (is_instance_of(obj, "IfcMappedItem")) {
+		auto src = object_field(obj, "MappingSource");
+		auto rep = object_field(*src, "MappedRepresentation");
+		return get_local_geometry(*rep, scaler, c);
 	}
-	else if (inst.is_instance_of("IfcBooleanClippingResult")) {
-		return wrapped_nef_operations::from_boolean_result(inst, scaler, c);
+	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
+		return wrapped_nef_operations::from_boolean_result(obj, scaler, c);
 	}
-	else if (inst.is_instance_of("IfcFaceBasedSurfaceModel")) {
-		cppw::Set face_set = inst.get("FbsmFaces");
-		cppw::Instance shell = face_set.get_(0);
+	else if (is_instance_of(obj, "IfcFaceBasedSurfaceModel")) {
+		auto face_set = collection_field(obj, "FbsmFaces");
 		auto sf = build_scale_function(scaler);
-		return std::unique_ptr<brep>(new brep(shell, sf, c));
+		return std::unique_ptr<brep>(new brep(*face_set[0], sf, c));
 	}
 	else {
 		throw bad_rep_exception("unknown or unsupported geometry definition");
