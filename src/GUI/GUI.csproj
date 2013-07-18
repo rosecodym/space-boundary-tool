@@ -39,6 +39,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Edm Wrapper">
+      <HintPath>..\..\dependencies\lib\Edm Wrapper.dll</HintPath>
+    </Reference>
     <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="IdfToolbox">
       <HintPath>..\..\dependencies\lib\IdfToolbox.dll</HintPath>
@@ -140,10 +143,6 @@
       <Project>{2B180C45-2DA1-4C26-9850-F92B9369D626}</Project>
       <Name>Core Managed Wrapper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Edm Wrapper\Edm Wrapper.vcxproj">
-      <Project>{6133D6D1-B93B-468F-8B6F-6120E900BF72}</Project>
-      <Name>Edm Wrapper</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
@@ -165,8 +164,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>for %25%25I in ("$(SolutionDir)..\dependencies\lib\edm_libxml2.dll" "$(SolutionDir)..\dependencies\lib\edmicpp500_2010.dll" "$(SolutionDir)..\dependencies\lib\edmikit500.dll" "$(SolutionDir)..\dependencies\lib\iconv.dll") ^
+do copy %25%25I "$(OutDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

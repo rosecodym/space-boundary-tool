@@ -40,7 +40,7 @@ private:
 	~EdmDatabase() { this->!EdmDatabase(); }
 
 	static EdmDatabase() {
-		const char * const LICENSE_KEY = "set key here";
+		const char * const LICENSE_KEY = "EDM LICENSE KEY";
 		sdai::tSdaiSelect mySelect;
 		mySelect.value.stringVal = sdai::SdaiString(LICENSE_KEY);
 		mySelect.type = sdai::sdaiSTRING;
