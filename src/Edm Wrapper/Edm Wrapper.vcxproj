@@ -61,10 +61,16 @@
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PostBuildEvent>
-      <Command>for %%I in ("$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
-do copy %%I "$(OutDir)"</Command>
-      <Message>Copying runtime libraries to output directory</Message>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"
+copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
+      <Message>Removing EDM license key and copying output to dependency directory</Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Injecting EDM license key</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -79,10 +85,16 @@ do copy %%I "$(OutDir)"</Command>
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PostBuildEvent>
-      <Command>for %%I in ("$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
-do copy %%I "$(OutDir)"</Command>
-      <Message>Copying runtime libraries to output directory</Message>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"
+copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
+      <Message>Removing EDM license key and copying output to dependency directory</Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmDir)/license_key.txt" "$(ProjectDir)EdmDatabase.h"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Injecting EDM license key</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -90,7 +102,6 @@ do copy %%I "$(OutDir)"</Command>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Edm.h" />
     <ClInclude Include="EdmDatabase.h" />
     <ClInclude Include="EdmException.h" />
     <ClInclude Include="edm_wrapper_native_interface.h" />
@@ -121,6 +132,7 @@ do copy %%I "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />
+    <None Include="Manipulate EDM License Key.fsx" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

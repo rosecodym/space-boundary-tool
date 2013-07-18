@@ -21,9 +21,6 @@
     <ClInclude Include="EdmDatabase.h">
       <Filter>managed</Filter>
     </ClInclude>
-    <ClInclude Include="Edm.h">
-      <Filter>managed</Filter>
-    </ClInclude>
     <ClInclude Include="EdmException.h">
       <Filter>managed</Filter>
     </ClInclude>
@@ -51,6 +48,7 @@
     <None Include="app.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Manipulate EDM License Key.fsx" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
