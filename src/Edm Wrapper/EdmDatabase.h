@@ -2,7 +2,6 @@
 
 #include <cpp_edmi.h>
 
-#include "Edm.h"
 #include "EdmException.h"
 
 using namespace System;
