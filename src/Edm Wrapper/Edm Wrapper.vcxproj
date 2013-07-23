@@ -45,9 +45,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName).$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName).$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -64,7 +66,8 @@
     </Link>
     <PostBuildEvent>
       <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
-copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
+for %%I in ("$(TargetPath)" "$(TargetDir)$(TargetName).lib") ^
+do copy %%I "$(SolutionDir)..\dependencies\lib\"</Command>
       <Message>Removing EDM license key and copying output to dependency directory</Message>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -88,7 +91,8 @@ copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
     </Link>
     <PostBuildEvent>
       <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
-copy "$(TargetPath)" "$(SolutionDir)..\dependencies\lib\"</Command>
+for %%I in ("$(TargetPath)" "$(TargetDir)$(TargetName).lib") ^
+do copy %%I "$(SolutionDir)..\dependencies\lib\"</Command>
       <Message>Removing EDM license key and copying output to dependency directory</Message>
     </PostBuildEvent>
     <PreBuildEvent>

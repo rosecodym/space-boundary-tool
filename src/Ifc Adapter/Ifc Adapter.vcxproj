@@ -117,10 +117,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\dependencies\lib;$(BoostDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>../Debug/Edm Wrapper.lib;$(LedaDir)\leda_mdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)..\dependencies\lib\Edm Wrapper.$(Configuration).lib;$(LedaDir)\leda_mdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>for %%I in ("$(BoostDir)\lib\boost_thread-vc100-mt-gd-1_47.dll" "$(SolutionDir)\..\dependencies\lib\CGAL-vc100-mt-gd-4.1.dll" "$(LedaDir)\leda_mdd.dll" "$(EdmDir)\bin\edm_libxml2.dll" "$(EdmDir)\bin\edmicpp500_2010.dll" "$(EdmDir)\bin\edmikit500.dll" "$(EdmDir)\bin\iconv.dll") ^
+      <Command>for %%I in ("$(BoostDir)\lib\boost_thread-vc100-mt-gd-1_47.dll" "$(SolutionDir)\..\dependencies\lib\CGAL-vc100-mt-gd-4.1.dll" "$(LedaDir)\leda_mdd.dll") ^
 do copy %%I "$(OutDir)"</Command>
       <Message>Copying runtime libraries to output directory</Message>
     </PostBuildEvent>
@@ -146,7 +146,7 @@ do copy %%I "$(OutDir)"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\dependencies\lib;$(BoostDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>../Debug/Edm Wrapper.lib;$(LedaDir)\leda_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)..\dependencies\lib\Edm Wrapper.$(Configuration).lib;$(LedaDir)\leda_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PostBuildEvent>
