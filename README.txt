@@ -13,7 +13,7 @@ Once you have these, place a Visual Studio Property Sheet named "Dependencies.pr
 BoostDir - the root directory for your Boost installation.
 LedaDir - the root directory for your LEDA installation.
 
-Refer to http://msdn.microsoft.com/en-us/library/vstudio/669zx6zc(v=vs.100).aspx for instructions on how to do this. Once this step is done, everything* should build. (If you want to build the installer, make sure to add leda_md.dll as a file dependency to the installer project. If you don't, it will still build, but the distributed executable won't work because it won't be able to find leda_md.dll. I haven't made this step automatic because you can't apply property sheets to installer projects.)
+Refer to http://msdn.microsoft.com/en-us/library/vstudio/669zx6zc(v=vs.100).aspx for instructions on how to set up Property Sheets. Once this step is done, everything* should build.
 
 Direct questions to sbt-support@lbl.gov.
 
