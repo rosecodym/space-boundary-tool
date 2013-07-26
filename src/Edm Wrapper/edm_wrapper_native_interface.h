@@ -60,6 +60,9 @@ class EDM_WRAPPER_INTERFACE model {
 public:
 	model(const char * path);
 	~model();
+
+	bool loaded_ok() const;
+	const std::string & last_error() const;
 	
 	std::vector<const ifc_object *> building_elements();
 	std::vector<const ifc_object *> spaces();

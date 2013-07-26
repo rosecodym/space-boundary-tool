@@ -20,6 +20,10 @@ model::~model() {
 	delete d_;
 }
 
+bool model::loaded_ok() const { return d_->m != __nullptr; }
+
+const std::string & model::last_error() const { return d_->last_error; }
+
 std::vector<const ifc_object *> model::building_elements() {
 	std::vector<const ifc_object *> res;
 	cppw::Instance_set elems = 

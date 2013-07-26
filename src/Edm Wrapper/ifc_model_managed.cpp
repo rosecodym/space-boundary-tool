@@ -7,10 +7,13 @@
 
 namespace ifc_interface {
 
-model::model(const char * path) : d_(new internals)
+model::model(const char * path) :  d_(new internals)
 {
-	IfcInterface::EdmDatabase ^ db = IfcInterface::EdmDatabase::Instance();
-	d_->m = db->LoadModel(gcnew String(path));	
+	try {
+		IfcInterface::EdmDatabase ^ db = IfcInterface::EdmDatabase::Instance();
+		d_->m = db->LoadModel(gcnew String(path));
+	}
+	catch (cppw::Error & e) { d_->last_error = e.message.data(); }
 }
 
 } // namespace ifc_interface

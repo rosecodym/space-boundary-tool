@@ -24,6 +24,7 @@ struct model::internals {
 	cppw::Open_model * m;
 	std::list<ifc_object> known_objects;
 	boost::optional<cppw::Instance> owner_history;
+	std::string last_error;
 };
 
 } // namespace ifc_interface
