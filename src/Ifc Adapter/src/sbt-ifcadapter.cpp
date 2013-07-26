@@ -202,7 +202,13 @@ ifcadapter_return_t execute(
 	number_collection<K> ctxt(EPS_MAGIC / 20); // magic divided by magic
 	number_collection<iK> output_ctxt(EPS_MAGIC);
 	notify(fmt("Processing file %s.\n") % input_filename);
+
 	ifc_interface::model m(input_filename);
+	if (!m.loaded_ok()) {
+		opts.error_func(const_cast<char *>((m.last_error() + "\n").c_str()));
+		return IFCADAPT_IFC_ERROR;
+	}
+
 	std::vector<element_info *> shadings;
 	double lupm = m.length_units_per_meter();
 	opts.length_units_per_meter = lupm;
