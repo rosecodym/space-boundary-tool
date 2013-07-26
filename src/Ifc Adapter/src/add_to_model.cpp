@@ -226,7 +226,7 @@ ifc_object * create_rel_aggregates(
 	return res;
 }
 
-void create_necessary_virtual_elements(
+std::vector<ifc_object *> create_necessary_virtual_elements(
 	model * m, 
 	space_boundary ** sbs, 
 	int sb_count)
@@ -240,6 +240,7 @@ void create_necessary_virtual_elements(
 			}
 		}
 	}
+	std::vector<ifc_object *> res;
 	for (auto pair = virtuals.begin(); pair != virtuals.end(); ++pair) {
 		auto inst = m->create_object("IfcVirtualElement", true);
 		char guidbuf[128];
@@ -247,7 +248,9 @@ void create_necessary_virtual_elements(
 		set_field(inst, "GlobalId", guidbuf);
 		strncpy(pair->first->element_name, guidbuf, ELEMENT_NAME_MAX_LEN);
 		strncpy(pair->second->element_name, guidbuf, ELEMENT_NAME_MAX_LEN);
+		res.push_back(inst);
 	}
+	return res;
 }
 
 } // namespace
@@ -269,7 +272,7 @@ ifcadapter_return_t add_to_model(
 		version_string,
 		"Lawrence Berkeley National Laboratory");
 
-	create_necessary_virtual_elements(m, sbs, sb_count);
+	auto virts = create_necessary_virtual_elements(m, sbs, sb_count);
 	msg_func("Created virtual elements.\n");
 	
 	msg_func("Adding space boundaries to model");
@@ -281,6 +284,9 @@ ifcadapter_return_t add_to_model(
 	auto ifc_bldg_elems = m->building_elements();
 	for (auto e = ifc_bldg_elems.begin(); e != ifc_bldg_elems.end(); ++e) {
 		by_guid[string_field(**e, "GlobalId")] = *e;
+	}
+	for (auto v = virts.begin(); v != virts.end(); ++v) {
+		by_guid[string_field(**v, "GlobalId")] = *v;
 	}
 	int added_count = 0;
 	for (size_t i = 0; i < sb_count; ++i) {
