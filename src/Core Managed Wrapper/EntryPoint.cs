@@ -80,7 +80,7 @@ namespace Sbt
         public enum IfcAdapterResult : int
         {
             Ok = 0,
-            EdmError = 1,
+            IfcError = 1,
             StackOverflow = 2,
             Unknown = -1
         }
@@ -242,7 +242,7 @@ namespace Sbt
                 out faceCount,
                 out solidCount);
 
-            if (res == IfcAdapterResult.EdmError)
+            if (res == IfcAdapterResult.IfcError)
             {
                 throw new Exception("There was a problem reading or writing an IFC file.\n");
             }
