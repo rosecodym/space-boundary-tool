@@ -15,7 +15,7 @@ open System.Text.RegularExpressions
 let updateVersions solutionDir =
     let major = 1
     let minor = 5
-    let revision = 8
+    let revision = 9
 
     let shortString = sprintf "%i.%i.%i" major minor revision
     let fullString = sprintf "%i.%i.%i.0" major minor revision
