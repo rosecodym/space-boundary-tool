@@ -398,7 +398,21 @@ namespace GUI
                 if (StartMonth < 1 || StartMonth > 12) { reasons.Add("The run period start month has not been set."); }
                 if (EndDay < 1 || EndDay > 31) { reasons.Add("The run period end day has not been set."); }
                 if (EndMonth < 1 || EndMonth > 12) { reasons.Add("The run period end month has not been set."); }
-                try { if (new DateTime(2012, EndMonth, EndDay) < new DateTime(2012, StartMonth, StartDay)) { reasons.Add("The run period end date is prior to the run period start date."); } } catch (Exception) { }
+                // This gets bounced through a string and a TryParse because 
+                // otherwise bad DateTimes throw exceptions, which makes
+                // debuggging a huge pain.
+                var startString = 
+                    String.Format("2012-{0}-{1}", StartMonth, StartDay);
+                var endString =
+                    String.Format("2012-{0}-{1}", EndMonth, EndDay);
+                DateTime start;
+                DateTime end;
+                if (DateTime.TryParse(startString, out start) &&
+                    DateTime.TryParse(endString, out end) &&
+                    end < start)
+                {
+                    reasons.Add("The run period end date is prior to the run period start date.");
+                }
                 return reasons.Count == 0 ? null : "An IDF cannot be generated:\n" + String.Join(Environment.NewLine, reasons);
             }
         }
