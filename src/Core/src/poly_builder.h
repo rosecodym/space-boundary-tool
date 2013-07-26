@@ -46,7 +46,9 @@ public:
 				indices.back().push_back(exists->second);
 			}
 		}
-		return poly_builder(points, indices);
+		auto res = poly_builder(points, indices);
+		if (!res.all_faces_planar()) { throw bad_brep_exception(); }
+		return res;
 	}
 
 	template <typename PointRange>
