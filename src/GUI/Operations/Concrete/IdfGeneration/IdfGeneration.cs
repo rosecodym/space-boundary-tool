@@ -101,9 +101,9 @@ namespace GUI.Operations
                             ReportProgress(
                                 msg + Environment.NewLine,
                                 ProgressEvent.ProgressEventType.Warning));
-                var zoneNamesByGuid = GatherZoneNamesByGuid(FindUsedSpaces(
+                var zoneAssignment = new ZoneAssignment(
                     p.SbtBuilding.SpaceBoundaries,
-                    p.IfcBuilding.SpacesByGuid));
+                    p.IfcBuilding.SpacesByGuid.Values);
                 IDictionary<string, BuildingSurface> surfacesByGuid =
                     new Dictionary<string, BuildingSurface>();
                 var allSbs = p.SbtBuilding.SpaceBoundaries;
@@ -114,8 +114,8 @@ namespace GUI.Operations
                     {
                         // E+ (7.1) doesn't like intrazone virtual boundaries.
                         return
-                            zoneNamesByGuid[sb.BoundedSpace.Guid] !=
-                            zoneNamesByGuid[sb.Opposite.BoundedSpace.Guid];
+                            zoneAssignment[sb.BoundedSpace.Guid] !=
+                            zoneAssignment[sb.Opposite.BoundedSpace.Guid];
                     }
                 });
                 foreach (Sbt.CoreTypes.SpaceBoundary sb in nonFen)
@@ -140,7 +140,7 @@ namespace GUI.Operations
                                 constructions,
                                 dirs,
                                 thicknesses),
-                            zoneNamesByGuid[sb.BoundedSpace.Guid]);
+                            zoneAssignment[sb.BoundedSpace.Guid]);
                     }
                     else
                     {
@@ -151,7 +151,7 @@ namespace GUI.Operations
                             sb.Normal,
                             modelCNorm,
                             modelC);
-                        var zoneName = zoneNamesByGuid[sb.BoundedSpace.Guid];
+                        var zoneName = zoneAssignment[sb.BoundedSpace.Guid];
                         var surf = new BuildingSurface(sb, c, zoneName);
                         surfacesByGuid[sb.Guid] = surf;
                     }
@@ -260,7 +260,7 @@ namespace GUI.Operations
                     p.StartDay,
                     p.EndMonth,
                     p.EndDay);
-                foreach (string zoneName in zoneNamesByGuid.Values.Distinct())
+                foreach (string zoneName in zoneAssignment.AllZoneNames())
                 {
                     creator.AddZone(zoneName);
                 }
@@ -301,48 +301,6 @@ namespace GUI.Operations
                 ReportProgress("Operation failed: " + ex.Message + Environment.NewLine, ProgressEvent.ProgressEventType.Error);
             }
             return null;
-        }
-
-        static private ICollection<IfcSpace> FindUsedSpaces(IEnumerable<Sbt.CoreTypes.SpaceBoundary> sbs, IDictionary<string, IfcSpace> spaces)
-        {
-            HashSet<string> usedGuids = new HashSet<string>(sbs.Select(sb => sb.BoundedSpace.Guid));
-            return new List<IfcSpace>(usedGuids.Select(guid => spaces[guid]));
-        }
-
-        static private IDictionary<string, string> GatherZoneNamesByGuid(
-            ICollection<IfcSpace> usedSpaces)
-        {
-            var getName = new Func<IfcSpace, int, string>[]
-            {
-                (sp, _) => String.Format("{0} {1}", sp.LongName, sp.Name),
-                (sp, _) => sp.LongName,
-                (sp, _) => sp.Name,
-                (sp, x) => sp.Guid + new String('X', x)
-            };
-
-            var usedNames = new HashSet<string>();
-            var bySpace = new Dictionary<IfcSpace, string>();
-            Func<string, bool> unacceptable = name =>
-                String.IsNullOrWhiteSpace(name) || usedNames.Contains(name);
-            foreach (IfcSpace sp in usedSpaces)
-            {
-                int x = 0;
-                string attempt;
-                do
-                {
-                    attempt = getName[x++ > 3 ? 3 : x](sp, x - 3).ToUpper();
-                }
-                while (unacceptable(attempt));
-                bySpace[sp] = attempt;
-                usedNames.Add(attempt);
-            }
-
-            var res = new Dictionary<string, string>(bySpace.Count);
-            foreach (var kvp in bySpace)
-            {
-                res[kvp.Key.Guid] = kvp.Value;
-            }
-            return res;
         }
 
         public IdfGeneration(ViewModel vm, Action completionAction)
