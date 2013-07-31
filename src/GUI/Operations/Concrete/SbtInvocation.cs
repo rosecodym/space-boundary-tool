@@ -129,6 +129,16 @@ namespace GUI.Operations
                     resultingBuilding.FaceCount = faceCount;
                     resultingBuilding.SolidCount = solidCount;
                     resultingBuilding.CalculationTime = cpuTime;
+                    var corrections = new Dictionary<string, float>();
+                    for (int i = 0; i < spaceBoundaries.Count; ++i)
+                    {
+                        if (correctedSBAreas[i] != 0.0f)
+                        {
+                            var guid = spaceBoundaries[i].Guid;
+                            corrections[guid] = correctedSBAreas[i];
+                        }
+                    }
+                    resultingBuilding.CorrectedAreas = corrections;
                     return resultingBuilding;
                 }
                 catch (Exception ex)
