@@ -160,6 +160,12 @@ namespace GUI.Operations
                         surf.Normal.X,
                         surf.Normal.Y,
                         surf.Normal.Z));
+                    if (surf.TrueArea.HasValue)
+                    {
+                        obj.Comments.Add(String.Format(
+                            "True area: {0}", 
+                            surf.TrueArea.Value));
+                    }
                 }
             }
 

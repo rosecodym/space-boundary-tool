@@ -118,6 +118,7 @@ namespace GUI.Operations
                             zoneAssignment[sb.Opposite.BoundedSpace.Guid];
                     }
                 });
+                var areaCorrections = p.SbtBuilding.CorrectedAreas;
                 foreach (Sbt.CoreTypes.SpaceBoundary sb in nonFen)
                 {
                     if (sb.Level == 2)
@@ -133,6 +134,12 @@ namespace GUI.Operations
                             thicknesses.Add(layer.Thickness);
                             dirs.Add(norm);
                         }
+                        float? trueArea = null;
+                        float corr;
+                        if (areaCorrections.TryGetValue(sb.Guid, out corr))
+                        {
+                            trueArea = corr;
+                        }
                         surfacesByGuid[sb.Guid] = new BuildingSurface(
                             sb,
                             cmanager.ConstructionForLayers(
@@ -140,7 +147,8 @@ namespace GUI.Operations
                                 constructions,
                                 dirs,
                                 thicknesses),
-                            zoneAssignment[sb.BoundedSpace.Guid]);
+                            zoneAssignment[sb.BoundedSpace.Guid],
+                            trueArea);
                     }
                     else
                     {

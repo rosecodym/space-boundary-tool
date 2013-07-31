@@ -35,17 +35,20 @@ namespace GUI.Operations
             readonly Plane3 plane;
             readonly Construction construction;
             readonly string zoneName;
+            readonly float? trueArea;
 
             public BuildingSurface(
                 SpaceBoundary sb,
                 Construction construction, 
-                string zoneName)
+                string zoneName,
+                float? trueArea = null)
             {
                 this.sbtInfo = sb;
                 this.geometry = sbtInfo.Geometry.Cleaned(0.01);
                 this.plane = sb.Plane();
                 this.construction = construction;
                 this.zoneName = zoneName;
+                this.trueArea = trueArea;
             }
 
             public string Name { get { return sbtInfo.Guid; } }
@@ -138,6 +141,8 @@ namespace GUI.Operations
                     sbtInfo.Element != null &&
                     sbtInfo.Element.Type == type;
             }
+
+            public float? TrueArea { get { return trueArea; } }
         }
     }
 }
