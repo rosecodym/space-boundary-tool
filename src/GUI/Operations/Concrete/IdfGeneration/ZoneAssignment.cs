@@ -30,7 +30,7 @@ namespace GUI.Operations
 
                 var unzoned = new List<IfcSpace>();
                 foreach (IfcSpace sp in usedSpaces) {
-                    if (sp.Zones != null)
+                    if (sp.Zones != null && sp.Zones.Count > 0)
                     {
                         nameLookup[sp.Guid] = sp.Zones.First().Name;
                         usedNames.Add(sp.Zones.First().Name);
