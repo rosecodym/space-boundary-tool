@@ -70,7 +70,8 @@ namespace GUI.Operations
                     IList<Sbt.CoreTypes.ElementInfo> elements;
                     IList<Tuple<double, double, double>> compositeDirs;
                     ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
-                    ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
+                    IList<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
+                    float[] correctedSBAreas;
                     int pointCount;
                     int edgeCount;
                     int faceCount;
@@ -88,6 +89,7 @@ namespace GUI.Operations
                         out compositeDirs,
                         out spaces,
                         out spaceBoundaries,
+                        out correctedSBAreas,
                         out pointCount,
                         out edgeCount,
                         out faceCount,

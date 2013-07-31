@@ -187,6 +187,7 @@ ifcadapter_return_t execute(
 	space_info *** spaces,
 	size_t * sb_count,
 	space_boundary *** sbs,
+	float ** corrected_areas,
 	int * total_points,
 	int * total_edges,
 	int * total_faces,
@@ -198,6 +199,7 @@ ifcadapter_return_t execute(
 	*elements = nullptr;
 	*spaces = nullptr;
 	*sbs = nullptr;
+	*corrected_areas = nullptr;
 	if (!input_filename) { return IFCADAPT_INVALID_ARGS; }
 	number_collection<K> ctxt(EPS_MAGIC / 20); // magic divided by magic
 	number_collection<iK> output_ctxt(EPS_MAGIC);
@@ -322,6 +324,8 @@ ifcadapter_return_t execute(
 		}
 		*element_count = *element_count + shadings.size();
 
+		*corrected_areas = (float *)calloc(*sb_count, sizeof(float));
+
 		return IFCADAPT_OK;
 	}
 	else if (generate_res == SBT_STACK_OVERFLOW) {
@@ -340,3 +344,6 @@ void release_spaces(space_info ** spaces, size_t count) {
 	release_list(spaces, count);
 }
 
+void release_corrected_areas(float * corrected_areas) {
+	free(corrected_areas);
+}

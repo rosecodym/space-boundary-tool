@@ -32,6 +32,7 @@ __declspec(SBT_IFC_INTERFACE) enum ifcadapter_return_t execute(
 	struct space_info *** spaces,
 	size_t * sb_count,
 	struct space_boundary *** sbs,
+	float ** corrected_areas,
 	int * totalPoints,
 	int * totalEdges,
 	int * totalFaces,
@@ -42,6 +43,9 @@ void release_elements(struct element_info ** elements, size_t count);
 
 __declspec(SBT_IFC_INTERFACE) 
 void release_spaces(struct space_info ** spaces, size_t count);
+
+__declspec(SBT_IFC_INTERFACE)
+void release_corrected_areas(float * corrected_areas);
 
 #ifdef __cplusplus
 }
