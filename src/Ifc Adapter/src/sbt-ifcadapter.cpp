@@ -340,6 +340,3 @@ void release_spaces(space_info ** spaces, size_t count) {
 	release_list(spaces, count);
 }
 
-void free_space_boundaries(space_boundary ** sbs, size_t count) {
-	release_space_boundaries(sbs, count);
-}
