@@ -26,16 +26,6 @@ namespace Sbt
             internal IntPtr errorFunc;
         }
 
-        [DllImport("SBT-Core.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "calculate_space_boundaries")]
-        private static extern SbtResult CalculateSpaceBoundaries(
-            uint elementCount,
-            IntPtr elements,
-            uint spaceCount,
-            IntPtr spaces,
-            out uint spaceBoundaryCount,
-            out IntPtr spaceBoundaries,
-            SBCalculationOptions opts);
-
         [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "execute")]
         private static extern IfcAdapterResult LoadAndRunFrom(
             string inputFilename,
@@ -70,86 +60,17 @@ namespace Sbt
             None = 0x0
         }
 
-        public enum SbtResult : int
-        {
-            Ok = 0,
-            TooComplicated = 1,
-            Unknown = -1
-        }
-
         public enum IfcAdapterResult : int
         {
             Ok = 0,
             IfcError = 1,
             StackOverflow = 2,
+            InvalidArguments = 3,
             Unknown = -1
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void MessageDelegate(string msg);
-
-        public static void CalculateSpaceBoundaries(
-            ICollection<CoreTypes.ElementInfo> elements,
-            ICollection<CoreTypes.SpaceInfo> spaces,
-            out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
-            SbtFlags flags = SbtFlags.None,
-            double lengthUnitsPerMeter = 1.0,
-            double maxPairDistanceInMeters = 0.5,
-            MessageDelegate notifyMsg = null,
-            MessageDelegate warningMsg = null,
-            MessageDelegate errorMsg = null)
-        {
-            SBCalculationOptions opts;
-            opts.flags = flags;
-            opts.lengthUnitsPerMeter = lengthUnitsPerMeter;
-            opts.maxPairDistanceInMeters = maxPairDistanceInMeters;
-            opts.unused = 0;
-            opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
-            opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;
-            opts.errorFunc = errorMsg != null ? Marshal.GetFunctionPointerForDelegate(errorMsg) : IntPtr.Zero;
-            opts.elementFilter = IntPtr.Zero;
-            opts.elementFilterCount = 0;
-            opts.spaceFilter = IntPtr.Zero;
-            opts.spaceFilterCount = 0;
-
-            uint elementCount = (uint)elements.Count;
-            uint spaceCount = (uint)spaces.Count;
-            uint spaceBoundaryCount;
-
-            spaceBoundaries = new List<CoreTypes.SpaceBoundary>();
-
-            SbtResult res = SbtResult.Unknown;
-
-            IntPtr nativeSbs;
-
-            using (CoreTypes.ElementList es = new CoreTypes.ElementList(elements))
-            {
-                using (CoreTypes.SpaceList ss = new CoreTypes.SpaceList(spaces))
-                {
-                    res = CalculateSpaceBoundaries(elementCount, es.NativePtr, spaceCount, ss.NativePtr, out spaceBoundaryCount, out nativeSbs, opts);
-                    if (res == SbtResult.Ok)
-                    {
-                        for (uint i = 0; i < spaceBoundaryCount; ++i)
-                        {
-                            IntPtr sb = Marshal.ReadIntPtr(nativeSbs, Marshal.SizeOf(typeof(IntPtr)) * (int)i);
-                            NativeCoreTypes.SpaceBoundary native = (NativeCoreTypes.SpaceBoundary)Marshal.PtrToStructure(sb, typeof(NativeCoreTypes.SpaceBoundary));
-                            spaceBoundaries.Add(new CoreTypes.SpaceBoundary(native));
-                        }
-                        CoreTypes.SpaceBoundary.LinkOpposites(spaceBoundaries);
-                        CoreTypes.SpaceBoundary.LinkContaining(spaceBoundaries);
-                        CoreTypes.SpaceBoundary.LinkSpaces(spaceBoundaries, spaces);
-                        CoreTypes.SpaceBoundary.LinkElements(spaceBoundaries, elements);
-                    }
-                    else if (res == SbtResult.TooComplicated)
-                    {
-                        throw new Exceptions.TooComplicatedException();
-                    }
-                    else {
-                        throw new Exceptions.SbtException();
-                    }
-                }
-            }
-        }
 
         public static void CalculateSpaceBoundariesFromIfc(
             string inputFilename,
@@ -170,6 +91,12 @@ namespace Sbt
             MessageDelegate warningMsg = null,
             MessageDelegate errorMsg = null)
         {
+            if (inputFilename == null)
+            {
+                throw new ArgumentException(
+                    "An input file must be specified",
+                    "inputFilename");
+            }
             SBCalculationOptions opts;
             opts.flags = flags;
             opts.lengthUnitsPerMeter = 1.0;
@@ -249,6 +176,10 @@ namespace Sbt
             else if (res == IfcAdapterResult.StackOverflow)
             {
                 throw new Exception("Stack overflow. Please report this SBT bug.\n");
+            }
+            else if (res == IfcAdapterResult.InvalidArguments)
+            {
+                throw new Exception("Invalid arguments to the IFC adapter. Please report this SBT bug.\n");
             }
             else if (res != IfcAdapterResult.Ok)
             {
