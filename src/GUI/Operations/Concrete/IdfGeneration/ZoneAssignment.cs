@@ -53,7 +53,10 @@ namespace GUI.Operations
                 {
                     int x = 0;
                     string attempt;
-                    do { attempt = getName[x > 4 ? 4 : x](sp, x - 2); }
+                    do { 
+                        attempt = getName[x > 4 ? 4 : x](sp, x - 2);
+                        ++x;
+                    }
                     while (unacceptable(attempt));
                     nameLookup[sp.Guid] = attempt;
                     usedNames.Add(attempt);
