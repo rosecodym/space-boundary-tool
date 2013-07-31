@@ -42,11 +42,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Managed Types\ElementList.cs" />
+    <Compile Include="Managed Types\SpaceBoundary.cs" />
+    <Compile Include="Managed Types\SpaceList.cs" />
     <Compile Include="NativeTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="SolidSplitter.cs" />
-    <Compile Include="WrappedTypes.cs" />
+    <Compile Include="Managed Types\Brep.cs" />
+    <Compile Include="Managed Types\ElementInfo.cs" />
+    <Compile Include="Managed Types\ExtrudedAreaSolid.cs" />
+    <Compile Include="Managed Types\Face.cs" />
+    <Compile Include="Managed Types\MaterialLayer.cs" />
+    <Compile Include="Managed Types\Point.cs" />
+    <Compile Include="Managed Types\Polyloop.cs" />
+    <Compile Include="Managed Types\Solid.cs" />
+    <Compile Include="Managed Types\SpaceInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
