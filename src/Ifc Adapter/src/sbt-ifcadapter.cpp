@@ -229,6 +229,14 @@ ifcadapter_return_t execute(
 		&ctxt,
 		&shadings);
 	if (res != IFCADAPT_OK) { return res; }
+	else if (*space_count == 0) {
+		opts.error_func("The model has no defined spaces.\n");
+		return IFCADAPT_OK;
+	}
+	else if (*element_count == 0) {
+		opts.error_func("The model has no defined building elements.\n");
+		return IFCADAPT_OK;
+	}
 	gather_geometry_info(
 		total_points,
 		total_edges,
