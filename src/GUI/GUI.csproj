@@ -140,9 +140,9 @@
       <Project>{B08D640C-794E-486E-9B61-3790D4FA0D97}</Project>
       <Name>ConstructionManagement</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core Managed Wrapper\Core Managed Wrapper.csproj">
+    <ProjectReference Include="..\Managed Wrapper\Managed Wrapper.csproj">
       <Project>{2B180C45-2DA1-4C26-9850-F92B9369D626}</Project>
-      <Name>Core Managed Wrapper</Name>
+      <Name>Managed Wrapper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
