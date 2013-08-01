@@ -32,8 +32,8 @@ public:
 
 	explicit face(const std::vector<point_3> & points) : outer_(points) { }
 
-	const std::vector<point_3> outer_boundary() const { return outer_; }
-	const std::vector<std::vector<point_3>> voids() const { return voids_ ; }
+	const std::vector<point_3> & outer_boundary() const { return outer_; }
+	const std::vector<std::vector<point_3>> & voids() const { return voids_ ; }
 	direction_3 normal() const;
 	interface_face to_interface() const;
 	void reverse();
