@@ -63,6 +63,9 @@
     <ClInclude Include="src\ifc-to-cgal.h">
       <Filter>geometry</Filter>
     </ClInclude>
+    <ClInclude Include="src\approximated_curve.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\precompiled.cpp">
@@ -97,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="src\sbt-ifcadapter.cpp">
       <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\approximated_curve.cpp">
+      <Filter>geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

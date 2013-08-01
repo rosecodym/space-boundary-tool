@@ -4,6 +4,7 @@
 
 #include "internal_geometry.h"
 
+#include "approximated_curve.h"
 #include "geometry_common.h"
 #include "number_collection.h"
 #include "unit_scaler.h"
@@ -102,12 +103,14 @@ transformation_3 build_transformation(
 	}
 }
 
-std::vector<point_3> build_polyloop(
+std::tuple<std::vector<point_3>, std::vector<approximated_curve>>
+build_polyloop(
 	const ifc_object & obj,
 	const length_scaler & scale,
 	number_collection<K> * c)
 {
 	typedef std::vector<point_3> loop;
+	std::vector<approximated_curve> no_approxes;
 	if (is_instance_of(obj, "IfcPolyline")) {
 		loop res;
 		auto pts = collection_field(obj, "Points");
@@ -115,7 +118,7 @@ std::vector<point_3> build_polyloop(
 			res.push_back(build_point(**p, scale, c));
 		}
 		if (res.front() == res.back()) { res.pop_back(); }
-		return res;
+		return std::make_tuple(res, no_approxes);
 	}
 	else if (is_instance_of(obj, "IfcCompositeCurveSegment")) {
 		return build_polyloop(*object_field(obj, "ParentCurve"), scale, c);
@@ -135,15 +138,20 @@ std::vector<point_3> build_polyloop(
 		for (auto p = pts.begin(); p != pts.end(); ++p) {
 			res.push_back(build_point(**p, scale, c));
 		}
-		return res;
+		return std::make_tuple(res, no_approxes);
 	}
 	else if (is_instance_of(obj, "IfcCurveBoundedPlane")) {
 		auto bound = object_field(obj, "OuterBoundary");
-		auto res = build_polyloop(*bound, scale, c);
+		loop res;
+		std::vector<approximated_curve> approxes;
+		std::tie(res, approxes) = build_polyloop(*bound, scale, c);
 		auto basis = object_field(obj, "BasisSurface");
 		auto t = build_transformation(basis, scale, c);
 		boost::transform(res, res.begin(), t);
-		return res;
+		for (auto p = approxes.begin(); p != approxes.end(); ++p) {
+			*p = p->transformed(t);
+		}
+		return std::make_tuple(res, approxes);
 	}
 	else if (is_instance_of(obj, "IfcArbitraryClosedProfileDef")) {
 		return build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
@@ -166,12 +174,12 @@ std::vector<point_3> build_polyloop(
 		assert(boost::find_if(res, [](const point_3 & p) {
 			return !CGAL::is_zero(p.z());
 		}) == res.end());
-		return res;
+		return std::make_tuple(res, no_approxes);
 	}
 	else if (is_kind_of(obj, "IfcFaceBound")) {
 		auto res = build_polyloop(*object_field(obj, "Bound"), scale, c);
 		if (!boolean_field(obj, "Orientation")) { 
-			boost::reverse(res); 
+			boost::reverse(std::get<0>(res)); 
 		}
 		return res;
 	}
@@ -208,27 +216,44 @@ face::face(
 	number_collection<K> * c)
 {
 	if (is_instance_of(obj, "IfcFaceBound")) {
-		outer_ = build_polyloop(*object_field(obj, "Bound"), scale, c);
+		std::tie(outer_, approximations_) = 
+			build_polyloop(*object_field(obj, "Bound"), scale, c);
 	}
 	else if (is_instance_of(obj, "IfcFace")) {
 		auto bounds = collection_field(obj, "Bounds");
 		for (auto b = bounds.begin(); b != bounds.end(); ++b) {
+			std::vector<approximated_curve> approxes;
 			if (is_instance_of(**b, "IfcFaceOuterBound")) {
-				outer_ = build_polyloop(**b, scale, c);
+				std::tie(outer_, approxes) = build_polyloop(**b, scale, c);
+				boost::copy(approxes, std::back_inserter(approximations_));
 			}
-			else { voids_.push_back(build_polyloop(**b, scale, c)); }
+			else { 
+				std::vector<point_3> v;
+				std::tie(v, approxes) = build_polyloop(**b, scale, c);
+				voids_.push_back(v);
+				boost::copy(approxes, std::back_inserter(approximations_));
+			}
 		}
 	}
 	else if (is_instance_of(obj, "IfcArbitraryProfileDefWithVoids")) {
-		outer_ = build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
+		std::tie(outer_, approximations_) = 
+			build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
 		auto inners = collection_field(obj, "InnerCurves");
 		for (auto p = inners.begin(); p != inners.end(); ++p) {
-			voids_.push_back(build_polyloop(**p, scale, c));
+			std::vector<point_3> v;
+			std::vector<approximated_curve> approxes;
+			std::tie(v, approxes) = build_polyloop(**p, scale, c);
+			voids_.push_back(v);
+			boost::copy(approxes, std::back_inserter(approximations_));
 		}
 	}
 	else {
-		outer_ = build_polyloop(obj, scale, c);
+		std::tie(outer_, approximations_) = build_polyloop(obj, scale, c);
 	}
+}
+
+const std::vector<approximated_curve> & face::approximations() const {
+	return approximations_;
 }
 
 direction_3 face::normal() const {
@@ -288,6 +313,9 @@ void face::transform(const transformation_3 & t) {
 	for (auto v = voids_.begin(); v != voids_.end(); ++v) {
 		boost::transform(*v, v->begin(), t);
 	}
+	for (auto a = approximations_.begin(); a != approximations_.end(); ++a) {
+		*a = a->transformed(t);
+	}
 }
 
 brep::brep(
@@ -319,6 +347,14 @@ interface_solid brep::to_interface_solid() const {
 	rep.faces = (::face *)malloc(sizeof(::face) * rep.face_count);
 	for (size_t i = 0; i < rep.face_count; ++i) {
 		rep.faces[i] = this->faces[i].to_interface();
+	}
+	return res;
+}
+
+std::vector<approximated_curve> brep::approximations() const {
+	std::vector<approximated_curve> res;
+	for (auto f = faces.begin(); f != faces.end(); ++f) {
+		boost::copy(f->approximations(), std::back_inserter(res));
 	}
 	return res;
 }
@@ -360,6 +396,16 @@ interface_solid ext::to_interface_solid() const {
 	rep.ext_dx = CGAL::to_double(dir_.dx());
 	rep.ext_dy = CGAL::to_double(dir_.dy());
 	rep.ext_dz = CGAL::to_double(dir_.dz());
+	return res;
+}
+
+std::vector<approximated_curve> ext::approximations() const {
+	auto res = area_.approximations();
+	size_t count = res.size();
+	auto extrude = build_translation(dir_, depth_);
+	for (size_t i = 0; i < count; ++i) {
+		res.push_back(res[i].transformed(extrude));
+	}
 	return res;
 }
 

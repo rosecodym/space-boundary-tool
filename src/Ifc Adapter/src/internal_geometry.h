@@ -2,6 +2,7 @@
 
 #include "precompiled.h"
 
+#include "approximated_curve.h"
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"
 
@@ -24,6 +25,7 @@ class face {
 private:
 	std::vector<point_3> outer_;
 	std::vector<std::vector<point_3>> voids_;
+	std::vector<approximated_curve> approximations_;
 public:
 	face(
 		const ifc_interface::ifc_object & obj,
@@ -34,6 +36,7 @@ public:
 
 	const std::vector<point_3> outer_boundary() const { return outer_; }
 	const std::vector<std::vector<point_3>> voids() const { return voids_ ; }
+	const std::vector<approximated_curve> & approximations() const;
 	direction_3 normal() const;
 	interface_face to_interface() const;
 	void reverse();
@@ -69,6 +72,7 @@ public:
 
 	virtual void transform(const transformation_3 & t) = 0;
 	virtual interface_solid to_interface_solid() const = 0;
+	virtual std::vector<approximated_curve> approximations() const = 0;
 };
 
 class brep : public solid {
@@ -84,6 +88,7 @@ public:
 
 	virtual void transform(const transformation_3 & t);
 	virtual interface_solid to_interface_solid() const;
+	virtual std::vector<approximated_curve> approximations() const;
 };
 
 class ext : public solid {
@@ -101,6 +106,7 @@ public:
 	const NT & depth() const { return depth_; }
 	virtual void transform(const transformation_3 & t);
 	virtual interface_solid to_interface_solid() const;
+	virtual std::vector<approximated_curve> approximations() const;
 };
 
 class bad_rep_exception : public std::exception {
