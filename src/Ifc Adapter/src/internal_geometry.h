@@ -29,7 +29,7 @@ private:
 public:
 	face(
 		const ifc_interface::ifc_object & obj,
-		const length_scaler & scale_length,
+		const unit_scaler & scaler,
 		number_collection<K> * c);
 
 	explicit face(const std::vector<point_3> & points) : outer_(points) { }
@@ -81,7 +81,7 @@ private:
 public:
 	brep(
 		const ifc_interface::ifc_object & inst, 
-		const length_scaler & scale_length,
+		const unit_scaler & scaler,
 		number_collection<K> * c);
 
 	explicit brep(const std::vector<face> & faces) : faces(faces) { }
@@ -99,7 +99,7 @@ private:
 public:
 	ext(
 		const ifc_interface::ifc_object & inst, 
-		const length_scaler & scale_length,
+		const unit_scaler & scaler,
 		number_collection<K> * c);
 	const face & base() const { return area_; }
 	const direction_3 & dir() const { return dir_; }

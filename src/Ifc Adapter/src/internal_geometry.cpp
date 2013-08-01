@@ -6,6 +6,7 @@
 
 #include "approximated_curve.h"
 #include "geometry_common.h"
+#include "ifc-to-cgal.h"
 #include "number_collection.h"
 #include "unit_scaler.h"
 #include "wrapped_nef_operations.h"
@@ -20,93 +21,10 @@ bool are_perpendicular(const direction_3 & a, const direction_3 & b) {
 	return CGAL::is_zero(a.vector() * b.vector());
 }
 
-length_scaler build_scale_function(const unit_scaler & us) {
-	return [&us](double len) { return us.length_in(len); };
-}
-
-point_3 build_point(
-	const ifc_interface::ifc_object & obj,
-	const length_scaler & scale_length,
-	number_collection<K> * c) 
-{
-	double x, y, z;
-	ifc_interface::triple_field(obj, "Coordinates", &x, &y, &z);
-	return c->request_point(scale_length(x), scale_length(y), scale_length(z));
-}
-
-direction_3 build_direction(
-	const ifc_object & obj,
-	number_collection<K> * c)
-{
-	double dx, dy, dz;
-	ifc_interface::triple_field(obj, "DirectionRatios", &dx, &dy, &dz);
-	return c->request_direction(dx, dy, dz);
-}
-
-transformation_3 build_transformation(
-	const ifc_object * obj,
-	const length_scaler & scale_length,
-	number_collection<K> * c) 
-{
-	if (!obj) { return transformation_3(); }
-	if (is_instance_of(*obj, "IfcLocalPlacement")) {
-		auto to = build_transformation(
-			object_field(*obj, "PlacementRelTo"),
-			scale_length,
-			c);
-		auto from = build_transformation(
-			object_field(*obj, "RelativePlacement"),
-			scale_length,
-			c);
-		return to * from;
-	}
-	else if (is_instance_of(*obj, "IfcAxis2Placement2D")) {
-		auto loc_obj = object_field(*obj, "Location");
-		auto location = build_point(*loc_obj, scale_length, c);
-		auto p = collection_field(*obj, "P");
-		auto xcol = normalize(build_direction(*p[0], c).vector());
-		auto ycol = normalize(build_direction(*p[1], c).vector());
-		vector_3 zcol(0, 0, 1);
-		return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
-								xcol.y(), ycol.y(), zcol.y(), location.y(),
-								xcol.z(), ycol.z(), zcol.z(), location.z());
-	}
-	else if (is_instance_of(*obj, "IfcAxis2Placement3D")) {
-		auto loc_obj = object_field(*obj, "Location");
-		auto location = build_point(*loc_obj, scale_length, c);
-		auto p = collection_field(*obj, "P");
-		auto xcol = normalize(build_direction(*p[0], c).vector());
-		auto ycol = normalize(build_direction(*p[1], c).vector());
-		auto zcol = normalize(build_direction(*p[2], c).vector());
-		return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
-								xcol.y(), ycol.y(), zcol.y(), location.y(),
-								xcol.z(), ycol.z(), zcol.z(), location.z());
-	}
-	else if (is_instance_of(*obj, "IfcPlane")) {
-		auto position = object_field(*obj, "Position");
-		return build_transformation(position, scale_length, c);
-	}
-	else if (is_instance_of(*obj, "IfcCartesianTransformationOperator3D")) {
-		auto loc_obj = object_field(*obj, "LocalOrigin");
-		point_3 loc = build_point(*loc_obj, scale_length, c);
-		auto p = collection_field(*obj, "U");
-		double scale = real_field(*obj, "Scl");
-		auto xcol = normalize(build_direction(*p[0], c).vector()) * scale;
-		auto ycol = normalize(build_direction(*p[1], c).vector()) * scale;
-		auto zcol = normalize(build_direction(*p[2], c).vector()) * scale;
-		return transformation_3(xcol.x(), ycol.x(), zcol.x(), loc.x(),
-								xcol.y(), ycol.y(), zcol.y(), loc.y(),
-								xcol.z(), ycol.z(), zcol.z(), loc.z());
-	}
-	else {
-		throw bad_rep_exception("unknown source for transformation matrix");
-	}
-}
-
 std::tuple<std::vector<point_3>, std::vector<approximated_curve>>
 build_polyloop(
 	const ifc_object & obj,
-	const length_scaler & scale,
+	const unit_scaler & scale,
 	number_collection<K> * c)
 {
 	typedef std::vector<point_3> loop;
@@ -161,13 +79,14 @@ build_polyloop(
 		double ydim = real_field(obj, "YDim");
 		point_2 req;
 		loop res;
-		req = c->request_point(scale(-xdim) / 2, scale(-ydim) / 2);
+		auto s = [&scale](double d) { return scale.length_in(d); };
+		req = c->request_point(s(-xdim) / 2, s(-ydim) / 2);
 		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(scale(xdim) / 2, scale(-ydim) / 2);
+		req = c->request_point(s(xdim) / 2, s(-ydim) / 2);
 		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(scale(xdim) / 2, scale(ydim) / 2);
+		req = c->request_point(s(xdim) / 2, s(ydim) / 2);
 		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(scale(-xdim) / 2, scale(ydim) / 2);
+		req = c->request_point(s(-xdim) / 2, s(ydim) / 2);
 		res.push_back(point_3(req.x(), req.y(), 0));
 		auto t = build_transformation(object_field(obj, "Position"), scale, c);
 		boost::transform(res, res.begin(), t);
@@ -212,7 +131,7 @@ bool normal_matches_dir(
 
 face::face(
 	const ifc_object & obj,
-	const length_scaler & scale,
+	const unit_scaler & scale,
 	number_collection<K> * c)
 {
 	if (is_instance_of(obj, "IfcFaceBound")) {
@@ -320,7 +239,7 @@ void face::transform(const transformation_3 & t) {
 
 brep::brep(
 	const ifc_object & obj,
-	const length_scaler & scale_length,
+	const unit_scaler & scale_length,
 	number_collection<K> * c)
 {
 	if (!is_kind_of(obj, "IfcConnectedFaceSet")) {
@@ -361,12 +280,12 @@ std::vector<approximated_curve> brep::approximations() const {
 
 ext::ext(
 	const ifc_object & obj,
-	const length_scaler & scale,
+	const unit_scaler & scale,
 	number_collection<K> * c)
 	: area_(*object_field(obj, "SweptArea"), scale, c)
 {
 	double unscaled_depth = real_field(obj, "Depth");
-	depth_ = c->request_height(scale(unscaled_depth));
+	depth_ = c->request_height(scale.length_in(unscaled_depth));
 	auto d = object_field(obj, "ExtrudedDirection");
 	double dx, dy, dz;
 	triple_field(*d, "DirectionRatios", &dx, &dy, &dz);
@@ -418,8 +337,7 @@ transformation_3 get_globalizer(
 		auto rep = object_field(obj, "Representation");
 		auto inner = get_globalizer(*rep, scaler, c);
 		auto placement = object_field(obj, "ObjectPlacement");
-		auto sf = build_scale_function(scaler);
-		return inner * build_transformation(placement, sf, c);
+		return inner * build_transformation(placement, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
 		auto reps = collection_field(obj, "Representations");
@@ -448,13 +366,12 @@ transformation_3 get_globalizer(
 	}
 	else if (is_instance_of(obj, "IfcMappedItem")) {
 		auto ms = object_field(obj, "MappingSource");
-		auto sf = build_scale_function(scaler);
 		auto mapped_rep = object_field(*ms, "MappedRepresentation");
 		auto base = get_globalizer(*mapped_rep, scaler, c);
 		auto mapping_origin = object_field(*ms, "MappingOrigin");
-		auto from = build_transformation(mapping_origin, sf, c);
+		auto from = build_transformation(mapping_origin, scaler, c);
 		auto mapping_target = object_field(obj, "MappingTarget");
-		auto to = build_transformation(mapping_target, sf, c);
+		auto to = build_transformation(mapping_target, scaler, c);
 		return base * from * to;
 	}
 	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
@@ -529,14 +446,12 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (is_instance_of(obj, "IfcFacetedBrep")) {
 		auto b = object_field(obj, "Outer");
-		auto sf = build_scale_function(scaler);
-		return std::unique_ptr<brep>(new brep(*b, sf, c));
+		return std::unique_ptr<brep>(new brep(*b, scaler, c));
 	}
 	else if (is_instance_of(obj, "IfcExtrudedAreaSolid")) {
-		auto sf = build_scale_function(scaler);
-		auto res = std::unique_ptr<ext>(new ext(obj, sf, c));
+		auto res = std::unique_ptr<ext>(new ext(obj, scaler, c));
 		auto pos = object_field(obj, "Position");
-		res->transform(build_transformation(pos, sf, c));
+		res->transform(build_transformation(pos, scaler, c));
 		return std::move(res);
 	}
 	else if (is_instance_of(obj, "IfcMappedItem")) {
@@ -549,8 +464,7 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (is_instance_of(obj, "IfcFaceBasedSurfaceModel")) {
 		auto face_set = collection_field(obj, "FbsmFaces");
-		auto sf = build_scale_function(scaler);
-		return std::unique_ptr<brep>(new brep(*face_set[0], sf, c));
+		return std::unique_ptr<brep>(new brep(*face_set[0], scaler, c));
 	}
 	else {
 		throw bad_rep_exception("unknown or unsupported geometry definition");

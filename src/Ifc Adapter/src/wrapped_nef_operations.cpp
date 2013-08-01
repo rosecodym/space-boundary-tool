@@ -60,9 +60,8 @@ nef_polyhedron_3 create_nef(
 	eqc * c, 
 	number_collection<eK> * ec) 
 {
-	auto s = [&scaler](double x) { return scaler.length_in(x); };
 	if (is_kind_of(obj, "IfcExtrudedAreaSolid")) {
-		internal_geometry::ext internal_ext(obj, s, c);
+		internal_geometry::ext internal_ext(obj, scaler, c);
 		using boost::transform;
 		using std::back_inserter;
 		const auto & bverts = internal_ext.base().outer_boundary();
@@ -151,7 +150,7 @@ nef_polyhedron_3 create_nef(
 	}
 	else if (is_kind_of(obj, "IfcPolygonalBoundedHalfSpace")) {
 		auto boundary = object_field(obj, "PolygonalBoundary");
-		internal_geometry::face base(*boundary, s, c);
+		internal_geometry::face base(*boundary, scaler, c);
 		const auto & base_points = base.outer_boundary();
 		std::vector<extended_plane_3> planes;
 		size_t pc = base_points.size();
