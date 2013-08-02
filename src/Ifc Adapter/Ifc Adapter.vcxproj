@@ -120,7 +120,7 @@
       <AdditionalDependencies>$(SolutionDir)..\dependencies\lib\Edm Wrapper.$(Configuration).lib;$(LedaDir)\leda_mdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>do "$(LedaDir)\leda_mdd.dll" "$(OutDir)"</Command>
+      <Command>copy "$(LedaDir)\leda_mdd.dll" "$(OutDir)"</Command>
       <Message>Copying runtime libraries to output directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
