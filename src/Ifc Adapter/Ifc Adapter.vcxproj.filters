@@ -66,6 +66,9 @@
     <ClInclude Include="src\approximated_curve.h">
       <Filter>geometry</Filter>
     </ClInclude>
+    <ClInclude Include="src\build_polyloop.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\precompiled.cpp">
@@ -102,6 +105,9 @@
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="src\approximated_curve.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\build_polyloop.cpp">
       <Filter>geometry</Filter>
     </ClCompile>
   </ItemGroup>

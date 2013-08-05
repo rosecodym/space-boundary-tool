@@ -5,6 +5,7 @@
 #include "internal_geometry.h"
 
 #include "approximated_curve.h"
+#include "build_polyloop.h"
 #include "geometry_common.h"
 #include "ifc-to-cgal.h"
 #include "number_collection.h"
@@ -19,96 +20,6 @@ namespace {
 
 bool are_perpendicular(const direction_3 & a, const direction_3 & b) {
 	return CGAL::is_zero(a.vector() * b.vector());
-}
-
-std::tuple<std::vector<point_3>, std::vector<approximated_curve>>
-build_polyloop(
-	const ifc_object & obj,
-	const unit_scaler & scale,
-	number_collection<K> * c)
-{
-	typedef std::vector<point_3> loop;
-	std::vector<approximated_curve> no_approxes;
-	if (is_instance_of(obj, "IfcPolyline")) {
-		loop res;
-		auto pts = collection_field(obj, "Points");
-		for (auto p = pts.begin(); p != pts.end(); ++p) {
-			res.push_back(build_point(**p, scale, c));
-		}
-		if (res.front() == res.back()) { res.pop_back(); }
-		return std::make_tuple(res, no_approxes);
-	}
-	else if (is_instance_of(obj, "IfcCompositeCurveSegment")) {
-		return build_polyloop(*object_field(obj, "ParentCurve"), scale, c);
-	}
-	else if (is_instance_of(obj, "IfcCompositeCurve")) {
-		auto components = collection_field(obj, "Segments");
-		if (components.size() != 1) {
-			throw bad_rep_exception(
-				"composite curves without exactly one segment are "
-				"unsupported");
-		}
-		return build_polyloop(*components[0], scale, c);
-	}
-	else if (is_instance_of(obj, "IfcPolyLoop")) {
-		loop res;
-		auto pts = collection_field(obj, "Polygon");
-		for (auto p = pts.begin(); p != pts.end(); ++p) {
-			res.push_back(build_point(**p, scale, c));
-		}
-		return std::make_tuple(res, no_approxes);
-	}
-	else if (is_instance_of(obj, "IfcCurveBoundedPlane")) {
-		auto bound = object_field(obj, "OuterBoundary");
-		loop res;
-		std::vector<approximated_curve> approxes;
-		std::tie(res, approxes) = build_polyloop(*bound, scale, c);
-		auto basis = object_field(obj, "BasisSurface");
-		auto t = build_transformation(basis, scale, c);
-		boost::transform(res, res.begin(), t);
-		for (auto p = approxes.begin(); p != approxes.end(); ++p) {
-			*p = p->transformed(t);
-		}
-		return std::make_tuple(res, approxes);
-	}
-	else if (is_instance_of(obj, "IfcArbitraryClosedProfileDef")) {
-		return build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
-	}
-	else if (is_instance_of(obj, "IfcRectangleProfileDef")) {
-		double xdim = real_field(obj, "XDim");
-		double ydim = real_field(obj, "YDim");
-		point_2 req;
-		loop res;
-		auto s = [&scale](double d) { return scale.length_in(d); };
-		req = c->request_point(s(-xdim) / 2, s(-ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(s(xdim) / 2, s(-ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(s(xdim) / 2, s(ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(s(-xdim) / 2, s(ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		auto t = build_transformation(object_field(obj, "Position"), scale, c);
-		boost::transform(res, res.begin(), t);
-		assert(boost::find_if(res, [](const point_3 & p) {
-			return !CGAL::is_zero(p.z());
-		}) == res.end());
-		return std::make_tuple(res, no_approxes);
-	}
-	else if (is_kind_of(obj, "IfcFaceBound")) {
-		auto res = build_polyloop(*object_field(obj, "Bound"), scale, c);
-		if (!boolean_field(obj, "Orientation")) { 
-			boost::reverse(std::get<0>(res)); 
-		}
-		return res;
-	}
-	else if (is_kind_of(obj, "IfcCircleProfileDef")) {
-		throw bad_rep_exception(
-			"curved geometry definitions are not supported.");
-	}
-	else {
-		throw bad_rep_exception("unsupported representation for a polyloop");
-	}
 }
 
 bool normal_matches_dir(
