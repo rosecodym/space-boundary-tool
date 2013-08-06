@@ -56,6 +56,27 @@ private:
 
 const approximations NO_APPROXES;
 
+loop approximate_circle(
+	const ifc_object & circle_like,
+	const unit_scaler & scaler,
+	number_collection<K> * c)
+{
+	// Create a square with area equal to the provided circle
+	double diff = sqrt(3.14159) * real_field(circle_like, "Radius") / 2;
+	auto pos = object_field(circle_like, "Position");
+	auto center = object_field(*pos, "Location");
+	double x, y, z;
+	triple_field(*center, "Coordinates", &x, &y, &z);
+	assert(z == 0.0);
+	auto s = [&scaler] (double d) { return scaler.length_in(d); };
+	loop res;
+	res.push_back(c->request_point(s(x + diff), s(y - diff), z));
+	res.push_back(c->request_point(s(x + diff), s(y + diff), z));
+	res.push_back(c->request_point(s(x - diff), s(y + diff), z));
+	res.push_back(c->request_point(s(x - diff), s(y - diff), z));
+	return res;
+}
+
 polyloop_result from_polyline(
 	const ifc_object & obj, 
 	const unit_scaler & s, 
@@ -84,11 +105,62 @@ polyloop_result from_composite_curve(
 	number_collection<K> * c)
 {
 	auto components = collection_field(obj, "Segments");
-	if (components.size() != 1) {
-		throw bad_rep_exception(
-			"composite curves without exactly one segment are unsupported");
+	if (components.size() == 1) { 
+		return build_polyloop(*components[0], s, c);
 	}
-	return build_polyloop(*components[0], s, c);
+	// Sometimes circles are broken up into pieces for no reason.
+	bool one_circle = true;
+	const ifc_object * circle = nullptr;
+	boost::optional<direction_3> x;
+	boost::optional<direction_3> y;
+	boost::optional<point_3> center;
+	for (auto p = components.begin(); p != components.end(); ++p) {
+		auto parent = object_field(**p, "ParentCurve");
+		if (is_instance_of(*parent, "IfcTrimmedCurve")) {
+			auto basis = object_field(*parent, "BasisCurve");
+			if (is_instance_of(*basis, "IfcCircle")) {
+				auto this_geom = object_field(*basis, "Position");
+				auto this_axes = collection_field(*this_geom, "P");
+				auto this_x = build_direction(*this_axes[0], c);
+				if (circle && this_x != x) {
+					one_circle = false;
+					break;
+				}
+				else { x = this_x; }
+				auto this_y = build_direction(*this_axes[1], c);
+				if (circle && this_y != y) {
+					one_circle = false;
+					break;
+				}
+				else { y = this_y; }
+				auto this_loc = object_field(*this_geom, "Location");
+				auto this_center = build_point(*this_loc, s, c);
+				if (circle && this_center != center) {
+					one_circle = false;
+					break;
+				}
+				else { center = this_center; }
+				circle = basis;
+			}
+			else { 
+				one_circle = false; 
+				break; 
+			}
+		}
+		else {
+			one_circle = false;
+			break;
+		}
+	}
+	if (one_circle) {
+		// approximate_circle assumes that the circle lies in a plane parallel
+		// to the xy plane. If this is not correct, this won't work.
+		loop approxed = approximate_circle(*circle, s, c);
+		return std::make_tuple(approxed, NO_APPROXES);
+	}
+	else { 
+		throw bad_rep_exception("composite curve with more than one segment");
+	}
 }
 
 polyloop_result from_polyloop(
@@ -169,11 +241,11 @@ polyloop_result from_face_bound(
 }
 
 polyloop_result from_circle_profile_def(
-	const ifc_object & /*obj*/,
-	const unit_scaler & /*s*/,
-	number_collection<K> * /*c*/)
+	const ifc_object & obj,
+	const unit_scaler & s,
+	number_collection<K> * c)
 {
-	throw bad_rep_exception("curved geometry definitions are not supported.");
+	return std::make_tuple(approximate_circle(obj, s, c), NO_APPROXES);
 }
 
 } // namespace
