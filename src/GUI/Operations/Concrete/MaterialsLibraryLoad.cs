@@ -44,13 +44,41 @@ namespace GUI.Operations
                     ReportProgress("IDD loaded. Loading IDF...\n");
                     var warnings = new List<string>();
                     Idf idf = new Idf(p.Path, idd, CreateLogger(warnings));
+                    Action<string> warn = w =>
+                        ReportProgress(
+                            "Materials library warning: " 
+                                + w 
+                                + Environment.NewLine,
+                            ProgressEventType.Warning);
                     foreach (var w in warnings)
                     {
-                        var msg = 
-                            "Materials library warning: " 
-                            + w 
-                            + Environment.NewLine;
-                        ReportProgress(msg, ProgressEventType.Warning);
+                        warn(w);
+                    }
+                    foreach (var obj in idf.GetAllObjects())
+                    {
+                        foreach (var f in obj.Fields)
+                        {
+                            if (f.Value.IsNothing && 
+                                f.IddInfo.Required &&
+                                f.Name != "Thickness")
+                            {
+                                if (obj.Name == null)
+                                {
+                                    warn(String.Format(
+                                        "Field '{0}' of unnamed '{1}' object has a missing or invalid value.", 
+                                        f.Name == null ? f.Code : f.Name, 
+                                        f.IdfObject.Type));
+                                }
+                                else
+                                {
+                                    warn(String.Format(
+                                        "Field '{0}' of '{1}' object '{2}' has a missing or invalid value.", 
+                                        f.Name == null ? f.Code : f.Name, 
+                                        f.IdfObject.Type, 
+                                        f.IdfObject.Name));
+                                }
+                            }
+                        }
                     }
                     ReportProgress("IDF loaded.\n");
 
@@ -80,86 +108,6 @@ namespace GUI.Operations
         ValidationCallbackTable CreateLogger(IList<string> warnings)
         {
             var callbacks = Idf.CreateDefaultLoadCallbacks();
-            Func<Field, string> stringify = f =>
-            {
-                if (f.IdfObject.Name == null)
-                {
-                    return String.Format(
-                        "Field '{0}' of unnamed '{1}' object",
-                        f.Name == null ? f.Code : f.Name,
-                        f.IdfObject.Type);
-                }
-                else
-                {
-                    return String.Format(
-                        "Field '{0}' of '{1}' object '{2}'",
-                        f.Name == null ? f.Code : f.Name,
-                        f.IdfObject.Type,
-                        f.IdfObject.Name);
-                }
-            };
-
-            callbacks.AlphaIntoNumeric = (f, v) =>
-            {
-                warnings.Add(String.Format(
-                    "{0} has the alphanumeric value '{1}', but is numeric.", 
-                    stringify(f), 
-                    v));
-                return IdfToolbox.Base.FieldValue.Nothing;
-            };
-
-            callbacks.ImproperAutocalculate = f =>
-            {
-                warnings.Add(String.Format(
-                    "{0} has an illegal 'Autocalculate' value.",
-                    stringify(f)));
-                return IdfToolbox.Base.FieldValue.Nothing;
-            };
-
-            callbacks.ImproperAutosize = f =>
-            {
-                warnings.Add(String.Format(
-                    "{0} has an illegal 'Autosize' value.",
-                    stringify(f)));
-                return IdfToolbox.Base.FieldValue.Nothing;
-            };
-
-            callbacks.IntegerOutOfBounds = (f, v) =>
-            {
-                warnings.Add(String.Format(
-                    "{0} has an out-of-bounds value '{1}'.",
-                    stringify(f),
-                    v));
-                return IdfToolbox.Base.FieldValue.Nothing;
-            };
-
-            callbacks.InvalidKey = (f, v) =>
-            {
-                warnings.Add(String.Format(
-                    "{0} has the non-key value '{1}'.",
-                    stringify(f),
-                    v));
-                return IdfToolbox.Base.FieldValue.Nothing;
-            };
-
-            callbacks.RealIntoInteger = (f, v) =>
-            {
-                warnings.Add(String.Format(
-                    "{0} has real value '{1}', but is an integer field.",
-                    stringify(f),
-                    v));
-                return IdfToolbox.Base.FieldValue.Nothing;
-            };
-
-            callbacks.RealOutOfBounds = (f, v) =>
-            {
-                warnings.Add(String.Format(
-                    "{0} has an out-of-bounds value '{1}'.",
-                    stringify(f),
-                    v));
-                return IdfToolbox.Base.FieldValue.Nothing;
-            };
-
             callbacks.UnknownObjectType = (attempt, _fieldValues) =>
             {
                 warnings.Add(String.Format(
@@ -167,7 +115,6 @@ namespace GUI.Operations
                     attempt));
                 return null;
             };
-
             return callbacks;
         }
     }
