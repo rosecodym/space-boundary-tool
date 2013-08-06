@@ -3095,22 +3095,6 @@
     900;                     !- Specific Heat {J/kg-K}
 
   Material,
-    Masonry - Glass Block,   !- Name
-    ,                        !- Roughness
-    ,                        !- Thickness {m}
-    ,                        !- Conductivity {W/m-K}
-    ,                        !- Density {kg/m3}
-    ;                        !- Specific Heat {J/kg-K}
-
-  Material,
-    Site - Water:4degC,      !- Name
-    liquid,                  !- Roughness
-    ,                        !- Thickness {m}
-    0.6,                     !- Conductivity {W/m-K}
-    1000,                    !- Density {kg/m3}
-    4187;                    !- Specific Heat {J/kg-K}
-
-  Material,
     Curtain Wall Mullions,   !- Name
     Smooth,                  !- Roughness
     ,                        !- Thickness {m}
@@ -3319,28 +3303,12 @@
     900;                     !- Specific Heat {J/kg-K}
 
   Material,
-    Default Mass Glazing,    !- Name
-    ,                        !- Roughness
-    ,                        !- Thickness {m}
-    ,                        !- Conductivity {W/m-K}
-    ,                        !- Density {kg/m3}
-    ;                        !- Specific Heat {J/kg-K}
-
-  Material,
     Default Mass Interior Wall,  !- Name
     MediumRough,             !- Roughness
     ,                        !- Thickness {m}
     1.95,                    !- Conductivity {W/m-K}
     2240,                    !- Density {kg/m3}
     900;                     !- Specific Heat {J/kg-K}
-
-  Material,
-    Default Mass Opening,    !- Name
-    ,                        !- Roughness
-    ,                        !- Thickness {m}
-    0.129,                   !- Conductivity {W/m-K}
-    496,                     !- Density {kg/m3}
-    1630;                    !- Specific Heat {J/kg-K}
 
   Material,
     Default Mass Roof,       !- Name
@@ -3365,22 +3333,6 @@
     0.167,                   !- Conductivity {W/m-K}
     680,                     !- Density {kg/m3}
     1630;                    !- Specific Heat {J/kg-K}
-
-  Material,
-    Glazing - Curtain Wall Glazing,  !- Name
-    ,                        !- Roughness
-    ,                        !- Thickness {m}
-    ,                        !- Conductivity {W/m-K}
-    ,                        !- Density {kg/m3}
-    ;                        !- Specific Heat {J/kg-K}
-
-  Material,
-    Glazing - Window Glazing,!- Name
-    ,                        !- Roughness
-    ,                        !- Thickness {m}
-    ,                        !- Conductivity {W/m-K}
-    ,                        !- Density {kg/m3}
-    ;                        !- Specific Heat {J/kg-K}
 
   Material,
     Insulation/ Thermal Barriers - Batt insulation,  !- Name
