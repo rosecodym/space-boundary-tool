@@ -15,7 +15,6 @@ namespace Sbt.CoreTypes
         public SpaceInfo BoundedSpace { get; private set; }
         public SpaceBoundary Opposite { get; private set; }
         public SpaceBoundary ContainingBoundary { get; private set; }
-        public bool LiesOnOutside { get; private set; }
         public bool IsVirtual { get; private set; }
         public bool IsExternal { get; private set; }
         private List<MaterialLayer> materialLayers;
