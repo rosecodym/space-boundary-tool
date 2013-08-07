@@ -61,7 +61,8 @@ loop approximate_circle(
 	const unit_scaler & scaler,
 	number_collection<K> * c)
 {
-	// Create a square with area equal to the provided circle
+	// Create a square with area equal to the provided circle. The square will
+	// lie in a plane parallel to the xy plane.
 	double diff = sqrt(3.14159) * real_field(circle_like, "Radius") / 2;
 	auto pos = object_field(circle_like, "Position");
 	auto center = object_field(*pos, "Location");
@@ -77,7 +78,45 @@ loop approximate_circle(
 	return res;
 }
 
-polyloop_result from_polyline(
+boost::optional<loop> is_split_circle(
+	const std::vector<ifc_object *> & parts,
+	const unit_scaler & s,
+	number_collection<K> * c)
+{
+	// Sometimes circles are broken up into pieces for no reason.
+	const ifc_object * circle = nullptr;
+	boost::optional<direction_3> x;
+	boost::optional<direction_3> y;
+	boost::optional<point_3> center;
+	for (auto p = parts.begin(); p != parts.end(); ++p) {
+		auto parent = object_field(**p, "ParentCurve");
+		if (is_instance_of(*parent, "IfcTrimmedCurve")) {
+			auto basis = object_field(*parent, "BasisCurve");
+			if (is_instance_of(*basis, "IfcCircle")) {
+				auto this_geom = object_field(*basis, "Position");
+				auto this_axes = collection_field(*this_geom, "P");
+				auto this_x = build_direction(*this_axes[0], c);
+				if (circle && this_x != x) { return boost::optional<loop>(); }
+				else { x = this_x; }
+				auto this_y = build_direction(*this_axes[1], c);
+				if (circle && this_y != y) { return boost::optional<loop>(); }
+				else { y = this_y; }
+				auto this_loc = object_field(*this_geom, "Location");
+				auto this_center = build_point(*this_loc, s, c);
+				if (circle && this_center != center) { 
+					return boost::optional<loop>();
+				}
+				else { center = this_center; }
+				circle = basis;
+			}
+			else { return boost::optional<loop>(); }
+		}
+		else { return boost::optional<loop>(); }
+	}
+	return approximate_circle(*circle, s, c);
+}
+
+loop polyline_points(
 	const ifc_object & obj, 
 	const unit_scaler & s, 
 	number_collection<K> * c)
@@ -88,15 +127,15 @@ polyloop_result from_polyline(
 		res.push_back(build_point(**p, s, c));
 	}
 	if (res.front() == res.back()) { res.pop_back(); }
-	return std::make_tuple(res, NO_APPROXES);
+	return res;
 }
 
-polyloop_result from_composite_curve_segment(
-	const ifc_object & obj,
-	const unit_scaler & s,
+polyloop_result from_polyline(
+	const ifc_object & obj, 
+	const unit_scaler & s, 
 	number_collection<K> * c)
 {
-	return build_polyloop(*object_field(obj, "ParentCurve"), s, c);
+	return std::make_tuple(polyline_points(obj, s, c), NO_APPROXES);
 }
 
 polyloop_result from_composite_curve(
@@ -105,62 +144,27 @@ polyloop_result from_composite_curve(
 	number_collection<K> * c)
 {
 	auto components = collection_field(obj, "Segments");
-	if (components.size() == 1) { 
-		return build_polyloop(*components[0], s, c);
-	}
-	// Sometimes circles are broken up into pieces for no reason.
-	bool one_circle = true;
-	const ifc_object * circle = nullptr;
-	boost::optional<direction_3> x;
-	boost::optional<direction_3> y;
-	boost::optional<point_3> center;
+	auto as_circle = is_split_circle(components, s, c);
+	if (as_circle) { return std::make_tuple(*as_circle, NO_APPROXES); }
+	loop res;
+	approximations all_approxes;
 	for (auto p = components.begin(); p != components.end(); ++p) {
 		auto parent = object_field(**p, "ParentCurve");
-		if (is_instance_of(*parent, "IfcTrimmedCurve")) {
-			auto basis = object_field(*parent, "BasisCurve");
-			if (is_instance_of(*basis, "IfcCircle")) {
-				auto this_geom = object_field(*basis, "Position");
-				auto this_axes = collection_field(*this_geom, "P");
-				auto this_x = build_direction(*this_axes[0], c);
-				if (circle && this_x != x) {
-					one_circle = false;
-					break;
-				}
-				else { x = this_x; }
-				auto this_y = build_direction(*this_axes[1], c);
-				if (circle && this_y != y) {
-					one_circle = false;
-					break;
-				}
-				else { y = this_y; }
-				auto this_loc = object_field(*this_geom, "Location");
-				auto this_center = build_point(*this_loc, s, c);
-				if (circle && this_center != center) {
-					one_circle = false;
-					break;
-				}
-				else { center = this_center; }
-				circle = basis;
-			}
-			else { 
-				one_circle = false; 
-				break; 
-			}
+		loop pts;
+		approximations approxes;
+		if (is_instance_of(*parent, "IfcCompositeCurve")) {
+			std::tie(pts, approxes) = from_composite_curve(*parent, s, c);
+		}
+		else if (is_instance_of(*parent, "IfcPolyline")) {
+			pts = polyline_points(*parent, s, c);
 		}
 		else {
-			one_circle = false;
-			break;
+			throw bad_rep_exception("unsupported composite curve segment");
 		}
+		boost::copy(pts, std::back_inserter(res));
+		boost::copy(approxes, std::back_inserter(all_approxes));
 	}
-	if (one_circle) {
-		// approximate_circle assumes that the circle lies in a plane parallel
-		// to the xy plane. If this is not correct, this won't work.
-		loop approxed = approximate_circle(*circle, s, c);
-		return std::make_tuple(approxed, NO_APPROXES);
-	}
-	else { 
-		throw bad_rep_exception("composite curve with more than one segment");
-	}
+	return std::make_tuple(res, all_approxes);
 }
 
 polyloop_result from_polyloop(
@@ -255,9 +259,8 @@ polyloop_result build_polyloop(
 	const unit_scaler & s, 
 	number_collection<K> * c) 
 {
-	std::array<handler, 9> handlers = {
+	std::array<handler, 8> handlers = {
 		handler("IfcPolyline", true, &from_polyline),
-		handler("IfcCompositeCurveSegment", true, &from_composite_curve_segment),
 		handler("IfcCompositeCurve", true, &from_composite_curve),
 		handler("IfcPolyLoop", true, &from_polyloop),
 		handler("IfcCurveBoundedPlane", true, &from_curve_bounded_plane),
