@@ -25,7 +25,7 @@ double length_units_per_meter(const cppw::Instance & unit) {
 		cppw::Instance conversionFactor = unit.get("ConversionFactor");
 		double factor = (cppw::Real)conversionFactor.get("ValueComponent");
 		cppw::Instance unitComponent = conversionFactor.get("UnitComponent");
-		return factor * length_units_per_meter(unitComponent);
+		return length_units_per_meter(unitComponent) / factor;
 	}
 	return 1.0;	
 }
