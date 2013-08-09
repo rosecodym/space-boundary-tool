@@ -64,9 +64,8 @@ ifc_object * model::create_curve(
     for (auto p = points.begin(); p != points.end(); ++p) {
 		ifc_object * pt = this->create_point(p->first, p->second);
 		assert(pt);
-		cppw::Application_instance * app_inst = pt->as_app_instance();
-		assert(app_inst);
-		pts.add(*app_inst);
+		cppw::Application_instance app_inst(pt->data());
+		pts.add(app_inst);
     }
     d_->known_objects.push_back(ifc_object(curve, this));
 	return &d_->known_objects.back();

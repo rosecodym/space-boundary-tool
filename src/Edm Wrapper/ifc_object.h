@@ -10,21 +10,13 @@ class model;
 
 class ifc_object {
 public:
-	ifc_object(const cppw::Application_instance & app_inst, model * m)
-		: data_(app_inst),
-		  m_(m)
-	{ }
-	ifc_object(const cppw::Instance & inst, model * m) 
-		: data_(inst),
-		  m_(m)
-	{ }
-
-	const cppw::Instance * as_instance() const;
-	cppw::Application_instance * as_app_instance();
+	ifc_object(const cppw::Select & sel, model * m) : data_(sel), m_(m) { }
+	
+	cppw::Select data() const { return data_; }
 	model * parent_model() const { return m_; }
 
 private:
-	boost::variant<cppw::Instance, cppw::Application_instance> data_;
+	cppw::Select data_;
 	model * m_;
 };
 

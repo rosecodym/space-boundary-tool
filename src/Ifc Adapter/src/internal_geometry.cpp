@@ -38,6 +38,22 @@ bool normal_matches_dir(
 		EPS_MAGIC);
 }
 
+face create_face(
+	const ifc_object & obj,
+	const unit_scaler & scale,
+	number_collection<K> * c)
+{
+	ifc_object * area_obj;
+	object_field(obj, "SweptArea", &area_obj);
+	return face(*area_obj, scale, c);
+}
+
+std::string rep_id(const ifc_object & obj) {
+	std::string res;
+	string_field(obj, "RepresentationIdentifier", &res);
+	return res;
+}
+
 } // namespace
 
 face::face(
@@ -46,11 +62,13 @@ face::face(
 	number_collection<K> * c)
 {
 	if (is_instance_of(obj, "IfcFaceBound")) {
-		std::tie(outer_, approximations_) = 
-			build_polyloop(*object_field(obj, "Bound"), scale, c);
+		ifc_object * bound;
+		object_field(obj, "Bound", &bound);
+		std::tie(outer_, approximations_) = build_polyloop(*bound, scale, c);
 	}
 	else if (is_instance_of(obj, "IfcFace")) {
-		auto bounds = collection_field(obj, "Bounds");
+		std::vector<ifc_object *> bounds;
+		collection_field(obj, "Bounds", &bounds);
 		for (auto b = bounds.begin(); b != bounds.end(); ++b) {
 			std::vector<approximated_curve> approxes;
 			if (is_instance_of(**b, "IfcFaceOuterBound")) {
@@ -66,9 +84,11 @@ face::face(
 		}
 	}
 	else if (is_instance_of(obj, "IfcArbitraryProfileDefWithVoids")) {
-		std::tie(outer_, approximations_) = 
-			build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
-		auto inners = collection_field(obj, "InnerCurves");
+		ifc_object * outer;
+		object_field(obj, "OuterCurve", &outer);
+		std::tie(outer_, approximations_) = build_polyloop(*outer, scale, c);
+		std::vector<ifc_object *> inners;
+		collection_field(obj, "InnerCurves", &inners);
 		for (auto p = inners.begin(); p != inners.end(); ++p) {
 			std::vector<point_3> v;
 			std::vector<approximated_curve> approxes;
@@ -156,7 +176,8 @@ brep::brep(
 	if (!is_kind_of(obj, "IfcConnectedFaceSet")) {
 		throw bad_rep_exception("unsupported representation for a brep");
 	}
-	auto face_set = collection_field(obj, "CfsFaces");
+	std::vector<ifc_object *> face_set;
+	collection_field(obj, "CfsFaces", &face_set);
 	for (auto f = face_set.begin(); f != face_set.end(); ++f) {
 		faces.push_back(face(**f, scale_length, c));
 	}
@@ -193,11 +214,13 @@ ext::ext(
 	const ifc_object & obj,
 	const unit_scaler & scale,
 	number_collection<K> * c)
-	: area_(*object_field(obj, "SweptArea"), scale, c)
+	: area_(create_face(obj, scale, c))
 {
-	double unscaled_depth = real_field(obj, "Depth");
+	double unscaled_depth;
+	real_field(obj, "Depth", &unscaled_depth);
 	depth_ = c->request_height(scale.length_in(unscaled_depth));
-	auto d = object_field(obj, "ExtrudedDirection");
+	ifc_object * d;
+	object_field(obj, "ExtrudedDirection", &d);
 	double dx, dy, dz;
 	triple_field(*d, "DirectionRatios", &dx, &dy, &dz);
 	dir_ = c->request_direction(dx, dy, dz);
@@ -245,28 +268,32 @@ transformation_3 get_globalizer(
 	number_collection<K> * c) 
 {
 	if (is_kind_of(obj, "IfcProduct")) {
-		auto rep = object_field(obj, "Representation");
+		ifc_object * rep;
+		object_field(obj, "Representation", &rep);
 		auto inner = get_globalizer(*rep, scaler, c);
-		auto placement = object_field(obj, "ObjectPlacement");
+		ifc_object * placement;
+		object_field(obj, "ObjectPlacement", &placement);
 		return inner * build_transformation(placement, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
-		auto reps = collection_field(obj, "Representations");
+		std::vector<ifc_object *> reps;
+		collection_field(obj, "Representations", &reps);
 		for (auto r = reps.begin(); r != reps.end(); ++r) {
-			if (string_field(**r, "RepresentationIdentifier") == "Body") {
-				return get_globalizer(**r, scaler, c);
+			if (rep_id(**r) == "Body") { 
+				return get_globalizer(**r, scaler, c); 
 			}
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
 	}
 	else if (
 		is_instance_of(obj, "IfcShapeRepresentation") &&
-		string_field(obj, "RepresentationIdentifier") == "Body")
+		rep_id(obj) == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		auto rep_items = collection_field(obj, "Items");
+		std::vector<ifc_object *> rep_items;
+		collection_field(obj, "Items", &rep_items);
 		return get_globalizer(*rep_items[0], scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcFacetedBrep")) {
@@ -276,12 +303,16 @@ transformation_3 get_globalizer(
 		return transformation_3();
 	}
 	else if (is_instance_of(obj, "IfcMappedItem")) {
-		auto ms = object_field(obj, "MappingSource");
-		auto mapped_rep = object_field(*ms, "MappedRepresentation");
+		ifc_object * ms;
+		object_field(obj, "MappingSource", &ms);
+		ifc_object * mapped_rep;
+		object_field(*ms, "MappedRepresentation", &mapped_rep);
 		auto base = get_globalizer(*mapped_rep, scaler, c);
-		auto mapping_origin = object_field(*ms, "MappingOrigin");
+		ifc_object * mapping_origin;
+		object_field(*ms, "MappingOrigin", &mapping_origin);
 		auto from = build_transformation(mapping_origin, scaler, c);
-		auto mapping_target = object_field(obj, "MappingTarget");
+		ifc_object * mapping_target;
+		object_field(obj, "MappingTarget", &mapping_target);
 		auto to = build_transformation(mapping_target, scaler, c);
 		return base * from * to;
 	}
@@ -301,7 +332,8 @@ boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 	number_collection<K> * c)
 {
 	if (is_instance_of(obj, "IfcPolyline")) {
-		auto pts = collection_field(obj, "Points");
+		std::vector<ifc_object *> pts;
+		collection_field(obj, "Points", &pts);
 		if (pts.size() != 2) {
 			throw bad_rep_exception(
 				"axis definition without exactly two points");
@@ -323,20 +355,25 @@ std::unique_ptr<solid> get_local_geometry(
 	number_collection<K> * c)
 {
 	if (is_kind_of(obj, "IfcProduct")) {
-		auto rep = object_field(obj, "Representation");
+		ifc_object * rep;
+		object_field(obj, "Representation", &rep);
 		return get_local_geometry(*rep, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
-		auto reps = collection_field(obj, "Representations");
+		std::vector<ifc_object *> reps;
+		collection_field(obj, "Representations", &reps);
 		std::unique_ptr<solid> geometry;
 		boost::optional<std::tuple<direction_3, direction_3>> axes;
 		for (auto r = reps.begin(); r != reps.end(); ++r) {
-			auto identifier = string_field(**r, "RepresentationIdentifier");
+			std::string identifier;
+			string_field(**r, "RepresentationIdentifier", &identifier);
 			if (identifier == "Body") {
 				geometry = get_local_geometry(**r, scaler, c);
 			}
 			else if (identifier == "Axis") {
-				axes = get_axes(*collection_field(**r, "Items")[0], c);
+				std::vector<ifc_object *> items;
+				collection_field(**r, "Items", &items);
+				axes = get_axes(*items[0], c);
 			}
 		}
 		if (geometry) {
@@ -347,34 +384,40 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (
 		is_instance_of(obj, "IfcShapeRepresentation") &&
-		string_field(obj, "RepresentationIdentifier") == "Body")
+		rep_id(obj) == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		auto items = collection_field(obj, "Items");
+		std::vector<ifc_object *> items;
+		collection_field(obj, "Items", &items);
 		return get_local_geometry(*items[0], scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcFacetedBrep")) {
-		auto b = object_field(obj, "Outer");
+		ifc_object * b;
+		object_field(obj, "Outer", &b);
 		return std::unique_ptr<brep>(new brep(*b, scaler, c));
 	}
 	else if (is_instance_of(obj, "IfcExtrudedAreaSolid")) {
 		auto res = std::unique_ptr<ext>(new ext(obj, scaler, c));
-		auto pos = object_field(obj, "Position");
+		ifc_object * pos;
+		object_field(obj, "Position", &pos);
 		res->transform(build_transformation(pos, scaler, c));
 		return std::move(res);
 	}
 	else if (is_instance_of(obj, "IfcMappedItem")) {
-		auto src = object_field(obj, "MappingSource");
-		auto rep = object_field(*src, "MappedRepresentation");
+		ifc_object * src;
+		object_field(obj, "MappingSource", &src);
+		ifc_object * rep;
+		object_field(*src, "MappedRepresentation", &rep);
 		return get_local_geometry(*rep, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
 		return wrapped_nef_operations::from_boolean_result(obj, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcFaceBasedSurfaceModel")) {
-		auto face_set = collection_field(obj, "FbsmFaces");
+		std::vector<ifc_object *> face_set;
+		collection_field(obj, "FbsmFaces", &face_set);
 		return std::unique_ptr<brep>(new brep(*face_set[0], scaler, c));
 	}
 	else {

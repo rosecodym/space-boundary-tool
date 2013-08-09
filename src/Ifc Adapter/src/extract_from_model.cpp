@@ -23,14 +23,18 @@ T ** create_list(size_t count) {
 }
 
 bool is_shading(const ifc_object & obj) {
-	auto name = string_field(obj, "Name");
+	std::string name;
+	string_field(obj, "Name", &name);
 	if (strstr(name.c_str(), "Shading")) { return true; }
 
-	auto defined_by = collection_field(obj, "IsDefinedBy");
+	std::vector<ifc_object *> defined_by;
+	collection_field(obj, "IsDefinedBy", &defined_by);
 	for (auto d = defined_by.begin(); d != defined_by.end(); ++d) {
 		if (is_instance_of(**d, "IfcRelDefinesByProperties")) {
-			auto pset = object_field(**d, "RelatingPropertyDefinition");
-			auto name = string_field(*pset, "Name");
+			ifc_object * pset;
+			object_field(**d, "RelatingPropertyDefinition", &pset);
+			std::string name;
+			string_field(*pset, "Name", &name);
 			if (strstr(name.c_str(), "ElementShading")) {
 				return true;
 			}
@@ -40,11 +44,13 @@ bool is_shading(const ifc_object & obj) {
 }
 
 ifc_object * get_related_opening(const ifc_object & fen) {
-	auto fills_voids = collection_field(fen, "FillsVoids");
+	std::vector<ifc_object *> fills_voids;
+	collection_field(fen, "FillsVoids", &fills_voids);
+	ifc_object * res = nullptr;
 	if (fills_voids.size() == 1) {
-		return object_field(*fills_voids.front(), "RelatingOpeningElement");
+		object_field(*fills_voids.front(), "RelatingOpeningElement", &res);
 	}
-	else { return nullptr; }
+	return res;
 }
 
 boost::optional<direction_3> get_composite_dir(
@@ -54,13 +60,16 @@ boost::optional<direction_3> get_composite_dir(
 	const direction_3 & axis3) 
 {
 	if (!is_kind_of(obj, "IfcWindow")) {
-		auto rel_assoc = collection_field(obj, "HasAssociations");
+		std::vector<ifc_object *> rel_assoc;
+		collection_field(obj, "HasAssociations", &rel_assoc);
 		for (auto o = rel_assoc.begin(); o != rel_assoc.end(); ++o) {
 			if (is_kind_of(**o, "IfcRelAssociatesMaterial")) {
-				auto mat = object_field(**o, "RelatingMaterial");
+				ifc_object * mat;
+				object_field(**o, "RelatingMaterial", &mat);
 				if (is_kind_of(*mat, "IfcMaterialLayerSetUsage")) {
-					auto dir = string_field(*mat, "LayerSetDirection");
-					auto sense = string_field(*mat, "DirectionSense");
+					std::string dir, sense;
+					string_field(*mat, "LayerSetDirection", &dir);
+					string_field(*mat, "DirectionSense", &sense);
 					direction_3 res =
 						dir == "AXIS1" ? axis1 :
 						dir == "AXIS2" ? axis2 :
@@ -95,7 +104,9 @@ size_t get_elements(
 
 	auto is_ceiling = [](const ifc_object & o) -> bool {
 		if (!is_kind_of(o, "IfcCovering")) { return false; }
-		return string_field(o, "PredefinedType") == "CEILING";
+		std::string type;
+		string_field(o, "PredefinedType", &type);
+		return type == "CEILING";
 	};
 
 	auto bldg_elems = m->building_elements();
@@ -108,7 +119,8 @@ size_t get_elements(
 			is_kind_of(**e, "IfcDoor") ? DOOR :
 			is_kind_of(**e, "IfcWindow") ? WINDOW : 
 			is_ceiling(**e) ? SLAB : UNKNOWN;
-		auto guid = string_field(**e, "GlobalId");
+		std::string guid;
+		string_field(**e, "GlobalId", &guid);
 		if (type != UNKNOWN && passes_filter(guid.c_str())) {
 			sprintf(buf, "Extracting element %s...", guid.c_str());
 			msg_func(buf);
@@ -210,7 +222,8 @@ size_t get_spaces(
 	std::vector<space_info> space_vector;
 
 	for (auto sp = ss.begin(); sp != ss.end(); ++sp) {
-		auto id = string_field(**sp, "GlobalId");
+		std::string id;
+		string_field(**sp, "GlobalId", &id);
 		try {
 			if (space_filter(id.c_str())) {
 				fmt m("Extracting space %s...");

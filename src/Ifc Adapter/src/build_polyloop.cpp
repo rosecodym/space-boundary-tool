@@ -63,9 +63,13 @@ loop approximate_circle(
 {
 	// Create a square with area equal to the provided circle. The square will
 	// lie in a plane parallel to the xy plane.
-	double diff = sqrt(3.14159) * real_field(circle_like, "Radius") / 2;
-	auto pos = object_field(circle_like, "Position");
-	auto center = object_field(*pos, "Location");
+	double r;
+	real_field(circle_like, "Radius", &r);
+	double diff = sqrt(3.14159) * r / 2;
+	ifc_object * pos;
+	object_field(circle_like, "Position", &pos);
+	ifc_object * center;
+	object_field(*pos, "Location", &center);
 	double x, y, z;
 	triple_field(*center, "Coordinates", &x, &y, &z);
 	assert(z == 0.0);
@@ -89,19 +93,24 @@ boost::optional<loop> is_split_circle(
 	boost::optional<direction_3> y;
 	boost::optional<point_3> center;
 	for (auto p = parts.begin(); p != parts.end(); ++p) {
-		auto parent = object_field(**p, "ParentCurve");
+		ifc_object * parent;
+		object_field(**p, "ParentCurve", &parent);
 		if (is_instance_of(*parent, "IfcTrimmedCurve")) {
-			auto basis = object_field(*parent, "BasisCurve");
+			ifc_object * basis;
+			object_field(*parent, "BasisCurve", &basis);
 			if (is_instance_of(*basis, "IfcCircle")) {
-				auto this_geom = object_field(*basis, "Position");
-				auto this_axes = collection_field(*this_geom, "P");
+				ifc_object * this_geom;
+				object_field(*basis, "Position", &this_geom);
+				std::vector<ifc_object *> this_axes;
+				collection_field(*this_geom, "P", &this_axes);
 				auto this_x = build_direction(*this_axes[0], c);
 				if (circle && this_x != x) { return boost::optional<loop>(); }
 				else { x = this_x; }
 				auto this_y = build_direction(*this_axes[1], c);
 				if (circle && this_y != y) { return boost::optional<loop>(); }
 				else { y = this_y; }
-				auto this_loc = object_field(*this_geom, "Location");
+				ifc_object * this_loc;
+				object_field(*this_geom, "Location", &this_loc);
 				auto this_center = build_point(*this_loc, s, c);
 				if (circle && this_center != center) { 
 					return boost::optional<loop>();
@@ -122,7 +131,8 @@ loop polyline_points(
 	number_collection<K> * c)
 {
 	loop res;
-	auto pts = collection_field(obj, "Points");
+	std::vector<ifc_object *> pts;
+	collection_field(obj, "Points", &pts);
 	for (auto p = pts.begin(); p != pts.end(); ++p) {
 		res.push_back(build_point(**p, s, c));
 	}
@@ -136,9 +146,11 @@ handle_trimmed_curve(
 	const unit_scaler & s,
 	number_collection<K> * c)
 {
-	auto basis = object_field(obj, "BasisCurve");
-	auto trim1 = collection_field(obj, "Trim1");
-	auto trim2 = collection_field(obj, "Trim2");
+	ifc_object * basis;
+	object_field(obj, "BasisCurve", &basis);
+	std::vector<ifc_object *> trim1, trim2;
+	collection_field(obj, "Trim1", &trim1);
+	collection_field(obj, "Trim2", &trim2);
 	boost::optional<point_3> from, to;
 	boost::optional<approximated_curve> a;
 	if (is_instance_of(*basis, "IfcEllipse")) {
@@ -167,16 +179,28 @@ handle_trimmed_curve(
 			if (is_instance_of(**p, "IfcCartesianPoint")) {
 				from = build_point(**p, s, c);
 			}
-			else { p1 = as_real(**p) * 3.14159 / 180; }
+			else { 
+				double p1;
+				as_real(**p, &p1);
+				p1 *= 3.14159 / 180; 
+			}
 		}
 		for (auto p = trim2.begin(); p != trim2.end(); ++p) {
 			if (is_instance_of(**p, "IfcCartesianPoint")) {
 				to = build_point(**p, s, c);
 			}
-			else { p2 = as_real(**p) * 3.14159 / 180; }
+			else { 
+				double p2;
+				as_real(**p, &p2);
+				p2 *= 3.14159 / 180; 
+			}
 		}
-		double radius = s.length_in(real_field(*basis, "Radius"));
-		auto t = build_transformation(object_field(*basis, "Position"), s, c);
+		double radius;
+		real_field(*basis, "Radius", &radius);
+		radius = s.length_in(radius);
+		ifc_object * position;
+		object_field(*basis, "Position", &position);
+		auto t = build_transformation(position, s, c);
 		if (!from) { from = t(point_3(cos(*p1), sin(*p1), 0)); }
 		if (!to) { to = t(point_3(cos(*p2), sin(*p2), 0)); }
 		// While calculating the true area and length is easy using the given
@@ -207,9 +231,9 @@ handle_trimmed_curve(
 		a = approximated_curve(c12d, c22d, -true_area, true_length);
 	}
 
-	if (boolean_field(obj, "SenseAgreement")) {
-		return std::make_tuple(*from, *to, a);
-	}
+	bool sense;
+	boolean_field(obj, "SenseAgreement", &sense);
+	if (sense) { return std::make_tuple(*from, *to, a); }
 	else if (a) { return std::make_tuple(*to, *from, a->reversed()); }
 	else { return std::make_tuple(*to, *from, a); }
 }
@@ -227,13 +251,15 @@ polyloop_result from_composite_curve(
 	const unit_scaler & s,
 	number_collection<K> * c)
 {
-	auto components = collection_field(obj, "Segments");
+	std::vector<ifc_object *> components;
+	collection_field(obj, "Segments", &components);
 	auto as_circle = is_split_circle(components, s, c);
 	if (as_circle) { return std::make_tuple(*as_circle, NO_APPROXES); }
 	loop res;
 	approximations all_approxes;
 	for (auto p = components.begin(); p != components.end(); ++p) {
-		auto parent = object_field(**p, "ParentCurve");
+		ifc_object * parent;
+		object_field(**p, "ParentCurve", &parent);
 		loop pts;
 		approximations approxes;
 		if (is_instance_of(*parent, "IfcCompositeCurve")) {
@@ -250,7 +276,9 @@ polyloop_result from_composite_curve(
 			auto append_unique = [&pts](const point_3 & p) {
 				if (pts.empty() || pts.back() != p) { pts.push_back(p); }
 			};
-			if (boolean_field(obj, "SameSense")) {
+			bool same_sense;
+			boolean_field(obj, "SameSense", &same_sense);
+			if (same_sense) {
 				append_unique(from);
 				append_unique(to);
 			}
@@ -275,7 +303,8 @@ polyloop_result from_polyloop(
 	number_collection<K> * c)
 {
 	loop res;
-	auto pts = collection_field(obj, "Polygon");
+	std::vector<ifc_object *> pts;
+	collection_field(obj, "Polygon", &pts);
 	for (auto p = pts.begin(); p != pts.end(); ++p) {
 		res.push_back(build_point(**p, s, c));
 	}
@@ -287,11 +316,13 @@ polyloop_result from_curve_bounded_plane(
 	const unit_scaler & s,
 	number_collection<K> * c)
 {
-	auto bound = object_field(obj, "OuterBoundary");
+	ifc_object * bound;
+	object_field(obj, "OuterBoundary", &bound);
 	loop res;
 	std::vector<approximated_curve> approxes;
 	std::tie(res, approxes) = build_polyloop(*bound, s, c);
-	auto basis = object_field(obj, "BasisSurface");
+	ifc_object * basis;
+	object_field(obj, "BasisSurface", &basis);
 	auto t = build_transformation(basis, s, c);
 	boost::transform(res, res.begin(), t);
 	for (auto p = approxes.begin(); p != approxes.end(); ++p) {
@@ -305,7 +336,9 @@ polyloop_result from_arbitrary_closed_profile_def(
 	const unit_scaler & s,
 	number_collection<K> * c)
 {
-	return build_polyloop(*object_field(obj, "OuterCurve"), s, c);
+	ifc_object * outer;
+	object_field(obj, "OuterCurve", &outer);
+	return build_polyloop(*outer, s, c);
 }
 
 polyloop_result from_rectangle_profile_def(
@@ -313,8 +346,9 @@ polyloop_result from_rectangle_profile_def(
 	const unit_scaler & scale,
 	number_collection<K> * c)
 {
-	double xdim = real_field(obj, "XDim");
-	double ydim = real_field(obj, "YDim");
+	double xdim, ydim;
+	real_field(obj, "XDim", &xdim);
+	real_field(obj, "YDim", &ydim);
 	point_2 req;
 	loop res;
 	auto s = [&scale](double d) { return scale.length_in(d); };
@@ -326,7 +360,9 @@ polyloop_result from_rectangle_profile_def(
 	res.push_back(point_3(req.x(), req.y(), 0));
 	req = c->request_point(s(-xdim) / 2, s(ydim) / 2);
 	res.push_back(point_3(req.x(), req.y(), 0));
-	auto t = build_transformation(object_field(obj, "Position"), scale, c);
+	ifc_object * pos;
+	object_field(obj, "Position", &pos);
+	auto t = build_transformation(pos, scale, c);
 	boost::transform(res, res.begin(), t);
 	assert(boost::find_if(res, [](const point_3 & p) {
 		return !CGAL::is_zero(p.z());
@@ -339,10 +375,12 @@ polyloop_result from_face_bound(
 	const unit_scaler & s,
 	number_collection<K> * c)
 {
-	auto res = build_polyloop(*object_field(obj, "Bound"), s, c);
-	if (!boolean_field(obj, "Orientation")) { 
-		boost::reverse(std::get<0>(res)); 
-	}
+	ifc_object * bound;
+	object_field(obj, "Bound", &bound);
+	auto res = build_polyloop(*bound, s, c);
+	bool orientation;
+	boolean_field(obj, "Orientation", &orientation);
+	if (!orientation) { boost::reverse(std::get<0>(res)); }
 	return res;
 }
 

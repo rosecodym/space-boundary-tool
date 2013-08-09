@@ -186,7 +186,8 @@ ifc_object * create_sb(
 	const unit_scaler & scaler,
 	number_collection<iK> * c)
 {
-	auto space_trans = object_field(space, "ObjectPlacement");
+	ifc_object * space_trans;
+	object_field(space, "ObjectPlacement", &space_trans);
 	auto space_placement = build_transformation(space_trans, scaler, c);
 
 	auto res = m->create_object("IfcRelSpaceBoundary", true);
@@ -279,14 +280,20 @@ ifcadapter_return_t add_to_model(
 	std::map<std::string, const ifc_object *> by_guid;
 	auto ifc_spaces = m->spaces();
 	for (auto s = ifc_spaces.begin(); s != ifc_spaces.end(); ++s) {
-		by_guid[string_field(**s, "GlobalId")] = *s;
+		std::string guid;
+		string_field(**s, "GlobalId", &guid);
+		by_guid[guid] = *s;
 	}
 	auto ifc_bldg_elems = m->building_elements();
 	for (auto e = ifc_bldg_elems.begin(); e != ifc_bldg_elems.end(); ++e) {
-		by_guid[string_field(**e, "GlobalId")] = *e;
+		std::string guid;
+		string_field(**e, "GlobalId", &guid);
+		by_guid[guid] = *e;
 	}
 	for (auto v = virts.begin(); v != virts.end(); ++v) {
-		by_guid[string_field(**v, "GlobalId")] = *v;
+		std::string guid;
+		string_field(**v, "GlobalId", &guid);
+		by_guid[guid] = *v;
 	}
 	int added_count = 0;
 	for (size_t i = 0; i < sb_count; ++i) {
