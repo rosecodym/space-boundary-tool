@@ -48,6 +48,10 @@ public:
 	point_3 request_point(double x, double y, double z) { return point_3(xs_3d.request(x), ys_3d.request(y), zs_3d.request(z)); }
 	NT request_height(double z) { return heights.request(z); }
 
+	bool is_zero(double d) { 
+		return one_dimensional_equality_context<NT>::is_zero(d, tolerance); 
+	}
+
 	direction_3 request_direction(double dx, double dy, double dz) {
 		direction_3 requested(dx, dy, dz);
 		auto exists = boost::find_if(directions, [&requested, this](const direction_3 & d) {

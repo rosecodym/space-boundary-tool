@@ -24,6 +24,10 @@ public:
 		double x1, double y1, double z1,
 		double x2, double y2, double z2,
 		double eps) const;
+
+	approximated_curve reversed() const {
+		return approximated_curve(p2_, p1_, -n_, length_ratio_, -area_);
+	}
 	
 	approximated_curve transformed(const transformation_3 & t) const {
 		return approximated_curve(t(p1_), t(p2_), t(n_), length_ratio_, area_);

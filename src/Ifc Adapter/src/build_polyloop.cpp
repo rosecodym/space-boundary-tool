@@ -130,6 +130,90 @@ loop polyline_points(
 	return res;
 }
 
+std::tuple<point_3, point_3, boost::optional<approximated_curve>>
+handle_trimmed_curve(
+	const ifc_object & obj,
+	const unit_scaler & s,
+	number_collection<K> * c)
+{
+	auto basis = object_field(obj, "BasisCurve");
+	auto trim1 = collection_field(obj, "Trim1");
+	auto trim2 = collection_field(obj, "Trim2");
+	boost::optional<point_3> from, to;
+	boost::optional<approximated_curve> a;
+	if (is_instance_of(*basis, "IfcEllipse")) {
+		throw bad_rep_exception("ellipses are not yet supported");
+	}
+	else if (is_instance_of(*basis, "IfcLine")) {
+		for (auto p = trim1.begin(); p != trim1.end(); ++p) {
+			if (is_instance_of(**p, "IfcCartesianPoint")) {
+				from = build_point(**p, s, c);
+				break;
+			}
+		}
+		for (auto p = trim2.begin(); p != trim2.end(); ++p) {
+			if (is_instance_of(**p, "IfcCartesianPoint")) {
+				to = build_point(**p, s, c);
+				break;
+			}
+		}
+		if (!from || !to) {
+			throw bad_rep_exception("lines trimmed by parameters instead of points are not yet supported");
+		}
+	}
+	else { // Per the 2x3 standard, it has to be an IfcCircle
+		boost::optional<double> p1, p2;
+		for (auto p = trim1.begin(); p != trim1.end(); ++p) {
+			if (is_instance_of(**p, "IfcCartesianPoint")) {
+				from = build_point(**p, s, c);
+			}
+			else { p1 = as_real(**p) * 3.14159 / 180; }
+		}
+		for (auto p = trim2.begin(); p != trim2.end(); ++p) {
+			if (is_instance_of(**p, "IfcCartesianPoint")) {
+				to = build_point(**p, s, c);
+			}
+			else { p2 = as_real(**p) * 3.14159 / 180; }
+		}
+		double radius = s.length_in(real_field(*basis, "Radius"));
+		auto t = build_transformation(object_field(*basis, "Position"), s, c);
+		if (!from) { from = t(point_3(cos(*p1), sin(*p1), 0)); }
+		if (!to) { to = t(point_3(cos(*p2), sin(*p2), 0)); }
+		// While calculating the true area and length is easy using the given
+		// parameters, they aren't always present, so we might as well just
+		// reconstruct them in all cases.
+		auto inv_t = t.inverse();
+		auto c13d = inv_t(*from);
+		auto c23d = inv_t(*to);
+		assert(c->is_zero(CGAL::to_double(c13d.z())));
+		assert(c->is_zero(CGAL::to_double(c23d.z())));
+		double c1x = CGAL::to_double(c13d.x());
+		double c1y = CGAL::to_double(c13d.y());
+		double c2x = CGAL::to_double(c23d.x());
+		double c2y = CGAL::to_double(c23d.y());
+		double angle1 = atan2(c1x, c1y);
+		double angle2 = atan2(c2x, c2y);
+		if (angle1 < 0.0) { angle1 += 2 * 3.14159; }
+		if (angle2 < 0.0) { angle2 += 2 * 3.14159; }
+		assert(!p1 || c->is_zero(*p1 - angle1));
+		assert(!p2 || c->is_zero(*p2 - angle2));
+		double diff = angle2 - angle1;
+		if (diff < 0.0) { diff += 2 * 3.14159; }
+		double true_length = radius * diff;
+		// Formula from http://en.wikipedia.org/wiki/Circle_segment
+		double true_area = radius * radius / 2.0 * (diff - sin(diff));
+		point_2 c12d(c1x, c1y);
+		point_2 c22d(c2x, c2y);
+		a = approximated_curve(c12d, c22d, -true_area, true_length);
+	}
+
+	if (boolean_field(obj, "SenseAgreement")) {
+		return std::make_tuple(*from, *to, a);
+	}
+	else if (a) { return std::make_tuple(*to, *from, a->reversed()); }
+	else { return std::make_tuple(*to, *from, a); }
+}
+
 polyloop_result from_polyline(
 	const ifc_object & obj, 
 	const unit_scaler & s, 
@@ -157,6 +241,24 @@ polyloop_result from_composite_curve(
 		}
 		else if (is_instance_of(*parent, "IfcPolyline")) {
 			pts = polyline_points(*parent, s, c);
+		}
+		else if (is_instance_of(*parent, "IfcTrimmedCurve")) {
+			point_3 from;
+			point_3 to;
+			boost::optional<approximated_curve> a;
+			std::tie(from, to, a) = handle_trimmed_curve(*parent, s, c);
+			auto append_unique = [&pts](const point_3 & p) {
+				if (pts.empty() || pts.back() != p) { pts.push_back(p); }
+			};
+			if (boolean_field(obj, "SameSense")) {
+				append_unique(from);
+				append_unique(to);
+			}
+			else {
+				append_unique(to);
+				append_unique(from);
+			}
+			if (a) { approxes.push_back(*a); }
 		}
 		else {
 			throw bad_rep_exception("unsupported composite curve segment");
