@@ -277,7 +277,7 @@ polyloop_result from_composite_curve(
 				if (pts.empty() || pts.back() != p) { pts.push_back(p); }
 			};
 			bool same_sense;
-			boolean_field(obj, "SameSense", &same_sense);
+			boolean_field(**p, "SameSense", &same_sense);
 			if (same_sense) {
 				append_unique(from);
 				append_unique(to);
