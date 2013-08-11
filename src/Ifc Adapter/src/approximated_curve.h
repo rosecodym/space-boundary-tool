@@ -8,13 +8,7 @@ public:
 		const point_2 & p1, 
 		const point_2 & p2,
 		double area_on_left,
-		double true_length)
-		: p1_(p1.x(), p1.y(), 0.0),
-		  p2_(p2.x(), p2.y(), 0.0),
-		  n_(0.0, 0.0, 1.0),
-		  length_ratio_(true_length),
-		  area_(area_on_left)
-	{ }
+		double true_length);
 
 	direction_3	original_plane_normal() const { return n_; }
 	double		true_area_on_left() const { return area_; }
@@ -39,13 +33,16 @@ private:
 		const point_3 & p2,
 		const direction_3 & normal,
 		double r,
-		double a)
-		: p1_(p1), p2_(p2), n_(normal), length_ratio_(r), area_(a)
-	{ }
+		double a);
 
 	point_3 p1_;
 	point_3 p2_;
 	direction_3 n_;
 	double length_ratio_;
 	double area_;
+
+#ifndef NDEBUG
+	double dp1_[3];
+	double dp2_[3];
+#endif
 };
