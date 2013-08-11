@@ -14,71 +14,6 @@ sb_calculation_options g_opts;
 
 namespace {
 
-void scale_point(point * p, const unit_scaler & scaler) {
-	p->x = scaler.length_in(p->x);
-	p->y = scaler.length_in(p->y);
-	p->z = scaler.length_in(p->z);
-}
-
-void scale_loop(polyloop * loop, const unit_scaler & scaler) {
-	for (size_t i = 0; i < loop->vertex_count; ++i) {
-		scale_point(&loop->vertices[i], scaler);
-	}
-}
-
-void scale_face(face * f, const unit_scaler & scaler) {
-	scale_loop(&f->outer_boundary, scaler);
-	for (size_t i = 0; i < f->void_count; ++i) {
-		scale_loop(&f->voids[i], scaler);
-	}
-}
-
-void scale_brep(brep * b, const unit_scaler & scaler) {
-	for (size_t i = 0; i < b->face_count; ++i) {
-		scale_face(&b->faces[i], scaler);
-	}
-}
-
-void scale_ext(extruded_area_solid * e, const unit_scaler & scaler) {
-	e->extrusion_depth = scaler.length_in(e->extrusion_depth);
-	scale_face(&e->area, scaler);
-}
-
-void scale_solid(solid * s, const unit_scaler & scaler) {
-	if (s->rep_type == REP_BREP) { scale_brep(&s->rep.as_brep, scaler); }
-	else { scale_ext(&s->rep.as_ext, scaler); }
-}
-
-void scale_elements(element_info ** elements, size_t count, const unit_scaler & scaler) {
-	for (size_t i = 0; i < count; ++i) {
-		scale_solid(&elements[i]->geometry, scaler);
-	}
-}
-
-void scale_spaces(space_info ** spaces, size_t count, const unit_scaler & scaler) {
-	for (size_t i = 0; i < count; ++i) {
-		scale_solid(&spaces[i]->geometry, scaler);
-	}
-}
-
-void scale_space_boundaries(space_boundary ** sbs, size_t count, const unit_scaler & scaler) {
-	for (size_t i = 0; i < count; ++i) {
-		scale_loop(&sbs[i]->geometry, scaler);
-		for (size_t j = 0; j < sbs[i]->material_layer_count; ++j) {
-			sbs[i]->thicknesses[j] = scaler.length_in(sbs[i]->thicknesses[j]);
-		}
-	}
-}
-
-void scale_shadings(
-	std::vector<element_info *> * shadings,
-	const unit_scaler & scaler)
-{
-	for (auto p = shadings->begin(); p != shadings->end(); ++p) {
-		scale_solid(&(*p)->geometry, scaler);
-	}
-}
-
 std::function<bool(const char *)> create_guid_filter(char ** first, size_t count) {
 	std::set<std::string> ok_elements;
 	if (first != nullptr && count != 0) {
@@ -213,7 +148,6 @@ ifcadapter_return_t execute(
 
 	std::vector<element_info *> shadings;
 	double lupm = m.length_units_per_meter();
-	opts.length_units_per_meter = lupm;
 	unit_scaler scaler(lupm);
 	ifcadapter_return_t res = extract_from_model(
 		&m,
@@ -224,6 +158,7 @@ ifcadapter_return_t execute(
 		composite_layer_dzs,
 		space_count,
 		spaces,
+		scaler,
 		g_opts.notify_func,
 		g_opts.warn_func,
 		create_guid_filter(opts.element_filter, opts.element_filter_count),
@@ -256,7 +191,9 @@ ifcadapter_return_t execute(
 				"generation will likely fail.");
 		}
 	}
-
+	
+	// As far as the SBT core is concerned, everything is in meters.
+	opts.length_units_per_meter = 1.0;
 	sbt_return_t generate_res = 
 		calculate_space_boundaries(
 			*element_count, 
@@ -292,6 +229,7 @@ ifcadapter_return_t execute(
 					&m, 
 					*sb_count, 
 					*sbs, 
+					scaler,
 					opts.notify_func, 
 					&output_ctxt);
 			if (res == IFCADAPT_OK)
@@ -301,10 +239,6 @@ ifcadapter_return_t execute(
 				notify("done.\n");
 			}
 		}
-		scale_elements(*elements, *element_count, scaler);
-		scale_spaces(*spaces, *space_count, scaler);
-		scale_space_boundaries(*sbs, *sb_count, scaler);
-		scale_shadings(&shadings, scaler);
 
 		auto total_e_count = *element_count + shadings.size();
 		auto total_e_size = sizeof(element_info *) * total_e_count;

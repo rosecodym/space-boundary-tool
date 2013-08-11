@@ -260,11 +260,10 @@ ifcadapter_return_t add_to_model(
 	model * m,
 	size_t sb_count, 
 	space_boundary ** sbs,
+	const unit_scaler & scaler,
 	void (*msg_func)(char *),
 	number_collection<iK> * c) 
 {
-	unit_scaler scaler = unit_scaler::identity_scaler;
-
 	msg_func("Preparing to add space boundaries to the model.\n");
 	auto version_string = "1.5.9";
 	m->set_new_owner_history(

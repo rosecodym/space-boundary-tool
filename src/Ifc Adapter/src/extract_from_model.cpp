@@ -262,6 +262,7 @@ ifcadapter_return_t extract_from_model(
 	double ** composite_layer_dzs,
 	size_t * space_count,
 	space_info *** spaces,
+	const unit_scaler & scaler,
 	void (*notify)(char *),
 	void (*warn)(char *),
 	const std::function<bool(const char *)> & element_filter,
@@ -269,7 +270,6 @@ ifcadapter_return_t extract_from_model(
 	number_collection<K> * c,
 	std::vector<element_info *> * shadings)
 {
-	auto scaler = unit_scaler::identity_scaler;
 	char buf[256];
 	*element_count = get_elements(
 		m, 
