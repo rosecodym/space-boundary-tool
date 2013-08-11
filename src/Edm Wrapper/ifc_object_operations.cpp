@@ -7,11 +7,13 @@ using namespace cppw;
 namespace ifc_interface {
 
 bool is_kind_of(const ifc_object & obj, const char * type) {
+	if (obj.data().get_primitive_type() != instance_type) { return false; }
 	try { return Instance(obj.data()).is_kind_of(type); }
 	catch (...) { return false; }
 }
 
 bool is_instance_of(const ifc_object & obj, const char * type) {
+	if (obj.data().get_primitive_type() != instance_type) { return false; }
 	try { return Instance(obj.data()).is_instance_of(type); }
 	catch (...) { return false; }
 }
@@ -22,7 +24,10 @@ bool boolean_field(
 	bool * res)
 {
 	try { 
-		*res = static_cast<bool>(Instance(obj.data()).get(field_name));
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != boolean_type) { return false; }
+		*res = (Boolean)sel;
 		return true;
 	}
 	catch (...) { return false; }
@@ -34,7 +39,10 @@ bool collection_field(
 	std::vector<ifc_object *> * res)
 {
 	try {
-		cppw::Aggregate col = Instance(obj.data()).get(field_name);
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != aggregate_type) { return false; }
+		Aggregate col(sel);
 		model * m = obj.parent_model();
 		assert(col.size() > 0);
 		*res = std::vector<ifc_object *>();
@@ -52,7 +60,8 @@ bool object_field(
 	ifc_object ** res)
 {
 	try {
-		cppw::Select sel = Instance(obj.data()).get(field_name);
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
 		if (sel.is_set()) { 
 			model * m = obj.parent_model();
 			*res = m->take_ownership(ifc_object(sel, m));
@@ -69,7 +78,10 @@ bool real_field(
 	double * res) 
 {
 	try {
-		*res = static_cast<double>(Instance(obj.data()).get(field_name));
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != real_type) { return false; }
+		*res = (Real)sel;
 		return true;
 	}
 	catch (...) { return false; }
@@ -81,8 +93,10 @@ bool string_field(
 	std::string * res)
 {
 	try {
-		String str = Instance(obj.data()).get(field_name);
-		*res = std::string(str.data());
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != string_type) { return false; }
+		*res = std::string(String(sel).data());
 		return true;
 	}
 	catch (...) { return false; }
@@ -96,10 +110,22 @@ bool triple_field(
 	double * c)
 {
 	try {
-		cppw::Aggregate col = Instance(obj.data()).get(field_name);
-		*a = static_cast<double>(col.get_(0));
-		*b = static_cast<double>(col.get_(1));
-		*c = col.size() > 2 ? static_cast<double>(col.get_(2)) : 0.0;
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != aggregate_type) { return false; }
+		Aggregate col(sel);
+		sel = col.get_(0);
+		if (sel.get_primitive_type() != real_type) { return false; }
+		*a = (Real)sel;
+		sel = col.get_(1);
+		if (sel.get_primitive_type() != real_type) { return false; }
+		*b = (Real)sel;
+		if (col.size() > 2) {
+			sel = col.get_(2);
+			if (sel.get_primitive_type() != real_type) { return false; }
+			*c = (Real)sel;
+		}
+		else { *c = 0.0; }
 		return true;
 	}
 	catch (...) { return false; }
@@ -107,7 +133,8 @@ bool triple_field(
 
 bool as_real(const ifc_object & obj, double * res) {
 	try {
-		*res = static_cast<double>(obj.data());
+		if (obj.data().get_primitive_type() != real_type) { return false; }
+		*res = (Real)obj.data();
 		return true;
 	}
 	catch (...) { return false; }
@@ -119,6 +146,7 @@ bool set_field(
 	const char * value)
 {
 	try {
+		if (obj->data().get_primitive_type() != instance_type) { return false; }
 		Application_instance(obj->data()).put(field_name, value);
 		return true;
 	}
@@ -131,6 +159,7 @@ bool set_field(
 	const ifc_object & value)
 {
 	try {
+		if (obj->data().get_primitive_type() != instance_type) { return false; }
 		Application_instance(obj->data()).put(field_name, value.data());
 		return true;
 	}
