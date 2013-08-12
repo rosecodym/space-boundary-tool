@@ -5,10 +5,11 @@
 class approximated_curve {
 public:
 	approximated_curve(
-		const point_2 & p1, 
-		const point_2 & p2,
+		const point_3 & p1, 
+		const point_3 & p2,
+		const direction_3 & normal,
 		double area_on_left,
-		double true_length);
+		double length_ratio);
 
 	direction_3	original_plane_normal() const { return n_; }
 	double		true_area_on_left() const { return area_; }
@@ -20,21 +21,14 @@ public:
 		double eps) const;
 
 	approximated_curve reversed() const {
-		return approximated_curve(p2_, p1_, -n_, length_ratio_, -area_);
+		return approximated_curve(p2_, p1_, -n_, -area_, length_ratio_);
 	}
 	
 	approximated_curve transformed(const transformation_3 & t) const {
-		return approximated_curve(t(p1_), t(p2_), t(n_), length_ratio_, area_);
+		return approximated_curve(t(p1_), t(p2_), t(n_), area_, length_ratio_);
 	}
 
 private:
-	approximated_curve(
-		const point_3 & p1,
-		const point_3 & p2,
-		const direction_3 & normal,
-		double r,
-		double a);
-
 	point_3 p1_;
 	point_3 p2_;
 	direction_3 n_;

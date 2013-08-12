@@ -253,16 +253,16 @@ handle_trimmed_curve(
 		double diff = sense ? angle2 - angle1 : angle1 - angle2;
 		if (diff < 0.0) { diff += 2 * 3.14159; }
 		double true_length = radius * diff;
+		double dist = sqrt(CGAL::to_double((*to - *from).squared_length()));
 		// Formula from http://en.wikipedia.org/wiki/Circle_segment
-		double true_area = radius * radius / 2.0 * (diff - sin(diff));
-		point_2 c12d(c1x, c1y);
-		point_2 c22d(c2x, c2y);
+		double area = radius * radius / 2.0 * (diff - sin(diff));
+		direction_3 n(0.0, 0.0, 1.0);
 		if (sense) {
-			a = approximated_curve(c12d, c22d, -true_area, true_length);
+			a = approximated_curve(*from, *to, n, -area, true_length / dist);
 			return std::make_tuple(*from, *to, a);
 		}
 		else {
-			a = approximated_curve(c22d, c12d, -true_area, true_length);
+			a = approximated_curve(*to, *from, n, -area, true_length / dist);
 			return std::make_tuple(*to, *from, a);
 		}
 	}

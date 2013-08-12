@@ -2,47 +2,18 @@
 
 #include "approximated_curve.h"
 
-namespace {
-
-double distance(const point_2 & a, const point_2 & b) {
-	double ax = CGAL::to_double(a.x());
-	double ay = CGAL::to_double(a.y());
-	double bx = CGAL::to_double(b.x());
-	double by = CGAL::to_double(b.y());
-	return sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
-}
-
-} // namespace
-
 approximated_curve::approximated_curve(
-	const point_2 & p1, 
-	const point_2 & p2,
-	double area_on_left,
-	double true_length)
-	: p1_(p1.x(), p1.y(), 0.0),
-		p2_(p2.x(), p2.y(), 0.0),
-		n_(0.0, 0.0, 1.0),
-		length_ratio_(true_length / distance(p1, p2)),
-		area_(area_on_left)
-{ 
-#ifndef NDEBUG
-	dp1_[0] = CGAL::to_double(p1.x());
-	dp1_[1] = CGAL::to_double(p1.y());
-	dp1_[2] = 0.0;
-	dp2_[0] = CGAL::to_double(p2.x());
-	dp2_[1] = CGAL::to_double(p2.y());
-	dp2_[2] = 0.0;
-#endif
-}
-
-approximated_curve::approximated_curve(
-	const point_3 & p1,
+	const point_3 & p1, 
 	const point_3 & p2,
 	const direction_3 & normal,
-	double r,
-	double a)
-	: p1_(p1), p2_(p2), n_(normal), length_ratio_(r), area_(a)
-{
+	double area_on_left,
+	double length_ratio)
+	: p1_(p1),
+	  p2_(p2),
+	  n_(normal),
+	  length_ratio_(length_ratio),
+	  area_(area_on_left)
+{ 
 #ifndef NDEBUG
 	dp1_[0] = CGAL::to_double(p1.x());
 	dp1_[1] = CGAL::to_double(p1.y());
