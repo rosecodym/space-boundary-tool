@@ -4,6 +4,7 @@
 
 #include "sbt-ifcadapter.h"
 
+#include "geometry_common.h"
 #include "model_operations.h"
 #include "number_collection.h"
 #include "reassign_bounded_spaces.h"
@@ -105,39 +106,102 @@ void gather_geometry_info(
 			total_solids,
 			spaces[i]->geometry);
 	}
-}		
+}	
+
+template <typename ApproximatedCurveRange>
+boost::optional<float> calculate_corrected_area(
+	const ApproximatedCurveRange & as,
+	const polyloop & loop,
+	double eps)
+{
+	// http://geomalgorithms.com/a01-_area.html
+	point curr, next;
+	double a = 0.0;
+	double b = 0.0;
+	double c = 0.0;
+	double area_x = 0.0;
+	double area_y = 0.0;
+	double area_z = 0.0;
+	double area;
+	std::vector<ApproximatedCurveRange::const_iterator> forward_matches;
+	std::vector<ApproximatedCurveRange::const_iterator> reverse_matches;
+	for (size_t i = 0; i < loop.vertex_count; ++i) {
+		curr = loop.vertices[i];
+		next = loop.vertices[(i + 1) % loop.vertex_count];
+		a += (curr.y - next.y) * (curr.z + next.z);
+		b += (curr.z - next.z) * (curr.x + next.x);
+		c += (curr.x - next.x) * (curr.y + next.y);
+		area_x += curr.y * next.z - curr.z * next.y;
+		area_y += curr.x * next.z - curr.z * next.x;
+		area_z += curr.x * next.y - curr.y * next.x;
+		for (auto apx = as.begin(); apx != as.end(); ++apx) {
+			auto modify = apx->matches(curr.x, curr.y, curr.z,
+									   next.x, next.y, next.z,
+				                       eps);
+			if (modify == approximated_curve::FORWARD_MATCH) {
+				forward_matches.push_back(apx);
+				break;
+			}
+			else if (modify == approximated_curve::REVERSE_MATCH) {
+				reverse_matches.push_back(apx);
+				break;
+			}
+		}
+	}
+	if (forward_matches.empty() && reverse_matches.empty()) {
+		return boost::optional<float>();
+	}
+	direction_3 n(a, b, c);
+	a = abs(a);
+	b = abs(b);
+	c = abs(c);
+	double mag = sqrt(a * a + b * b + c * c);
+	if (a >= b && a >= c) { area = abs(area_x / 2 * mag / a); }
+	else if (b >= a && b >= c) { area = abs(area_y / 2 * mag / b); }
+	else if (c >= a && c >= b) { area = abs(area_z / 2 * mag / c); }
+	for (auto apx = as.begin(); apx != as.end(); ++apx) {
+		if (number_collection<K>::are_effectively_perpendicular(
+				n, 
+				apx->original_plane_normal(), 
+				eps))
+		{
+			return static_cast<float>(area * apx->true_length_ratio());
+		}
+	}
+	for (auto m = forward_matches.begin(); m != forward_matches.end(); ++m) {
+		if (share_sense(n, (*m)->original_plane_normal())) {
+			area -= (*m)->true_area_on_left();
+		}
+		else { area += (*m)->true_area_on_left(); }
+	}
+	for (auto m = forward_matches.begin(); m != forward_matches.end(); ++m) {
+		if (share_sense(n, (*m)->original_plane_normal())) {
+			area += (*m)->true_area_on_left();
+		}
+		else { area -= (*m)->true_area_on_left(); }
+	}
+	return static_cast<float>(area);
+}
 
 float * calculate_corrected_areas(
 	space_boundary ** sbs,
 	size_t sb_count,
-	const std::vector<approximated_curve> & approxes,
+	const std::vector<approximated_curve> & as,
 	double eps)
 {
 	std::map<space_boundary *, float> corrected_areas;
 	for (size_t i = 0; i < sb_count; ++i) {
-		auto opp = corrected_areas.find(sbs[i]->opposite);
-		if (opp != corrected_areas.end() && opp->second >= 0.0) {
-			corrected_areas[sbs[i]] = opp->second;
-			continue;
-		}
-		auto geom = sbs[i]->geometry;
-		for (size_t j = 0; j < geom.vertex_count; ++j) {
-			point frm = geom.vertices[j];
-			point to = geom.vertices[(j + 1) % geom.vertex_count];
-			for (auto a = approxes.begin(); a != approxes.end(); ++a) {
-				if (a->matches(frm.x, frm.y, frm.z, to.x, to.y, to.z, eps)) {
-					corrected_areas[sbs[i]] = 100.0;
-					goto next_sb;
-				}
-			}
-		}
-		corrected_areas[sbs[i]] = -1.0;
-next_sb:
-		(void)0;
+		auto corrected = calculate_corrected_area(as, sbs[i]->geometry, eps);
+		assert(!corrected || *corrected >= 0.0);
+		if (corrected) { corrected_areas[sbs[i]] = *corrected; }
 	}
 	float * res = (float *)malloc(sb_count * sizeof(float));
 	for (size_t i = 0; i < sb_count; ++i) {
-		res[i] = corrected_areas[sbs[i]];
+		auto c = corrected_areas.find(sbs[i]);
+		if (c == corrected_areas.end() && sbs[i]->opposite) {
+			c = corrected_areas.find(sbs[i]->opposite);
+		}
+		res[i] = c == corrected_areas.end() ? -1.0f : c->second;
 	}
 	return res;
 }

@@ -4,6 +4,12 @@
 
 class approximated_curve {
 public:
+	enum match_type {
+		NO_MATCH = 0,
+		FORWARD_MATCH,
+		REVERSE_MATCH
+	};
+
 	approximated_curve(
 		const point_3 & p1, 
 		const point_3 & p2,
@@ -15,7 +21,7 @@ public:
 	double		true_area_on_left() const { return area_; }
 	double		true_length_ratio() const { return length_ratio_; }
 
-	bool matches(
+	match_type matches(
 		double x1, double y1, double z1,
 		double x2, double y2, double z2,
 		double eps) const;
