@@ -73,7 +73,7 @@ building_graph create_building_graph(
 	static_assert(
 		std::is_same<BlockRange::value_type, const block *>::value,
 		"The values of the block range passed to create_building_graph must "
-		"be pointers to blocks.");
+		"be of type const block *.");
 
 	typedef building_graph::vertex_descriptor vertex;
 

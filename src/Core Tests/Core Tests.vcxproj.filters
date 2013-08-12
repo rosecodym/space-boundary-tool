@@ -43,6 +43,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="unit\operations\traversal">
+      <UniqueIdentifier>{d37e8f2e-1868-449e-afcd-d65d40a6ef16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Core\src\equality_context.cpp">
@@ -166,6 +169,18 @@
       <Filter>unit\operations\blocking</Filter>
     </ClCompile>
     <ClCompile Include="..\Core\src\poly_builder.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\traversal_tests.cpp">
+      <Filter>unit\operations\traversal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\building_graph.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\extend_path.cpp">
+      <Filter>Recompiled Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Core\src\vertex_wrapper.cpp">
       <Filter>Recompiled Source</Filter>
     </ClCompile>
   </ItemGroup>

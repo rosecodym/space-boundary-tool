@@ -107,12 +107,14 @@
   <ItemGroup>
     <ClCompile Include="..\Core\src\area.cpp" />
     <ClCompile Include="..\Core\src\assign_openings.cpp" />
+    <ClCompile Include="..\Core\src\building_graph.cpp" />
     <ClCompile Include="..\Core\src\build_blocks.cpp" />
     <ClCompile Include="..\Core\src\CreateGuid_64.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Core\src\equality_context.cpp" />
+    <ClCompile Include="..\Core\src\extend_path.cpp" />
     <ClCompile Include="..\Core\src\flatten.cpp" />
     <ClCompile Include="..\Core\src\geometry_common.cpp" />
     <ClCompile Include="..\Core\src\multiview_solid.cpp" />
@@ -128,6 +130,7 @@
     <ClCompile Include="..\Core\src\solid_geometry_util.cpp" />
     <ClCompile Include="..\Core\src\stringification.cpp" />
     <ClCompile Include="..\Core\src\surface_pair.cpp" />
+    <ClCompile Include="..\Core\src\vertex_wrapper.cpp" />
     <ClCompile Include="..\Core\src\wrapped_nef_polygon.cpp" />
     <ClCompile Include="src\area_tests.cpp" />
     <ClCompile Include="src\assign_opening_tests.cpp" />
@@ -142,6 +145,7 @@
     <ClCompile Include="src\complicated_extruded_element.cpp" />
     <ClCompile Include="src\multiview_solid_tests.cpp" />
     <ClCompile Include="src\nef_polygon_util_tests.cpp" />
+    <ClCompile Include="src\traversal_tests.cpp" />
     <ClCompile Include="src\wrapped_nef_polygon_tests.cpp" />
     <ClCompile Include="src\oriented_area_tests.cpp" />
     <ClCompile Include="src\precompiled.cpp">
