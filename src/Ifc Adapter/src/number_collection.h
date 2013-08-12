@@ -84,4 +84,19 @@ public:
 			eps);
 	}
 
+	static bool are_effectively_perpendicular(
+		const direction_3 & a, 
+		const direction_3 & b, 
+		double eps) 
+	{
+		vector_3 v_a = a.to_vector();
+		assert(!CGAL::is_zero(v_a.squared_length()));
+		vector_3 v_b = b.to_vector();
+		assert(!CGAL::is_zero(v_b.squared_length()));
+		auto denominator = v_a.squared_length() * v_b.squared_length();
+		return one_dimensional_equality_context<NT>::is_zero_squared(
+			(v_a * v_b) / denominator,
+			eps);
+	}
+
 };
