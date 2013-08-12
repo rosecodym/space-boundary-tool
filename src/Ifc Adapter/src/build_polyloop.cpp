@@ -172,6 +172,11 @@ handle_trimmed_curve(
 		if (!from || !to) {
 			throw bad_rep_exception("lines trimmed by parameters instead of points are not yet supported");
 		}
+		bool sense;
+		boolean_field(obj, "SenseAgreement", &sense);
+		boost::optional<approximated_curve> no_approx;
+		if (sense) { return std::make_tuple(*from, *to, no_approx); }
+		else { return std::make_tuple(*to, *from, no_approx); }
 	}
 	else { // Per the 2x3 standard, it has to be an IfcCircle
 		boost::optional<double> p1, p2;
@@ -180,9 +185,9 @@ handle_trimmed_curve(
 				from = build_point(**p, s, c);
 			}
 			else { 
-				double p1;
-				as_real(**p, &p1);
-				p1 *= 3.14159 / 180; 
+				double param;
+				as_real(**p, &param);
+				p1 = param * 3.14159 / 180; 
 			}
 		}
 		for (auto p = trim2.begin(); p != trim2.end(); ++p) {
@@ -190,9 +195,9 @@ handle_trimmed_curve(
 				to = build_point(**p, s, c);
 			}
 			else { 
-				double p2;
-				as_real(**p, &p2);
-				p2 *= 3.14159 / 180; 
+				double param;
+				as_real(**p, &param);
+				p2 = param * 3.14159 / 180; 
 			}
 		}
 		double radius;
@@ -201,8 +206,30 @@ handle_trimmed_curve(
 		ifc_object * position;
 		object_field(*basis, "Position", &position);
 		auto t = build_transformation(position, s, c);
-		if (!from) { from = t(point_3(cos(*p1), sin(*p1), 0)); }
-		if (!to) { to = t(point_3(cos(*p2), sin(*p2), 0)); }
+		auto rebuilt = t(point_3(radius * cos(*p1), radius * sin(*p1), 0));
+		if (!from) { from = rebuilt; }
+		else if (p1) { 
+#ifndef NDEBUG
+			double rx = CGAL::to_double(rebuilt.x());
+			double ry = CGAL::to_double(rebuilt.y());
+			double ox = CGAL::to_double(from->x());
+			double oy = CGAL::to_double(from->y());
+			double dist = sqrt((rx - ox) * (rx - ox) + (ry - oy) * (ry - oy));
+			assert(c->is_zero(dist));
+#endif
+		}
+		rebuilt = t(point_3(radius * cos(*p2), radius * sin(*p2), 0));
+		if (!to) { to = rebuilt; }
+		else if (p2) {
+#ifndef NDEBUG
+			double rx = CGAL::to_double(rebuilt.x());
+			double ry = CGAL::to_double(rebuilt.y());
+			double ox = CGAL::to_double(to->x());
+			double oy = CGAL::to_double(to->y());
+			double dist = sqrt((rx - ox) * (rx - ox) + (ry - oy) * (ry - oy));
+			assert(c->is_zero(dist));
+#endif
+		}
 		// While calculating the true area and length is easy using the given
 		// parameters, they aren't always present, so we might as well just
 		// reconstruct them in all cases.
@@ -215,27 +242,30 @@ handle_trimmed_curve(
 		double c1y = CGAL::to_double(c13d.y());
 		double c2x = CGAL::to_double(c23d.x());
 		double c2y = CGAL::to_double(c23d.y());
-		double angle1 = atan2(c1x, c1y);
-		double angle2 = atan2(c2x, c2y);
+		double angle1 = atan2(c1y, c1x);
+		double angle2 = atan2(c2y, c2x);
 		if (angle1 < 0.0) { angle1 += 2 * 3.14159; }
 		if (angle2 < 0.0) { angle2 += 2 * 3.14159; }
 		assert(!p1 || c->is_zero(*p1 - angle1));
 		assert(!p2 || c->is_zero(*p2 - angle2));
-		double diff = angle2 - angle1;
+		bool sense;
+		boolean_field(obj, "SenseAgreement", &sense);
+		double diff = sense ? angle2 - angle1 : angle1 - angle2;
 		if (diff < 0.0) { diff += 2 * 3.14159; }
 		double true_length = radius * diff;
 		// Formula from http://en.wikipedia.org/wiki/Circle_segment
 		double true_area = radius * radius / 2.0 * (diff - sin(diff));
 		point_2 c12d(c1x, c1y);
 		point_2 c22d(c2x, c2y);
-		a = approximated_curve(c12d, c22d, -true_area, true_length);
+		if (sense) {
+			a = approximated_curve(c12d, c22d, -true_area, true_length);
+			return std::make_tuple(*from, *to, a);
+		}
+		else {
+			a = approximated_curve(c22d, c12d, -true_area, true_length);
+			return std::make_tuple(*to, *from, a);
+		}
 	}
-
-	bool sense;
-	boolean_field(obj, "SenseAgreement", &sense);
-	if (sense) { return std::make_tuple(*from, *to, a); }
-	else if (a) { return std::make_tuple(*to, *from, a->reversed()); }
-	else { return std::make_tuple(*to, *from, a); }
 }
 
 polyloop_result from_polyline(
