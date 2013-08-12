@@ -105,6 +105,29 @@ void gather_geometry_info(
 			total_solids,
 			spaces[i]->geometry);
 	}
+}		
+
+float * calculate_corrected_areas(
+	space_boundary ** sbs,
+	size_t sb_count,
+	const std::vector<approximated_curve> & approxes,
+	double eps)
+{
+	float * res = (float *)calloc(sb_count, sizeof(float));
+	for (size_t i = 0; i < sb_count; ++i) {
+		auto geom = sbs[i]->geometry;
+		for (size_t j = 0; j < geom.vertex_count; ++j) {
+			point frm = geom.vertices[j];
+			point to = geom.vertices[(j + 1) % geom.vertex_count];
+			for (auto a = approxes.begin(); a != approxes.end(); ++a) {
+				if (a->matches(frm.x, frm.y, frm.z, to.x, to.y, to.z, eps)) {
+					res[i] -= 1.0;
+					break;
+				}
+			}
+		}
+	}
+	return res;		
 }
 
 } // namespace
@@ -147,6 +170,7 @@ ifcadapter_return_t execute(
 	}
 
 	std::vector<element_info *> shadings;
+	std::vector<approximated_curve> approximated_curves;
 	double lupm = m.length_units_per_meter();
 	unit_scaler scaler(lupm);
 	ifcadapter_return_t res = extract_from_model(
@@ -164,7 +188,8 @@ ifcadapter_return_t execute(
 		create_guid_filter(opts.element_filter, opts.element_filter_count),
 		create_guid_filter(opts.space_filter, opts.space_filter_count),
 		&ctxt,
-		&shadings);
+		&shadings,
+		&approximated_curves);
 	if (res != IFCADAPT_OK) { return res; }
 	else if (*space_count == 0) {
 		opts.error_func("The model has no defined spaces.\n");
@@ -258,7 +283,11 @@ ifcadapter_return_t execute(
 		}
 		*element_count = *element_count + shadings.size();
 
-		*corrected_areas = (float *)calloc(*sb_count, sizeof(float));
+		*corrected_areas = calculate_corrected_areas(
+			*sbs,
+			*sb_count,
+			approximated_curves,
+			EPS_MAGIC);
 
 		return IFCADAPT_OK;
 	}

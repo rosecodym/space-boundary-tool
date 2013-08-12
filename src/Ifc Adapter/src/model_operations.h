@@ -2,6 +2,7 @@
 
 #include "precompiled.h"
 
+#include "approximated_curve.h"
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"
 
@@ -28,7 +29,8 @@ ifcadapter_return_t extract_from_model(
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
-	std::vector<element_info *> * shadings);
+	std::vector<element_info *> * shadings,
+	std::vector<approximated_curve> * approximated_curves);
 
 ifcadapter_return_t add_to_model(
 	ifc_interface::model * model,

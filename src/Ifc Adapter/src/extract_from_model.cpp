@@ -94,10 +94,12 @@ size_t get_elements(
 	const unit_scaler & s, 
 	const std::function<bool(const char *)> & passes_filter, 
 	number_collection<K> * c,
-	std::vector<element_info *> * shadings)
+	std::vector<element_info *> * shadings,
+	std::vector<approximated_curve> * approximated_curves)
 {
 	std::vector<element_info *> infos;
 	std::vector<direction_3> composite_dirs;
+	*approximated_curves = std::vector<approximated_curve>();
 
 	int next_element_id = 1;
 	char buf[256];
@@ -161,6 +163,9 @@ size_t get_elements(
 						*internal_geom->axis3());
 					if (cdir_maybe) { composite_dir = *cdir_maybe; }
 				}
+				boost::copy(
+					internal_geom->approximations(), 
+					std::back_inserter(*approximated_curves));
 			}
 			catch (internal_geometry::bad_rep_exception & ex) {
 				sprintf(
@@ -212,7 +217,8 @@ size_t get_spaces(
 	void (*warn_func)(char *),
 	const unit_scaler & s, 
 	const std::function<bool(const char *)> & space_filter, 
-	number_collection<K> * c)
+	number_collection<K> * c,
+	std::vector<approximated_curve> * approximated_curves)
 {
 	using internal_geometry::get_local_geometry;
 	using internal_geometry::get_globalizer;
@@ -220,6 +226,7 @@ size_t get_spaces(
 		
 	auto ss = m->spaces();
 	std::vector<space_info> space_vector;
+	*approximated_curves = std::vector<approximated_curve>();
 
 	for (auto sp = ss.begin(); sp != ss.end(); ++sp) {
 		std::string id;
@@ -235,6 +242,9 @@ size_t get_spaces(
 				strncpy(this_space.id, id.c_str(), SPACE_ID_MAX_LEN);
 				this_space.geometry = geometry->to_interface_solid();
 				space_vector.push_back(this_space);
+				boost::copy(
+					geometry->approximations(), 
+					std::back_inserter(*approximated_curves));
 				msg_func("done.\n");
 			}
 		}
@@ -268,8 +278,10 @@ ifcadapter_return_t extract_from_model(
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
-	std::vector<element_info *> * shadings)
+	std::vector<element_info *> * shadings,
+	std::vector<approximated_curve> * approximated_curves)
 {
+	std::vector<approximated_curve> element_approxes, space_approxes;
 	char buf[256];
 	*element_count = get_elements(
 		m, 
@@ -282,12 +294,22 @@ ifcadapter_return_t extract_from_model(
 		scaler, 
 		element_filter, 
 		c, 
-		shadings);
+		shadings,
+		&element_approxes);
 	sprintf(buf, "Got %u building elements.\n", *element_count);
 	notify(buf);
-	*space_count = 
-		get_spaces(m, spaces, notify, warn, scaler, space_filter, c);
+	*space_count = get_spaces(
+		m, 
+		spaces, 
+		notify, 
+		warn, 
+		scaler, 
+		space_filter, 
+		c, 
+		&space_approxes);
 	sprintf(buf, "Got %u building spaces.\n", *space_count);
 	notify(buf);
+	*approximated_curves = element_approxes;
+	boost::copy(space_approxes, std::back_inserter(*approximated_curves));
 	return IFCADAPT_OK;
 }
