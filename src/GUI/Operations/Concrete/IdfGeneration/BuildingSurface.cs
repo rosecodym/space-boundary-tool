@@ -48,6 +48,12 @@ namespace GUI.Operations
                 this.plane = sb.Plane();
                 this.construction = construction;
                 this.zoneName = zoneName;
+                if (trueArea.HasValue && trueArea.Value < 0.0)
+                {
+                    throw new ArgumentException(
+                        "True surface areas cannot be less than zero.",
+                        "trueArea");
+                }
                 this.trueArea = trueArea;
             }
 
