@@ -113,21 +113,33 @@ float * calculate_corrected_areas(
 	const std::vector<approximated_curve> & approxes,
 	double eps)
 {
-	float * res = (float *)calloc(sb_count, sizeof(float));
+	std::map<space_boundary *, float> corrected_areas;
 	for (size_t i = 0; i < sb_count; ++i) {
+		auto opp = corrected_areas.find(sbs[i]->opposite);
+		if (opp != corrected_areas.end() && opp->second >= 0.0) {
+			corrected_areas[sbs[i]] = opp->second;
+			continue;
+		}
 		auto geom = sbs[i]->geometry;
 		for (size_t j = 0; j < geom.vertex_count; ++j) {
 			point frm = geom.vertices[j];
 			point to = geom.vertices[(j + 1) % geom.vertex_count];
 			for (auto a = approxes.begin(); a != approxes.end(); ++a) {
 				if (a->matches(frm.x, frm.y, frm.z, to.x, to.y, to.z, eps)) {
-					res[i] -= 1.0;
-					break;
+					corrected_areas[sbs[i]] = 100.0;
+					goto next_sb;
 				}
 			}
 		}
+		corrected_areas[sbs[i]] = -1.0;
+next_sb:
+		(void)0;
 	}
-	return res;		
+	float * res = (float *)malloc(sb_count * sizeof(float));
+	for (size_t i = 0; i < sb_count; ++i) {
+		res[i] = corrected_areas[sbs[i]];
+	}
+	return res;
 }
 
 } // namespace
