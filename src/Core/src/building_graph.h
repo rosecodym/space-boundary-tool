@@ -18,21 +18,11 @@ namespace impl {
 class bg_vertex_data {
 private:
 	boost::variant<space_face *, const block *> data_;
-	// I store area here during construction instead of retrieving it from
-	// data_ on-demand to make it easier in the future to flatten it if that
-	// becomes necessary.
-	geometry_2d::area area_;
 public:
 	bg_vertex_data() { } // Default ctor for graph property bundle
-	explicit bg_vertex_data(space_face * f) 
-		: data_(f),
-		  area_(f->face_area())
-	{ }
-	explicit bg_vertex_data(const block * b) 
-		: data_(b),
-		  area_(b->base_area())
-	{ }
-	const geometry_2d::area & a() const { return area_; }
+	explicit bg_vertex_data(space_face * f) : data_(f) { }
+	explicit bg_vertex_data(const block * b) : data_(b) { }
+	const geometry_2d::area & a() const;
 	double thickness() const;
 	std::string identifier() const;
 	bool represents_halfblock() const;
