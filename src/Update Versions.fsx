@@ -43,7 +43,7 @@ let updateVersions solutionDir =
          "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
         ("Ifc Adapter/src", "add_to_model.cpp", 
          "version_string = \"", "\";", false)
-        ("Core Managed Wrapper/Properties", "AssemblyInfo.cs", 
+        ("Managed Wrapper/Properties", "AssemblyInfo.cs", 
          "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
         ]
 
