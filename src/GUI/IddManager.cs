@@ -16,6 +16,7 @@ namespace GUI
         {
             { EnergyPlusVersion.V710, Properties.Resources.V7_1_0_Energy_ },
             { EnergyPlusVersion.V720, Properties.Resources.V7_2_0_Energy_ },
+            { EnergyPlusVersion.V720C, Properties.Resources.V7_2_0C_Energy_ },
             { EnergyPlusVersion.V800, Properties.Resources.V8_0_0_Energy_ }
         };
 

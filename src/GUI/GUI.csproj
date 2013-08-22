@@ -67,6 +67,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IfcBuildingInformation.cs" />
+    <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV720CCreator.cs" />
     <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV720Creator.cs" />
     <Compile Include="Operations\Concrete\IdfGeneration\Idf Creators\IdfV800Creator.cs" />
     <Compile Include="Operations\Concrete\IdfGeneration\ZoneAssignment.cs" />
@@ -133,6 +134,7 @@
     <None Include="Resources\IFC2X3_final.exp" />
     <None Include="Resources\V7-1-0-Energy+.idd" />
     <None Include="Resources\V7-2-0-Energy+.idd" />
+    <None Include="Resources\V7-2-0C-Energy+.idd" />
     <None Include="Resources\V8-0-0-Energy+.idd" />
   </ItemGroup>
   <ItemGroup>

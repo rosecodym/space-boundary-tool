@@ -14,7 +14,7 @@ namespace GUI.Operations
 {
     partial class IdfGeneration
     {
-        class IdfV800Creator : IdfCreator
+        class IdfV720CCreator : IdfCreator
         {
             private static int ComparePointsForUpperLeftness(Point a, Point b)
             {
@@ -66,7 +66,7 @@ namespace GUI.Operations
                 return res;
             }
 
-            public IdfV800Creator(Idf idf, Action<string> notify) : base(idf, notify) { }
+            public IdfV720CCreator(Idf idf, Action<string> notify) : base(idf, notify) { }
 
             public override void AddBuilding(double northAxis, double loadsConvergence, double tempConvergence, SolarDistribution solarDistribution, BuildingTerrain terrain)
             {
@@ -160,6 +160,12 @@ namespace GUI.Operations
                         surf.Normal.X,
                         surf.Normal.Y,
                         surf.Normal.Z));
+                    if (surf.TrueArea.HasValue)
+                    {
+                        double ca = surf.TrueArea.Value;
+                        obj.Fields["Curved"].Value = "Curved";
+                        obj.Fields["Curved Surface Area"].Value = ca;
+                    }
                 }
             }
 
@@ -168,7 +174,7 @@ namespace GUI.Operations
                 IdfObject obj;
 
                 obj = idf.CreateObject("Version");
-                obj.Fields["Version Identifier"].Value = "8.0";
+                obj.Fields["Version Identifier"].Value = "7.2";
 
                 obj = idf.CreateObject("GlobalGeometryRules");
                 obj.Fields["Starting Vertex Position"].Value = "UpperLeftCorner";
@@ -247,7 +253,7 @@ namespace GUI.Operations
 
             public override void AddMaterial(Material layer)
             {
-                layer.AddToIdfV800(idf);
+                layer.AddToIdfV720(idf);
             }
 
             public override void AddRunPeriod(int startMonth, int startDay, int endMonth, int endDay)
@@ -284,7 +290,7 @@ namespace GUI.Operations
             public override void AddZone(string name)
             {
                 IdfObject obj = idf.CreateObject("Zone");
-                obj.Fields["Name"].Value = 
+                obj.Fields["Name"].Value =
                     name.Replace(",", " |").Replace(";", " |");
             }
         }

@@ -45,6 +45,10 @@ namespace GUI.Operations
                 {
                     return new IdfV720Creator(idf, notify);
                 }
+                else if (version == EnergyPlusVersion.V720C)
+                {
+                    return new IdfV720CCreator(idf, notify);
+                }
                 else if (version == EnergyPlusVersion.V800)
                 {
                     return new IdfV800Creator(idf, notify);
