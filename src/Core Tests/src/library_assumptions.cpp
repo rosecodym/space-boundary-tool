@@ -105,9 +105,19 @@ const size_t RIGHT = 2;
 const size_t TOP = 3;
 
 TEST(LibraryAssumptions, PolyhedronAssembly) {
-	// i'm not really sure what this test shows
-	// but it sure shows something
-	class builder : public CGAL::Modifier_base<polyhedron_3::HDS> {
+	// This test is supposed to evaluate and test how polyhedron assembly in
+	// CGAL works. The idea is this: assemble a polyhedron from some faces, and
+	// check both the mark of the "internal" volume and the orientations of the
+	// halffacets selected by placing a point directly on a facet. Then, reverse
+	// the assembling faces and perform the same checks.
+
+	// Unfortunately, there is some evidence that CGAL does not behave 
+	// consistently! I have tested this on two computers. In both (flipped and
+	// unflipped) cases, the enclosed volume has been marked, but in one case
+	// the halffacet selected was oriented one way, and in the other case it
+	// was the other way. This deserves a proper bug report to the CGAL mailing
+	// list.
+	class builder : public CGAL::Modifier_base<polyhedron_3::HDS> {             
 	private:
 		std::vector<point_3> points;
 		std::vector<std::deque<size_t>> indices;
@@ -147,6 +157,7 @@ TEST(LibraryAssumptions, PolyhedronAssembly) {
 		}
 	};
 
+	// Assemble the polygon as normal (face normals out).
 	polyhedron_3 poly;
 	builder b(false);
 	poly.delegate(b);
@@ -155,17 +166,16 @@ TEST(LibraryAssumptions, PolyhedronAssembly) {
 	CGAL::Object_handle o = nef.locate(point_3(0.1, 0.1, 0.1));
 	nef_polyhedron_3::Volume_const_handle v;
 	ASSERT_TRUE(CGAL::assign(v, o));
+	// The enclosed volume appears to be marked.
 	EXPECT_TRUE(v->mark());
 
 	nef_polyhedron_3::Halffacet_const_handle f;
 	o = nef.locate(point_3(0.25, 0, 0.25));
 	ASSERT_TRUE(CGAL::assign(f, o));
-	// here's where i would check the face normal, but i have no idea how CGAL
-	// decides which halffacet to return
+	// Awhile ago I deleted the check for the halffacet normal because I wasn't
+	// sure what it was supposed to be.
 
-	// see, it looks like whatever the orientation of the faces, the nef 
-	// polygon constructor will just "figure it out." this is with respect to 
-	// the mark of the internal volume
+	// Now, construct the solid from its reversed faces (face normals in).
 	polyhedron_3 rev;
 	b = builder(true);
 	rev.delegate(b);
@@ -173,12 +183,14 @@ TEST(LibraryAssumptions, PolyhedronAssembly) {
 	EXPECT_EQ(4, nef.number_of_vertices());
 	o = nef.locate(point_3(0.1, 0.1, 0.1));
 	ASSERT_TRUE(CGAL::assign(v, o));
+	// The enclosed volume is still marked.
 	EXPECT_TRUE(v->mark());
 	
-	// it's *not* with respect to the orientation of the face normals though, 
-	// so i have no idea what's going on
+	// On one machine I've checked, the selected halffacet points in. On 
+	// another, it points out, and this test fails on the last predicate.
 	o = nef.locate(point_3(0.25, 0, 0.25));
 	ASSERT_TRUE(CGAL::assign(f, o));
+	// Mystery predicate follows:
 	EXPECT_EQ(direction_3(0, 1, 0), f->plane().orthogonal_direction());
 }
 
