@@ -34,3 +34,4 @@ run.bat
 stacks.txt
 *.props
 installer/
+*.metagen
