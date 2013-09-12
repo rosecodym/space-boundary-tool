@@ -36,3 +36,6 @@ stacks.txt
 installer/
 *.metagen
 *.exp
+#Keep EDM Wrapper import libraries
+!Edm Wrapper.Debug.lib
+!Edm Wrapper.Release.lib
