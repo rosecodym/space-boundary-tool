@@ -35,3 +35,4 @@ stacks.txt
 *.props
 installer/
 *.metagen
+*.exp
