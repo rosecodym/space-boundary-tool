@@ -14,8 +14,8 @@ open System.Text.RegularExpressions
 
 let updateVersions solutionDir =
     let major = 1
-    let minor = 5
-    let revision = 9
+    let minor = 6
+    let revision = 0
 
     let shortString = sprintf "%i.%i.%i" major minor revision
     let fullString = sprintf "%i.%i.%i.0" major minor revision
@@ -43,7 +43,7 @@ let updateVersions solutionDir =
          "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
         ("Ifc Adapter/src", "add_to_model.cpp", 
          "version_string = \"", "\";", false)
-        ("Core Managed Wrapper/Properties", "AssemblyInfo.cs", 
+        ("Managed Wrapper/Properties", "AssemblyInfo.cs", 
          "\[assembly: Assembly(File)?Version\(\"", "\"\)\]", true)
         ]
 
