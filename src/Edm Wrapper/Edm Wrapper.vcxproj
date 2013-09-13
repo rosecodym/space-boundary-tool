@@ -46,10 +46,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
+    <OutDir>$(SolutionDir)\..\dependencies\lib\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
+    <OutDir>$(SolutionDir)\..\dependencies\lib\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -65,10 +67,8 @@
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PostBuildEvent>
-      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
-for %%I in ("$(TargetPath)" "$(TargetDir)$(TargetName).lib") ^
-do copy %%I "$(SolutionDir)..\dependencies\lib\"</Command>
-      <Message>Removing EDM license key and copying output to dependency directory</Message>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
+      <Message>Removing EDM license key</Message>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
@@ -90,10 +90,8 @@ do copy %%I "$(SolutionDir)..\dependencies\lib\"</Command>
       <EmbedManagedResourceFile>$(SolutionDir)..\res\IFC2X3_final.exp;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PostBuildEvent>
-      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"
-for %%I in ("$(TargetPath)" "$(TargetDir)$(TargetName).lib") ^
-do copy %%I "$(SolutionDir)..\dependencies\lib\"</Command>
-      <Message>Removing EDM license key and copying output to dependency directory</Message>
+      <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --remove "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
+      <Message>Removing EDM license key</Message>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>fsi --exec --nologo "$(ProjectDir)Manipulate EDM License Key.fsx" --inject "$(EdmLicenseKey)" "$(ProjectDir)EdmDatabase.h"</Command>
