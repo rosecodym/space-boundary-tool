@@ -48,7 +48,7 @@ public:
 	point_3 request_point(double x, double y, double z) { return point_3(xs_3d.request(x), ys_3d.request(y), zs_3d.request(z)); }
 	NT request_height(double z) { return heights.request(z); }
 
-	bool is_zero(double d) { 
+	bool is_zero(double d) const { 
 		return one_dimensional_equality_context<NT>::is_zero(d, tolerance); 
 	}
 
