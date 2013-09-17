@@ -65,7 +65,7 @@ loop approximate_circle(
 	// lie in a plane parallel to the xy plane.
 	double r;
 	real_field(circle_like, "Radius", &r);
-	double diff = sqrt(3.14159) * r / 2;
+	double diff = sqrt(M_PI) * r / 2;
 	ifc_object * pos;
 	object_field(circle_like, "Position", &pos);
 	ifc_object * center;
@@ -187,7 +187,7 @@ handle_trimmed_curve(
 			else { 
 				double param;
 				as_real(**p, &param);
-				p1 = param * 3.14159 / 180; 
+				p1 = param * M_PI / 180; 
 			}
 		}
 		for (auto p = trim2.begin(); p != trim2.end(); ++p) {
@@ -197,7 +197,7 @@ handle_trimmed_curve(
 			else { 
 				double param;
 				as_real(**p, &param);
-				p2 = param * 3.14159 / 180; 
+				p2 = param * M_PI / 180; 
 			}
 		}
 		double radius;
@@ -249,9 +249,9 @@ handle_trimmed_curve(
 		bool sense;
 		boolean_field(obj, "SenseAgreement", &sense);
 		double raw = sense ? angle2 - angle1 : angle1 - angle2;
-		double diff = fmod(fmod(raw, 2 * 3.14159) + 2 * 3.14159, 2 * 3.14159);
+		double diff = fmod(fmod(raw, M_2_PI) + 2 * M_2_PI, 2 * M_2_PI);
 		assert(diff >= 0.0);
-		assert(diff < 2 * 3.14159);
+		assert(diff < 2 * M_2_PI);
 		double true_length = radius * diff;
 		double dist = sqrt(CGAL::to_double((*to - *from).squared_length()));
 		// Formula from http://en.wikipedia.org/wiki/Circle_segment
