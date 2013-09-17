@@ -235,7 +235,7 @@ ifcadapter_return_t execute(
 	*sbs = nullptr;
 	*corrected_areas = nullptr;
 	if (!input_filename) { return IFCADAPT_INVALID_ARGS; }
-	number_collection<K> ctxt(EPS_MAGIC / 20); // magic divided by magic
+	number_collection<K> ctxt(EPS_MAGIC);
 	number_collection<iK> output_ctxt(EPS_MAGIC);
 	notify(fmt("Processing file %s.\n") % input_filename);
 
