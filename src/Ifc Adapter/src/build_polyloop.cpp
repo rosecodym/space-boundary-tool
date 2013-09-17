@@ -244,14 +244,14 @@ handle_trimmed_curve(
 		double c2y = CGAL::to_double(c23d.y());
 		double angle1 = atan2(c1y, c1x);
 		double angle2 = atan2(c2y, c2x);
-		if (angle1 < 0.0) { angle1 += 2 * 3.14159; }
-		if (angle2 < 0.0) { angle2 += 2 * 3.14159; }
-		assert(!p1 || c->is_zero(*p1 - angle1));
-		assert(!p2 || c->is_zero(*p2 - angle2));
+		assert(!p1 || angles_equal(*p1, angle1, *c));
+		assert(!p2 || angles_equal(*p2, angle2, *c));
 		bool sense;
 		boolean_field(obj, "SenseAgreement", &sense);
-		double diff = sense ? angle2 - angle1 : angle1 - angle2;
-		if (diff < 0.0) { diff += 2 * 3.14159; }
+		double raw = sense ? angle2 - angle1 : angle1 - angle2;
+		double diff = fmod(fmod(raw, 2 * 3.14159) + 2 * 3.14159, 2 * 3.14159);
+		assert(diff >= 0.0);
+		assert(diff < 2 * 3.14159);
 		double true_length = radius * diff;
 		double dist = sqrt(CGAL::to_double((*to - *from).squared_length()));
 		// Formula from http://en.wikipedia.org/wiki/Circle_segment

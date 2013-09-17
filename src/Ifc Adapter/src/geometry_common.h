@@ -76,3 +76,9 @@ inline bool share_sense(const direction_3 & a, const direction_3 & b) {
 	NT sep = a.to_vector().squared_length() + b.to_vector().squared_length();
 	return combined > sep; 
 }
+
+inline bool angles_equal(double a, double b, const number_collection<K> & c) {
+	double dx = cos(b) - cos(a);
+	double dy = sin(b) - sin(a);
+	return c.is_zero(sqrt(dx * dx + dy * dy));
+}
