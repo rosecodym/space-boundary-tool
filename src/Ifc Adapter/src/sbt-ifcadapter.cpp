@@ -363,7 +363,7 @@ ifcadapter_return_t execute(
 			*sbs,
 			*sb_count,
 			approximated_curves,
-			EPS_MAGIC);
+			EPS_MAGIC * 10);
 
 		return IFCADAPT_OK;
 	}
