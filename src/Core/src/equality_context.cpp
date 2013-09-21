@@ -16,9 +16,6 @@ void equality_context::init_constants()
 	xs_3d.request(0.0); xs_3d.request(1.0);
 	ys_3d.request(0.0); ys_3d.request(1.0);
 	zs_3d.request(0.0); zs_3d.request(1.0);
-	snap(direction_3(1.0, 0.0, 0.0));
-	snap(direction_3(0.0, 1.0, 0.0));
-	snap(direction_3(0.0, 0.0, 1.0));
 	request_orientation(direction_3(1, 0, 0));
 	request_orientation(direction_3(0, 1, 0));
 	request_orientation(direction_3(0, 0, 1));
@@ -27,22 +24,10 @@ void equality_context::init_constants()
 direction_3 equality_context::snap(const direction_3 & d) {
 	using CGAL::is_zero;
 	assert(!(is_zero(d.dx()) && is_zero(d.dy()) && is_zero(d.dz())));
-	vector_3 v = geometry_common::normalize(d.to_vector());
-	for (auto p = directions.begin(); p != directions.end(); ++p) {
-		if (p->first == d) {
-			return d;
-		}
-		if (is_zero_squared(CGAL::cross_product(p->second, v).squared_length(), tolerance / 100)) {
-			if (geometry_common::share_sense(d, p->first)) {
-				return p->first;
-			}
-			else {
-				return -p->first;
-			}
-		}
-	}
-	directions.push_back(std::make_pair(d, v));
-	return d;
+	orientation * o;
+	bool sense_match;
+	std::tie(o, sense_match) = this->request_orientation(d);
+	return sense_match ? o->direction() : -o->direction();
 }
 
 polygon_2 equality_context::snap(const polygon_2 & poly) {
