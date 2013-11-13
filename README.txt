@@ -6,7 +6,7 @@ If all you're looking for is the binary, it can be downloaded from https://gaia.
 
 SBT requires Microsoft Visual Studio 2010 to build, and has two dependencies you'll need to acquire on your own:
 
-Boost 1.47 - retrievable from http://www.boost.org/.
+Boost 1.47 - retrievable from http://www.boost.org/. While SBT requires two Boost binaries, they are provided in /dependencies, so you just need to get the header-only libraries.
 LEDA - retrievable from http://www.algorithmic-solutions.com/leda/index.htm. Only the free edition has been tested with SBT.
 
 Once you have these, place a Visual Studio Property Sheet named "Dependencies.props" in src/ and set the following user-defined macros:
