@@ -9,12 +9,8 @@ SBT requires Microsoft Visual Studio 2010 to build, and has two dependencies you
 Boost 1.47 - retrievable from http://www.boost.org/. While SBT requires two Boost binaries, they are provided in /dependencies, so you just need to get the header-only libraries.
 LEDA - retrievable from http://www.algorithmic-solutions.com/leda/index.htm. Only the free edition has been tested with SBT.
 
-Once you have these, place a Visual Studio Property Sheet named "Dependencies.props" in src/ and set the following user-defined macros:
-BoostDir - the root directory for your Boost installation.
-LedaDir - the root directory for your LEDA installation.
-
-Refer to http://msdn.microsoft.com/en-us/library/vstudio/669zx6zc(v=vs.100).aspx for instructions on how to set up Property Sheets. Once this step is done, everything* should build.
+Once you have these installed, you'll need to configure their locations in any unmanaged projects you wish to build. This probably means these projects: Core, Core Tests, Ifc Adapter. The properties to set are in Configuration Properties > SBT Dependencies. After doing so, everything* should build.
 
 Direct questions to sbt-support@lbl.gov.
 
-*Note that the "Edm Wrapper" project will not be buildable unless you happen to have an EDM license. EDM is a Jotne product that we use for IFC interaction. The "Edm Wrapper" project cripples this software so that we can distribute it so that you can build SBT on your own. Everything else in SBT can be built, though, as a working Edm Wrapper binary (as well as its dependencies) is located in /dependencies. Issuing a "Build All" command for the solution will not attempt to build the Edm Wrapper. If you happen to have an EDM license of your own, you can build and tinker with the Edm Wrapper yourself by placing a property sheet named "EDM Settings.props" in src/Edm Wrapper/ with the user-defined macros EdmDir (pointing to the directory of your EDM installation that contains developerseat/) and EdmLicenseKey (containing your license key).
+*Note that the "Edm Wrapper" project will not be buildable unless you happen to have an EDM license. EDM is a Jotne product that we use for IFC interaction. The "Edm Wrapper" project cripples this software so that we can distribute it so that you can build SBT on your own. Everything else in SBT can be built, though, as a working Edm Wrapper binary (as well as its dependencies) is located in /dependencies. Issuing a "Build All" command for the solution will not attempt to build the Edm Wrapper. If you happen to have an EDM license of your own, you can build and tinker with the Edm Wrapper yourself by configuring the relevant properties in the SBT Dependencies section of Edm Wrapper's properties page.

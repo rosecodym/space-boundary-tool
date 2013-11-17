@@ -1,0 +1,28 @@
+<Rule Name="DependencyConfig"
+    DisplayName="SBT Dependencies"
+    Order="1"
+    PageTemplate="tool"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile" ItemType="" HasConfigurationCondition="true" />
+  </Rule.DataSource>
+
+  <Rule.Categories>
+    <Category Name="CommonDeps" DisplayName="Common" Description="General build configuration" />
+  </Rule.Categories>
+	
+<StringProperty
+    Name="LedaDir"
+    Category="CommonDeps"
+    DisplayName="LEDA root path"
+    Description="LEDA root path. (Set to the directory containing incl/, leda_md.dll, and leda_mdd.dll)."
+    />
+
+  <StringProperty
+    Name="BoostDir"
+    Category="CommonDeps"
+    DisplayName="Boost 1.47 root path"
+    Description="Boost 1.47 root path. (Set to the directory containing boost/)."
+    />
+</Rule>
