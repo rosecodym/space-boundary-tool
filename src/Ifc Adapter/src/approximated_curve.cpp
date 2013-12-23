@@ -22,6 +22,7 @@ approximated_curve::approximated_curve(
 	dp2_[1] = CGAL::to_double(p2.y());
 	dp2_[2] = CGAL::to_double(p2.z());
 #endif
+	assert(length_ratio >= 1.0);
 }
 
 approximated_curve::match_type approximated_curve::matches(

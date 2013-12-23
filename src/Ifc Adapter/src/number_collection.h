@@ -91,11 +91,12 @@ public:
 	{
 		vector_3 v_a = a.to_vector();
 		assert(!CGAL::is_zero(v_a.squared_length()));
+		v_a = v_a / CGAL::sqrt(v_a.squared_length());
 		vector_3 v_b = b.to_vector();
 		assert(!CGAL::is_zero(v_b.squared_length()));
-		auto denominator = v_a.squared_length() * v_b.squared_length();
+		v_b = v_b / CGAL::sqrt(v_b.squared_length());
 		return one_dimensional_equality_context<NT>::is_zero_squared(
-			(v_a * v_b) / denominator,
+			v_a * v_b,
 			eps);
 	}
 

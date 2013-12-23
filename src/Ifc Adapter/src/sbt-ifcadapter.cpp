@@ -122,7 +122,6 @@ boost::optional<float> calculate_corrected_area(
 	double area_x = 0.0;
 	double area_y = 0.0;
 	double area_z = 0.0;
-	double area;
 	std::vector<ApproximatedCurveRange::const_iterator> forward_matches;
 	std::vector<ApproximatedCurveRange::const_iterator> reverse_matches;
 	for (size_t i = 0; i < loop.vertex_count; ++i) {
@@ -156,31 +155,38 @@ boost::optional<float> calculate_corrected_area(
 	b = abs(b);
 	c = abs(c);
 	double mag = sqrt(a * a + b * b + c * c);
-	if (a >= b && a >= c) { area = abs(area_x / 2 * mag / a); }
-	else if (b >= a && b >= c) { area = abs(area_y / 2 * mag / b); }
-	else if (c >= a && c >= b) { area = abs(area_z / 2 * mag / c); }
-	for (auto apx = as.begin(); apx != as.end(); ++apx) {
+	double orig_area;
+	double area_change = 0.0;
+	if (a >= b && a >= c) { orig_area = abs(area_x / 2 * mag / a); }
+	else if (b >= a && b >= c) { orig_area = abs(area_y / 2 * mag / b); }
+	else /*if (c >= a && c >= b)*/ { orig_area = abs(area_z / 2 * mag / c); }
+	for (auto m = forward_matches.begin(); m != forward_matches.end(); ++m) {
 		if (number_collection<K>::are_effectively_perpendicular(
-				n, 
-				apx->original_plane_normal(), 
-				eps))
+			n,
+			(*m)->original_plane_normal(),
+			eps))
 		{
-			return static_cast<float>(area * apx->true_length_ratio());
+			return static_cast<float>(orig_area * (*m)->true_length_ratio());
 		}
-	}
-	for (auto m = forward_matches.begin(); m != forward_matches.end(); ++m) {
-		if (share_sense(n, (*m)->original_plane_normal())) {
-			area -= (*m)->true_area_on_left();
+		else if (share_sense(n, (*m)->original_plane_normal())) {
+			area_change -= (*m)->true_area_on_left();
 		}
-		else { area += (*m)->true_area_on_left(); }
+		else { area_change += (*m)->true_area_on_left(); }
 	}
-	for (auto m = forward_matches.begin(); m != forward_matches.end(); ++m) {
-		if (share_sense(n, (*m)->original_plane_normal())) {
-			area += (*m)->true_area_on_left();
+	for (auto m = reverse_matches.begin(); m != reverse_matches.end(); ++m) {
+		if (number_collection<K>::are_effectively_perpendicular(
+			n,
+			(*m)->original_plane_normal(),
+			eps))
+		{
+			return static_cast<float>(orig_area * (*m)->true_length_ratio());
 		}
-		else { area -= (*m)->true_area_on_left(); }
+		else if (share_sense(n, (*m)->original_plane_normal())) {
+			area_change += (*m)->true_area_on_left();
+		}
+		else { area_change -= (*m)->true_area_on_left(); }
 	}
-	return static_cast<float>(area);
+	return static_cast<float>(orig_area + area_change);
 }
 
 float * calculate_corrected_areas(

@@ -249,13 +249,14 @@ handle_trimmed_curve(
 		bool sense;
 		boolean_field(obj, "SenseAgreement", &sense);
 		double raw = sense ? angle2 - angle1 : angle1 - angle2;
-		double diff = fmod(fmod(raw, M_2_PI) + 2 * M_2_PI, 2 * M_2_PI);
-		assert(diff >= 0.0);
-		assert(diff < 2 * M_2_PI);
-		double true_length = radius * diff;
+		double circles_removed = fmod(raw, 2 * M_PI);
+		double pos_diff = fmod(circles_removed + 2 * M_PI, 2 * M_PI);
+		assert(pos_diff >= 0.0);
+		assert(pos_diff < 2 * M_PI);
+		double true_length = radius * pos_diff;
 		double dist = sqrt(CGAL::to_double((*to - *from).squared_length()));
 		// Formula from http://en.wikipedia.org/wiki/Circle_segment
-		double area = radius * radius / 2.0 * (diff - sin(diff));
+		double area = radius * radius / 2.0 * (pos_diff - sin(pos_diff));
 		direction_3 n(0.0, 0.0, 1.0);
 		if (sense) {
 			a = approximated_curve(*from, *to, n, -area, true_length / dist);
