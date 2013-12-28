@@ -44,7 +44,6 @@ bool collection_field(
 		if (sel.get_primitive_type() != aggregate_type) { return false; }
 		Aggregate col(sel);
 		model * m = obj.parent_model();
-		assert(col.size() > 0);
 		*res = std::vector<ifc_object *>();
 		for (col.move_first(); col.move_next(); ) {
 			res->push_back(m->take_ownership(ifc_object(col.get_(), m)));
