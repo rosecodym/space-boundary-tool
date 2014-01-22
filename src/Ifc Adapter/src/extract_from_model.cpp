@@ -101,7 +101,6 @@ size_t get_elements(
 	std::vector<direction_3> composite_dirs;
 	*approximated_curves = std::vector<approximated_curve>();
 
-	int next_element_id = 1;
 	char buf[256];
 
 	auto is_ceiling = [](const ifc_object & o) -> bool {
@@ -181,10 +180,23 @@ size_t get_elements(
 			strncpy(info->name, guid.c_str(), ELEMENT_NAME_MAX_LEN);
 			info->type = type;
 			info->geometry = interface_geom;
-			info->id = next_element_id++;
+			// info.id is poorly named. It represents the *material* id of the
+			// element, and will be used by construction layers to identify this
+			// element as the source of the layer material. The lookup is 
+			// performed by treating the id as the index of the element in the
+			// elements array; as such, the id must match the object's index!
+			// Additionally, it shouldn't be needed for shading objects, since
+			// they don't participate in construction assemblies. So we'll 
+			// assign -1 to indicate "unset" first:
+			info->id = -1;
 			if (element_is_shading) { shadings->push_back(info); }
 			else {
+				// Then, if the element is a construction-participating element
+				// (instead of a shading), we'll synchronize the indices:
 				infos.push_back(info);
+				infos.back()->id = infos.size();
+				// The id is technically offset from the index by 1 for
+				// historical reasons.
 				composite_dirs.push_back(composite_dir);
 			}
 			msg_func("done.\n");
