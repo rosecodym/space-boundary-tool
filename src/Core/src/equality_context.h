@@ -18,8 +18,6 @@ private:
 	one_dimensional_equality_context heights;
 	std::vector<std::unique_ptr<orientation>> orientations;
 
-	std::vector<std::pair<direction_3, vector_3>> directions;
-
 	void init_constants();
 
 	equality_context(const equality_context & disabled);

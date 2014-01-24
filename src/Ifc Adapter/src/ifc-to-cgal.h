@@ -43,15 +43,20 @@ CGAL::Aff_transformation_3<KernelT> build_transformation(
 	typedef CGAL::Aff_transformation_3<KernelT> result_t;
 	if (obj) {
 		if (is_instance_of(*obj, "IfcLocalPlacement")) {
-			auto relTo = object_field(*obj, "PlacementRelTo");
-			auto from = object_field(*obj, "RelativePlacement");
+			ifc_interface::ifc_object * rel_to;
+			object_field(*obj, "PlacementRelTo", &rel_to);
+			ifc_interface::ifc_object * from;
+			object_field(*obj, "RelativePlacement", &from);
 			return 
-				build_transformation(relTo, s, c) *
+				build_transformation(rel_to, s, c) *
 				build_transformation(from, s, c);
 		}
 		else if (is_instance_of(*obj, "IfcAxis2Placement2D")) {
-			auto loc = build_point(*object_field(*obj, "Location"), s, c);
-			auto p = collection_field(*obj, "P");
+			ifc_interface::ifc_object * loc_obj;
+			object_field(*obj, "Location", &loc_obj);
+			auto loc = build_point(*loc_obj, s, c);
+			std::vector<ifc_interface::ifc_object *> p;
+			collection_field(*obj, "P", &p);
 			auto xdir = build_direction(*p[0], c);
 			auto ydir = build_direction(*p[1], c);
 			auto xcol = normalize(xdir.vector());
@@ -62,8 +67,11 @@ CGAL::Aff_transformation_3<KernelT> build_transformation(
 							xcol.z(), ycol.z(), zcol.z(), loc.z());
 		}
 		else if (is_instance_of(*obj, "IfcAxis2Placement3D")) {
-			auto loc = build_point(*object_field(*obj, "Location"), s, c);
-			auto p = collection_field(*obj, "P");
+			ifc_interface::ifc_object * loc_obj;
+			object_field(*obj, "Location", &loc_obj);
+			auto loc = build_point(*loc_obj, s, c);
+			std::vector<ifc_interface::ifc_object *> p;
+			collection_field(*obj, "P", &p);
 			auto xdir = build_direction(*p[0], c);
 			auto ydir = build_direction(*p[1], c);
 			auto zdir = build_direction(*p[2], c);
@@ -75,13 +83,19 @@ CGAL::Aff_transformation_3<KernelT> build_transformation(
 							xcol.z(), ycol.z(), zcol.z(), loc.z());
 		}
 		else if (is_instance_of(*obj, "IfcPlane")) {
-			return build_transformation(object_field(*obj, "Position"), s, c);
+			ifc_interface::ifc_object * pos;
+			object_field(*obj, "Position", &pos);
+			return build_transformation(pos, s, c);
 		}
 		else if (is_instance_of(*obj, "IfcCartesianTransformationOperator3D")) 
 		{
-			auto loc = build_point(*object_field(*obj, "LocalOrigin"), s, c);
-			auto p = collection_field(*obj, "U");
-			double scale = real_field(*obj, "Scl");
+			ifc_interface::ifc_object * loc_obj;
+			object_field(*obj, "LocalOrigin", &loc_obj);
+			auto loc = build_point(*loc_obj, s, c);
+			std::vector<ifc_interface::ifc_object *> p;
+			collection_field(*obj, "U", &p);
+			double scale;
+			real_field(*obj, "Scl", &scale);
 			auto xdir = build_direction(*p[0], c);
 			auto ydir = build_direction(*p[1], c);
 			auto zdir = build_direction(*p[2], c);

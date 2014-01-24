@@ -212,6 +212,7 @@ namespace GUI
                 { 
                     EnergyPlusVersion.V710,
                     EnergyPlusVersion.V720,
+                    EnergyPlusVersion.V720C,
                     EnergyPlusVersion.V800
                 });
             }

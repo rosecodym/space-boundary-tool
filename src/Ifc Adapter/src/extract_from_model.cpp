@@ -23,14 +23,18 @@ T ** create_list(size_t count) {
 }
 
 bool is_shading(const ifc_object & obj) {
-	auto name = string_field(obj, "Name");
+	std::string name;
+	string_field(obj, "Name", &name);
 	if (strstr(name.c_str(), "Shading")) { return true; }
 
-	auto defined_by = collection_field(obj, "IsDefinedBy");
+	std::vector<ifc_object *> defined_by;
+	collection_field(obj, "IsDefinedBy", &defined_by);
 	for (auto d = defined_by.begin(); d != defined_by.end(); ++d) {
 		if (is_instance_of(**d, "IfcRelDefinesByProperties")) {
-			auto pset = object_field(**d, "RelatingPropertyDefinition");
-			auto name = string_field(*pset, "Name");
+			ifc_object * pset;
+			object_field(**d, "RelatingPropertyDefinition", &pset);
+			std::string name;
+			string_field(*pset, "Name", &name);
 			if (strstr(name.c_str(), "ElementShading")) {
 				return true;
 			}
@@ -40,11 +44,13 @@ bool is_shading(const ifc_object & obj) {
 }
 
 ifc_object * get_related_opening(const ifc_object & fen) {
-	auto fills_voids = collection_field(fen, "FillsVoids");
+	std::vector<ifc_object *> fills_voids;
+	collection_field(fen, "FillsVoids", &fills_voids);
+	ifc_object * res = nullptr;
 	if (fills_voids.size() == 1) {
-		return object_field(*fills_voids.front(), "RelatingOpeningElement");
+		object_field(*fills_voids.front(), "RelatingOpeningElement", &res);
 	}
-	else { return nullptr; }
+	return res;
 }
 
 boost::optional<direction_3> get_composite_dir(
@@ -54,13 +60,16 @@ boost::optional<direction_3> get_composite_dir(
 	const direction_3 & axis3) 
 {
 	if (!is_kind_of(obj, "IfcWindow")) {
-		auto rel_assoc = collection_field(obj, "HasAssociations");
+		std::vector<ifc_object *> rel_assoc;
+		collection_field(obj, "HasAssociations", &rel_assoc);
 		for (auto o = rel_assoc.begin(); o != rel_assoc.end(); ++o) {
 			if (is_kind_of(**o, "IfcRelAssociatesMaterial")) {
-				auto mat = object_field(**o, "RelatingMaterial");
+				ifc_object * mat;
+				object_field(**o, "RelatingMaterial", &mat);
 				if (is_kind_of(*mat, "IfcMaterialLayerSetUsage")) {
-					auto dir = string_field(*mat, "LayerSetDirection");
-					auto sense = string_field(*mat, "DirectionSense");
+					std::string dir, sense;
+					string_field(*mat, "LayerSetDirection", &dir);
+					string_field(*mat, "DirectionSense", &sense);
 					direction_3 res =
 						dir == "AXIS1" ? axis1 :
 						dir == "AXIS2" ? axis2 :
@@ -85,17 +94,20 @@ size_t get_elements(
 	const unit_scaler & s, 
 	const std::function<bool(const char *)> & passes_filter, 
 	number_collection<K> * c,
-	std::vector<element_info *> * shadings)
+	std::vector<element_info *> * shadings,
+	std::vector<approximated_curve> * approximated_curves)
 {
 	std::vector<element_info *> infos;
 	std::vector<direction_3> composite_dirs;
+	*approximated_curves = std::vector<approximated_curve>();
 
-	int next_element_id = 1;
 	char buf[256];
 
 	auto is_ceiling = [](const ifc_object & o) -> bool {
 		if (!is_kind_of(o, "IfcCovering")) { return false; }
-		return string_field(o, "PredefinedType") == "CEILING";
+		std::string type;
+		string_field(o, "PredefinedType", &type);
+		return type == "CEILING";
 	};
 
 	auto bldg_elems = m->building_elements();
@@ -108,7 +120,8 @@ size_t get_elements(
 			is_kind_of(**e, "IfcDoor") ? DOOR :
 			is_kind_of(**e, "IfcWindow") ? WINDOW : 
 			is_ceiling(**e) ? SLAB : UNKNOWN;
-		auto guid = string_field(**e, "GlobalId");
+		std::string guid;
+		string_field(**e, "GlobalId", &guid);
 		if (type != UNKNOWN && passes_filter(guid.c_str())) {
 			sprintf(buf, "Extracting element %s...", guid.c_str());
 			msg_func(buf);
@@ -149,6 +162,9 @@ size_t get_elements(
 						*internal_geom->axis3());
 					if (cdir_maybe) { composite_dir = *cdir_maybe; }
 				}
+				boost::copy(
+					internal_geom->approximations(), 
+					std::back_inserter(*approximated_curves));
 			}
 			catch (internal_geometry::bad_rep_exception & ex) {
 				sprintf(
@@ -164,10 +180,23 @@ size_t get_elements(
 			strncpy(info->name, guid.c_str(), ELEMENT_NAME_MAX_LEN);
 			info->type = type;
 			info->geometry = interface_geom;
-			info->id = next_element_id++;
+			// info.id is poorly named. It represents the *material* id of the
+			// element, and will be used by construction layers to identify this
+			// element as the source of the layer material. The lookup is 
+			// performed by treating the id as the index of the element in the
+			// elements array; as such, the id must match the object's index!
+			// Additionally, it shouldn't be needed for shading objects, since
+			// they don't participate in construction assemblies. So we'll 
+			// assign -1 to indicate "unset" first:
+			info->id = -1;
 			if (element_is_shading) { shadings->push_back(info); }
 			else {
+				// Then, if the element is a construction-participating element
+				// (instead of a shading), we'll synchronize the indices:
 				infos.push_back(info);
+				infos.back()->id = infos.size();
+				// The id is technically offset from the index by 1 for
+				// historical reasons.
 				composite_dirs.push_back(composite_dir);
 			}
 			msg_func("done.\n");
@@ -200,7 +229,8 @@ size_t get_spaces(
 	void (*warn_func)(char *),
 	const unit_scaler & s, 
 	const std::function<bool(const char *)> & space_filter, 
-	number_collection<K> * c)
+	number_collection<K> * c,
+	std::vector<approximated_curve> * approximated_curves)
 {
 	using internal_geometry::get_local_geometry;
 	using internal_geometry::get_globalizer;
@@ -208,9 +238,11 @@ size_t get_spaces(
 		
 	auto ss = m->spaces();
 	std::vector<space_info> space_vector;
+	*approximated_curves = std::vector<approximated_curve>();
 
 	for (auto sp = ss.begin(); sp != ss.end(); ++sp) {
-		auto id = string_field(**sp, "GlobalId");
+		std::string id;
+		string_field(**sp, "GlobalId", &id);
 		try {
 			if (space_filter(id.c_str())) {
 				fmt m("Extracting space %s...");
@@ -222,6 +254,9 @@ size_t get_spaces(
 				strncpy(this_space.id, id.c_str(), SPACE_ID_MAX_LEN);
 				this_space.geometry = geometry->to_interface_solid();
 				space_vector.push_back(this_space);
+				boost::copy(
+					geometry->approximations(), 
+					std::back_inserter(*approximated_curves));
 				msg_func("done.\n");
 			}
 		}
@@ -249,14 +284,16 @@ ifcadapter_return_t extract_from_model(
 	double ** composite_layer_dzs,
 	size_t * space_count,
 	space_info *** spaces,
+	const unit_scaler & scaler,
 	void (*notify)(char *),
 	void (*warn)(char *),
 	const std::function<bool(const char *)> & element_filter,
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
-	std::vector<element_info *> * shadings)
+	std::vector<element_info *> * shadings,
+	std::vector<approximated_curve> * approximated_curves)
 {
-	auto scaler = unit_scaler::identity_scaler;
+	std::vector<approximated_curve> element_approxes, space_approxes;
 	char buf[256];
 	*element_count = get_elements(
 		m, 
@@ -269,12 +306,22 @@ ifcadapter_return_t extract_from_model(
 		scaler, 
 		element_filter, 
 		c, 
-		shadings);
+		shadings,
+		&element_approxes);
 	sprintf(buf, "Got %u building elements.\n", *element_count);
 	notify(buf);
-	*space_count = 
-		get_spaces(m, spaces, notify, warn, scaler, space_filter, c);
+	*space_count = get_spaces(
+		m, 
+		spaces, 
+		notify, 
+		warn, 
+		scaler, 
+		space_filter, 
+		c, 
+		&space_approxes);
 	sprintf(buf, "Got %u building spaces.\n", *space_count);
 	notify(buf);
+	*approximated_curves = element_approxes;
+	boost::copy(space_approxes, std::back_inserter(*approximated_curves));
 	return IFCADAPT_OK;
 }

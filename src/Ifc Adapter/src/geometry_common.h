@@ -70,3 +70,15 @@ CGAL::Aff_transformation_3<KernelT> build_flatten(
 		x*y*s+w*z*s,		ONE-(x*x*s+z*z*s),	y*z*s-w*x*s,
 		x*z*s-w*y*s,		y*z*s+w*x*s,		ONE-(x*x*s+y*y*s));
 }
+
+inline bool share_sense(const direction_3 & a, const direction_3 & b) {
+	NT combined = (a.to_vector() + b.to_vector()).squared_length();
+	NT sep = a.to_vector().squared_length() + b.to_vector().squared_length();
+	return combined > sep; 
+}
+
+inline bool angles_equal(double a, double b, const number_collection<K> & c) {
+	double dx = cos(b) - cos(a);
+	double dy = sin(b) - sin(a);
+	return c.is_zero(sqrt(dx * dx + dy * dy));
+}

@@ -70,7 +70,8 @@ namespace GUI.Operations
                     IList<Sbt.CoreTypes.ElementInfo> elements;
                     IList<Tuple<double, double, double>> compositeDirs;
                     ICollection<Sbt.CoreTypes.SpaceInfo> spaces;
-                    ICollection<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
+                    IList<Sbt.CoreTypes.SpaceBoundary> spaceBoundaries;
+                    float[] correctedSBAreas;
                     int pointCount;
                     int edgeCount;
                     int faceCount;
@@ -88,6 +89,7 @@ namespace GUI.Operations
                         out compositeDirs,
                         out spaces,
                         out spaceBoundaries,
+                        out correctedSBAreas,
                         out pointCount,
                         out edgeCount,
                         out faceCount,
@@ -127,6 +129,16 @@ namespace GUI.Operations
                     resultingBuilding.FaceCount = faceCount;
                     resultingBuilding.SolidCount = solidCount;
                     resultingBuilding.CalculationTime = cpuTime;
+                    var corrections = new Dictionary<string, float>();
+                    for (int i = 0; i < spaceBoundaries.Count; ++i)
+                    {
+                        if (correctedSBAreas[i] >= 0.0f)
+                        {
+                            var guid = spaceBoundaries[i].Guid;
+                            corrections[guid] = correctedSBAreas[i];
+                        }
+                    }
+                    resultingBuilding.CorrectedAreas = corrections;
                     return resultingBuilding;
                 }
                 catch (Exception ex)

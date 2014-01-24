@@ -2,52 +2,103 @@
 
 #include "ifc_object.h"
 
+using namespace cppw;
+
 namespace ifc_interface {
 
 bool is_kind_of(const ifc_object & obj, const char * type) {
-	return obj.as_instance()->is_kind_of(type);
+	if (obj.data().get_primitive_type() != instance_type) { return false; }
+	try { return Instance(obj.data()).is_kind_of(type); }
+	catch (...) { return false; }
 }
 
 bool is_instance_of(const ifc_object & obj, const char * type) {
-	return obj.as_instance()->is_instance_of(type);
+	if (obj.data().get_primitive_type() != instance_type) { return false; }
+	try { return Instance(obj.data()).is_instance_of(type); }
+	catch (...) { return false; }
 }
 
-bool boolean_field(const ifc_object & obj, const char * field_name) {
-	return static_cast<bool>(obj.as_instance()->get(field_name));
-}
-
-std::vector<ifc_object *> collection_field(
+bool boolean_field(
 	const ifc_object & obj, 
-	const char * field_name)
+	const char * field_name,
+	bool * res)
 {
-	cppw::Aggregate col = obj.as_instance()->get(field_name);
-	std::vector<ifc_object *> res;
-	model * m = obj.parent_model();
-	for (col.move_first(); col.move_next(); ) {
-		cppw::Instance inst = col.get_();
-		res.push_back(m->take_ownership(ifc_object(inst, m)));
+	try { 
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != boolean_type) { return false; }
+		*res = (Boolean)sel;
+		return true;
 	}
-	return res;
+	catch (...) { return false; }
 }
 
-ifc_object * object_field(const ifc_object & obj, const char * field_name) {
+bool collection_field(
+	const ifc_object & obj, 
+	const char * field_name,
+	std::vector<ifc_object *> * res)
+{
 	try {
-		cppw::Select sel = obj.as_instance()->get(field_name);
-		if (!sel.is_set()) { return __nullptr; }
-		cppw::Instance inst = sel;
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != aggregate_type) { return false; }
+		Aggregate col(sel);
 		model * m = obj.parent_model();
-		return m->take_ownership(ifc_object(inst, m));
+		*res = std::vector<ifc_object *>();
+		for (col.move_first(); col.move_next(); ) {
+			res->push_back(m->take_ownership(ifc_object(col.get_(), m)));
+		}
+		return true;
 	}
-	catch (...) { return __nullptr; }
+	catch (...) { return false; }
 }
 
-double real_field(const ifc_object & obj, const char * field_name) {
-	return static_cast<double>(obj.as_instance()->get(field_name));
+bool object_field(
+	const ifc_object & obj, 
+	const char * field_name,
+	ifc_object ** res)
+{
+	try {
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.is_set()) { 
+			model * m = obj.parent_model();
+			*res = m->take_ownership(ifc_object(sel, m));
+		}
+		else { *res = __nullptr; }
+		return true;
+	}
+	catch (...) { return false; }
 }
 
-std::string string_field(const ifc_object & obj, const char * field_name) {
-	cppw::String res = obj.as_instance()->get(field_name);
-	return std::string(res.data());
+bool real_field(
+	const ifc_object & obj, 
+	const char * field_name, 
+	double * res) 
+{
+	try {
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != real_type) { return false; }
+		*res = (Real)sel;
+		return true;
+	}
+	catch (...) { return false; }
+}
+
+bool string_field(
+	const ifc_object & obj, 
+	const char * field_name,
+	std::string * res)
+{
+	try {
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != string_type) { return false; }
+		*res = std::string(String(sel).data());
+		return true;
+	}
+	catch (...) { return false; }
 }
 
 bool triple_field(
@@ -58,10 +109,31 @@ bool triple_field(
 	double * c)
 {
 	try {
-		cppw::Aggregate col = obj.as_instance()->get(field_name);
-		*a = static_cast<double>(col.get_(0));
-		*b = static_cast<double>(col.get_(1));
-		*c = col.size() > 2 ? static_cast<double>(col.get_(2)) : 0.0;
+		if (obj.data().get_primitive_type() != instance_type) { return false; }
+		Select sel = Instance(obj.data()).get(field_name);
+		if (sel.get_primitive_type() != aggregate_type) { return false; }
+		Aggregate col(sel);
+		sel = col.get_(0);
+		if (sel.get_primitive_type() != real_type) { return false; }
+		*a = (Real)sel;
+		sel = col.get_(1);
+		if (sel.get_primitive_type() != real_type) { return false; }
+		*b = (Real)sel;
+		if (col.size() > 2) {
+			sel = col.get_(2);
+			if (sel.get_primitive_type() != real_type) { return false; }
+			*c = (Real)sel;
+		}
+		else { *c = 0.0; }
+		return true;
+	}
+	catch (...) { return false; }
+}
+
+bool as_real(const ifc_object & obj, double * res) {
+	try {
+		if (obj.data().get_primitive_type() != real_type) { return false; }
+		*res = (Real)obj.data();
 		return true;
 	}
 	catch (...) { return false; }
@@ -73,9 +145,8 @@ bool set_field(
 	const char * value)
 {
 	try {
-		cppw::Application_instance * app_inst = obj->as_app_instance();
-		if (!app_inst) { return false; }
-		app_inst->put(field_name, value);
+		if (obj->data().get_primitive_type() != instance_type) { return false; }
+		Application_instance(obj->data()).put(field_name, value);
 		return true;
 	}
 	catch (...) { return false; }
@@ -87,10 +158,8 @@ bool set_field(
 	const ifc_object & value)
 {
 	try {
-		cppw::Application_instance * app_inst = obj->as_app_instance();
-		const cppw::Instance * val = value.as_instance();
-		if (!app_inst) { return false; }
-		app_inst->put(field_name, *val);
+		if (obj->data().get_primitive_type() != instance_type) { return false; }
+		Application_instance(obj->data()).put(field_name, value.data());
 		return true;
 	}
 	catch (...) { return false; }

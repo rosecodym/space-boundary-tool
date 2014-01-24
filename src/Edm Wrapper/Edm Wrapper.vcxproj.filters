@@ -77,9 +77,6 @@
     <ClCompile Include="ifc_object_operations.cpp">
       <Filter>native</Filter>
     </ClCompile>
-    <ClCompile Include="ifc_object.cpp">
-      <Filter>native</Filter>
-    </ClCompile>
     <ClCompile Include="ifc_model_native.cpp">
       <Filter>native</Filter>
     </ClCompile>

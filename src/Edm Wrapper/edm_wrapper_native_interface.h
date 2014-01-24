@@ -27,25 +27,32 @@ EDM_WRAPPER_INTERFACE bool is_instance_of(
 	const char * type);
 EDM_WRAPPER_INTERFACE bool boolean_field(
 	const ifc_object & obj,
-	const char * field_name);
-EDM_WRAPPER_INTERFACE std::vector<ifc_object *> collection_field(
+	const char * field_name,
+	bool * res);
+EDM_WRAPPER_INTERFACE bool collection_field(
 	const ifc_object & obj,
-	const char * field_name);
-EDM_WRAPPER_INTERFACE ifc_object * object_field(
+	const char * field_name,
+	std::vector<ifc_object *> * res);
+EDM_WRAPPER_INTERFACE bool object_field(
 	const ifc_object & obj,
-	const char * field_name);
-EDM_WRAPPER_INTERFACE double real_field(
+	const char * field_name,
+	ifc_object ** res);
+EDM_WRAPPER_INTERFACE bool real_field(
 	const ifc_object & obj,
-	const char * field_name);
-EDM_WRAPPER_INTERFACE std::string string_field(
+	const char * field_name,
+	double * res);
+EDM_WRAPPER_INTERFACE bool string_field(
 	const ifc_object & obj, 
-	const char * field_name);
+	const char * field_name,
+	std::string * res);
 EDM_WRAPPER_INTERFACE bool triple_field(
 	const ifc_object & obj,
 	const char * field_name,
 	double * a,
 	double * b,
 	double * c);
+
+EDM_WRAPPER_INTERFACE bool as_real(const ifc_object & obj, double * res);
 
 EDM_WRAPPER_INTERFACE bool set_field(
 	ifc_object * obj,

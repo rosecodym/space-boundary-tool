@@ -3,6 +3,8 @@
 #define CGAL_LEDA_VERSION 630
 #define LEDA_DLL
 
+#define _USE_MATH_DEFINES // Allows use of M_x macros in MS's <cmath>
+
 #pragma warning (push,1)
 #pragma warning (disable:4005) // macro redefinition
 #pragma warning (disable:4293) // shift count negative or too big
@@ -16,6 +18,7 @@
 #include <numeric>
 #include <exception>
 #include <cassert>
+#include <cmath>
 #include <cstdio>
 
 #include <boost/range/algorithm.hpp>

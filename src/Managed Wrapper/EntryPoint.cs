@@ -40,6 +40,7 @@ namespace Sbt
             out IntPtr spaces,
             out uint sbCount,
             out IntPtr spaceBoundaries,
+            out IntPtr correctedAreas,
             out int totalPoints,
             out int totalEdges,
             out int totalFaces,
@@ -53,6 +54,9 @@ namespace Sbt
 
         [DllImport("SBT-Core.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "release_space_boundaries")]
         private static extern void FreeSpaceBoundaries(IntPtr sbs, uint count);
+
+        [DllImport("SBT-IFC.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl, EntryPoint = "release_corrected_areas")]
+        private static extern void FreeCorrectedAreas(IntPtr areas);
 
         [Flags]
         public enum SbtFlags : int
@@ -78,7 +82,8 @@ namespace Sbt
             out IList<CoreTypes.ElementInfo> elements,
             out IList<Tuple<double, double, double>> compositeDirs,
             out ICollection<CoreTypes.SpaceInfo> spaces,
-            out ICollection<CoreTypes.SpaceBoundary> spaceBoundaries,
+            out IList<CoreTypes.SpaceBoundary> spaceBoundaries,
+            out float[] correctedSBAreas,
             out int pointCount,
             out int edgeCount,
             out int faceCount,
@@ -151,6 +156,8 @@ namespace Sbt
             IntPtr compositeDysPtr;
             IntPtr compositeDzsPtr;
 
+            IntPtr correctedAreas;
+
             IfcAdapterResult res = LoadAndRunFrom(
                 inputFilename, 
                 outputFilename,
@@ -164,6 +171,7 @@ namespace Sbt
                 out nativeSpaces,
                 out spaceBoundaryCount, 
                 out nativeSbs,
+                out correctedAreas,
                 out pointCount,
                 out edgeCount,
                 out faceCount,
@@ -223,13 +231,19 @@ namespace Sbt
                 spaces.Add(new CoreTypes.SpaceInfo(native));
             }
 
+            int sbCount = (int)spaceBoundaryCount;
+
+            var ptrSize = Marshal.SizeOf(typeof(IntPtr));
             spaceBoundaries = new List<CoreTypes.SpaceBoundary>();
-            for (uint i = 0; i < spaceBoundaryCount; ++i)
+            for (int i = 0; i < sbCount; ++i)
             {
-                IntPtr sb = Marshal.ReadIntPtr(nativeSbs, Marshal.SizeOf(typeof(IntPtr)) * (int)i);
+                var sb = Marshal.ReadIntPtr(nativeSbs, ptrSize * i);
                 NativeCoreTypes.SpaceBoundary native = (NativeCoreTypes.SpaceBoundary)Marshal.PtrToStructure(sb, typeof(NativeCoreTypes.SpaceBoundary));
                 spaceBoundaries.Add(new CoreTypes.SpaceBoundary(native));
             }
+
+            correctedSBAreas = new float[sbCount];
+            Marshal.Copy(correctedAreas, correctedSBAreas, 0, sbCount);
 
             System.Diagnostics.Debug.Assert(
                 !spaceBoundaries.Any(_ => true) ||
@@ -246,6 +260,7 @@ namespace Sbt
             FreeElements(nativeElements, eCount);
             FreeSpaces(nativeSpaces, spaceCount);
             FreeSpaceBoundaries(nativeSbs, spaceBoundaryCount);
+            FreeCorrectedAreas(correctedAreas);
         }
     }
 }

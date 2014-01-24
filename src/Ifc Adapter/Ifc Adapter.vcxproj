@@ -16,6 +16,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\approximated_curve.h" />
+    <ClInclude Include="src\build_polyloop.h" />
     <ClInclude Include="src\CreateGuid_64.h" />
     <ClInclude Include="src\geometry_common.h" />
     <ClInclude Include="src\ifc-to-cgal.h" />
@@ -33,6 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\add_to_model.cpp" />
+    <ClCompile Include="src\approximated_curve.cpp" />
+    <ClCompile Include="src\build_polyloop.cpp" />
     <ClCompile Include="src\c-test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

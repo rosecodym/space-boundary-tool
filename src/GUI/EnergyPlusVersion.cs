@@ -9,6 +9,7 @@ namespace GUI
     {
         V710,
         V720,
+        V720C,
         V800
     }
 }

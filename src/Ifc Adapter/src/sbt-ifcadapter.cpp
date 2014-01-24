@@ -4,6 +4,7 @@
 
 #include "sbt-ifcadapter.h"
 
+#include "geometry_common.h"
 #include "model_operations.h"
 #include "number_collection.h"
 #include "reassign_bounded_spaces.h"
@@ -13,71 +14,6 @@
 sb_calculation_options g_opts;
 
 namespace {
-
-void scale_point(point * p, const unit_scaler & scaler) {
-	p->x = scaler.length_in(p->x);
-	p->y = scaler.length_in(p->y);
-	p->z = scaler.length_in(p->z);
-}
-
-void scale_loop(polyloop * loop, const unit_scaler & scaler) {
-	for (size_t i = 0; i < loop->vertex_count; ++i) {
-		scale_point(&loop->vertices[i], scaler);
-	}
-}
-
-void scale_face(face * f, const unit_scaler & scaler) {
-	scale_loop(&f->outer_boundary, scaler);
-	for (size_t i = 0; i < f->void_count; ++i) {
-		scale_loop(&f->voids[i], scaler);
-	}
-}
-
-void scale_brep(brep * b, const unit_scaler & scaler) {
-	for (size_t i = 0; i < b->face_count; ++i) {
-		scale_face(&b->faces[i], scaler);
-	}
-}
-
-void scale_ext(extruded_area_solid * e, const unit_scaler & scaler) {
-	e->extrusion_depth = scaler.length_in(e->extrusion_depth);
-	scale_face(&e->area, scaler);
-}
-
-void scale_solid(solid * s, const unit_scaler & scaler) {
-	if (s->rep_type == REP_BREP) { scale_brep(&s->rep.as_brep, scaler); }
-	else { scale_ext(&s->rep.as_ext, scaler); }
-}
-
-void scale_elements(element_info ** elements, size_t count, const unit_scaler & scaler) {
-	for (size_t i = 0; i < count; ++i) {
-		scale_solid(&elements[i]->geometry, scaler);
-	}
-}
-
-void scale_spaces(space_info ** spaces, size_t count, const unit_scaler & scaler) {
-	for (size_t i = 0; i < count; ++i) {
-		scale_solid(&spaces[i]->geometry, scaler);
-	}
-}
-
-void scale_space_boundaries(space_boundary ** sbs, size_t count, const unit_scaler & scaler) {
-	for (size_t i = 0; i < count; ++i) {
-		scale_loop(&sbs[i]->geometry, scaler);
-		for (size_t j = 0; j < sbs[i]->material_layer_count; ++j) {
-			sbs[i]->thicknesses[j] = scaler.length_in(sbs[i]->thicknesses[j]);
-		}
-	}
-}
-
-void scale_shadings(
-	std::vector<element_info *> * shadings,
-	const unit_scaler & scaler)
-{
-	for (auto p = shadings->begin(); p != shadings->end(); ++p) {
-		scale_solid(&(*p)->geometry, scaler);
-	}
-}
 
 std::function<bool(const char *)> create_guid_filter(char ** first, size_t count) {
 	std::set<std::string> ok_elements;
@@ -170,6 +106,110 @@ void gather_geometry_info(
 			total_solids,
 			spaces[i]->geometry);
 	}
+}	
+
+template <typename ApproximatedCurveRange>
+boost::optional<float> calculate_corrected_area(
+	const ApproximatedCurveRange & as,
+	const polyloop & loop,
+	double eps)
+{
+	// http://geomalgorithms.com/a01-_area.html
+	point curr, next;
+	double a = 0.0;
+	double b = 0.0;
+	double c = 0.0;
+	double area_x = 0.0;
+	double area_y = 0.0;
+	double area_z = 0.0;
+	std::vector<ApproximatedCurveRange::const_iterator> forward_matches;
+	std::vector<ApproximatedCurveRange::const_iterator> reverse_matches;
+	for (size_t i = 0; i < loop.vertex_count; ++i) {
+		curr = loop.vertices[i];
+		next = loop.vertices[(i + 1) % loop.vertex_count];
+		a += (curr.y - next.y) * (curr.z + next.z);
+		b += (curr.z - next.z) * (curr.x + next.x);
+		c += (curr.x - next.x) * (curr.y + next.y);
+		area_x += curr.y * next.z - curr.z * next.y;
+		area_y += curr.x * next.z - curr.z * next.x;
+		area_z += curr.x * next.y - curr.y * next.x;
+		for (auto apx = as.begin(); apx != as.end(); ++apx) {
+			auto modify = apx->matches(curr.x, curr.y, curr.z,
+									   next.x, next.y, next.z,
+				                       eps);
+			if (modify == approximated_curve::FORWARD_MATCH) {
+				forward_matches.push_back(apx);
+				break;
+			}
+			else if (modify == approximated_curve::REVERSE_MATCH) {
+				reverse_matches.push_back(apx);
+				break;
+			}
+		}
+	}
+	if (forward_matches.empty() && reverse_matches.empty()) {
+		return boost::optional<float>();
+	}
+	direction_3 n(a, b, c);
+	a = abs(a);
+	b = abs(b);
+	c = abs(c);
+	double mag = sqrt(a * a + b * b + c * c);
+	double orig_area;
+	double area_change = 0.0;
+	if (a >= b && a >= c) { orig_area = abs(area_x / 2 * mag / a); }
+	else if (b >= a && b >= c) { orig_area = abs(area_y / 2 * mag / b); }
+	else /*if (c >= a && c >= b)*/ { orig_area = abs(area_z / 2 * mag / c); }
+	for (auto m = forward_matches.begin(); m != forward_matches.end(); ++m) {
+		if (number_collection<K>::are_effectively_perpendicular(
+			n,
+			(*m)->original_plane_normal(),
+			eps))
+		{
+			return static_cast<float>(orig_area * (*m)->true_length_ratio());
+		}
+		else if (share_sense(n, (*m)->original_plane_normal())) {
+			area_change -= (*m)->true_area_on_left();
+		}
+		else { area_change += (*m)->true_area_on_left(); }
+	}
+	for (auto m = reverse_matches.begin(); m != reverse_matches.end(); ++m) {
+		if (number_collection<K>::are_effectively_perpendicular(
+			n,
+			(*m)->original_plane_normal(),
+			eps))
+		{
+			return static_cast<float>(orig_area * (*m)->true_length_ratio());
+		}
+		else if (share_sense(n, (*m)->original_plane_normal())) {
+			area_change += (*m)->true_area_on_left();
+		}
+		else { area_change -= (*m)->true_area_on_left(); }
+	}
+	return static_cast<float>(orig_area + area_change);
+}
+
+float * calculate_corrected_areas(
+	space_boundary ** sbs,
+	size_t sb_count,
+	const std::vector<approximated_curve> & as,
+	double eps)
+{
+	std::map<space_boundary *, float> corrected_areas;
+	for (size_t i = 0; i < sb_count; ++i) {
+		auto corrected = calculate_corrected_area(as, sbs[i]->geometry, eps);
+		assert(!corrected || *corrected >= 0.0);
+		if (corrected) { corrected_areas[sbs[i]] = *corrected; }
+	}
+	float * res = (float *)malloc(sb_count * sizeof(float));
+	for (size_t i = 0; i < sb_count; ++i) {
+		auto c = corrected_areas.find(sbs[i]);
+		if (c == corrected_areas.end() && sbs[i]->opposite) {
+			c = corrected_areas.find(sbs[i]->opposite);
+		}
+		res[i] = c == corrected_areas.end() ? -1.0f : c->second;
+	}
+	return res;
 }
 
 } // namespace
@@ -187,6 +227,7 @@ ifcadapter_return_t execute(
 	space_info *** spaces,
 	size_t * sb_count,
 	space_boundary *** sbs,
+	float ** corrected_areas,
 	int * total_points,
 	int * total_edges,
 	int * total_faces,
@@ -198,8 +239,9 @@ ifcadapter_return_t execute(
 	*elements = nullptr;
 	*spaces = nullptr;
 	*sbs = nullptr;
+	*corrected_areas = nullptr;
 	if (!input_filename) { return IFCADAPT_INVALID_ARGS; }
-	number_collection<K> ctxt(EPS_MAGIC / 20); // magic divided by magic
+	number_collection<K> ctxt(EPS_MAGIC);
 	number_collection<iK> output_ctxt(EPS_MAGIC);
 	notify(fmt("Processing file %s.\n") % input_filename);
 
@@ -210,8 +252,8 @@ ifcadapter_return_t execute(
 	}
 
 	std::vector<element_info *> shadings;
+	std::vector<approximated_curve> approximated_curves;
 	double lupm = m.length_units_per_meter();
-	opts.length_units_per_meter = lupm;
 	unit_scaler scaler(lupm);
 	ifcadapter_return_t res = extract_from_model(
 		&m,
@@ -222,12 +264,14 @@ ifcadapter_return_t execute(
 		composite_layer_dzs,
 		space_count,
 		spaces,
+		scaler,
 		g_opts.notify_func,
 		g_opts.warn_func,
 		create_guid_filter(opts.element_filter, opts.element_filter_count),
 		create_guid_filter(opts.space_filter, opts.space_filter_count),
 		&ctxt,
-		&shadings);
+		&shadings,
+		&approximated_curves);
 	if (res != IFCADAPT_OK) { return res; }
 	else if (*space_count == 0) {
 		opts.error_func("The model has no defined spaces.\n");
@@ -254,7 +298,9 @@ ifcadapter_return_t execute(
 				"generation will likely fail.");
 		}
 	}
-
+	
+	// As far as the SBT core is concerned, everything is in meters.
+	opts.length_units_per_meter = 1.0;
 	sbt_return_t generate_res = 
 		calculate_space_boundaries(
 			*element_count, 
@@ -290,6 +336,7 @@ ifcadapter_return_t execute(
 					&m, 
 					*sb_count, 
 					*sbs, 
+					scaler,
 					opts.notify_func, 
 					&output_ctxt);
 			if (res == IFCADAPT_OK)
@@ -299,10 +346,6 @@ ifcadapter_return_t execute(
 				notify("done.\n");
 			}
 		}
-		scale_elements(*elements, *element_count, scaler);
-		scale_spaces(*spaces, *space_count, scaler);
-		scale_space_boundaries(*sbs, *sb_count, scaler);
-		scale_shadings(&shadings, scaler);
 
 		auto total_e_count = *element_count + shadings.size();
 		auto total_e_size = sizeof(element_info *) * total_e_count;
@@ -322,6 +365,12 @@ ifcadapter_return_t execute(
 		}
 		*element_count = *element_count + shadings.size();
 
+		*corrected_areas = calculate_corrected_areas(
+			*sbs,
+			*sb_count,
+			approximated_curves,
+			EPS_MAGIC * 10);
+
 		return IFCADAPT_OK;
 	}
 	else if (generate_res == SBT_STACK_OVERFLOW) {
@@ -340,3 +389,6 @@ void release_spaces(space_info ** spaces, size_t count) {
 	release_list(spaces, count);
 }
 
+void release_corrected_areas(float * corrected_areas) {
+	free(corrected_areas);
+}

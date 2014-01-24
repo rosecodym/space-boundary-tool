@@ -4,7 +4,10 @@
 
 #include "internal_geometry.h"
 
+#include "approximated_curve.h"
+#include "build_polyloop.h"
 #include "geometry_common.h"
+#include "ifc-to-cgal.h"
 #include "number_collection.h"
 #include "unit_scaler.h"
 #include "wrapped_nef_operations.h"
@@ -17,171 +20,6 @@ namespace {
 
 bool are_perpendicular(const direction_3 & a, const direction_3 & b) {
 	return CGAL::is_zero(a.vector() * b.vector());
-}
-
-length_scaler build_scale_function(const unit_scaler & us) {
-	return [&us](double len) { return us.length_in(len); };
-}
-
-point_3 build_point(
-	const ifc_interface::ifc_object & obj,
-	const length_scaler & scale_length,
-	number_collection<K> * c) 
-{
-	double x, y, z;
-	ifc_interface::triple_field(obj, "Coordinates", &x, &y, &z);
-	return c->request_point(scale_length(x), scale_length(y), scale_length(z));
-}
-
-direction_3 build_direction(
-	const ifc_object & obj,
-	number_collection<K> * c)
-{
-	double dx, dy, dz;
-	ifc_interface::triple_field(obj, "DirectionRatios", &dx, &dy, &dz);
-	return c->request_direction(dx, dy, dz);
-}
-
-transformation_3 build_transformation(
-	const ifc_object * obj,
-	const length_scaler & scale_length,
-	number_collection<K> * c) 
-{
-	if (!obj) { return transformation_3(); }
-	if (is_instance_of(*obj, "IfcLocalPlacement")) {
-		auto to = build_transformation(
-			object_field(*obj, "PlacementRelTo"),
-			scale_length,
-			c);
-		auto from = build_transformation(
-			object_field(*obj, "RelativePlacement"),
-			scale_length,
-			c);
-		return to * from;
-	}
-	else if (is_instance_of(*obj, "IfcAxis2Placement2D")) {
-		auto loc_obj = object_field(*obj, "Location");
-		auto location = build_point(*loc_obj, scale_length, c);
-		auto p = collection_field(*obj, "P");
-		auto xcol = normalize(build_direction(*p[0], c).vector());
-		auto ycol = normalize(build_direction(*p[1], c).vector());
-		vector_3 zcol(0, 0, 1);
-		return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
-								xcol.y(), ycol.y(), zcol.y(), location.y(),
-								xcol.z(), ycol.z(), zcol.z(), location.z());
-	}
-	else if (is_instance_of(*obj, "IfcAxis2Placement3D")) {
-		auto loc_obj = object_field(*obj, "Location");
-		auto location = build_point(*loc_obj, scale_length, c);
-		auto p = collection_field(*obj, "P");
-		auto xcol = normalize(build_direction(*p[0], c).vector());
-		auto ycol = normalize(build_direction(*p[1], c).vector());
-		auto zcol = normalize(build_direction(*p[2], c).vector());
-		return transformation_3(xcol.x(), ycol.x(), zcol.x(), location.x(),
-								xcol.y(), ycol.y(), zcol.y(), location.y(),
-								xcol.z(), ycol.z(), zcol.z(), location.z());
-	}
-	else if (is_instance_of(*obj, "IfcPlane")) {
-		auto position = object_field(*obj, "Position");
-		return build_transformation(position, scale_length, c);
-	}
-	else if (is_instance_of(*obj, "IfcCartesianTransformationOperator3D")) {
-		auto loc_obj = object_field(*obj, "LocalOrigin");
-		point_3 loc = build_point(*loc_obj, scale_length, c);
-		auto p = collection_field(*obj, "U");
-		double scale = real_field(*obj, "Scl");
-		auto xcol = normalize(build_direction(*p[0], c).vector()) * scale;
-		auto ycol = normalize(build_direction(*p[1], c).vector()) * scale;
-		auto zcol = normalize(build_direction(*p[2], c).vector()) * scale;
-		return transformation_3(xcol.x(), ycol.x(), zcol.x(), loc.x(),
-								xcol.y(), ycol.y(), zcol.y(), loc.y(),
-								xcol.z(), ycol.z(), zcol.z(), loc.z());
-	}
-	else {
-		throw bad_rep_exception("unknown source for transformation matrix");
-	}
-}
-
-std::vector<point_3> build_polyloop(
-	const ifc_object & obj,
-	const length_scaler & scale,
-	number_collection<K> * c)
-{
-	typedef std::vector<point_3> loop;
-	if (is_instance_of(obj, "IfcPolyline")) {
-		loop res;
-		auto pts = collection_field(obj, "Points");
-		for (auto p = pts.begin(); p != pts.end(); ++p) {
-			res.push_back(build_point(**p, scale, c));
-		}
-		if (res.front() == res.back()) { res.pop_back(); }
-		return res;
-	}
-	else if (is_instance_of(obj, "IfcCompositeCurveSegment")) {
-		return build_polyloop(*object_field(obj, "ParentCurve"), scale, c);
-	}
-	else if (is_instance_of(obj, "IfcCompositeCurve")) {
-		auto components = collection_field(obj, "Segments");
-		if (components.size() != 1) {
-			throw bad_rep_exception(
-				"composite curves without exactly one segment are "
-				"unsupported");
-		}
-		return build_polyloop(*components[0], scale, c);
-	}
-	else if (is_instance_of(obj, "IfcPolyLoop")) {
-		loop res;
-		auto pts = collection_field(obj, "Polygon");
-		for (auto p = pts.begin(); p != pts.end(); ++p) {
-			res.push_back(build_point(**p, scale, c));
-		}
-		return res;
-	}
-	else if (is_instance_of(obj, "IfcCurveBoundedPlane")) {
-		auto bound = object_field(obj, "OuterBoundary");
-		auto res = build_polyloop(*bound, scale, c);
-		auto basis = object_field(obj, "BasisSurface");
-		auto t = build_transformation(basis, scale, c);
-		boost::transform(res, res.begin(), t);
-		return res;
-	}
-	else if (is_instance_of(obj, "IfcArbitraryClosedProfileDef")) {
-		return build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
-	}
-	else if (is_instance_of(obj, "IfcRectangleProfileDef")) {
-		double xdim = real_field(obj, "XDim");
-		double ydim = real_field(obj, "YDim");
-		point_2 req;
-		loop res;
-		req = c->request_point(scale(-xdim) / 2, scale(-ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(scale(xdim) / 2, scale(-ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(scale(xdim) / 2, scale(ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		req = c->request_point(scale(-xdim) / 2, scale(ydim) / 2);
-		res.push_back(point_3(req.x(), req.y(), 0));
-		auto t = build_transformation(object_field(obj, "Position"), scale, c);
-		boost::transform(res, res.begin(), t);
-		assert(boost::find_if(res, [](const point_3 & p) {
-			return !CGAL::is_zero(p.z());
-		}) == res.end());
-		return res;
-	}
-	else if (is_kind_of(obj, "IfcFaceBound")) {
-		auto res = build_polyloop(*object_field(obj, "Bound"), scale, c);
-		if (!boolean_field(obj, "Orientation")) { 
-			boost::reverse(res); 
-		}
-		return res;
-	}
-	else if (is_kind_of(obj, "IfcCircleProfileDef")) {
-		throw bad_rep_exception(
-			"curved geometry definitions are not supported.");
-	}
-	else {
-		throw bad_rep_exception("unsupported representation for a polyloop");
-	}
 }
 
 bool normal_matches_dir(
@@ -200,35 +38,72 @@ bool normal_matches_dir(
 		EPS_MAGIC);
 }
 
+face create_face(
+	const ifc_object & obj,
+	const unit_scaler & scale,
+	number_collection<K> * c)
+{
+	ifc_object * area_obj;
+	object_field(obj, "SweptArea", &area_obj);
+	return face(*area_obj, scale, c);
+}
+
+std::string rep_id(const ifc_object & obj) {
+	std::string res;
+	string_field(obj, "RepresentationIdentifier", &res);
+	return res;
+}
+
 } // namespace
 
 face::face(
 	const ifc_object & obj,
-	const length_scaler & scale,
+	const unit_scaler & scale,
 	number_collection<K> * c)
 {
 	if (is_instance_of(obj, "IfcFaceBound")) {
-		outer_ = build_polyloop(*object_field(obj, "Bound"), scale, c);
+		ifc_object * bound;
+		object_field(obj, "Bound", &bound);
+		std::tie(outer_, approximations_) = build_polyloop(*bound, scale, c);
 	}
 	else if (is_instance_of(obj, "IfcFace")) {
-		auto bounds = collection_field(obj, "Bounds");
+		std::vector<ifc_object *> bounds;
+		collection_field(obj, "Bounds", &bounds);
 		for (auto b = bounds.begin(); b != bounds.end(); ++b) {
+			std::vector<approximated_curve> approxes;
 			if (is_instance_of(**b, "IfcFaceOuterBound")) {
-				outer_ = build_polyloop(**b, scale, c);
+				std::tie(outer_, approxes) = build_polyloop(**b, scale, c);
+				boost::copy(approxes, std::back_inserter(approximations_));
 			}
-			else { voids_.push_back(build_polyloop(**b, scale, c)); }
+			else { 
+				std::vector<point_3> v;
+				std::tie(v, approxes) = build_polyloop(**b, scale, c);
+				voids_.push_back(v);
+				boost::copy(approxes, std::back_inserter(approximations_));
+			}
 		}
 	}
 	else if (is_instance_of(obj, "IfcArbitraryProfileDefWithVoids")) {
-		outer_ = build_polyloop(*object_field(obj, "OuterCurve"), scale, c);
-		auto inners = collection_field(obj, "InnerCurves");
+		ifc_object * outer;
+		object_field(obj, "OuterCurve", &outer);
+		std::tie(outer_, approximations_) = build_polyloop(*outer, scale, c);
+		std::vector<ifc_object *> inners;
+		collection_field(obj, "InnerCurves", &inners);
 		for (auto p = inners.begin(); p != inners.end(); ++p) {
-			voids_.push_back(build_polyloop(**p, scale, c));
+			std::vector<point_3> v;
+			std::vector<approximated_curve> approxes;
+			std::tie(v, approxes) = build_polyloop(**p, scale, c);
+			voids_.push_back(v);
+			boost::copy(approxes, std::back_inserter(approximations_));
 		}
 	}
 	else {
-		outer_ = build_polyloop(obj, scale, c);
+		std::tie(outer_, approximations_) = build_polyloop(obj, scale, c);
 	}
+}
+
+const std::vector<approximated_curve> & face::approximations() const {
+	return approximations_;
 }
 
 direction_3 face::normal() const {
@@ -288,17 +163,21 @@ void face::transform(const transformation_3 & t) {
 	for (auto v = voids_.begin(); v != voids_.end(); ++v) {
 		boost::transform(*v, v->begin(), t);
 	}
+	for (auto a = approximations_.begin(); a != approximations_.end(); ++a) {
+		*a = a->transformed(t);
+	}
 }
 
 brep::brep(
 	const ifc_object & obj,
-	const length_scaler & scale_length,
+	const unit_scaler & scale_length,
 	number_collection<K> * c)
 {
 	if (!is_kind_of(obj, "IfcConnectedFaceSet")) {
 		throw bad_rep_exception("unsupported representation for a brep");
 	}
-	auto face_set = collection_field(obj, "CfsFaces");
+	std::vector<ifc_object *> face_set;
+	collection_field(obj, "CfsFaces", &face_set);
 	for (auto f = face_set.begin(); f != face_set.end(); ++f) {
 		faces.push_back(face(**f, scale_length, c));
 	}
@@ -323,15 +202,25 @@ interface_solid brep::to_interface_solid() const {
 	return res;
 }
 
+std::vector<approximated_curve> brep::approximations() const {
+	std::vector<approximated_curve> res;
+	for (auto f = faces.begin(); f != faces.end(); ++f) {
+		boost::copy(f->approximations(), std::back_inserter(res));
+	}
+	return res;
+}
+
 ext::ext(
 	const ifc_object & obj,
-	const length_scaler & scale,
+	const unit_scaler & scale,
 	number_collection<K> * c)
-	: area_(*object_field(obj, "SweptArea"), scale, c)
+	: area_(create_face(obj, scale, c))
 {
-	double unscaled_depth = real_field(obj, "Depth");
-	depth_ = c->request_height(scale(unscaled_depth));
-	auto d = object_field(obj, "ExtrudedDirection");
+	double unscaled_depth;
+	real_field(obj, "Depth", &unscaled_depth);
+	depth_ = c->request_height(scale.length_in(unscaled_depth));
+	ifc_object * d;
+	object_field(obj, "ExtrudedDirection", &d);
 	double dx, dy, dz;
 	triple_field(*d, "DirectionRatios", &dx, &dy, &dz);
 	dir_ = c->request_direction(dx, dy, dz);
@@ -363,35 +252,48 @@ interface_solid ext::to_interface_solid() const {
 	return res;
 }
 
+std::vector<approximated_curve> ext::approximations() const {
+	auto res = area_.approximations();
+	size_t count = res.size();
+	auto extrude = build_translation(dir_, depth_);
+	for (size_t i = 0; i < count; ++i) {
+		res.push_back(res[i].transformed(extrude));
+	}
+	return res;
+}
+
 transformation_3 get_globalizer(
 	const ifc_object & obj,
 	const unit_scaler & scaler,
 	number_collection<K> * c) 
 {
 	if (is_kind_of(obj, "IfcProduct")) {
-		auto rep = object_field(obj, "Representation");
+		ifc_object * rep;
+		object_field(obj, "Representation", &rep);
 		auto inner = get_globalizer(*rep, scaler, c);
-		auto placement = object_field(obj, "ObjectPlacement");
-		auto sf = build_scale_function(scaler);
-		return inner * build_transformation(placement, sf, c);
+		ifc_object * placement;
+		object_field(obj, "ObjectPlacement", &placement);
+		return inner * build_transformation(placement, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
-		auto reps = collection_field(obj, "Representations");
+		std::vector<ifc_object *> reps;
+		collection_field(obj, "Representations", &reps);
 		for (auto r = reps.begin(); r != reps.end(); ++r) {
-			if (string_field(**r, "RepresentationIdentifier") == "Body") {
-				return get_globalizer(**r, scaler, c);
+			if (rep_id(**r) == "Body") { 
+				return get_globalizer(**r, scaler, c); 
 			}
 		}
 		throw bad_rep_exception("no 'Body' representation identifier");
 	}
 	else if (
 		is_instance_of(obj, "IfcShapeRepresentation") &&
-		string_field(obj, "RepresentationIdentifier") == "Body")
+		rep_id(obj) == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		auto rep_items = collection_field(obj, "Items");
+		std::vector<ifc_object *> rep_items;
+		collection_field(obj, "Items", &rep_items);
 		return get_globalizer(*rep_items[0], scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcFacetedBrep")) {
@@ -401,14 +303,17 @@ transformation_3 get_globalizer(
 		return transformation_3();
 	}
 	else if (is_instance_of(obj, "IfcMappedItem")) {
-		auto ms = object_field(obj, "MappingSource");
-		auto sf = build_scale_function(scaler);
-		auto mapped_rep = object_field(*ms, "MappedRepresentation");
+		ifc_object * ms;
+		object_field(obj, "MappingSource", &ms);
+		ifc_object * mapped_rep;
+		object_field(*ms, "MappedRepresentation", &mapped_rep);
 		auto base = get_globalizer(*mapped_rep, scaler, c);
-		auto mapping_origin = object_field(*ms, "MappingOrigin");
-		auto from = build_transformation(mapping_origin, sf, c);
-		auto mapping_target = object_field(obj, "MappingTarget");
-		auto to = build_transformation(mapping_target, sf, c);
+		ifc_object * mapping_origin;
+		object_field(*ms, "MappingOrigin", &mapping_origin);
+		auto from = build_transformation(mapping_origin, scaler, c);
+		ifc_object * mapping_target;
+		object_field(obj, "MappingTarget", &mapping_target);
+		auto to = build_transformation(mapping_target, scaler, c);
 		return base * from * to;
 	}
 	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
@@ -427,7 +332,8 @@ boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 	number_collection<K> * c)
 {
 	if (is_instance_of(obj, "IfcPolyline")) {
-		auto pts = collection_field(obj, "Points");
+		std::vector<ifc_object *> pts;
+		collection_field(obj, "Points", &pts);
 		if (pts.size() != 2) {
 			throw bad_rep_exception(
 				"axis definition without exactly two points");
@@ -449,20 +355,25 @@ std::unique_ptr<solid> get_local_geometry(
 	number_collection<K> * c)
 {
 	if (is_kind_of(obj, "IfcProduct")) {
-		auto rep = object_field(obj, "Representation");
+		ifc_object * rep;
+		object_field(obj, "Representation", &rep);
 		return get_local_geometry(*rep, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
-		auto reps = collection_field(obj, "Representations");
+		std::vector<ifc_object *> reps;
+		collection_field(obj, "Representations", &reps);
 		std::unique_ptr<solid> geometry;
 		boost::optional<std::tuple<direction_3, direction_3>> axes;
 		for (auto r = reps.begin(); r != reps.end(); ++r) {
-			auto identifier = string_field(**r, "RepresentationIdentifier");
+			std::string identifier;
+			string_field(**r, "RepresentationIdentifier", &identifier);
 			if (identifier == "Body") {
 				geometry = get_local_geometry(**r, scaler, c);
 			}
 			else if (identifier == "Axis") {
-				axes = get_axes(*collection_field(**r, "Items")[0], c);
+				std::vector<ifc_object *> items;
+				collection_field(**r, "Items", &items);
+				axes = get_axes(*items[0], c);
 			}
 		}
 		if (geometry) {
@@ -473,38 +384,41 @@ std::unique_ptr<solid> get_local_geometry(
 	}
 	else if (
 		is_instance_of(obj, "IfcShapeRepresentation") &&
-		string_field(obj, "RepresentationIdentifier") == "Body")
+		rep_id(obj) == "Body")
 	{
 		// This is NOT redundant with the IfcProductDefinitionShape case.
 		// IfcShapeRepresentations can live on their own (inside some mapping
 		// instances). Do NOT refactor it out!
-		auto items = collection_field(obj, "Items");
+		std::vector<ifc_object *> items;
+		collection_field(obj, "Items", &items);
 		return get_local_geometry(*items[0], scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcFacetedBrep")) {
-		auto b = object_field(obj, "Outer");
-		auto sf = build_scale_function(scaler);
-		return std::unique_ptr<brep>(new brep(*b, sf, c));
+		ifc_object * b;
+		object_field(obj, "Outer", &b);
+		return std::unique_ptr<brep>(new brep(*b, scaler, c));
 	}
 	else if (is_instance_of(obj, "IfcExtrudedAreaSolid")) {
-		auto sf = build_scale_function(scaler);
-		auto res = std::unique_ptr<ext>(new ext(obj, sf, c));
-		auto pos = object_field(obj, "Position");
-		res->transform(build_transformation(pos, sf, c));
+		auto res = std::unique_ptr<ext>(new ext(obj, scaler, c));
+		ifc_object * pos;
+		object_field(obj, "Position", &pos);
+		res->transform(build_transformation(pos, scaler, c));
 		return std::move(res);
 	}
 	else if (is_instance_of(obj, "IfcMappedItem")) {
-		auto src = object_field(obj, "MappingSource");
-		auto rep = object_field(*src, "MappedRepresentation");
+		ifc_object * src;
+		object_field(obj, "MappingSource", &src);
+		ifc_object * rep;
+		object_field(*src, "MappedRepresentation", &rep);
 		return get_local_geometry(*rep, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
 		return wrapped_nef_operations::from_boolean_result(obj, scaler, c);
 	}
 	else if (is_instance_of(obj, "IfcFaceBasedSurfaceModel")) {
-		auto face_set = collection_field(obj, "FbsmFaces");
-		auto sf = build_scale_function(scaler);
-		return std::unique_ptr<brep>(new brep(*face_set[0], sf, c));
+		std::vector<ifc_object *> face_set;
+		collection_field(obj, "FbsmFaces", &face_set);
+		return std::unique_ptr<brep>(new brep(*face_set[0], scaler, c));
 	}
 	else {
 		throw bad_rep_exception("unknown or unsupported geometry definition");
