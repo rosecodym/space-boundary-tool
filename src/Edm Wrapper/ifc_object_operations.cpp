@@ -94,7 +94,8 @@ bool string_field(
 	try {
 		if (obj.data().get_primitive_type() != instance_type) { return false; }
 		Select sel = Instance(obj.data()).get(field_name);
-		if (sel.get_primitive_type() != string_type) { return false; }
+		auto type = sel.get_primitive_type();
+		if (type != string_type && type != enum_type) { return false; }
 		*res = std::string(String(sel).data());
 		return true;
 	}
