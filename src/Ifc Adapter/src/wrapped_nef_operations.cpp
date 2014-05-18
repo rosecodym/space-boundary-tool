@@ -10,8 +10,6 @@
 
 #include "wrapped_nef_operations.h"
 
-extern sb_calculation_options g_opts;
-
 using namespace ifc_interface;
 
 namespace {
@@ -137,8 +135,8 @@ nef_polyhedron_3 create_nef(
 		ifc_object * base_surface;
 		object_field(obj, "BaseSurface", &base_surface);
 		if (!is_instance_of(*base_surface, "IfcPlane")) {
-			g_opts.error_func("[Error - tried to use something other than an IfcPlane for the base surface of an IfcHalfspaceSolid.]\n");
-			return nef_polyhedron_3();
+			auto msg = "only IfcPlane objects are supported as the base surface of IfcHalfspaceSolid objects";
+			throw internal_geometry::bad_rep_exception(msg);
 		}
 		ifc_object * surface_placement;
 		object_field(*base_surface, "Position", &surface_placement);
@@ -168,8 +166,8 @@ nef_polyhedron_3 create_nef(
 		ifc_object * base_surface;
 		object_field(obj, "BaseSurface", &base_surface);
 		if (!is_instance_of(*base_surface, "IfcPlane")) {
-			g_opts.error_func("[Error - tried to use something other than an IfcPlane for the base surface of an IfcPolygonalBoundedHalfSpace.]\n");
-			return nef_polyhedron_3();
+			auto msg = "only IfcPlane objects are supported as the base surface of IfcPolygonalBoundedHalfSpace objects";
+			throw internal_geometry::bad_rep_exception(msg);
 		}
 		ifc_object * surface_placement;
 		object_field(*base_surface, "Position", &surface_placement);
@@ -199,7 +197,10 @@ nef_polyhedron_3 create_nef(
 		nef_polyhedron_3 first = create_nef(*operand1, scaler, c, ec);
 		nef_polyhedron_3 second = create_nef(*operand2, scaler, c, ec);
 		std::string op;
-		string_field(obj, "Operator", &op);
+		if (!string_field(obj, "Operator", &op)) {
+			auto message = "boolean operator could not be determined";
+			throw internal_geometry::bad_rep_exception(message);
+		}
 		if (op == "DIFFERENCE") {
 			return (first - second).regularization();
 		}
@@ -210,13 +211,13 @@ nef_polyhedron_3 create_nef(
 			return (first + second).regularization();
 		}
 		else {
-			g_opts.error_func("[Error - invalid boolean result operator.]\n");
-			return nef_polyhedron_3();
+			auto message = "unknown boolean operator";
+			throw internal_geometry::bad_rep_exception(message);
 		}
 	}
 	else {
-		g_opts.error_func("[Error - can only create adapter nef from an extruded area solid or a halfspace solid.]\n");
-		return nef_polyhedron_3();
+		auto message = "unsupported geometry representation";
+		throw internal_geometry::bad_rep_exception(message);
 	}
 }
 
@@ -229,11 +230,16 @@ std::unique_ptr<internal_geometry::solid> convert_to_solid(
 	int face_index = 0;
 	CGAL_forall_halffacets(facet, nef) {
 		if (facet->incident_volume()->mark()) {
-			if (std::distance(facet->facet_cycles_begin(), facet->facet_cycles_end()) != 1) {
+			auto fcb = facet->facet_cycles_begin();
+			auto fce = facet->facet_cycles_end();
+			auto cycle_count = std::distance(fcb, fce);
+			if (cycle_count != 1) {
 				char buf[256];
-				sprintf(buf, "[Error - boolean result solid facet with a hole (%u cycles).]\n", std::distance(facet->facet_cycles_begin(), facet->facet_cycles_end()));
-				g_opts.error_func(buf);
-				return std::unique_ptr<internal_geometry::solid>();
+				sprintf(
+					buf,
+					"after boolean operation, facet has a hole (%u cycles)",
+					cycle_count);
+				throw internal_geometry::bad_rep_exception(buf);
 			}
 			auto cycle = facet->facet_cycles_begin();
 			all_pts.push_back(std::vector<point_3>());
@@ -263,9 +269,11 @@ namespace wrapped_nef_operations {
 
 std::unique_ptr<internal_geometry::solid> from_boolean_result(
 	const ifc_object & obj, 
-	const unit_scaler & scaler, eqc * c) 
+	const unit_scaler & scaler,
+	eqc * c,
+	std::function<void(char *)> notify_func) 
 {
-	g_opts.notify_func("(geometry requires boolean operations)...");
+	notify_func("(geometry requires boolean operations)...");
 	number_collection<eK> extended_context(EPS_MAGIC / 20);
 	return convert_to_solid(create_nef(obj, scaler, c, &extended_context), c);
 }

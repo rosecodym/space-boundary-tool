@@ -147,7 +147,8 @@ size_t get_elements(
 				internal_geom = internal_geometry::get_local_geometry(
 					*effective_object,
 					s,
-					c);
+					c,
+					msg_func);
 				globalizer = internal_geometry::get_globalizer(
 					*effective_object,
 					s,
@@ -247,7 +248,7 @@ size_t get_spaces(
 			if (space_filter(id.c_str())) {
 				fmt m("Extracting space %s...");
 				msg_func(const_cast<char *>((m % id).str().c_str()));
-				auto geometry = get_local_geometry(**sp, s, c);
+				auto geometry = get_local_geometry(**sp, s, c, msg_func);
 				auto globalizer = get_globalizer(**sp, s, c);
 				geometry->transform(globalizer);
 				space_info this_space;

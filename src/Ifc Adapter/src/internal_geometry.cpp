@@ -352,12 +352,13 @@ boost::optional<std::tuple<direction_3, direction_3>> get_axes(
 std::unique_ptr<solid> get_local_geometry(
 	const ifc_object & obj,
 	const unit_scaler & scaler,
-	number_collection<K> * c)
+	number_collection<K> * c,
+	std::function<void(char *)> notify)
 {
 	if (is_kind_of(obj, "IfcProduct")) {
 		ifc_object * rep;
 		object_field(obj, "Representation", &rep);
-		return get_local_geometry(*rep, scaler, c);
+		return get_local_geometry(*rep, scaler, c, notify);
 	}
 	else if (is_instance_of(obj, "IfcProductDefinitionShape")) {
 		std::vector<ifc_object *> reps;
@@ -368,7 +369,7 @@ std::unique_ptr<solid> get_local_geometry(
 			std::string identifier;
 			string_field(**r, "RepresentationIdentifier", &identifier);
 			if (identifier == "Body") {
-				geometry = get_local_geometry(**r, scaler, c);
+				geometry = get_local_geometry(**r, scaler, c, notify);
 			}
 			else if (identifier == "Axis") {
 				std::vector<ifc_object *> items;
@@ -391,7 +392,7 @@ std::unique_ptr<solid> get_local_geometry(
 		// instances). Do NOT refactor it out!
 		std::vector<ifc_object *> items;
 		collection_field(obj, "Items", &items);
-		return get_local_geometry(*items[0], scaler, c);
+		return get_local_geometry(*items[0], scaler, c, notify);
 	}
 	else if (is_instance_of(obj, "IfcFacetedBrep")) {
 		ifc_object * b;
@@ -410,10 +411,11 @@ std::unique_ptr<solid> get_local_geometry(
 		object_field(obj, "MappingSource", &src);
 		ifc_object * rep;
 		object_field(*src, "MappedRepresentation", &rep);
-		return get_local_geometry(*rep, scaler, c);
+		return get_local_geometry(*rep, scaler, c, notify);
 	}
 	else if (is_instance_of(obj, "IfcBooleanClippingResult")) {
-		return wrapped_nef_operations::from_boolean_result(obj, scaler, c);
+		using wrapped_nef_operations::from_boolean_result;
+		return from_boolean_result(obj, scaler, c, notify);
 	}
 	else if (is_instance_of(obj, "IfcFaceBasedSurfaceModel")) {
 		std::vector<ifc_object *> face_set;

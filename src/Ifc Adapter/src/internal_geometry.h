@@ -125,6 +125,7 @@ transformation_3 get_globalizer(
 std::unique_ptr<solid> get_local_geometry(
 	const ifc_interface::ifc_object & obj, 
 	const unit_scaler & scaler,
-	number_collection<K> * c);
+	number_collection<K> * c,
+	std::function<void(char *)> notify);
 
 } // namespace internal_geometry
