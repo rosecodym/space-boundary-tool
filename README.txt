@@ -9,7 +9,7 @@ SBT requires Microsoft Visual Studio 2010 to build, and has two dependencies you
 Boost 1.47 - retrievable from http://www.boost.org/. While SBT requires two Boost binaries, they are provided in /dependencies, so you just need to get the header-only libraries.
 LEDA - retrievable from http://www.algorithmic-solutions.com/leda/index.htm. Only the free edition has been tested with SBT.
 
-Once you have these installed, you'll need to configure their locations in any unmanaged projects you wish to build. This probably means these projects: Core, Core Tests, Ifc Adapter. The properties to set are in Configuration Properties > SBT Dependencies. After doing so, everything* should build.
+Once you have these installed, you'll need to configure their locations in any unmanaged projects you wish to build. This probably means these projects: Core, Core Tests, Ifc Adapter. The properties to set are in Configuration Properties > SBT Dependencies. After doing so, everything* should build. (Do not enclose any paths you specify in quotation marks; doing so may break the build.)
 
 Direct questions to sbt-support@lbl.gov.
 
