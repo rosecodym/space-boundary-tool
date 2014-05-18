@@ -152,6 +152,10 @@ std::vector<block> build_blocks(
 			// use as little stack space as possible in this catch block because the stack is still busted
 			stack_overflow = true;
 		}
+		catch (std::exception & ex) {
+			auto m = fmt("Element %s blocking failed: %s. It will be skipped."); 
+			report_warning(m % e.name() % ex.what());
+		}
 		if (stack_overflow) {
 			_resetstkoflw();
 			report_warning("Internal error: stack overflow. Please report this"
