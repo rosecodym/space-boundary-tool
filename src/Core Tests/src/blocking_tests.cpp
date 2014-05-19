@@ -59,6 +59,27 @@ TEST(Blocking, ParallelPairHalfblocks) {
 	EXPECT_EQ(1, halfblocks.size()) << "(Far)";
 }
 
+TEST(Blocking, SlopedTrapezoid) {
+	equality_context c(0.01);
+
+	auto e_info = create_element(
+		"element",
+		SLAB,
+		1,
+		create_ext(
+			0.0, 0.0, 1.0,
+			0.31,
+			create_face(4,
+				simple_point(6.0, 2.0, 5.0),
+				simple_point(2.0, 2.0, 5.0),
+				simple_point(-1.0, 5.0, 4.0),
+				simple_point(9.0, 5.0, 4.0))));
+	element e(e_info, &c);
+	std::vector<block> blocks;
+	ASSERT_NO_THROW(blocks = impl::build_blocks_for(e, &c, 0.5));
+	EXPECT_EQ(7, blocks.size());
+}
+
 TEST(Blocking, TwoStairs) {
 	equality_context c(0.01);
 
@@ -352,6 +373,48 @@ TEST(Blocking, SinglePairLink) {
 	std::vector<block> blocks;
 	link_halfblocks(std::move(surfaces), dummy, std::back_inserter(blocks));
 	EXPECT_EQ(1, blocks.size());
+}
+
+TEST(SurfacePairHeightComparison, AngledAllEdgesConsistent) {
+	equality_context c(0.01);
+
+	oriented_area base(simple_face(create_face(4,
+		simple_point(-1.0, 5.0, 4.32),
+		simple_point(2.0, 2.0, 5.32),
+		simple_point(6.0, 2.0, 5.32),
+		simple_point(9.0, 5.0, 4.32)), true, &c), &c);
+	
+	oriented_area s1(simple_face(create_face(4,
+		simple_point(6.0, 2.0, 5.32),
+		simple_point(6.0, 2.0, 5.0),
+		simple_point(9.0, 5.0, 4.0),
+		simple_point(9.0, 5.0, 4.32)), true, &c), &c);
+
+	oriented_area s2(simple_face(create_face(4,
+		simple_point(6.0, 2.0, 5.0),
+		simple_point(2.0, 2.0, 5.0),
+		simple_point(-1.0, 5.0, 4.0),
+		simple_point(9.0, 5.0, 4.0)), true, &c), &c);
+
+	surface_pair p1(base, s1, &c, 0.5);
+	surface_pair p2(base, s2, &c, 0.5);
+
+	typedef blocking::impl::Surface_pair_envelope_traits traits;
+	typedef traits::x_monotone_curve_2 curve;
+	traits::Construct_projected_boundary_2 construct_boundaries;
+	std::vector<CGAL::Object> curve_objects;
+	construct_boundaries(p1, std::back_inserter(curve_objects));
+	for (auto o = curve_objects.begin(); o != curve_objects.end(); ++o) {
+		std::pair<curve, CGAL::Oriented_side> c;
+		ASSERT_TRUE(CGAL::assign(c, *o));
+		auto left1 = p1.relative_height_at(c.first.left());
+		auto left2 = p2.relative_height_at(c.first.left());
+		auto right1 = p1.relative_height_at(c.first.right());
+		auto right2 = p2.relative_height_at(c.first.right());
+		auto lf = CGAL::compare(left1, left2);
+		auto rt = CGAL::compare(right1, right2);
+		EXPECT_TRUE(lf == CGAL::EQUAL || rt == CGAL::EQUAL || lf == rt);
+	}
 }
 
 } // namespace
