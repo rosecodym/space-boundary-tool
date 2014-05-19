@@ -181,6 +181,7 @@ public:
 				}
 
 				boost::transform(boundaries, oi, [&projection](const x_monotone_curve_2 & curve) -> CGAL::Object {
+					assert(curve.left() != curve.right());
 					bool is_right = curve.is_directed_right();
 					bool clockwise = projection.is_clockwise_oriented();
 					bool position = is_right != clockwise;
@@ -207,14 +208,20 @@ public:
 			return s1.base().sense() ? CGAL::compare(d2, d1) : CGAL::compare(d1, d2);
 		}
 		CGAL::Comparison_result operator () (const x_monotone_curve_2 & curve, const Xy_monotone_surface_3 & s1, const Xy_monotone_surface_3 & s2) const {
-			CGAL::Comparison_result res = (*this)(curve.left(), s1, s2);
-			if (res == CGAL::EQUAL) {
-				res = (*this)(curve.right(), s1, s2);
-				if (res == CGAL::EQUAL) {
-					res = (*this)(K().construct_midpoint_2_object()(curve.left(), curve.right()), s1, s2);
+			auto left = (*this)(curve.left(), s1, s2);
+			auto right = (*this)(curve.right(), s1, s2);
+			if (left == CGAL::EQUAL) {
+				if (right == CGAL::EQUAL) {
+					auto construct_mid = K().construct_midpoint_2_object();
+					auto mid = construct_mid(curve.left(), curve.right());
+					return (*this)(mid, s1, s2);
 				}
+				else { return right; }
 			}
-			return res;
+			else {
+				assert(right == CGAL::EQUAL || left == right);
+				return left;
+			}
 		}
 	};
 
@@ -230,8 +237,8 @@ public:
 			}
 
 			// now we must have 2 different non-vertical planes:
- 			// plane1: a1*x + b1*y + c1*z + d1 = 0  , c1 != 0
- 			// plane2: a2*x + b2*y + c2*z + d2 = 0  , c2 != 0
+			// plane1: a1*x + b1*y + c1*z + d1 = 0  , c1 != 0
+			// plane2: a2*x + b2*y + c2*z + d2 = 0  , c2 != 0
 
 			const plane_3 & plane1 = surf1.other().parallel_plane_through_origin();
 			const plane_3 & plane2 = surf2.other().parallel_plane_through_origin();
@@ -239,19 +246,19 @@ public:
 			NT a1 = plane1.a(), b1 = plane1.b(), c1 = plane1.c();
 			NT a2 = plane2.a(), b2 = plane2.b(), c2 = plane2.c();
 
- 			// our line is a3*x + b3*y + c3 = 0
- 			// it is assumed that the planes intersect over this line
+			// our line is a3*x + b3*y + c3 = 0
+			// it is assumed that the planes intersect over this line
 			const line_2 & line = curve.line(); 
 			NT a3 = line.a(), b3 = line.b(), c3 = line.c();
 
 			CGAL::Sign s1 = CGAL::sign((a2*a3+b2*b3)/c2-(a1*a3+b1*b3)/c1);
-    
+	
 			// We only need to make sure that w is in the correct direction
 			// (going from down to up)
 			// the original segment endpoints p1=(x1,y1) and p2=(x2,y2)
 			// are transformed to (v1,w1) and (v2,w2), so we need that w2 > w1
 			// (otherwise the result should be multiplied by -1)
-      
+	  
 			const point_2 & p1 = curve.left();
 			const point_2 & p2 = curve.right();
 			NT x1 = p1.x(), y1 = p1.y(), x2 = p2.x(), y2 = p2.y();
