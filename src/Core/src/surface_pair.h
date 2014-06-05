@@ -96,7 +96,7 @@ public:
 	envelope_contribution contributes_to_envelope() const;
 	
 	bool are_perpendicular() const { 
-		return oriented_area::are_perpendicular(*m_base, *m_other, EPS_MAGIC); 
+		return oriented_area::are_perpendicular(*m_base, *m_other, g_opts.tolernace_in_meters); 
 	}
 
 	const area & base_minus_other_projected() const {

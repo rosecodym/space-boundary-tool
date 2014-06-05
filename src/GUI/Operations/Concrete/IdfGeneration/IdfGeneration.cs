@@ -68,7 +68,7 @@ namespace GUI.Operations
             p.EPVersion = (EnergyPlusVersion)vm.EnergyPlusVersionIndexToWrite;
             p.OutputFilename = vm.OutputIdfFilePath;
             p.LocationName = vm.BuildingLocation;
-            p.TimeZone = vm.TimeZone;
+            p.Tolerance = vm.Tolerance;
             p.SolarDistribution = vm.SolarDistribution;
             p.LoadsConvergenceTolerance = vm.LoadsConvergenceTolerance;
             p.TemperatureConvergenceTolerance = vm.TemperatureConvergenceTolerance;

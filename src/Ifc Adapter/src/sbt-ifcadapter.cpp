@@ -241,8 +241,8 @@ ifcadapter_return_t execute(
 	*sbs = nullptr;
 	*corrected_areas = nullptr;
 	if (!input_filename) { return IFCADAPT_INVALID_ARGS; }
-	number_collection<K> ctxt(EPS_MAGIC);
-	number_collection<iK> output_ctxt(EPS_MAGIC);
+	number_collection<K> ctxt(opts.tolernace_in_meters);
+	number_collection<iK> output_ctxt(opts.tolernace_in_meters);
 	notify(fmt("Processing file %s.\n") % input_filename);
 
 	ifc_interface::model m(input_filename);
@@ -369,7 +369,7 @@ ifcadapter_return_t execute(
 			*sbs,
 			*sb_count,
 			approximated_curves,
-			EPS_MAGIC * 10);
+			opts.tolernace_in_meters * 10);
 
 		return IFCADAPT_OK;
 	}

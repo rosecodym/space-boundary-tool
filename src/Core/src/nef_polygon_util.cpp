@@ -54,7 +54,7 @@ nef_polygon_2 clean(const nef_polygon_2 & nef) {
 	bool changed = false;
 	boost::for_each(loops, [&changed](loop_t & loop) { 
 		size_t in_size = loop.size();
-		if (!geometry_common::cleanup_loop(&loop, EPS_MAGIC)) { loop.clear(); }
+		if (!geometry_common::cleanup_loop(&loop, g_opts.tolernace_in_meters)) { loop.clear(); }
 		if (loop.size() != in_size) { changed = true; }
 	});
 
@@ -70,7 +70,7 @@ nef_polygon_2 clean(const nef_polygon_2 & nef) {
 }
 
 nef_polygon_2 create_nef_polygon(polygon_2 poly) {
-	if (!geometry_common::cleanup_loop(&poly, EPS_MAGIC)) {
+	if (!geometry_common::cleanup_loop(&poly, g_opts.tolernace_in_meters)) {
 		return nef_polygon_2::EMPTY;
 	}
 	std::vector<espoint_2> ext;

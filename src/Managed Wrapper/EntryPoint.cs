@@ -16,6 +16,7 @@ namespace Sbt
             internal SbtFlags flags;
             internal double lengthUnitsPerMeter;
             internal double maxPairDistanceInMeters;
+            internal double tolernaceInMeters;
             internal int unused;
             internal IntPtr spaceFilter;
             internal uint spaceFilterCount;
@@ -88,6 +89,7 @@ namespace Sbt
             out int edgeCount,
             out int faceCount,
             out int solidCount,
+            double tolernace = 0.01,
             SbtFlags flags = SbtFlags.None,
             double maxPairDistanceInMeters = 0.5,
             IEnumerable<string> spaceFilter = null,
@@ -106,6 +108,7 @@ namespace Sbt
             opts.flags = flags;
             opts.lengthUnitsPerMeter = 1.0;
             opts.maxPairDistanceInMeters = maxPairDistanceInMeters;
+            opts.tolernaceInMeters = tolernace;
             opts.unused = 0;
             opts.notifyFunc = notifyMsg != null ? Marshal.GetFunctionPointerForDelegate(notifyMsg) : IntPtr.Zero;
             opts.warnFunc = warningMsg != null ? Marshal.GetFunctionPointerForDelegate(warningMsg) : IntPtr.Zero;

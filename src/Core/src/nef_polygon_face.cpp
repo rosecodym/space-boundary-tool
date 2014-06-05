@@ -23,7 +23,7 @@ boost::optional<polygon_2> face::outer() const {
 			res.push_back(point_2(pt.x(), pt.y()));
 		}
 	}
-	if (!geometry_common::cleanup_loop(&res, EPS_MAGIC)) {
+	if (!geometry_common::cleanup_loop(&res, g_opts.tolernace_in_meters)) {
 		return boost::optional<polygon_2>();
 	}
 	else {
@@ -79,7 +79,7 @@ boost::optional<polygon_with_holes_2> face::to_pwh() const {
 				holes.back().push_back(point_2(pt.x(), pt.y()));
 			}
 		}
-		if (!geometry_common::cleanup_loop(&holes.back(), EPS_MAGIC)) {
+		if (!geometry_common::cleanup_loop(&holes.back(), g_opts.tolernace_in_meters)) {
 			holes.pop_back();
 		}
 	}

@@ -19,6 +19,7 @@ namespace GUI.Operations
         {
             public string InputFilename { get; set; }
             public string OutputFilename { get; set; }
+            public double Tolernace { get; set; }
             public Sbt.EntryPoint.SbtFlags Flags { get; set; }
             public IList<string> SpaceGuidFilter { get; set; }
             public IList<string> ElementGuidFilter { get; set; }
@@ -47,6 +48,7 @@ namespace GUI.Operations
                 Parameters p = new Parameters();
                 p.InputFilename = vm.InputIfcFilePath;
                 p.OutputFilename = (vm.WriteIfc && !String.IsNullOrWhiteSpace(vm.OutputIfcFilePath)) ? vm.OutputIfcFilePath : null;
+                p.Tolernace = vm.Tolerance;
                 if (vm.SbElementFilter != null) { p.ElementGuidFilter = vm.SbElementFilter.Split(' '); }
                 if (vm.SbSpaceFilter != null) { p.SpaceGuidFilter = vm.SbSpaceFilter.Split(' '); }
                 p.Flags = (Sbt.EntryPoint.SbtFlags)Convert.ToInt32(vm.Flags, 16);
@@ -94,6 +96,7 @@ namespace GUI.Operations
                         out edgeCount,
                         out faceCount,
                         out solidCount,
+                        p.Tolernace,
                         p.Flags,
                         0.5,
                         p.SpaceGuidFilter,

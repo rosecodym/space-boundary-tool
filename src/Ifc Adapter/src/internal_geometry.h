@@ -6,6 +6,8 @@
 #include "number_collection.h"
 #include "sbt-ifcadapter.h"
 
+extern sb_calculation_options g_opts;
+
 class unit_scaler;
 
 namespace ifc_interface {

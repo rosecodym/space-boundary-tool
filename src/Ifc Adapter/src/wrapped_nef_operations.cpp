@@ -274,7 +274,7 @@ std::unique_ptr<internal_geometry::solid> from_boolean_result(
 	std::function<void(char *)> notify_func) 
 {
 	notify_func("(geometry requires boolean operations)...");
-	number_collection<eK> extended_context(EPS_MAGIC / 20);
+	number_collection<eK> extended_context(g_opts.tolernace_in_meters / 20);
 	return convert_to_solid(create_nef(obj, scaler, c, &extended_context), c);
 }
 

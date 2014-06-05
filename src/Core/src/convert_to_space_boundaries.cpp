@@ -77,7 +77,7 @@ space_boundary * create_unlinked_space_boundary(
 		newsb->opposite = nullptr;
 		newsb->parent = nullptr;
 		
-		equality_context lc(EPS_MAGIC);
+		equality_context lc(g_opts.tolernace_in_meters);
 	
 		newsb->material_layer_count = s.material_layers().size();
 		if (newsb->material_layer_count > 0) {

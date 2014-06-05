@@ -62,4 +62,4 @@ typedef CGAL::Aff_transformation_2<iK>		itransformation_2;
 typedef CGAL::Aff_transformation_3<iK>		itransformation_3;
 typedef CGAL::Polygon_2<iK>					ipolygon_2;
 
-#define EPS_MAGIC 0.01
+//#define EPS_MAGIC 0.1

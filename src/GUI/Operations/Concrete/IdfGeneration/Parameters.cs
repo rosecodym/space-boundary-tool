@@ -33,6 +33,7 @@ namespace GUI.Operations
             public string OutputFilename { get; set; }
             public string LocationName { get; set; }
             public double TimeZone { get; set; }
+            public double Tolerance { get; set; }
             public SolarDistribution SolarDistribution { get; set; }
             public double NorthAxis { get; set; }
             public BuildingTerrain BuildingTerrain { get; set; }

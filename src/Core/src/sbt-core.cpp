@@ -91,7 +91,7 @@ sbt_return_t calculate_space_boundaries(
 			fmt("Beginning processing for %u building elements.\n") 
 			% element_count);
 
-		equality_context ctxt(EPS_MAGIC);
+		equality_context ctxt(g_opts.tolernace_in_meters);
 		double height_cutoff =
 			g_opts.max_pair_distance_in_meters *
 			g_opts.length_units_per_meter;
@@ -137,7 +137,7 @@ sbt_return_t calculate_space_boundaries(
 			surfaces, 
 			space_boundaries, 
 			space_boundary_count,
-			opts.length_units_per_meter * EPS_MAGIC);
+			opts.length_units_per_meter * opts.tolernace_in_meters);
 		report_progress("done.\n");
 	}
 	catch (sbt_exception & ex) {

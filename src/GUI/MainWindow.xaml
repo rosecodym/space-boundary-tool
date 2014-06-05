@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:GUI"
         Height="502" Width="1156" Closed="MainWindowClosed" 
         xmlns:converters="clr-namespace:GUI.Converters">
-    <Window.Title>Space Boundary Tool 1.7.0</Window.Title>
+    <Window.Title>Space Boundary Tool 1.7.1</Window.Title>
     <Window.Resources>
         <DrawingImage x:Key="OKSmall">
             <DrawingImage.Drawing>
@@ -93,6 +93,9 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
+                                    <Label Content="Tolerance:" Grid.Row="1" Height="Auto" HorizontalAlignment="Left" Margin="0" Name="label43" VerticalAlignment="Center" />
+                                    <TextBox Text="{Binding Tolerance}"  Grid.Row="1" MinWidth="60" Height="Auto" HorizontalAlignment="Center" Margin="1" Name="textBox12" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                                    <Label Content="m            " Grid.Row="1" Height="Auto" HorizontalAlignment="Right" Margin="0" Name="label44" VerticalAlignment="Center" />
                                     <Button 
                                         Content="Calculate Space Boundaries" 
                                         Height="23" 

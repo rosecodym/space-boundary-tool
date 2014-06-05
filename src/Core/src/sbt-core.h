@@ -27,7 +27,7 @@ typedef char space_id_t[SPACE_ID_MAX_LEN + 1];
 // an element ID is a completely different beast, but we're all going to live
 // with it for the moment.
 typedef char element_name_t[ELEMENT_NAME_MAX_LEN + 1];
-typedef int element_id_t;							
+typedef int element_id_t;	
 
 // See the definition for solids below.
 enum solid_rep_type {
@@ -136,6 +136,7 @@ struct sb_calculation_options {
 	int flags;
 	double length_units_per_meter;
 	double max_pair_distance_in_meters;
+	double tolernace_in_meters;
 	int unused;
 	char ** space_filter;
 	size_t space_filter_count;

@@ -53,5 +53,8 @@
     <Setting Name="Timestep" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">6</Value>
     </Setting>
+    <Setting Name="Tolerance" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

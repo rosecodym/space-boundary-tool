@@ -35,7 +35,7 @@ bool normal_matches_dir(
 	return number_collection<K>::are_effectively_parallel(
 		f.normal(), 
 		dir, 
-		EPS_MAGIC);
+		g_opts.tolernace_in_meters);
 }
 
 face create_face(

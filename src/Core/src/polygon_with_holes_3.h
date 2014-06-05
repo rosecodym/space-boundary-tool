@@ -28,9 +28,9 @@ public:
 		outer.end()), 
 		m_holes(holes.begin(), holes.end()) 
 	{ 
-		geometry_common::cleanup_loop(&m_outer, EPS_MAGIC);
+		geometry_common::cleanup_loop(&m_outer, g_opts.tolernace_in_meters);
 		boost::for_each(m_holes, [](std::vector<point_3> & hole) {
-			geometry_common::cleanup_loop(&hole, EPS_MAGIC);
+			geometry_common::cleanup_loop(&hole, g_opts.tolernace_in_meters);
 		});
 	}
 

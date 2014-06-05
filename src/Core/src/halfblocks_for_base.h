@@ -42,14 +42,14 @@ void halfblocks_for_base(
 			}
 			// for some reason the envelope calculation creates degenerate 
 			// faces sometimes
-			if (!geometry_common::cleanup_loop(&this_poly, EPS_MAGIC)) {
+			if (!geometry_common::cleanup_loop(&this_poly, g_opts.tolernace_in_meters)) {
 				continue;
 			}
 			// we have to do two passes because of a bug in 
 			// geometry_common::cleanup_loop. see issue #4
 			// update: should be resolved but i haven't gotten around to 
 			// testing this particular path with this removed
-			if (!geometry_common::cleanup_loop(&this_poly, EPS_MAGIC)) {
+			if (!geometry_common::cleanup_loop(&this_poly, g_opts.tolernace_in_meters)) {
 				continue;
 			}
 			area this_area(this_poly);

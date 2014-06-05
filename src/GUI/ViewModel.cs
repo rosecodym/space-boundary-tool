@@ -347,6 +347,12 @@ namespace GUI
             set { Properties.Settings.Default.Timestep = value; }
         }
 
+        public double Tolerance
+        {
+            get { return Properties.Settings.Default.Tolerance; }
+            set { Properties.Settings.Default.Tolerance = value; }
+        }
+
         public bool CurrentlyCalculatingSBs { get { return this.sbCalculation.InProgress; } }
         public bool CurrentlyLoadingMaterialLibrary { get { return this.materialLibraryLoad.InProgress; } }
         public bool CurrentlyLoadingIfcModel { get { return this.buildingLoad.InProgress; } }

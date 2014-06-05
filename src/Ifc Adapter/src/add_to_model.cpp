@@ -265,7 +265,7 @@ ifcadapter_return_t add_to_model(
 	number_collection<iK> * c) 
 {
 	msg_func("Preparing to add space boundaries to the model.\n");
-	auto version_string = "1.7.0";
+	auto version_string = "1.7.1";
 	m->set_new_owner_history(
 		"Space Boundary Tool",
 		"SBT",
