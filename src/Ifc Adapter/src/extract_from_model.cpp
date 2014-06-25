@@ -83,6 +83,55 @@ boost::optional<direction_3> get_composite_dir(
 	return optional<direction_3>();
 }
 
+double getMaterialLayerThickness(const ifc_object & obj, const unit_scaler & s){
+	double dThickness = 0;
+	std::string name;
+	string_field(obj, "Name", &name);
+	std::string guid;
+	string_field(obj, "GlobalId", &guid);
+	std::vector<ifc_object *> rel_assoc;
+	collection_field(obj, "HasAssociations", &rel_assoc);
+	for (auto o = rel_assoc.begin(); o != rel_assoc.end(); ++o) {
+		if (is_kind_of(**o, "IfcRelAssociatesMaterial")) {
+			ifc_object * matLayerUsage;
+			object_field(**o, "RelatingMaterial", &matLayerUsage);
+			if (is_kind_of(*matLayerUsage, "IfcMaterialLayerSetUsage")) {
+				ifc_object * matLayerSet;
+				object_field(*matLayerUsage, "ForLayerSet", &matLayerSet);
+				if (is_kind_of(*matLayerSet, "IfcMaterialLayerSet")) {
+					std::string matLayerSetName;
+					string_field(*matLayerSet, "LayerSetName", &matLayerSetName);
+					std::vector<ifc_object *> matLayers;
+					collection_field(*matLayerSet, "MaterialLayers", &matLayers);
+					for (auto l = matLayers.begin(); l != matLayers.end(); ++l) {
+						if (is_kind_of(**l, "IfcMaterialLayer")) {
+							double dMatThickness;
+							real_field(**l, "LayerThickness", &dMatThickness);
+							dThickness = dThickness + dMatThickness;
+						}
+					}
+				}
+			}
+			else if (is_kind_of(*matLayerUsage, "IfcMaterialLayerSet")) {
+				std::string matLayerSetName;
+				string_field(*matLayerUsage, "LayerSetName", &matLayerSetName);
+				std::vector<ifc_object *> matLayers;
+				collection_field(*matLayerUsage, "MaterialLayers", &matLayers);
+				for (auto l = matLayers.begin(); l != matLayers.end(); ++l) {
+					if (is_kind_of(**l, "IfcMaterialLayer")) {
+						double dMatThickness;
+						real_field(**l, "LayerThickness", &dMatThickness);
+						dThickness = dThickness + dMatThickness;
+					}
+				}
+			}
+		}
+	}
+	if(dThickness == 0.0)
+		dThickness = dThickness;
+	return s.length_in(dThickness);
+}
+
 size_t get_elements(
 	model * m,
 	element_info *** elements, 
@@ -95,7 +144,8 @@ size_t get_elements(
 	const std::function<bool(const char *)> & passes_filter, 
 	number_collection<K> * c,
 	std::vector<element_info *> * shadings,
-	std::vector<approximated_curve> * approximated_curves)
+	std::vector<approximated_curve> * approximated_curves, 
+	double * tolerance)
 {
 	std::vector<element_info *> infos;
 	std::vector<direction_3> composite_dirs;
@@ -137,6 +187,17 @@ size_t get_elements(
 					warn_func(buf);
 					continue;
 				}
+			}
+			// TM: adding a check if the thickness of a wall is smaller than the tolerance we skip it
+			double dMaterialLayerThickness = getMaterialLayerThickness(**e, s);
+			if(dMaterialLayerThickness < *tolerance){
+				sprintf(
+						buf,
+						"Building element  %s thickness %d is smaller than the tolernace %d. It will be "
+						"skipped.\n",
+						guid.c_str(), tolerance, tolerance);
+					warn_func(buf);
+					continue;
 			}
 			bool element_is_shading = is_shading(**e);
 			std::unique_ptr<internal_geometry::solid> internal_geom;
@@ -292,7 +353,8 @@ ifcadapter_return_t extract_from_model(
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
 	std::vector<element_info *> * shadings,
-	std::vector<approximated_curve> * approximated_curves)
+	std::vector<approximated_curve> * approximated_curves, 
+	double * tolerance)
 {
 	std::vector<approximated_curve> element_approxes, space_approxes;
 	char buf[256];
@@ -308,7 +370,8 @@ ifcadapter_return_t extract_from_model(
 		element_filter, 
 		c, 
 		shadings,
-		&element_approxes);
+		&element_approxes, 
+		tolerance);
 	sprintf(buf, "Got %u building elements.\n", *element_count);
 	notify(buf);
 	*space_count = get_spaces(

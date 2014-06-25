@@ -233,6 +233,10 @@ namespace Sbt
                 NativeCoreTypes.SpaceInfo native = (NativeCoreTypes.SpaceInfo)Marshal.PtrToStructure(s, typeof(NativeCoreTypes.SpaceInfo));
                 spaces.Add(new CoreTypes.SpaceInfo(native));
             }
+            if (spaces.Count == 0)
+            {
+                System.Windows.MessageBox.Show("Your IFC file does not contain any spaces (IfcSpaces). Spaces are required to calculate space boundaries.");
+            }
 
             int sbCount = (int)spaceBoundaryCount;
 

@@ -30,7 +30,8 @@ ifcadapter_return_t extract_from_model(
 	const std::function<bool(const char *)> & space_filter,
 	number_collection<K> * c,
 	std::vector<element_info *> * shadings,
-	std::vector<approximated_curve> * approximated_curves);
+	std::vector<approximated_curve> * approximated_curves,
+	double * tolerance);
 
 ifcadapter_return_t add_to_model(
 	ifc_interface::model * model,

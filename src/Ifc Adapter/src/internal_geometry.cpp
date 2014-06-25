@@ -11,6 +11,7 @@
 #include "number_collection.h"
 #include "unit_scaler.h"
 #include "wrapped_nef_operations.h"
+#include <CGAL/Origin.h>
 
 using namespace ifc_interface;
 
@@ -24,18 +25,25 @@ bool are_perpendicular(const direction_3 & a, const direction_3 & b) {
 
 bool normal_matches_dir(
 	const face & f, 
-	const direction_3 & dir) 
+	const direction_3 & b) 
 {
-	// Something appears to be quite wrong here. The whole point of this
-	// function isn't to make sure that they're parallel - it assumes that
-	// they're parallel. It's to make sure that they're *not* *antiparallel*.
-	// Unfortunately, since I noticed this problem during a refactor I'm not
-	// going to just change it. I think that the bug is being masked by the
-	// fact that the core does the same check (presumably correctly).
-	return number_collection<K>::are_effectively_parallel(
-		f.normal(), 
-		dir, 
-		g_opts.tolernace_in_meters);
+	direction_3 a = f.normal();
+	vector_3 v_a = a.to_vector();
+	if(CGAL::is_zero(v_a.squared_length())){
+		auto Lenght = v_a.squared_length();
+		g_opts.tolernace_in_meters = g_opts.tolernace_in_meters;
+	}
+	assert(!CGAL::is_zero(v_a.squared_length()));
+	vector_3 v_b = b.to_vector();
+	assert(!CGAL::is_zero(v_b.squared_length()));
+	auto denominator = v_a.squared_length() * v_b.squared_length();
+	// The whole point of this stupid exact geometry stuff is that this
+	// assert will *never* trip. But let's just make sure.
+	assert(!CGAL::is_zero(denominator));
+	auto similarity = (v_a * v_b) / denominator;
+	if(similarity == 1)
+		return true;
+	return false;
 }
 
 face create_face(
@@ -168,6 +176,40 @@ void face::transform(const transformation_3 & t) {
 	}
 }
 
+bool face::HasNullArea(){
+	double dArea = 0;
+    if (outer_.size() > 2)
+    {
+		bool bFirst = true;
+		vector_3 nMain;
+        vector_3 v1 = outer_[0] - outer_[1];
+        for (int i = 2; i < outer_.size(); i++)
+        {
+			vector_3 v2 = outer_[0] - outer_[i];
+            vector_3 n1 = CGAL::cross_product(v1, v2);
+            double dTempArea = sqrt(CGAL::to_double(n1.x()) + CGAL::to_double(n1.y()) + CGAL::to_double(n1.z()));
+            if (dTempArea > 0)
+            {
+				n1 = vector_3(CGAL::to_double(n1.x()) / dTempArea, CGAL::to_double(n1.y()) / dTempArea, CGAL::to_double(n1.z()) / dTempArea);
+
+                if (bFirst){
+					nMain = n1;
+					bFirst = false;
+				}
+                else if (nMain == n1)
+                    dArea += dTempArea;
+                else
+                    dArea -= dTempArea;
+            }
+            v1 = v2;
+        }
+        dArea = abs(dArea) / 2;
+    }
+	if(dArea == 0)
+		return true;
+	return false;
+}
+
 brep::brep(
 	const ifc_object & obj,
 	const unit_scaler & scale_length,
@@ -224,10 +266,16 @@ ext::ext(
 	double dx, dy, dz;
 	triple_field(*d, "DirectionRatios", &dx, &dy, &dz);
 	dir_ = c->request_direction(dx, dy, dz);
-	if (!normal_matches_dir(area_, dir_)) {
-		area_.reverse();
+	if(area_.HasNullArea()){
+		throw null_area_exception("area of a potential space boundary is null");
 	}
-	assert(!are_perpendicular(area_.normal(), dir_));
+	else
+	{
+		if (!normal_matches_dir(area_, dir_)) {
+			area_.reverse();
+		}
+		assert(!are_perpendicular(area_.normal(), dir_));
+	}
 }
 
 void ext::transform(const transformation_3 & t) {

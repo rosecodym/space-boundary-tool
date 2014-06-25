@@ -59,75 +59,80 @@ nef_polyhedron_3 create_nef(
 	number_collection<eK> * ec) 
 {
 	if (is_kind_of(obj, "IfcExtrudedAreaSolid")) {
-		internal_geometry::ext internal_ext(obj, scaler, c);
-		using boost::transform;
-		using std::back_inserter;
-		const auto & bverts = internal_ext.base().outer_boundary();
-		std::vector<point_3> points;
-		transform(bverts, back_inserter(points), [c](const point_3 & p) {
-			return c->request_point(
-				CGAL::to_double(p.x()),
-				CGAL::to_double(p.y()),
-				CGAL::to_double(p.z()));
-		});
-		ifc_object * ifc_dir;
-		object_field(obj, "ExtrudedDirection", &ifc_dir);
-		auto extrusion_vec = to_exact_direction(*ifc_dir, c).to_vector();
-		extrusion_vec = extrusion_vec / sqrt(extrusion_vec.squared_length());
-		double depth;
-		real_field(obj, "Depth", &depth);
-		extrusion_vec = extrusion_vec * c->request_height(depth);
-		transformation_3 extrusion(CGAL::TRANSLATION, extrusion_vec);
-		points.reserve(bverts.size() * 2);
-		transform(points, back_inserter(points), extrusion);
-		typedef std::deque<size_t> ixdq;
-		std::vector<ixdq> facets;
-		ixdq base_indices;
-		ixdq target_indices;
-		facets.resize(bverts.size());
-		for (size_t i = 0; i < bverts.size(); ++i) {
-			base_indices.push_back(i);
-			target_indices.push_back(i + bverts.size());
-			facets[i].push_back(target_indices[i]);
-			facets[i].push_back(base_indices[i]);
-			facets[(i + 1) % bverts.size()].push_front(target_indices[i]);
-			facets[(i + 1) % bverts.size()].push_front(base_indices[i]);
+		try{
+			internal_geometry::ext internal_ext(obj, scaler, c);
+		
+			using boost::transform;
+			using std::back_inserter;
+			const auto & bverts = internal_ext.base().outer_boundary();
+			std::vector<point_3> points;
+			transform(bverts, back_inserter(points), [c](const point_3 & p) {
+				return c->request_point(
+					CGAL::to_double(p.x()),
+					CGAL::to_double(p.y()),
+					CGAL::to_double(p.z()));
+			});
+			ifc_object * ifc_dir;
+			object_field(obj, "ExtrudedDirection", &ifc_dir);
+			auto extrusion_vec = to_exact_direction(*ifc_dir, c).to_vector();
+			extrusion_vec = extrusion_vec / sqrt(extrusion_vec.squared_length());
+			double depth;
+			real_field(obj, "Depth", &depth);
+			extrusion_vec = extrusion_vec * c->request_height(depth);
+			transformation_3 extrusion(CGAL::TRANSLATION, extrusion_vec);
+			points.reserve(bverts.size() * 2);
+			transform(points, back_inserter(points), extrusion);
+			typedef std::deque<size_t> ixdq;
+			std::vector<ixdq> facets;
+			ixdq base_indices;
+			ixdq target_indices;
+			facets.resize(bverts.size());
+			for (size_t i = 0; i < bverts.size(); ++i) {
+				base_indices.push_back(i);
+				target_indices.push_back(i + bverts.size());
+				facets[i].push_back(target_indices[i]);
+				facets[i].push_back(base_indices[i]);
+				facets[(i + 1) % bverts.size()].push_front(target_indices[i]);
+				facets[(i + 1) % bverts.size()].push_front(base_indices[i]);
+			}
+			facets.push_back(base_indices);
+			facets.push_back(ixdq(target_indices.rbegin(), target_indices.rend()));
+			typedef extended_polyhedron_3::HDS hds_t;
+			struct builder : public CGAL::Modifier_base<hds_t> {
+				std::vector<extended_point_3> pts_;
+				const std::vector<ixdq> & facets_;
+				builder(
+					const std::vector<point_3> & pts,
+					const std::vector<ixdq> & facets,
+					number_collection<eK> * ec)
+					: facets_(facets) 
+				{
+					for (auto p = pts.begin(); p != pts.end(); ++p) {
+						pts_.push_back(ec->request_point(
+							CGAL::to_double(p->x()),
+							CGAL::to_double(p->y()),
+							CGAL::to_double(p->z())));
+					}
+				}
+				void operator () (hds_t & hds) {
+					CGAL::Polyhedron_incremental_builder_3<hds_t> b(hds, true);
+					b.begin_surface(pts_.size(), facets_.size());
+					for (auto p = pts_.begin(); p != pts_.end(); ++p) {
+						b.add_vertex(*p);
+					}
+					for (auto f = facets_.begin(); f != facets_.end(); ++f) {
+						b.add_facet(f->begin(), f->end());
+					}
+					b.end_surface();
+				}
+			};
+			builder b(points, facets, ec);
+			extended_polyhedron_3 poly;
+			poly.delegate(b);
+			return nef_polyhedron_3(poly);
+		}catch(internal_geometry::null_area_exception &nea){
+			return nef_polyhedron_3();
 		}
-		facets.push_back(base_indices);
-		facets.push_back(ixdq(target_indices.rbegin(), target_indices.rend()));
-		typedef extended_polyhedron_3::HDS hds_t;
-		struct builder : public CGAL::Modifier_base<hds_t> {
-			std::vector<extended_point_3> pts_;
-			const std::vector<ixdq> & facets_;
-			builder(
-				const std::vector<point_3> & pts,
-				const std::vector<ixdq> & facets,
-				number_collection<eK> * ec)
-				: facets_(facets) 
-			{
-				for (auto p = pts.begin(); p != pts.end(); ++p) {
-					pts_.push_back(ec->request_point(
-						CGAL::to_double(p->x()),
-						CGAL::to_double(p->y()),
-						CGAL::to_double(p->z())));
-				}
-			}
-			void operator () (hds_t & hds) {
-				CGAL::Polyhedron_incremental_builder_3<hds_t> b(hds, true);
-				b.begin_surface(pts_.size(), facets_.size());
-				for (auto p = pts_.begin(); p != pts_.end(); ++p) {
-					b.add_vertex(*p);
-				}
-				for (auto f = facets_.begin(); f != facets_.end(); ++f) {
-					b.add_facet(f->begin(), f->end());
-				}
-				b.end_surface();
-			}
-		};
-		builder b(points, facets, ec);
-		extended_polyhedron_3 poly;
-		poly.delegate(b);
-		return nef_polyhedron_3(poly);
 	}
 	else if (is_instance_of(obj, "IfcHalfspaceSolid") || 
 			 is_instance_of(obj, "IfcBoxedHalfSpace"))

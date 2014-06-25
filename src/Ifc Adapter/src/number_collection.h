@@ -78,8 +78,6 @@ public:
 		auto denominator = v_a.squared_length() * v_b.squared_length();
 		// The whole point of this stupid exact geometry stuff is that this
 		// assert will *never* trip. But let's just make sure.
-		if(!CGAL::is_zero(denominator))
-			eps = eps;
 		assert(!CGAL::is_zero(denominator));
 		return one_dimensional_equality_context<NT>::is_zero_squared(
 			CGAL::cross_product(v_a, v_b).squared_length() / denominator,

@@ -43,6 +43,7 @@ public:
 	interface_face to_interface() const;
 	void reverse();
 	void transform(const transformation_3 & t);
+	bool HasNullArea();
 };
 
 class solid {
@@ -116,6 +117,14 @@ private:
 	std::string msg;
 public:
 	bad_rep_exception(const std::string & msg) : msg(msg) { }
+	virtual const char * what() const throw() { return msg.c_str(); }
+};
+
+class null_area_exception: public std::exception {
+private:
+	std::string msg;
+public:
+	null_area_exception(const std::string & msg) : msg(msg) { }
 	virtual const char * what() const throw() { return msg.c_str(); }
 };
 

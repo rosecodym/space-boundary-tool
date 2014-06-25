@@ -271,7 +271,8 @@ ifcadapter_return_t execute(
 		create_guid_filter(opts.space_filter, opts.space_filter_count),
 		&ctxt,
 		&shadings,
-		&approximated_curves);
+		&approximated_curves,
+		&opts.tolernace_in_meters);
 	if (res != IFCADAPT_OK) { return res; }
 	else if (*space_count == 0) {
 		opts.error_func("The model has no defined spaces.\n");
