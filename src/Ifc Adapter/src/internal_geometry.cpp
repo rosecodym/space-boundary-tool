@@ -192,11 +192,12 @@ bool face::HasNullArea(){
             {
 				n1 = vector_3(CGAL::to_double(n1.x()) / dTempArea, CGAL::to_double(n1.y()) / dTempArea, CGAL::to_double(n1.z()) / dTempArea);
 
-                if (bFirst){
+                if (bFirst)
+				{
 					nMain = n1;
 					bFirst = false;
 				}
-                else if (nMain == n1)
+                if (nMain == n1)
                     dArea += dTempArea;
                 else
                     dArea -= dTempArea;
