@@ -2,6 +2,8 @@ Space Boundary Tool (version 1)
 
 The Space Boundary Tool (SBT) is a tool for automatically calculating whole-building energy performance simulation thermal space boundaries for Industry Foundation Classes (IFC) building models, and using these space boundaries to automatically generate EnergyPlus Input Definition Files (IDFs).
 
+The source code is hosted at https://bitbucket.org/berkeleylab/eetd-sbt. A fork on Github exists at https://github.com/rosecodym/space-boundary-tool just to make it easier to find.
+
 If all you're looking for is the binary, it can be downloaded from https://gaia.lbl.gov/interoperability/SBT/. Read on for build instructions.
 
 SBT requires Microsoft Visual Studio 2010 to build, and has two dependencies you'll need to acquire on your own:
